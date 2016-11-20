@@ -43,7 +43,7 @@ debugging "Installing oh-my-zsh..."
 curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
 
 # Node.js
-debugging "Installing npm packages..."
+# debugging "Installing npm packages..."
 # npm install -g $(cat npm/globals|grep -v "#")
 
 # --------------–-------–--------–--------–-------–--–-----
@@ -55,6 +55,16 @@ rm -rf ~/.gitconfig ~/.gitattributes ~/.gitignore_global
 ln -s ~/.files/git/config ~/.gitconfig
 ln -s ~/.files/git/attributes ~/.gitattributes
 ln -s ~/.files/git/ignore_global ~/.gitignore_global
+
+debugging "Linking ZSH settings..."
+rm -rf ~/.zshrc ~/.oh-my-zsh/custom
+ln -s ~/.files/zsh/zshrc ~/.zshrc
+ln -s ~/.files/zsh/custom ~/.oh-my-zsh/custom
+
+# Installing zsh-autosuggestions
+debugging "Installing zsh-autosuggestions..."
+rm -rf ~/.files/zsh/custom/plugins/zsh-autosuggestions
+git clone git://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 
 debugging "Linking VSCode settings..."
 rm -rf ~/Library/Application\ Support/Code/User/*.json ~/Library/Application\ Support/Code/User/snippets

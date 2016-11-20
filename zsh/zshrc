@@ -1,0 +1,12 @@
+# Path to your oh-my-zsh installation
+export ZSH=$HOME/.oh-my-zsh
+export ZSH_CUSTOM=$ZSH/custom
+
+source $HOME/.profile
+source $HOME/.bash_profile
+
+# Load ZSH
+source $ZSH/oh-my-zsh.sh
+source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Every setting in $ZSH/custom is being loaded automagically
