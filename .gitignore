@@ -1,1 +1,15 @@
 .DS_Store
+
+*.last-run
+*.system-ca-bundle
+*.merged-ca-bundle
+*.user-ca-bundle
+*.cache
+*.crt
+
+WakaTime.sublime-settings
+Evernote.sublime-settings
+Gist.sublime-settings
+
+node_modules
+bower_components

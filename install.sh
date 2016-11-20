@@ -34,3 +34,14 @@ rm -rf ~/.gitconfig ~/.gitattributes ~/.gitignore_global
 ln -s ~/.files/git/config ~/.gitconfig
 ln -s ~/.files/git/attributes ~/.gitattributes
 ln -s ~/.files/git/ignore_global ~/.gitignore_global
+
+debugging "Linking VSCode settings..."
+rm -rf ~/Library/Application\ Support/Code/User/*.json ~/Library/Application\ Support/Code/User/snippets
+ln -s ~/.files/vscode/snippets ~/Library/Application\ Support/Code/User/snippets
+ln -s ~/.files/vscode/settings.json ~/Library/Application\ Support/Code/User/settings.json
+ln -s ~/.files/vscode/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
+ln -s ~/.files/vscode/vsicons.settings.json ~/Library/Application\ Support/Code/User/vsicons.settings.json
+
+debugging "Linking Sublime Text 3 settings..."
+rm -rf ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+ln -s ~/.files/sublime/User ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
