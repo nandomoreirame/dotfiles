@@ -6,6 +6,7 @@ google-hangouts
 google-trends
 franz
 whatsapp
+telegram
 slack
 skype
 iterm2
@@ -15,9 +16,10 @@ vivaldi
 opera
 opera-mobile-emulator
 virtualbox
-pocketcast
+poedit
 docker
 docker-toolbox
+focused
 kitematic
 folx
 evernote
