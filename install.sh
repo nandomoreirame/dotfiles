@@ -7,7 +7,7 @@ green=`tput setaf 2`
 reset=`tput sgr0`
 
 debugging () {
-  echo "${green} → $1${reset}"
+  echo "${green} ===→ $1${reset}"
 }
 
 # --------------–-------–--------–--------–-------–--–-----
@@ -24,3 +24,13 @@ debugging "update and upgrade Homebrew..."
 # Make sure Homebrew is up to date
 brew update
 brew upgrade
+
+# --------------–-------–--------–--------–-------–--–-----
+# Command line tweaks, linking stuff
+# --------------–-------–--------–--------–-------–--–-----
+debugging "Linking Git dotfiles..."
+# Personal information in your .gitlocal, not .gitconfig!
+rm -rf ~/.gitconfig ~/.gitattributes ~/.gitignore_global
+ln -s ~/.files/git/config ~/.gitconfig
+ln -s ~/.files/git/attributes ~/.gitattributes
+ln -s ~/.files/git/ignore_global ~/.gitignore_global
