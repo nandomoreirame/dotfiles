@@ -25,6 +25,27 @@ debugging "update and upgrade Homebrew..."
 brew update
 brew upgrade
 
+# Command-line tools and utils
+# --------------–-------–--------–--------–-------–--–-----
+debugging "Installing packages using Homebrew..."
+
+# Install all packages listed in the brewfile
+brew install $(cat brew/brewfile|grep -v "#")
+
+debugging "Installing programs using Homebrew-cask..."
+brew cask install $(cat brew/brewcask|grep -v "#")
+
+# --------------–-------–--------–--------–-------–--–-----
+# Specific packages
+# --------------–-------–--------–--------–-------–--–-----
+# Installing oh-my-zsh
+debugging "Installing oh-my-zsh..."
+curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+
+# Node.js
+debugging "Installing npm packages..."
+# npm install -g $(cat npm/globals|grep -v "#")
+
 # --------------–-------–--------–--------–-------–--–-----
 # Command line tweaks, linking stuff
 # --------------–-------–--------–--------–-------–--–-----
