@@ -99,11 +99,35 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
 # Save screenshots to a folder called Screenshots
-mkdir ~/Pictures/Screenshots
-defaults write com.apple.screencapture location ~/Pictures/Screenshots
+ScreenshotsFolder=~/Pictures/Screenshots
+
+if [ -d $ScreenshotsFolder  ]
+then
+  echo "Directory $ScreenshotsFolder exists!"
+else
+  mkdir $ScreenshotsFolder
+  defaults write com.apple.screencapture location $ScreenshotsFolder
+fi
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
+
+
+# --------------–-------–--------–--------–-------–--–-----
+# Create Dev folders
+# --------------–-------–--------–--------–-------–--–-----
+
+DevFolders="$HOME/Dev/projects $HOME/Dev/clients $HOME/Dev/playground $HOME/Dev/open-source $HOME/Dev/www"
+
+for folder in $DevFolders
+do
+  if [ -d $folder  ]
+  then
+    echo "Directory $folder exists!"
+  else
+    mkdir -p $folder
+  fi
+done
 
 
 # --------------–-------–--------–--------–-------–--–-----
@@ -124,7 +148,7 @@ defaults write com.apple.Dock orientation -string bottom
 defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
 # Add a spacer tile in Dock
-defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'
+# defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'
 
 # Set the icon size of Dock items to 26 pixels
 defaults write com.apple.dock tilesize -int 26
@@ -427,8 +451,7 @@ defaults write org.m0k.transmission WarningLegal -bool false
 # --------------–-------–--------–--------–-------–--–-----
 # Kill affected applications
 # --------------–-------–--------–--------–-------–--–-----
-for app in "Activity Monitor" "Dock" "Finder" "Google Chrome" \
-           "Google Chrome Canary" "Transmission" "SystemUIServer"; do
+for app in "Activity Monitor" "Dock" "Finder" "SystemUIServer"; do
   killall "${app}" > /dev/null 2>&1
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
