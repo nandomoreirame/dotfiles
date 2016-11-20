@@ -76,3 +76,10 @@ ln -s ~/.files/vscode/vsicons.settings.json ~/Library/Application\ Support/Code/
 debugging "Linking Sublime Text 3 settings..."
 rm -rf ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
 ln -s ~/.files/sublime/User ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+
+# --------------–-------–--------–--------–-------–--–-----
+# System preferences
+# --------------–-------–--------–--------–-------–--–-----
+# It'll shut down Terminal!
+debugging "Set OS X defaults... (It'll shut down Terminal!)"
+sh osx/defaults.sh
