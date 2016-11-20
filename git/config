@@ -5,8 +5,7 @@
   # --------------–-------–--------–--------–-------–--–-----
   # Faster commands
   # --------------–-------–--------–--------–-------–--–-----
-  g = git
-  ad = add .
+  add = add .
   br = branch
   cm = commit -m
   cam = commit -a -m
@@ -14,7 +13,7 @@
   ps = push
   psm = push origin master
   psd = push origin dev
-  st = status
+  s = status
 
   # --------------–-------–--------–--------–-------–--–-----
   # More intuitive commands
@@ -38,7 +37,7 @@
 
 [core]
   excludesfile = ~/.gitignore_global
-  editor = subl
+	editor = subl
   pager = diff-so-fancy | less --tabs=2 -RFX
 
 [apply]
@@ -66,3 +65,6 @@
 
 [merge]
   log = true
+[user]
+	name = Fernando Moreira
+	email = nandomoreira.me@gmail.com

@@ -1,0 +1,16 @@
+{
+	"Image placeholder": {
+		"prefix": "imgplace",
+		"body": [
+			"<img src=\"//placehold.it/350x150\" alt=\"$1\">"
+		],
+		"description": "img tag with placehold.it"
+	},
+	"Viewport": {
+		"prefix": "viewport",
+		"body": [
+			"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+		],
+		"description": "meta tag viewport"
+	}
+}

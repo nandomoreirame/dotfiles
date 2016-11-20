@@ -1,0 +1,37 @@
+{
+	"Print to console": {
+		"prefix": "co",
+		"body": [
+			"console.$1('$2');"
+		],
+		"description": "Log output to console"
+	},
+	"Print to console log": {
+		"prefix": "clog",
+		"body": [
+			"console.log('$1');"
+		],
+		"description": "Log output to console log"
+	},
+	"Print to console info": {
+		"prefix": "cinfo",
+		"body": [
+			"console.info('$1');"
+		],
+		"description": "Log output to console info"
+	},
+	"Print to console error": {
+		"prefix": "cerr",
+		"body": [
+			"console.error('$1');"
+		],
+		"description": "Log output to console error"
+	},
+	"Print to console dir": {
+		"prefix": "cdir",
+		"body": [
+			"console.dir('$1');"
+		],
+		"description": "Log output to console dir"
+	}
+}

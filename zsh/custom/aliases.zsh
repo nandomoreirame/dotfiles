@@ -21,15 +21,14 @@ alias ls="command ls -G"
 
 # Process status
 alias psa="ps aux"
-alias psag="ps aux | ag "
 
 # Easy folder and file loading
 alias dl="cd ~/Downloads"
 alias www="cd ~/Dev/www"
 alias apps="cd /Applications"
-alias zload="source ~/zshrc"
+alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
-alias dotfiles="cd ~/.dotfiles"
+alias files="cd ~/.files"
 
 # Miscellaneous
 alias cleanup="find  -type f -name '*DS_Store' -ls -delete"
@@ -50,3 +49,7 @@ alias curltime='curl -s -w "%{time_total} seconds\n" -o /dev/null'
 alias g="git"
 alias git="hub"
 alias gh="hub"
+
+# Editors
+alias s="subl"
+alias c="code"
