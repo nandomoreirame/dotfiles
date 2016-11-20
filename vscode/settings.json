@@ -1,0 +1,35 @@
+// Place your settings in this file to overwrite the default settings
+{
+  "editor.fontFamily": "Fira Code, Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontLigatures": true,
+  "files.trimTrailingWhitespace": true,
+  "window.reopenFolders": "none",
+  "window.restoreFullscreen": true,
+  "editor.tabSize": 2,
+  "beautify.tabSize": 2,
+  "editor.rulers": [160],
+  "html.format.wrapLineLength": 160,
+  "html.format.endWithNewline": true,
+  "workbench.editor.enablePreview": false,
+  "git.enableLongCommitWarning": false,
+  "git.confirmSync": false,
+  "files.exclude": {
+    "**/node_modules" : true,
+    "**/*.zip"        : true,
+    "**/*.tar"        : true,
+    "**/*.gz"         : true
+  },
+  "search.exclude": {
+    "**/bower"  : true,
+    "**/_bower" : true,
+    "**/_site"  : true,
+    "**/dist"   : true
+  },
+  "alignment.chars": {
+    ":": {
+      "spaceBefore" : 1,
+      "spaceAfter"  : 1
+    }
+  }
+}
