@@ -1,16 +1,23 @@
 {
-	"Image placeholder": {
-		"prefix": "imgplace",
-		"body": [
-			"<img src=\"//placehold.it/350x150\" alt=\"$1\">"
-		],
-		"description": "img tag with placehold.it"
-	},
-	"Viewport": {
-		"prefix": "viewport",
-		"body": [
-			"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-		],
-		"description": "meta tag viewport"
-	}
+  "Image placeholder": {
+    "prefix": "imgplace",
+    "body": [
+      "<img src=\"//placehold.it/350x150\" alt=\"$1\">"
+    ],
+    "description": "img tag with placehold.it"
+  },
+  "image with lorempixel.com": {
+    "prefix": "img",
+    "body": [
+      "<img src=\"//lorempixel.com/${1:300}/${2:150}\" alt=\"$1\">"
+    ],
+    "description": "Add placeholder image with lorempixel.com"
+  },
+  "Viewport": {
+    "prefix": "viewport",
+    "body": [
+      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+    ],
+    "description": "meta tag viewport"
+  }
 }

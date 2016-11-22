@@ -34,3 +34,6 @@ Session.vim
 
 # Preprocessor
 .sass-cache
+
+# Visual Code Studio
+.vscode

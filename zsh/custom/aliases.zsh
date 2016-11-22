@@ -47,8 +47,8 @@ alias curltime='curl -s -w "%{time_total} seconds\n" -o /dev/null'
 
 # Git and GitHub (hub.github.com)
 alias g="git"
-alias git="hub"
-alias gh="hub"
+# alias git="hub"
+# alias gh="hub"
 
 # Editors
 alias s="subl"

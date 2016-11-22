@@ -2,10 +2,10 @@
 	"always_show_minimap_viewport": true,
 	"auto_indent": true,
 	"bold_folder_labels": true,
-	"color_scheme": "Packages/User/SublimeLinter/Monokai (SL).tmTheme",
+	"color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
+	"default_encoding": "UTF-8",
 	"detect_indentation": false,
 	"ensure_newline_at_eof_on_save": true,
-	"fallback_encoding": "UTF-8",
 	"file_exclude_patterns":
 	[
 		"*~",
@@ -54,16 +54,18 @@
 		"tmp",
 		".jekyll-assets-cache"
 	],
+	"font_face": "Fira Code",
 	"font_options":
 	[
 		"gray_antialias"
 	],
-	"font_size": 14,
+	"font_size": 11,
 	"highlight_line": true,
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
-		"Vintage"
+		"Vintage",
+		"WordPress"
 	],
 	"indent_guide_options":
 	[
@@ -77,10 +79,9 @@
 	"material_theme_panel_separator": true,
 	"overlay_scroll_bars": "enabled",
 	"tab_size": 2,
+	"theme": "Material-Theme.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": true,
 	"trim_trailing_white_space_on_save": true,
-	"word_wrap": true,
-  "color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
-  "theme": "Material-Theme.sublime-theme"
+	"word_wrap": true
 }
