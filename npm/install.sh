@@ -5,4 +5,8 @@ cd "$(dirname "${BASH_SOURCE[0]}")" \
 
 debugging "Installing npm packages..."
 
-npm install -g $(cat globals|grep -v "#")
+# Node.js
+if test $(which npm)
+then
+  npm install -g $(cat globals|grep -v "#")
+fi

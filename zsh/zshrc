@@ -1,6 +1,6 @@
 # Path to your oh-my-zsh installation
 export ZSH=$HOME/.oh-my-zsh
-export ZSH_CUSTOM=$ZSH/custom
+ZSH_CUSTOM=$ZSH/custom
 
 source $HOME/.profile
 source $HOME/.bash_profile
@@ -9,4 +9,9 @@ source $HOME/.bash_profile
 source $ZSH/oh-my-zsh.sh
 source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# Every setting in $ZSH/custom is being loaded automagically
+# export nvm
+export NVM_DIR=$HOME/.nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+
+# export rvm
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

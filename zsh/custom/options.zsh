@@ -33,13 +33,6 @@ plugins=(git osx npm nvm rvm brew extract z zsh-syntax-highlighting zsh-autosugg
 # User configuration
 export EDITOR=code
 
-# export nvm
-export NVM_DIR=$HOME/.nvm
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
-
-# export rvm
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
 # Set up a colored prompt in Zsh
 autoload -U promptinit
 promptinit
