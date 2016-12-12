@@ -1,32 +1,83 @@
-"avoiding annoying CSApprox warning message
+" ======= avoiding annoying CSApprox warning message
 let g:CSApprox_verbose_level = 0
 
-"necessary on some Linux distros for pathogen to properly load bundles
+" ======= Theme
+"colorscheme monokai
+colorscheme onedark
+
+" ======= necessary on some Linux distros for pathogen to properly load bundles
+syntax on
 filetype on
 filetype off
 
-"load pathogen managed plugins
-call pathogen#infect()
-
-"Use Vim settings, rather then Vi settings (much better!).
-"This must be first, because it changes other options as a side effect.
+" ======= Use Vim settings, rather then Vi settings (much better!).
+" ======= This must be first, because it changes other options as a side effect.
 set nocompatible
 
-"allow backspacing over everything in insert mode
+" ======= allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
-"store lots of :cmdline history
+" ======= store lots of :cmdline history
 set history=1000
 
-set showcmd     "show incomplete cmds down the bottom
-set showmode    "show current mode down the bottom
+set showcmd     " ======= show incomplete cmds down the bottom
+set showmode    " ======= show current mode down the bottom
 
-set incsearch   "find the next match as we type the search
-set hlsearch    "hilight searches by default
+set incsearch   " ======= find the next match as we type the search
+set hlsearch    " ======= hilight searches by default
 
-set number      "add line numbers
+set number      " ======= add line numbers
 set showbreak=...
 set wrap linebreak nolist
 
-"key mapping for saving file
+" ======= key mapping for saving file
 nmap <C-s> :w<CR>
+
+" ======= Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" ======= space open/closes folds
+nnoremap <space> za
+
+" ======= load pathogen managed plugins
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" ======= So Cute ;D
+syntax on
+set encoding=utf8
+set number
+set tabstop=2
+set eb
+set expandtab
+set hlsearch
+set ignorecase
+set incsearch
+set showcmd
+set showmatch
+set textwidth=80
+set cursorline
+filetype indent on
+
+" ======= load and install plugins
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'JamshedVesuna/vim-markdown-preview'
+Plugin 'grvcoelho/vim-javascript-snippets'
+Plugin 'hallettj/jslint.vim'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'tpope/vim-haml'
+Plugin 'mattn/emmet-vim'
+Plugin 'moll/vim-node'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
+Plugin 'mileszs/ack.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'ervandew/supertab'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'godlygeek/tabular'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
