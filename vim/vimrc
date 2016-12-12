@@ -1,58 +1,83 @@
-" ======= avoiding annoying CSApprox warning message
+if &compatible
+  set nocompatible
+endif
+
+"" ******************************************
+"" Encoding
+"" ******************************************
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8
+
+"" ******************************************
+"" avoiding annoying CSApprox warning message
+"" ******************************************
 let g:CSApprox_verbose_level = 0
 
-" ======= Theme
+"" ******************************************
+"" Theme
+"" ******************************************
 "colorscheme monokai
 colorscheme onedark
 
-" ======= necessary on some Linux distros for pathogen to properly load bundles
+"" ******************************************
+"" necessary on some Linux distros for pathogen to properly load bundles
+"" ******************************************
 syntax on
-filetype on
 filetype off
 
-" ======= Use Vim settings, rather then Vi settings (much better!).
-" ======= This must be first, because it changes other options as a side effect.
-set nocompatible
+"" ******************************************
+"" Ignore files
+"" ******************************************
+let g:vimfiler_ignore_pattern = ['^\.git$', '^\.DS_Store$', '^\node_modules$']
 
-" ======= allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-" ======= store lots of :cmdline history
+"" ******************************************
+"" store lots of :cmdline history
+"" ******************************************
 set history=1000
 
-set showcmd     " ======= show incomplete cmds down the bottom
-set showmode    " ======= show current mode down the bottom
+set showcmd     "" show incomplete cmds down the bottom
+set showmode    "" show current mode down the bottom
 
-set incsearch   " ======= find the next match as we type the search
-set hlsearch    " ======= hilight searches by default
+set incsearch   "" find the next match as we type the search
+set hlsearch    "" hilight searches by default
 
-set number      " ======= add line numbers
+set number      "" add line numbers
 set showbreak=...
 set wrap linebreak nolist
 
-" ======= key mapping for saving file
+"" ******************************************
+"" key mapping for saving file
+"" ******************************************
 nmap <C-s> :w<CR>
 
-" ======= Smart way to move between windows
+"" ******************************************
+"" Smart way to move between windows
+"" ******************************************
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" ======= space open/closes folds
+"" ******************************************
+"" space open/closes folds
+"" ******************************************
 nnoremap <space> za
 
-" ======= load pathogen managed plugins
+"" ******************************************
+"" load pathogen managed plugins
+"" ******************************************
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-" ======= So Cute ;D
+"" ******************************************
+"" So Cute ;D
+"" ******************************************
 syntax on
 set encoding=utf8
 set number
 set tabstop=2
 set eb
-set expandtab
 set hlsearch
 set ignorecase
 set incsearch
@@ -61,8 +86,14 @@ set showmatch
 set textwidth=80
 set cursorline
 filetype indent on
+set tabstop=2
+set shiftwidth=2
+set expandtab
+:retab
 
-" ======= load and install plugins
+"" ******************************************
+"" load and install plugins
+"" ******************************************
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'JamshedVesuna/vim-markdown-preview'
@@ -81,3 +112,7 @@ Plugin 'davidhalter/jedi-vim'
 Plugin 'godlygeek/tabular'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'mhinz/vim-signify'
+Plugin 'vim-syntastic/syntastic'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'edkolev/promptline.vim'
