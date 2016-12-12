@@ -1,0 +1,63 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+    "editor.tabSize": 2,
+    "beautify.tabSize": 2,
+    "editor.rulers": [160],
+    "editor.wrappingColumn": 600,
+    "editor.renderIndentGuides": true,
+    "html.format.wrapLineLength": 160,
+    "html.format.endWithNewline": true,
+    "git.enableLongCommitWarning": false,
+    "git.confirmSync": false,
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontLigatures": true,
+    "editor.useTabStops": false,
+    "files.encoding": "utf8",
+    "editor.renderWhitespace": "all",
+    "editor.fontSize": 14,
+    "editor.lineHeight": 24,
+    "editor.tabCompletion": true,
+    "css.validate": false,
+    "html.format.indentHandlebars": true,
+    "emmet.syntaxProfiles": {
+        "javascript": "sass"
+    },
+    "search.exclude": {
+        "build": true,
+        ".temp": true,
+        "temp": true,
+        ".tmp": true,
+        "tmp": true,
+        "**/bower"  : true,
+        "**/_bower" : true,
+        "**/_site"  : true,
+        "**/dist"   : true
+    },
+    "files.exclude": {
+        ".git": true,
+        // "**/node_modules" : true,
+        "**/*.zip"        : true,
+        "**/*.tar"        : true,
+        "**/*.gz"         : true
+    },
+    "alignment.chars": {
+        ":" : {
+            "spaceBefore": 1,
+            "spaceAfter": 1
+        },
+        "=" : {
+            "spaceBefore": 1,
+            "spaceAfter": 1
+        },
+        "from" : {
+            "spaceBefore": 1,
+            "spaceAfter": 1
+        }
+    },
+    "trailing-spaces.trimOnSave": true,
+    "trailing-spaces.saveAfterTrim": true,
+    "eslint.autoFixOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "window.zoomLevel": 0
+  }

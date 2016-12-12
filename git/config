@@ -7,6 +7,8 @@
   # --------------–-------–--------–--------–-------–--–-----
   add = add .
   br = branch
+  ch = checkout
+  chm = checkout master
   cm = commit -m
   cam = commit -a -m
   pl = pull

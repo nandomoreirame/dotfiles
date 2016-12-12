@@ -1,0 +1,32 @@
+"avoiding annoying CSApprox warning message
+let g:CSApprox_verbose_level = 0
+
+"necessary on some Linux distros for pathogen to properly load bundles
+filetype on
+filetype off
+
+"load pathogen managed plugins
+call pathogen#infect()
+
+"Use Vim settings, rather then Vi settings (much better!).
+"This must be first, because it changes other options as a side effect.
+set nocompatible
+
+"allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+"store lots of :cmdline history
+set history=1000
+
+set showcmd     "show incomplete cmds down the bottom
+set showmode    "show current mode down the bottom
+
+set incsearch   "find the next match as we type the search
+set hlsearch    "hilight searches by default
+
+set number      "add line numbers
+set showbreak=...
+set wrap linebreak nolist
+
+"key mapping for saving file
+nmap <C-s> :w<CR>

@@ -47,9 +47,18 @@ alias curltime='curl -s -w "%{time_total} seconds\n" -o /dev/null'
 
 # Git and GitHub (hub.github.com)
 alias g="git"
+alias gs="git status"
 # alias git="hub"
 # alias gh="hub"
 
 # Editors
 alias s="subl"
 alias c="code"
+
+alias d="docker"
+alias di="docker images"
+
+alias dc="docker-compose"
+alias dc-k="docker-compose kill"
+alias dc-d="docker-compose down"
+alias dc-up="docker-compose up -d"
