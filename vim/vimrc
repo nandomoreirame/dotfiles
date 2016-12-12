@@ -23,6 +23,25 @@ colorscheme onedark
 "" ******************************************
 "" necessary on some Linux distros for pathogen to properly load bundles
 "" ******************************************
+
+"" ******************************************
+"" So Cute ;D
+"" ******************************************
+set number
+set tabstop=2
+set eb
+set hlsearch
+set ignorecase
+set incsearch
+set showcmd
+set showmatch
+set textwidth=80
+set cursorline
+filetype indent on
+set tabstop=2
+set shiftwidth=2
+set expandtab
+:retab
 syntax on
 filetype off
 
@@ -58,6 +77,7 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+map <C-b> :NERDTreeToggle<CR>
 
 "" ******************************************
 "" space open/closes folds
@@ -69,27 +89,6 @@ nnoremap <space> za
 "" ******************************************
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
-"" ******************************************
-"" So Cute ;D
-"" ******************************************
-syntax on
-set encoding=utf8
-set number
-set tabstop=2
-set eb
-set hlsearch
-set ignorecase
-set incsearch
-set showcmd
-set showmatch
-set textwidth=80
-set cursorline
-filetype indent on
-set tabstop=2
-set shiftwidth=2
-set expandtab
-:retab
 
 "" ******************************************
 "" load and install plugins
@@ -116,3 +115,17 @@ Plugin 'mhinz/vim-signify'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'edkolev/tmuxline.vim'
 Plugin 'edkolev/promptline.vim'
+Plugin 'wincent/command-t'
+Plugin 'editorconfig/editorconfig-vim'
+Plugin 'JulesWang/css.vim'
+Plugin 'cakebaker/scss-syntax.vim'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'dsawardekar/wordpress.vim'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'tpope/vim-liquid'
+
+call vundle#end()
+syntax enable
+filetype plugin indent on
