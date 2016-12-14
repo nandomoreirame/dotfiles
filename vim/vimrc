@@ -43,7 +43,6 @@ set shiftwidth=2
 set expandtab
 :retab
 syntax on
-filetype off
 
 "" ******************************************
 "" Ignore files
@@ -87,6 +86,8 @@ nnoremap <space> za
 "" ******************************************
 "" load pathogen managed plugins
 "" ******************************************
+set nocompatible
+filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
