@@ -15,7 +15,7 @@
     "editor.useTabStops": false,
     "files.encoding": "utf8",
     "editor.renderWhitespace": "all",
-    "editor.fontSize": 14,
+    "editor.fontSize": 12,
     "editor.lineHeight": 24,
     "editor.tabCompletion": true,
     "css.validate": false,
@@ -36,7 +36,7 @@
     },
     "files.exclude": {
         ".git": true,
-        // "**/node_modules" : true,
+        "**/node_modules" : true,
         "**/*.zip"        : true,
         "**/*.tar"        : true,
         "**/*.gz"         : true

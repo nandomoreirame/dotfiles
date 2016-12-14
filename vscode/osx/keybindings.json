@@ -1,7 +1,7 @@
 // Place your key bindings in this file to overwrite the defaults
 [
   {
-    "key"     : "ctrl+shift+d",
+    "key"     : "cmd+shift+d",
     "command" : "editor.action.copyLinesDownAction",
     "when"    : "editorTextFocus && !editorReadonly"
   },
@@ -16,12 +16,12 @@
     "when"    : "editorTextFocus && !editorReadonly"
   },
   {
-    "key"     : "ctrl+alt+a",
+    "key"     : "cmd+alt+a",
     "command" : "alignment.align",
     "when"    : "editorHasSelection"
   },
   {
-    "key"     : "ctrl+r",
+    "key"     : "cmd+r",
     "command" : "workbench.action.openRecent"
   }
 ]
