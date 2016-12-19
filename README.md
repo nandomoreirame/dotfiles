@@ -1,1 +1,1 @@
-# My MacBook dotfiles
+# My dotfiles
