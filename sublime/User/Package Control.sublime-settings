@@ -2,7 +2,6 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
-		"DashDoc"
 	],
 	"installed_packages":
 	[
@@ -21,6 +20,7 @@
 		"CSS3",
 		"DashDoc",
 		"EditorConfig",
+		"EditorConfigSnippets",
 		"Emmet",
 		"Evernote",
 		"Gist",
@@ -59,7 +59,9 @@
 		"TrailingSpaces",
 		"Twig",
 		"WakaTime",
-		"WordPress"
+		"WordPress",
+		"WordPress Completions",
+		"WordPress Customizer"
 	],
 	"repositories":
 	[

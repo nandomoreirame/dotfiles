@@ -1,6 +1,6 @@
 # Path to your oh-my-zsh installation
 export ZSH=$HOME/.oh-my-zsh
-ZSH_CUSTOM=$ZSH/custom
+export ZSH_CUSTOM=$ZSH/custom
 
 source $HOME/.profile
 source $HOME/.bash_profile

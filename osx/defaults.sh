@@ -112,12 +112,11 @@ fi
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
 
-
 # --------------–-------–--------–--------–-------–--–-----
 # Create Dev folders
 # --------------–-------–--------–--------–-------–--–-----
 
-DevFolders="$HOME/Dev/projects $HOME/Dev/clients $HOME/Dev/playground $HOME/Dev/open-source $HOME/Dev/www"
+DevFolders="$HOME/www/projects $HOME/www/clients $HOME/www/playground $HOME/www/open-source"
 
 for folder in $DevFolders
 do
@@ -129,14 +128,12 @@ do
   fi
 done
 
-
 # --------------–-------–--------–--------–-------–--–-----
 # Text format and input
 # --------------–-------–--------–--------–-------–--–-----
 # Set to metric units
 defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
 defaults write NSGlobalDomain AppleMetricUnits -bool true
-
 
 # --------------–-------–--------–--------–-------–--–-----
 # Dock and Dashboard
@@ -190,7 +187,7 @@ defaults write com.apple.dock mru-spaces -bool false
 # Remove the auto-hiding Dock delay
 defaults write com.apple.dock autohide-delay -float 0
 # Remove the animation when hiding/showing the Dock
-defaults write com.apple.dock autohide-time-modifier -float 0
+defaults write com.apple.dock autohide-time-modifier -int 1
 
 # Automatically hide and show the Dock
 defaults write com.apple.dock autohide -bool true
@@ -228,13 +225,13 @@ sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (
 # 12: Notification Center
 
 # Bottom right corner → Mission Control
-defaults write com.apple.dock wvous-br-corner -int 2
+defaults write com.apple.dock wvous-br-corner -int 0
 defaults write com.apple.dock wvous-br-modifier -int 0
 # Bottom left corner → Desktop
 defaults write com.apple.dock wvous-bl-corner -int 4
 defaults write com.apple.dock wvous-bl-modifier -int 0
 # Top right corner → Launchpad
-defaults write com.apple.dock wvous-tr-corner -int 11
+defaults write com.apple.dock wvous-tr-corner -int 4
 defaults write com.apple.dock wvous-tr-modifier -int 0
 # Top left corner → (empty)
 defaults write com.apple.dock wvous-tl-corner -int 0
