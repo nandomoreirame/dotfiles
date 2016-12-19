@@ -18,8 +18,11 @@
     "editor.fontSize": 14,
     "editor.lineHeight": 24,
     "editor.tabCompletion": true,
+    "extensions.autoUpdate": true,
     "css.validate": false,
     "html.format.indentHandlebars": true,
+    "html.format.enable": false,
+    "scss.lint.idSelector": "warning",
     "emmet.syntaxProfiles": {
         "javascript": "sass"
     },
@@ -29,28 +32,28 @@
         "temp": true,
         ".tmp": true,
         "tmp": true,
-        "**/bower"  : true,
-        "**/_bower" : true,
-        "**/_site"  : true,
-        "**/dist"   : true
+        "**/bower": true,
+        "**/_bower": true,
+        "**/_site": true,
+        "**/dist": true
     },
     "files.exclude": {
         ".git": true,
         // "**/node_modules" : true,
-        "**/*.zip"        : true,
-        "**/*.tar"        : true,
-        "**/*.gz"         : true
+        "**/*.zip": true,
+        "**/*.tar": true,
+        "**/*.gz": true
     },
     "alignment.chars": {
-        ":" : {
+        ":": {
             "spaceBefore": 1,
             "spaceAfter": 1
         },
-        "=" : {
+        "=": {
             "spaceBefore": 1,
             "spaceAfter": 1
         },
-        "from" : {
+        "from": {
             "spaceBefore": 1,
             "spaceAfter": 1
         }
@@ -60,4 +63,4 @@
     "eslint.autoFixOnSave": true,
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0
-  }
+}
