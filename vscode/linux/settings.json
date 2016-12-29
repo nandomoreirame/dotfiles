@@ -2,7 +2,6 @@
 {
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.tabSize": 2,
-    "beautify.tabSize": 2,
     "editor.rulers": [160],
     "editor.wrappingColumn": 600,
     "editor.renderIndentGuides": true,
@@ -32,14 +31,18 @@
         "temp": true,
         ".tmp": true,
         "tmp": true,
+        "**/shares": true,
+        "shares/**": true,
         "**/bower": true,
         "**/_bower": true,
         "**/_site": true,
         "**/dist": true
     },
     "files.exclude": {
+        "**/shares": true,
+        "shares/**": true,
         ".git": true,
-        // "**/node_modules" : true,
+        "**/node_modules" : true,
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true
@@ -60,7 +63,8 @@
     },
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
-    "eslint.autoFixOnSave": true,
     "files.trimTrailingWhitespace": true,
-    "window.zoomLevel": 0
-}
+    "window.zoomLevel": 0,
+    "workbench.activityBar.visible": true,
+    "workbench.statusBar.visible": true
+  }

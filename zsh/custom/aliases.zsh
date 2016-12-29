@@ -24,11 +24,16 @@ alias psa="ps aux"
 
 # Easy folder and file loading
 alias dl="cd ~/Downloads"
-alias www="cd ~/Dev/www"
+alias www="cd ~/www"
+alias projects="cd ~/www/projects"
+alias clients="cd ~/www/clients"
+alias playground="cd ~/www/playground"
 alias apps="cd /Applications"
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
 alias files="cd ~/.files"
+alias lkd="cd ~/lojaskd"
+alias dd="cd ~/lojaskd/devDocker"
 
 # Miscellaneous
 alias cleanup="find  -type f -name '*DS_Store' -ls -delete"
