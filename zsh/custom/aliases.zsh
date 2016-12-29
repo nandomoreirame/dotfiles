@@ -5,8 +5,8 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
 # Always recursive and verbose
-alias cp="cp -rv"
-alias rm="rm -rfv"
+alias cp="cp -r"
+alias rm="rm -rf"
 alias mv="mv -v"
 
 # List all files colorized in long format
@@ -21,19 +21,27 @@ alias ls="command ls -G"
 
 # Process status
 alias psa="ps aux"
+alias ht="htop"
 
 # Easy folder and file loading
-alias dl="cd ~/Downloads"
 alias www="cd ~/www"
-alias projects="cd ~/www/projects"
+
 alias clients="cd ~/www/clients"
+alias projects="cd ~/www/projects"
 alias playground="cd ~/www/playground"
+
+alias lkd="cd ~/www/lojaskd"
+alias dd="cd ~/www/lojaskd/devDocker"
+alias site="cd ~/www/lojaskd/devDocker/shares/site"
+alias fc="cd ~/www/lojaskd/devDocker/shares/site-fc"
+alias cms="cd ~/www/lojaskd/devDocker/shares/cms"
+alias ui="cd ~/www/lojaskd/devDocker/shares/ui"
+
+alias dl="cd ~/Downloads"
 alias apps="cd /Applications"
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
 alias files="cd ~/.files"
-alias lkd="cd ~/lojaskd"
-alias dd="cd ~/lojaskd/devDocker"
 
 # Miscellaneous
 alias cleanup="find  -type f -name '*DS_Store' -ls -delete"
