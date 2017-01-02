@@ -42,7 +42,6 @@
         "**/shares": true,
         "shares/**": true,
         ".git": true,
-        "**/node_modules" : true,
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true

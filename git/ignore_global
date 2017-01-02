@@ -37,3 +37,6 @@ Session.vim
 
 # Visual Code Studio
 .vscode
+
+tmp
+.tmp
