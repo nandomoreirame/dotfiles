@@ -30,6 +30,9 @@ main() {
   # Installing vscode settings
   ./vscode/install.sh
 
+  # Installing node modules
+  ./npm/install.sh
+
 }
 
 main "$@"

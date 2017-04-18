@@ -1,5 +1,5 @@
 # Set name of the theme to load
-ZSH_THEME="hero"
+ZSH_THEME="3den"
 
 # Uncomment the following line to use case-sensitive completion
 # CASE_SENSITIVE="true"

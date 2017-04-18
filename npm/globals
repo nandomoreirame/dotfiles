@@ -1,12 +1,15 @@
+yarn
+gulp
 bower
 yo
-gulp
+generator-wordpress
 http-server
 browser-sync
 speed-test
 cssstats
 gh
+gitignore
 jpm
 mozjpeg
-npmreserve
+eslint
 diff-so-fancy

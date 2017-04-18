@@ -9,6 +9,7 @@ update
 upgrade
 
 # Install all packages listed in the packages file
-echo $(cat packages|grep -v "#")
+sudo apt-get install $(cat packages|grep -v "#")
 
 update
+sudo apt-get autoclean

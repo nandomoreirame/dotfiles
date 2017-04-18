@@ -3,7 +3,7 @@
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.tabSize": 2,
     "editor.rulers": [160],
-    "editor.wrappingColumn": 600,
+    "editor.minimap.enabled": true,
     "editor.renderIndentGuides": true,
     "html.format.wrapLineLength": 160,
     "html.format.endWithNewline": true,
@@ -31,16 +31,10 @@
         "temp": true,
         ".tmp": true,
         "tmp": true,
-        "**/shares": true,
-        "shares/**": true,
-        "**/bower": true,
-        "**/_bower": true,
         "**/_site": true,
         "**/dist": true
     },
     "files.exclude": {
-        "**/shares": true,
-        "shares/**": true,
         ".git": true,
         "**/*.zip": true,
         "**/*.tar": true,
@@ -62,8 +56,12 @@
     },
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
+    "editor.trimAutoWhitespace": true,
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
     "workbench.activityBar.visible": true,
-    "workbench.statusBar.visible": true
-  }
+    "workbench.statusBar.visible": false,
+    "editor.wordWrap": "on",
+    "workbench.colorTheme": "Monokai Dimmed",
+    "workbench.iconTheme": "vscode-simpler-icons"
+}
