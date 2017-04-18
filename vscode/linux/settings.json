@@ -60,7 +60,7 @@
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
     "workbench.activityBar.visible": true,
-    "workbench.statusBar.visible": false,
+    "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
     "workbench.colorTheme": "Monokai Dimmed",
     "workbench.iconTheme": "vscode-simpler-icons"
