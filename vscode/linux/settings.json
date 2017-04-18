@@ -62,6 +62,6 @@
     "workbench.activityBar.visible": true,
     "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
-    "workbench.colorTheme": "Monokai Dimmed",
+    "workbench.colorTheme": "Solarized Dark",
     "workbench.iconTheme": "vscode-simpler-icons"
 }
