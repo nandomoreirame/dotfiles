@@ -69,9 +69,7 @@ alias s="subl"
 alias c="code"
 
 alias d="docker"
-alias di="docker images"
 
 alias dc="docker-compose"
-alias dc-k="docker-compose kill"
-alias dc-d="docker-compose down"
-alias dc-up="docker-compose up -d"
+alias gp="gulp"
+alias gw="gulp watch"

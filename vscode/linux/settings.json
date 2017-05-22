@@ -7,7 +7,6 @@
     "editor.renderIndentGuides": true,
     "html.format.wrapLineLength": 160,
     "html.format.endWithNewline": true,
-    "git.enableLongCommitWarning": false,
     "git.confirmSync": false,
     "editor.fontLigatures": true,
     "terminal.integrated.fontLigatures": true,
