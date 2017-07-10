@@ -1,11 +1,38 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [ ! -d "$HOME/.files" ]; then
-  echo "Installing .files for the first time"
-  git clone --depth=1 https://github.com/nandomoreirame/.files.git "$HOME/.files"
-  cd "$HOME/.files"
-else
-  echo ".files is already cloned"
+# Ask for the administrator password upfront
+sudo -v
+
+if [ -x "functions.sh" ]; then
+  . "functions.sh" || exit 1
 fi
 
-echo "please execute the command -> sh ~/.files/setup.sh"
+main() {
+
+  # Installing dependencies for OS
+  if [ "$(uname)" == "Darwin" ]; then
+    debugging "Installing dependencies for OSx..."
+    ./osx/install.sh
+  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    debugging "Installing dependencies for Linux..."
+    ./linux/install.sh
+  fi
+
+  # Installing git settings
+  ./git/install.sh
+
+  # Installing zsh settings
+  ./zsh/install.sh
+
+  # Installing sublime settings
+  ./sublime/install.sh
+
+  # Installing vscode settings
+  ./vscode/install.sh
+
+  # Installing node modules
+  ./npm/install.sh
+
+}
+
+main "$@"
