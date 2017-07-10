@@ -45,28 +45,8 @@
 [apply]
   whitespace = fix
 
-[color]
-  ui = auto
-  interactive = auto
-
-[color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
-
-[color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
-
-[color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
-
 [merge]
   log = true
 [user]
-  name = Fernando Moreira
-  email = nandomoreira.me@gmail.com
+	email = nandomoreira.me@gmail.com
+	name = Fernando Moreira

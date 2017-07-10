@@ -21,17 +21,17 @@ main() {
   # Installing git settings
   ./git/install.sh
 
-  # Installing zsh settings
+  # Installing zsh
   ./zsh/install.sh
 
-  # Installing sublime settings
+  # Installing sublime text 3
   ./sublime/install.sh
 
-  # Installing vscode settings
+  # Installing vscode
   ./vscode/install.sh
 
-  # Installing node modules
-  ./npm/install.sh
+  # Installing NVM, NodeJS and Node modules
+  ./node/install.sh
 
 }
 

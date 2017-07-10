@@ -1,8 +1,5 @@
-yarn
 gulp
-bower
 yo
-generator-wordpress
 http-server
 browser-sync
 speed-test
@@ -10,6 +7,5 @@ cssstats
 gh
 gitignore
 jpm
-mozjpeg
 eslint
 diff-so-fancy
