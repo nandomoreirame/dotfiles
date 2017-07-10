@@ -47,6 +47,7 @@
 
 [merge]
   log = true
-[user]
-	email = nandomoreira.me@gmail.com
-	name = Fernando Moreira
+
+# Use separate file for username / github token / etc
+[include]
+  path = ~/.gitconfig.local
