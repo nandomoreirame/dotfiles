@@ -7,11 +7,11 @@
     ],
     "description": "Print pre to debug"
   },
-  "image with lorempixel.com": {
-    "prefix": "img",
+   "PHP Tags": {
+    "prefix": "php",
     "body": [
-      "<img src=\"//lorempixel.com/${1:300}/${2:150}\" alt=\"$3\">"
+      "<?php $1 ?>"
     ],
-    "description": "Add placeholder image with lorempixel.com"
+    "description": "Open and close PHP Tags"
   }
 }

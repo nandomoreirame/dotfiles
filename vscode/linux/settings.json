@@ -62,4 +62,5 @@
     "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
     "workbench.colorTheme": "Solarized Dark",
+    "git.enableSmartCommit": true,
 }
