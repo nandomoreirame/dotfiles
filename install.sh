@@ -8,7 +8,6 @@ if [ -x "functions.sh" ]; then
 fi
 
 main() {
-
   # Installing dependencies for OS
   if [ "$(uname)" == "Darwin" ]; then
     debugging "Installing dependencies for OSx..."
@@ -17,9 +16,6 @@ main() {
     debugging "Installing dependencies for Linux..."
     ./linux/install.sh
   fi
-
-  # Installing git settings
-  ./git/install.sh
 
   # Installing zsh
   ./zsh/install.sh
@@ -33,6 +29,8 @@ main() {
   # Installing NVM, NodeJS and Node modules
   ./node/install.sh
 
+  # Installing git settings
+  ./git/install.sh
 }
 
 main "$@"
