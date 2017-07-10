@@ -8,4 +8,4 @@ else
   echo ".files is already cloned"
 fi
 
-echo "please execute the command -> sh ~/.files/setup.sh"
+echo "please execute the command -> sh ~/.files/install.sh"
