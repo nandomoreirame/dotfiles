@@ -61,7 +61,7 @@
     "workbench.activityBar.visible": true,
     "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
-    "workbench.colorTheme": "Monokai",
+    "workbench.colorTheme": "Dracula",
     "git.enableSmartCommit": true,
     "workbench.iconTheme": "material-icon-theme",
 }
