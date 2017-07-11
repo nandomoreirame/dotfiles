@@ -40,3 +40,6 @@ Session.vim
 
 tmp
 .tmp
+
+node_modules
+bower_components

@@ -1,6 +1,6 @@
 {
   "Create a arrow function": {
-    "prefix": "afunc",
+    "prefix": "func.a",
     "body": [
       "($1) => {",
       "  $2",
@@ -8,8 +8,22 @@
     ],
     "description": "Log output to console"
   },
+  "Node module import from": {
+    "prefix": "imp.from",
+    "body": [
+      "import $1 from '$2'"
+    ],
+    "description": "Node module import from"
+  },
+  "Node module require": {
+    "prefix": "require",
+    "body": [
+      "var $1 = require('$2');"
+    ],
+    "description": "Node module require"
+  },
   "Create a executable function": {
-    "prefix": "efunc",
+    "prefix": "func.e",
     "body": [
       "(function($1) {",
       "  $3",
@@ -18,7 +32,7 @@
     "description": "auto executable function"
   },
   "Create a jQuery app function": {
-    "prefix": "jfunc",
+    "prefix": "func.j",
     "body": [
       "var app = app || {};",
       "",
@@ -40,7 +54,7 @@
     "description": "jQuery app function"
   },
   "Print to console": {
-    "prefix": "co",
+    "prefix": "cons.",
     "body": [
       "console.$1($2);"
     ],
