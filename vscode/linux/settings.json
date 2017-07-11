@@ -61,16 +61,7 @@
     "workbench.activityBar.visible": true,
     "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
-    "workbench.colorTheme": "Material Theme Darker",
+    "workbench.colorTheme": "Monokai",
     "git.enableSmartCommit": true,
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.colorCustomizations": {
-        "activityBarBadge.background": "#E57373",
-        "list.activeSelectionForeground": "#E57373",
-        "list.inactiveSelectionForeground": "#E57373",
-        "list.highlightForeground": "#E57373",
-        "scrollbarSlider.activeBackground": "#E5737350",
-        "editorSuggestWidget.highlightForeground": "#E57373",
-        "textLink.foreground": "#E57373"
-    }
 }

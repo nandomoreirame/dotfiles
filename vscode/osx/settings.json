@@ -54,6 +54,7 @@
             "spaceAfter": 1
         }
     },
+    "workbench.colorTheme": "Monokai",
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
     "eslint.autoFixOnSave": true,
