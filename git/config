@@ -8,14 +8,16 @@
   add = add .
   br = branch
   ch = checkout
-  chm = checkout master
   cm = commit -m
+  ca = !git add -A && git commit -av
   cam = commit -a -m
   pl = pull
+  p = !"git pull; git submodule foreach git pull origin master"
+  c = clone --recursive
   ps = push
-  psm = push origin master
-  psd = push origin dev
-  s = status
+  s = status -s
+	l = log --pretty=oneline -n 20 --graph --abbrev-commit
+  d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
 
   # --------------–-------–--------–--------–-------–--–-----
   # More intuitive commands
@@ -24,6 +26,8 @@
   master = checkout master
   # checkout to branch
   goto = checkout
+  # Switch to a branch, creating it if necessary
+  go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
   # Create and goto branch
   create = checkout -b
   # update branch
@@ -32,6 +36,8 @@
   tags = tag -l
   # List branches
   branches = branch -a
+  # List remotes
+  remotes = remote -v
   # Reset (uncomitted) changes
   abort = reset --hard HEAD
   # Remove last commit
@@ -44,18 +50,66 @@
   whois = "!sh -c 'git log -i -1 --pretty=\"format:%an <%ae>\n\" --author=\"$1\"' -"
   # Commit name
   whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
+  # Remove the old tag with this name and tag the latest commit with it.
+	retag = "!r() { git tag -d $1 && git push origin :refs/tags/$1 && git tag $1; }; r"
+  # List aliases
+	aliases = config --get-regexp alias
 
 [core]
   excludesfile = ~/.gitignore_global
   editor = subl
   pager = diff-so-fancy | less --tabs=2 -RFX
 
+[color]
+  # Use colors in Git commands that are capable of colored output when
+  # outputting to the terminal. (This is the default setting in Git ≥ 1.8.4.)
+  ui = auto
+
+# [color "branch"]
+# 	current = yellow reverse
+# 	local = yellow
+# 	remote = green
+
+# [color "diff"]
+# 	meta = yellow bold
+# 	frag = magenta bold # line info
+# 	old = red # deletions
+# 	new = green # additions
+
+# [color "status"]
+# 	added = yellow
+# 	changed = green
+# 	untracked = cyan
+
 [apply]
+  # Detect whitespace errors when applying a patch
   whitespace = fix
 
 [merge]
   log = true
 
+[help]
+  # Automatically correct and execute mistyped commands
+  autocorrect = 1
+
 # Use separate file for username / github token / etc
 [include]
   path = ~/.gitconfig.local
+
+# URL shorthands
+
+[url "git@github.com:"]
+  insteadOf = "gh:"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+  insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+  insteadOf = "gst:"
+  pushInsteadOf = "gist:"
+  pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+  insteadOf = "gist:"

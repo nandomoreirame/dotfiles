@@ -20,5 +20,5 @@ echo -n "${color}Enter your git name: ${reset}"
 read GIT_NAME
 
 echo "[user]
-  email = $GIT_EMAIL\n
+  email = $GIT_EMAIL
   name = $GIT_NAME" > $HOME/.gitconfig.local
