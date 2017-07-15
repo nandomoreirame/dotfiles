@@ -3,10 +3,9 @@
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.tabSize": 2,
     "editor.rulers": [160],
-    "editor.wrappingColumn": 600,
+    "editor.wordWrapColumn": 600,
     "html.format.wrapLineLength": 160,
     "html.format.endWithNewline": true,
-    "git.enableLongCommitWarning": false,
     "extensions.autoUpdate": true,
     "git.confirmSync": false,
     "editor.fontLigatures": true,
@@ -54,11 +53,12 @@
             "spaceAfter": 1
         }
     },
-    "workbench.colorTheme": "Monokai",
+    "workbench.colorTheme": "Dracula",
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
     "eslint.autoFixOnSave": true,
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
-    "vsicons.dontShowNewVersionMessage": true
-  }
+    "vsicons.dontShowNewVersionMessage": true,
+    "workbench.iconTheme": "material-icon-theme"
+}
