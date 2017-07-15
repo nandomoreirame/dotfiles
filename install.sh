@@ -31,6 +31,13 @@ main() {
 
   # Installing git settings
   ./git/install.sh
+
+  rm -rf $HOME/.bashrc $HOME/.bash_profile $HOME/.profile $HOME/.curlrc $HOME/.wgetrc
+  ln -s $HOME/.files/.bashrc $HOME/.bashrc
+  ln -s $HOME/.files/.bash_profile $HOME/.bash_profile
+  ln -s $HOME/.files/.profile $HOME/.profile
+  ln -s $HOME/.files/.curlrc $HOME/.curlrc
+  ln -s $HOME/.files/.wgetrc $HOME/.wgetrc
 }
 
 main "$@"
