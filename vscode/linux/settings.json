@@ -17,7 +17,6 @@
     "editor.lineHeight": 24,
     "editor.tabCompletion": true,
     "extensions.autoUpdate": true,
-    "css.validate": false,
     "html.format.indentHandlebars": true,
     "html.format.enable": false,
     "scss.lint.idSelector": "warning",
@@ -35,6 +34,7 @@
     },
     "files.exclude": {
         ".git": true,
+        "**/**/node_modules": true,
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true

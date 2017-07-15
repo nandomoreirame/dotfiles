@@ -20,6 +20,14 @@
   # --------------–-------–--------–--------–-------–--–-----
   # More intuitive commands
   # --------------–-------–--------–--------–-------–--–-----
+  # checkout to master
+  master = checkout master
+  # checkout to branch
+  goto = checkout
+  # Create and goto branch
+  create = checkout -b
+  # update branch
+  update = pull
   # List tags
   tags = tag -l
   # List branches

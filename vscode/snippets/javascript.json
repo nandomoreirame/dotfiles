@@ -11,23 +11,23 @@
   "Node module import from": {
     "prefix": "imp.from",
     "body": [
-      "import $1 from '$2'"
+      "import ${module} from '${module}'"
     ],
     "description": "Node module import from"
   },
   "Node module require": {
     "prefix": "require",
     "body": [
-      "var $1 = require('$2');"
+      "var ${module} = require('${module}');"
     ],
     "description": "Node module require"
   },
   "Create a executable function": {
     "prefix": "func.e",
     "body": [
-      "(function($1) {",
+      "(function(${$}) {",
       "  $3",
-      "})($2);"
+      "})(${jQuery});"
     ],
     "description": "auto executable function"
   },
@@ -36,7 +36,7 @@
     "body": [
       "var app = app || {};",
       "",
-      "app.general = (function ($1) {",
+      "app.general = (function (${$}) {",
       "  'use strict';",
       "",
       "  var config = {};",
@@ -48,15 +48,15 @@
       "  return {",
       "    init: init",
       "  };",
-      "})($2);",
+      "})(${jQuery});",
       ""
     ],
     "description": "jQuery app function"
   },
   "Print to console": {
-    "prefix": "cons.",
+    "prefix": "console.",
     "body": [
-      "console.$1($2);"
+      "console.${log}(${''});"
     ],
     "description": "Log output to console"
   }
