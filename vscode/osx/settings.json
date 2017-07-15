@@ -60,5 +60,6 @@
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
     "vsicons.dontShowNewVersionMessage": true,
-    "workbench.iconTheme": "material-icon-theme"
+    "workbench.iconTheme": "material-icon-theme",
+    "git.enableSmartCommit": true
 }
