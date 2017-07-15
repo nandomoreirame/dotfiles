@@ -28,6 +28,10 @@ brew install $(cat brew/brewfile|grep -v "#")
 debugging "Installing programs using Homebrew-cask..."
 brew cask install $(cat brew/brewcask|grep -v "#")
 
+# Remove outdated versions from the cellar.
+# --------------–-------–--------–--------–-------–--–-----
+brew cleanup
+
 # --------------–-------–--------–--------–-------–--–-----
 # System preferences
 # --------------–-------–--------–--------–-------–--–-----
