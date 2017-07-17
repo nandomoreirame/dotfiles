@@ -64,8 +64,7 @@ alias gs="git status"
 # alias git="hub"
 # alias gh="hub"
 
-alias chuck="sudo"
-alias chucknorris="sudo -i"
+alias chucknorris="sudo"
 
 # Editors
 alias s="subl"
