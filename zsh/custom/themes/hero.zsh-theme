@@ -6,9 +6,9 @@ local current_dir='${PWD/#$HOME/~}'
 local user_symbol=' › '
 local node_version=''
 
-node_version='%{$fg[red]%}(node $(node -v))%{$reset_color%}'
+node_version='%{$fg[red]%}(node $(node -v) › npm $(npm -v))%{$reset_color%}'
 
-PROMPT="${user_host} ${node_version} ${git_branch}
+PROMPT="${user_host} ${rvm_ruby} ${node_version} ${git_branch}
 ${current_dir}%B${user_symbol}%b"
 RPS1="%B${return_code}%b"
 
