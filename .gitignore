@@ -29,3 +29,6 @@ WakaTime.sublime-settings
 Evernote.sublime-settings
 Gist.sublime-settings
 zsh-autosuggestions
+
+plugins/zsh-autosuggestions
+plugins/nvm-auto

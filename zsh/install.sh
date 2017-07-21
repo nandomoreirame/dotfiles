@@ -17,3 +17,8 @@ ln -s $HOME/.files/zsh/custom $HOME/.oh-my-zsh/custom
 debugging "Installing zsh-autosuggestions..."
 rm -rf $HOME/.files/zsh/custom/plugins/zsh-autosuggestions
 git clone git://github.com/zsh-users/zsh-autosuggestions $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+# Installing nvm-auto
+debugging "Installing nvm-auto..."
+rm -rf $HOME/.files/zsh/custom/plugins/nvm-auto
+git clone https://github.com/dijitalmunky/nvm-auto.git $HOME/.oh-my-zsh/custom/plugins/nvm-auto
