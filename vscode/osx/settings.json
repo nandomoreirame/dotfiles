@@ -2,7 +2,6 @@
 {
     "editor.fontFamily": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
     "editor.tabSize": 2,
-    "editor.rulers": [160],
     "editor.wordWrapColumn": 600,
     "html.format.wrapLineLength": 160,
     "html.format.endWithNewline": true,
@@ -18,6 +17,7 @@
     "editor.tabCompletion": true,
     "css.validate": false,
     "html.format.indentHandlebars": true,
+    "phpformatter.composer": true,
     "emmet.syntaxProfiles": {
         "javascript": "sass"
     },
@@ -61,5 +61,8 @@
     "window.zoomLevel": 0,
     "vsicons.dontShowNewVersionMessage": true,
     "workbench.iconTheme": "material-icon-theme",
-    "git.enableSmartCommit": true
+    "git.enableSmartCommit": true,
+    "material-icon-theme.showUpdateMessage": false,
+    "guides.enabled": false,
+    "files.autoSave": "afterDelay"
 }
