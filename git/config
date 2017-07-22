@@ -34,6 +34,8 @@
   update = pull
   # List tags
   tags = tag -l
+  # Create tag
+	create-tag = "!r() { git tag -a v$1 -m 'create a new version $1'; }; r"
   # List branches
   branches = branch -a
   # List remotes

@@ -30,14 +30,16 @@
         "**/bower": true,
         "**/_bower": true,
         "**/_site": true,
-        "**/dist": true
+        "**/dist": true,
+        "**/.sass-cache": true
     },
     "files.exclude": {
         ".git": true,
         "**/node_modules": true,
         "**/*.zip": true,
         "**/*.tar": true,
-        "**/*.gz": true
+        "**/*.gz": true,
+        "**/.sass-cache": true
     },
     "alignment.chars": {
         ":": {
@@ -64,5 +66,5 @@
     "git.enableSmartCommit": true,
     "material-icon-theme.showUpdateMessage": false,
     "guides.enabled": false,
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "off"
 }
