@@ -2,7 +2,7 @@ local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
 
 local user_host='%{$terminfo[bold]$fg[blue]%}@%m%{$reset_color%}'
 local git_branch='$(git_prompt_info)%{$reset_color%}'
-local current_dir='${PWD/#$HOME/~}'
+local current_dir='%{$fg[cyan]%}${PWD/#$HOME/~}%{$reset_color%}'
 local user_symbol=' › '
 local node_version=''
 

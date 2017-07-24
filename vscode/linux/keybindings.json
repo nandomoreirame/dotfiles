@@ -23,5 +23,9 @@
   {
     "key"     : "ctrl+r",
     "command" : "workbench.action.openRecent"
+  },
+  {
+    "key": "ctrl+k ctrl+s",
+    "command": "workbench.action.files.saveAll"
   }
 ]

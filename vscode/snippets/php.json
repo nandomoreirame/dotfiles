@@ -7,11 +7,42 @@
     ],
     "description": "Print pre to debug"
   },
+   "PHP Var": {
+    "prefix": "v",
+    "body": [
+      "$${1:var}"
+    ],
+    "description": "PHP Var"
+  },
    "PHP Tags": {
     "prefix": "php",
     "body": [
       "<?php $1 ?>"
     ],
     "description": "Open and close PHP Tags"
+  },
+   "PHP echo short tags": {
+    "prefix": "phpecho",
+    "body": [
+      "<?= $${1:var}; ?>"
+    ],
+    "description": "PHP echo short Tags"
+  },
+   "PHP view if": {
+    "prefix": "phpif",
+    "body": [
+      "<?php if ($${1:var}): ?>",
+      "<?php endif; ?>"
+    ],
+    "description": "PHP view if"
+  },
+   "PHP view ifelse": {
+    "prefix": "phpif",
+    "body": [
+      "<?php if ($${1:var}): ?>",
+      "<?php else: ?>",
+      "<?php endif; ?>"
+    ],
+    "description": "PHP view ifelse"
   }
 }

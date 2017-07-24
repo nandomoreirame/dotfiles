@@ -54,12 +54,12 @@
 		"tmp",
 		".jekyll-assets-cache"
 	],
+	"font_face": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
 	"font_options":
 	[
 		"gray_antialias"
 	],
 	"font_size": 10,
-	"font_face": "'Fira Code', Menlo, Monaco, 'Courier New', monospace",
 	"highlight_line": true,
 	"highlight_modified_tabs": true,
 	"ignored_packages":

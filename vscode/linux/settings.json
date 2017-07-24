@@ -29,8 +29,8 @@
         "temp": true,
         ".tmp": true,
         "tmp": true,
-        "**/_site": true,
-        "**/dist": true
+        "**/dist": true,
+        "**/_site": true
     },
     "files.exclude": {
         ".git": true,
