@@ -5,6 +5,15 @@ local git_branch='$(git_prompt_info)%{$reset_color%}'
 local current_dir='%{$fg[cyan]%}${PWD/#$HOME/~}%{$reset_color%}'
 local user_symbol=' › '
 local node_version=''
+local rvm_ruby=''
+
+if which rvm-prompt &> /dev/null; then
+  rvm_ruby='%{$fg[red]%}($(rvm-prompt i v g))%{$reset_color%}'
+else
+  if which rbenv &> /dev/null; then
+    rvm_ruby='%{$fg[red]%}($(rbenv version | sed -e "s/ (set.*$//"))%{$reset_color%}'
+  fi
+fi
 
 node_version='%{$fg[red]%}(node $(node -v) › npm $(npm -v))%{$reset_color%}'
 
