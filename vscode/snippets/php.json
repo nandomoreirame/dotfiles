@@ -2,8 +2,7 @@
    "Print pre to debug": {
     "prefix": "prp",
     "body": [
-      "echo '<pre>' . print_r( $1, true ) . '</pre>';",
-      "$2"
+      "echo '<pre>' . print_r( $1, true ) . '</pre>$2';"
     ],
     "description": "Print pre to debug"
   },

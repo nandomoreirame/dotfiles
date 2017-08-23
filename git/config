@@ -15,8 +15,8 @@
   p = !"git pull; git submodule foreach git pull origin master"
   c = clone --recursive
   ps = push
-  s = status -s
-	l = log --pretty=oneline -n 20 --graph --abbrev-commit
+  s = status
+  l = log --pretty=oneline -n 20 --graph --abbrev-commit
   d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
 
   # --------------–-------–--------–--------–-------–--–-----
@@ -35,7 +35,7 @@
   # List tags
   tags = tag -l
   # Create tag
-	create-tag = "!r() { git tag -a v$1 -m 'create a new version $1'; }; r"
+  create-tag = "!r() { git tag -fa v$1 -m 'create a new version $1'; }; r"
   # List branches
   branches = branch -a
   # List remotes
@@ -53,9 +53,9 @@
   # Commit name
   whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
   # Remove the old tag with this name and tag the latest commit with it.
-	retag = "!r() { git tag -d $1 && git push origin :refs/tags/$1 && git tag $1; }; r"
+  retag = "!r() { git tag -d $1 && git push origin :refs/tags/$1 && git tag $1; }; r"
   # List aliases
-	aliases = config --get-regexp alias
+  aliases = config --get-regexp alias
 
 [core]
   excludesfile = ~/.gitignore_global
@@ -68,20 +68,20 @@
   ui = auto
 
 # [color "branch"]
-# 	current = yellow reverse
-# 	local = yellow
-# 	remote = green
+#   current = yellow reverse
+#   local = yellow
+#   remote = green
 
 # [color "diff"]
-# 	meta = yellow bold
-# 	frag = magenta bold # line info
-# 	old = red # deletions
-# 	new = green # additions
+#   meta = yellow bold
+#   frag = magenta bold # line info
+#   old = red # deletions
+#   new = green # additions
 
 # [color "status"]
-# 	added = yellow
-# 	changed = green
-# 	untracked = cyan
+#   added = yellow
+#   changed = green
+#   untracked = cyan
 
 [apply]
   # Detect whitespace errors when applying a patch

@@ -20,6 +20,7 @@
     "html.format.indentHandlebars": true,
     "html.format.enable": false,
     "scss.lint.idSelector": "warning",
+    "emmet.triggerExpansionOnTab": true,
     "emmet.syntaxProfiles": {
         "javascript": "sass"
     },
