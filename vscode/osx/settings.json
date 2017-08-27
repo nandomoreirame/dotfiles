@@ -17,7 +17,6 @@
     "editor.tabCompletion": true,
     "css.validate": false,
     "html.format.indentHandlebars": true,
-    "phpformatter.composer": true,
     "emmet.syntaxProfiles": {
         "javascript": "sass"
     },
@@ -31,6 +30,7 @@
         "**/_bower": true,
         "**/_site": true,
         "**/dist": true,
+        "**/themes": true,
         "**/.sass-cache": true
     },
     "files.exclude": {
@@ -39,6 +39,10 @@
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true,
+        // "**/*themes": true,
+        "**/*uploads": true,
+        "**/*plugins": true,
+        "**/.runtime": true,
         "**/.sass-cache": true
     },
     "alignment.chars": {
