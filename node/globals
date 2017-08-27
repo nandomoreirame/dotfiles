@@ -2,10 +2,9 @@ gulp
 yo
 http-server
 browser-sync
-speed-test
 cssstats
 gh
 gitignore
-jpm
 eslint
 diff-so-fancy
+lorem-ipsum
