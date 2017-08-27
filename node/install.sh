@@ -18,6 +18,7 @@ then
   rm -rf $HOME/.nvmrc
   echo "$NODE_VERSION" > $HOME/.nvmrc
   nvm use
+  nvm alias default $NODE_VERSION
 fi
 
 debugging "Installing npm packages..."
@@ -35,7 +36,7 @@ echo -n "${color}npm init name: ${reset}"
 read NPM_INIT_NAME
 echo -n "${color}npm init email: ${reset}"
 read NPM_INIT_EMAIL
-echo -n "${color}npm init utl: ${reset}"
+echo -n "${color}npm init url: ${reset}"
 read NPM_INIT_URL
 
 echo "init.author.name=$NPM_INIT_NAME
