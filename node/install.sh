@@ -1,45 +1,49 @@
 #!/bin/bash
 
-cd "$(dirname "${BASH_SOURCE[0]}")" \
-    && . "../functions.sh"
+source common/functions.sh
 
 NODE_VERSION=8
 
 if test $(which curl)
 then
-  debugging "Installing NVM and NodeJS..."
-  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+  msg_checking "curl"
+  msg_installing "NVM and NodeJS..."
+  curl -o- -s https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+  msg_ok "nvm"
 fi
 
 # nvm
 if test $(which nvm)
 then
+  msg_checking "nvm"
+  msg_installing "nvm"
   nvm install $NODE_VERSION
   rm -rf $HOME/.nvmrc
   echo "$NODE_VERSION" > $HOME/.nvmrc
   nvm use
   nvm alias default $NODE_VERSION
+  node -v
+  msg_ok "$HOME/.nvmrc"
 fi
 
-debugging "Installing npm packages..."
+msg_installing "npm packages..."
 
-# npm
+# Installing global node packages
 if test $(which npm)
 then
   npm install -g $(cat globals|grep -v "#")
 fi
 
-rm -rf $HOME/.npmrc
+  if test $(which yarn)
+  then
+    msg_checking "yarn"
+  else
+    msg_installing "yarn"
+    npm install -g yarn
+  fi
 
-echo -n "${color}npm init name: ${reset}"
-read NPM_INIT_NAME
-echo -n "${color}npm init email: ${reset}"
-read NPM_INIT_EMAIL
-echo -n "${color}npm init url: ${reset}"
-read NPM_INIT_URL
+  yarn global add $(cat globals|grep -v "#")
+  msg_ok "globals node modules"
+fi
 
-echo "init.author.name=$NPM_INIT_NAME
-init.author.email=$NPM_INIT_EMAIL
-init.author.url=$NPM_INIT_URL
-init.version=0.0.1
-init.license=MIT" > $HOME/.npmrc
+./npmrc.sh

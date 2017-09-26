@@ -1,9 +1,8 @@
 #!/bin/bash
 
-cd "$(dirname "${BASH_SOURCE[0]}")" \
-    && . "../functions.sh"
+source common/functions.sh
 
-debugging "Linking VSCode settings..."
+msg_installing "Linking VSCode settings..."
 
 if [ "$(uname)" == "Darwin" ]; then
   rm -rf $HOME/Library/Application\ Support/Code/User/*.json $HOME/Library/Application\ Support/Code/User/snippets

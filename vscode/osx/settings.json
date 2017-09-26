@@ -15,10 +15,19 @@
     "editor.fontSize": 12,
     "editor.lineHeight": 24,
     "editor.tabCompletion": true,
+    "emmet.showAbbreviationSuggestions": true,
+    "emmet.showExpandedAbbreviation": "always",
     "css.validate": false,
     "html.format.indentHandlebars": true,
+    "emmet.triggerExpansionOnTab": true,
+    "files.associations": {
+        "*.vue": "vue"
+    },
     "emmet.syntaxProfiles": {
-        "javascript": "sass"
+        "javascript": "javascriptreact",
+        "sass": "css",
+        "vue-html": "html",
+        "vue": "html"
     },
     "search.exclude": {
         "build": true,
@@ -39,36 +48,23 @@
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true,
-        // "**/*themes": true,
-        "**/*uploads": true,
-        "**/*plugins": true,
+        "**/*themes": true,
+        "**/*.nyc_output": true,
+        // "**/*uploads": true,
+        // "**/*plugins": true,
         "**/.runtime": true,
         "**/.sass-cache": true
     },
-    "alignment.chars": {
-        ":": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        },
-        "=": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        },
-        "from": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        }
-    },
-    "workbench.colorTheme": "Dracula",
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
     "eslint.autoFixOnSave": true,
+    "xo.enable": true,
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
-    "vsicons.dontShowNewVersionMessage": true,
     "workbench.iconTheme": "material-icon-theme",
     "git.enableSmartCommit": true,
     "material-icon-theme.showUpdateMessage": false,
     "guides.enabled": false,
-    "files.autoSave": "off"
+    "files.autoSave": "off",
+    "workbench.colorTheme": "Dracula"
 }

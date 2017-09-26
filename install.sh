@@ -7,13 +7,16 @@ if [ -x "functions.sh" ]; then
   . "functions.sh" || exit 1
 fi
 
+source common/functions.sh
+
 main() {
+
   # Installing dependencies for OS
   if [ "$(uname)" == "Darwin" ]; then
-    debugging "Installing dependencies for OSx..."
+    msg_installing "dependencies for OSx..."
     ./osx/install.sh
   elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    debugging "Installing dependencies for Linux..."
+    msg_installing "dependencies for Linux..."
     ./linux/install.sh
   fi
 
@@ -32,12 +35,12 @@ main() {
   # Installing git settings
   ./git/install.sh
 
-  rm -rf $HOME/.bashrc $HOME/.bash_profile $HOME/.profile $HOME/.curlrc $HOME/.wgetrc
-  ln -s $HOME/.files/.bashrc $HOME/.bashrc
-  ln -s $HOME/.files/.bash_profile $HOME/.bash_profile
-  ln -s $HOME/.files/.profile $HOME/.profile
-  ln -s $HOME/.files/.curlrc $HOME/.curlrc
-  ln -s $HOME/.files/.wgetrc $HOME/.wgetrc
+  # Installing Hyper settings
+  ./hyper/install.sh
+
+  # Installing common files
+  ./common/install.sh
+
 }
 
 main "$@"

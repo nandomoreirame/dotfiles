@@ -9,3 +9,4 @@ imagemagick --with-webp
 tree
 wget --with-iri
 hub
+phantomjs
