@@ -54,9 +54,9 @@
     "description": "jQuery app function"
   },
   "Print to console": {
-    "prefix": "console.",
+    "prefix": "clog",
     "body": [
-      "console.${log}(${''});"
+      "console.${log}(${var})"
     ],
     "description": "Log output to console"
   }

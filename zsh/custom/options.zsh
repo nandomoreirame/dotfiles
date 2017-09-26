@@ -1,11 +1,13 @@
 # Set name of the theme to load
-ZSH_THEME="hero"
+# ZSH_THEME="hero"
+ZSH_THEME="time"
+# ZSH_THEME="refined"
 
 # Uncomment the following line to use case-sensitive completion
 # CASE_SENSITIVE="true"
 
 # How often to auto-update (in days)
-export UPDATE_ZSH_DAYS=7
+export UPDATE_ZSH_DAYS=99999
 
 # Uncomment the following line to disable auto-setting terminal title
 # DISABLE_AUTO_TITLE="true"

@@ -21,8 +21,13 @@
     "html.format.enable": false,
     "scss.lint.idSelector": "warning",
     "emmet.triggerExpansionOnTab": true,
+    "emmet.showAbbreviationSuggestions": true,
+    "emmet.showExpandedAbbreviation": "always",
     "emmet.syntaxProfiles": {
-        "javascript": "sass"
+        "php": "html",
+        "javascript": "sass",
+        "vue-html": "html",
+        "vue": "html"
     },
     "search.exclude": {
         "build": true,
@@ -30,29 +35,25 @@
         "temp": true,
         ".tmp": true,
         "tmp": true,
+        "**/.nyc_output": true,
+        "**/coverage": true,
         "**/dist": true,
+        "**/vendor": true,
+        "**/templates_c": true,
         "**/_site": true
     },
     "files.exclude": {
         ".git": true,
+        "**/.nyc_output": true,
         "**/**/node_modules": true,
+        "**/**/coverage": true,
+        "**/**/templates_c": true,
         "**/*.zip": true,
+        "**/vendor": true,
+        "**/logs": true,
+        "**/cache": true,
         "**/*.tar": true,
         "**/*.gz": true
-    },
-    "alignment.chars": {
-        ":": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        },
-        "=": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        },
-        "from": {
-            "spaceBefore": 1,
-            "spaceAfter": 1
-        }
     },
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
@@ -62,7 +63,9 @@
     "workbench.activityBar.visible": true,
     "workbench.statusBar.visible": true,
     "editor.wordWrap": "on",
-    "workbench.colorTheme": "Dracula",
+    "workbench.colorTheme": "One Dark Pro",
     "git.enableSmartCommit": true,
     "workbench.iconTheme": "material-icon-theme",
+    "material-icon-theme.showUpdateMessage": false,
+    "files.autoSave": "off"
 }

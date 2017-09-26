@@ -3,7 +3,7 @@
 cd "$(dirname "${BASH_SOURCE[0]}")" \
     && . "../functions.sh"
 
-NODE_VERSION=6
+NODE_VERSION=8
 
 if test $(which curl)
 then
@@ -26,8 +26,7 @@ debugging "Installing npm packages..."
 # npm
 if test $(which npm)
 then
-  npm install -g yarn
-  yarn global add $(cat globals|grep -v "#")
+  npm install -g $(cat globals|grep -v "#")
 fi
 
 rm -rf $HOME/.npmrc
