@@ -25,23 +25,16 @@ alias ht="htop"
 
 # Easy folder and file loading
 alias www="cd ~/www"
-
 alias clients="cd ~/www/clients"
-alias projects="cd ~/www/projects"
+alias opensource="cd ~/www/open-source"
 alias playground="cd ~/www/playground"
-
-alias lkd="cd ~/www/lojaskd"
-alias dd="cd ~/www/lojaskd/devDocker"
-alias site="cd ~/www/lojaskd/devDocker/shares/site"
-alias fc="cd ~/www/lojaskd/devDocker/shares/site-fc"
-alias cms="cd ~/www/lojaskd/devDocker/shares/cms"
-alias ui="cd ~/www/lojaskd/devDocker/shares/ui"
-
+alias projects="cd ~/www/projects"
 alias dl="cd ~/Downloads"
 alias apps="cd /Applications"
+alias files="cd ~/.files"
+
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
-alias files="cd ~/.files"
 
 # Miscellaneous
 alias cleanup="find  -type f -name '*DS_Store' -ls -delete"
@@ -63,15 +56,10 @@ alias g="git"
 alias gs="git status"
 # alias git="hub"
 # alias gh="hub"
-
 alias chucknorris="sudo"
-
-# Editors
 alias s="subl"
 alias c="code"
-
 alias d="docker"
-
 alias dc="docker-compose"
 alias gp="gulp"
 alias gw="gulp watch"

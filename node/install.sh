@@ -2,7 +2,7 @@
 
 source common/functions.sh
 
-NODE_VERSION=8
+NODE_VERSION=6
 
 if test $(which curl)
 then
@@ -31,19 +31,8 @@ msg_installing "npm packages..."
 # Installing global node packages
 if test $(which npm)
 then
-  npm install -g $(cat globals|grep -v "#")
-fi
-
-  if test $(which yarn)
-  then
-    msg_checking "yarn"
-  else
-    msg_installing "yarn"
-    npm install -g yarn
-  fi
-
-  yarn global add $(cat globals|grep -v "#")
+  npm install -g $(cat ~/.files/node/globals|grep -v "#")
   msg_ok "globals node modules"
 fi
 
-./npmrc.sh
+~/.files/node/npmrc.sh

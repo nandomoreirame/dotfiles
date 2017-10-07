@@ -22,11 +22,11 @@ brew upgrade
 # Command-line tools and utils
 # --------------–-------–--------–--------–-------–--–-----
 msg_installing "packages using Homebrew..."
-brew install $(cat brew/brewfile|grep -v "#")
+brew install $(cat ~/.files/osx/brewfile | grep -v "#")
 
 msg_installing "programs using Homebrew-cask..."
-brew cask install $(cat brew/brewcask|grep -v "#")
-msg_ok $(cat brew/brewcask|grep -v "#")
+brew cask install $(cat ~/.files/osx/brewcask | grep -v "#")
+msg_ok $(cat ~/.files/osx/brewcask | grep -v "#")
 
 # Remove outdated versions from the cellar.
 # --------------–-------–--------–--------–-------–--–-----
@@ -37,4 +37,4 @@ brew cleanup
 # --------------–-------–--------–--------–-------–--–-----
 # It'll shut down Terminal!
 msg_installing "Set OS X defaults... (It'll shut down Terminal!)"
-sh ./defaults.sh
+sh ~/.files/osx/defaults.sh

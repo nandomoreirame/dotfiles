@@ -35,6 +35,6 @@ msg_installing "gems..."
 if test $(which gem)
 then
   msg_checking "gem"
-  gem install $(cat gems|grep -v "#")
-  msg_ok "$(cat gems|grep -v "#")"
+  gem install $(cat ~/.files/ruby/gems|grep -v "#")
+  msg_ok "gems"
 fi

@@ -52,15 +52,13 @@
         "**/*.gz": true,
         "**/*themes": true,
         "**/*.nyc_output": true,
-        // "**/*uploads": true,
-        // "**/*plugins": true,
+        "**/*uploads": true,
         "**/.runtime": true,
         "**/.sass-cache": true
     },
     "trailing-spaces.trimOnSave": true,
     "trailing-spaces.saveAfterTrim": true,
     "eslint.autoFixOnSave": true,
-    "xo.enable": true,
     "files.trimTrailingWhitespace": true,
     "window.zoomLevel": 0,
     "workbench.iconTheme": "material-icon-theme",
@@ -68,5 +66,6 @@
     "material-icon-theme.showUpdateMessage": false,
     "guides.enabled": false,
     "files.autoSave": "off",
-    "workbench.colorTheme": "Dracula"
+    "workbench.colorTheme": "Dracula",
+    "typescript.check.npmIsInstalled": false
 }
