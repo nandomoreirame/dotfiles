@@ -2,9 +2,10 @@ gulp
 yo
 http-server
 browser-sync
-cssstats
 gh
 gitignore
 eslint
 diff-so-fancy
 pure-prompt
+git-open
+git-labels
