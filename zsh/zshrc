@@ -38,3 +38,5 @@ load-nvmrc() {
 }
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+# Adding autocomplete for 'we'
+[ -f ~/.we_autocomplete ] && source ~/.we_autocomplete

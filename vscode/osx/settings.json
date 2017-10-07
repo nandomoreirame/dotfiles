@@ -8,7 +8,9 @@
     "extensions.autoUpdate": true,
     "git.confirmSync": false,
     "editor.fontLigatures": true,
-    "terminal.integrated.fontLigatures": true,
+    "emmet.preferences": {
+        "filter.commentAfter": "\n<!-- /[#ID][.CLASS] -->"
+    },
     "editor.useTabStops": false,
     "files.encoding": "utf8",
     "editor.renderWhitespace": "all",
