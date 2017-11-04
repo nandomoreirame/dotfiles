@@ -14,7 +14,7 @@ module.exports = {
     cursorColor: 'rgba(248,228,229,1)',
 
     // `BEAM` for |, `UNDERLINE` for _, `BLOCK` for █
-    cursorShape: 'BEAM',
+    cursorShape: 'BLOCK',
 
     // set to true for blinking cursor
     cursorBlink: true,
@@ -107,11 +107,10 @@ module.exports = {
   plugins: [
     `hyperlinks`,
     `hypercwd`,
-    `hyper-confirm`,
-    `gitrocket`,
+    `hyperline`,
     `hyper-hide-title`,
-    `hyper-tab-icons`,
-    `hyper-dracula`
+    // `hyper-dracula`
+    `hyperyellow`
   ],
 
   // in development, you can create a directory under
