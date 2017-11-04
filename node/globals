@@ -9,4 +9,4 @@ eslint
 diff-so-fancy
 pure-prompt
 git-open
-git-labels
+git-labels-cli
