@@ -116,7 +116,7 @@ defaults write com.apple.screencapture type -string "png"
 # Create Dev folders
 # --------------–-------–--------–--------–-------–--–-----
 
-DevFolders="$HOME/www/projects $HOME/www/clients $HOME/www/playground $HOME/www/open-source"
+DevFolders="$HOME/Sites/projects $HOME/Sites/clients $HOME/Sites/playground $HOME/Sites/open-source"
 
 for folder in $DevFolders
 do
