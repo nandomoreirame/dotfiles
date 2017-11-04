@@ -8,6 +8,7 @@
     "extensions.autoUpdate": true,
     "git.confirmSync": false,
     "editor.fontLigatures": true,
+    "emmet.showExpandedAbbreviation": "always",
     "emmet.preferences": {
         "filter.commentAfter": "\n<!-- /[#ID][.CLASS] -->"
     },
@@ -17,9 +18,6 @@
     "editor.fontSize": 12,
     "editor.lineHeight": 24,
     "editor.tabCompletion": true,
-    "emmet.showAbbreviationSuggestions": true,
-    "emmet.showExpandedAbbreviation": "always",
-    "css.validate": false,
     "html.format.indentHandlebars": true,
     "emmet.triggerExpansionOnTab": true,
     "files.associations": {
@@ -38,21 +36,24 @@
         ".tmp": true,
         "tmp": true,
         "**/bower": true,
+        "**/.tmp": true,
         "**/_bower": true,
         "**/_site": true,
+        "**/.nuxt": true,
         "**/dist": true,
         "**/themes": true,
         "**/.sass-cache": true
     },
     "files.exclude": {
         ".git": true,
+        "**/.tmp": true,
         "**/node_modules": true,
+        "**/.nuxt": true,
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true,
-        "**/*themes": true,
         "**/*.nyc_output": true,
-        "**/*uploads": true,
+        "**/uploads": true,
         "**/.runtime": true,
         "**/.sass-cache": true
     },
@@ -67,5 +68,11 @@
     "guides.enabled": false,
     "files.autoSave": "off",
     "workbench.colorTheme": "Dracula",
-    "typescript.check.npmIsInstalled": false
+    "typescript.check.npmIsInstalled": false,
+    "team.showWelcomeMessage": false,
+    "workbench.startupEditor": "newUntitledFile",
+    "sublimeTextKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.snippetSuggestions": "top",
+    "editor.formatOnPaste": true
 }
