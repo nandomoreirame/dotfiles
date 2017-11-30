@@ -105,11 +105,9 @@ module.exports = {
   //   `@company/project`
   //   `project#1.0.1`
   plugins: [
-    `hyperlinks`,
     `hypercwd`,
-    `hyperline`,
+    `hyperlinks`,
     `hyper-hide-title`,
-    // `hyper-dracula`
     `hyperyellow`
   ],
 
