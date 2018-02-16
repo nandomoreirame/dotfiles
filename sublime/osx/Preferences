@@ -74,7 +74,7 @@
 	"material_theme_panel_separator": true,
 	"overlay_scroll_bars": "enabled",
 	"tab_size": 2,
-	"theme": "Material-Theme.sublime-theme",
+	"theme": "Default.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": true,
 	"trim_trailing_white_space_on_save": true,

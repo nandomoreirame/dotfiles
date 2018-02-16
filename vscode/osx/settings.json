@@ -48,7 +48,7 @@
         ".git": true,
         "**/.tmp": true,
         "**/node_modules": true,
-        "**/.nuxt": true,
+        // "**/.nuxt": true,
         "**/*.zip": true,
         "**/*.tar": true,
         "**/*.gz": true,
@@ -74,5 +74,7 @@
     "sublimeTextKeymap.promptV3Features": true,
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.snippetSuggestions": "top",
-    "editor.formatOnPaste": true
+    "editor.formatOnPaste": true,
+    "editor.autoIndent": true,
+    "git.autofetch": true
 }
