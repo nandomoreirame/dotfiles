@@ -2,7 +2,7 @@
 
 source common/functions.sh
 
-NODE_VERSION=6
+NODE_VERSION=8
 
 if test $(which curl)
 then

@@ -42,3 +42,9 @@ load-nvmrc
 [ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+export PATH="/Applications/Google-cloud-sdk/bin:$PATH"
+
+source /Applications/Google-cloud-sdk/completion.zsh.inc
+source /Applications/Google-cloud-sdk/path.zsh.inc
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
