@@ -1,29 +1,29 @@
 {
-  "Create a arrow function": {
-    "prefix": "func.a",
+  "Create arrow function": {
+    "prefix": "afunc",
     "body": [
       "($1) => {",
       "  $2",
       "}"
     ],
-    "description": "Log output to console"
+    "description": "Create arrow function"
   },
   "Node module import from": {
-    "prefix": "imp.from",
+    "prefix": "ifrom",
     "body": [
-      "import ${module} from '${module}'"
+      "import ${Module} from '${module}'"
     ],
     "description": "Node module import from"
   },
   "Node module require": {
     "prefix": "require",
     "body": [
-      "var ${module} = require('${module}');"
+      "${const} ${Module} = require('${module}');"
     ],
     "description": "Node module require"
   },
   "Create a executable function": {
-    "prefix": "func.e",
+    "prefix": "exfunc",
     "body": [
       "(function(${$}) {",
       "  $3",
@@ -31,8 +31,17 @@
     ],
     "description": "auto executable function"
   },
+  "const function": {
+    "prefix": "cfunc",
+    "body": [
+      "const ${Var} = () => {",
+      "  return {$0}",
+      "}"
+    ],
+    "description": "const function"
+  },
   "Create a jQuery app function": {
-    "prefix": "func.j",
+    "prefix": "jfunc",
     "body": [
       "var app = app || {};",
       "",
@@ -56,8 +65,17 @@
   "Print to console": {
     "prefix": "clog",
     "body": [
-      "console.${log}(${var})"
+      "console.log(${var})"
     ],
     "description": "Log output to console"
+  },
+  "Export default": {
+    "prefix": "edef",
+    "body": [
+      "export default {",
+      "  $0",
+      "}"
+    ],
+    "description": "export default"
   }
 }

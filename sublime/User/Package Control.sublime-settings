@@ -2,6 +2,7 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
+		"SublimeLinter"
 	],
 	"installed_packages":
 	[
@@ -51,6 +52,7 @@
 		"SassBeautify",
 		"SexySnippets",
 		"SideBarEnhancements",
+		"Stylus",
 		"SublimeCodeIntel",
 		"SublimeERB",
 		"SublimeLinter",
@@ -58,6 +60,8 @@
 		"SublimeLinter-ruby",
 		"TrailingSpaces",
 		"Twig",
+		"Vue Syntax Highlight",
+		"VueFormatter",
 		"WordPress",
 		"WordPress Completions",
 		"WordPress Customizer"

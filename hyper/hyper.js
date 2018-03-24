@@ -8,7 +8,7 @@ module.exports = {
     fontSize: 14,
 
     // font family with optional fallbacks
-    fontFamily: '"Fira Code", Menlo, "DejaVu Sans Mono", "Lucida Console", monospace',
+    fontFamily: '"OperatorMono", "Fira Code", Menlo, "DejaVu Sans Mono", "Lucida Console", monospace',
 
     // terminal cursor background color and opacity (hex, rgb, hsl, hsv, hwb or cmyk)
     cursorColor: 'rgba(248,228,229,1)',
@@ -111,7 +111,8 @@ module.exports = {
   plugins: [
     `hypercwd`,
     `hyperlinks`,
-    `hyper-dracula`
+    // `hyper-dracula`
+    `hyperyellow`
   ],
 
   // in development, you can create a directory under

@@ -2,7 +2,7 @@
 	"always_show_minimap_viewport": true,
 	"auto_indent": true,
 	"bold_folder_labels": true,
-	"color_scheme": "Packages/User/SublimeLinter/Monokai (SL).tmTheme",
+	"color_scheme": "Packages/Material Theme/schemes/Material-Theme-Darker.tmTheme",
 	"detect_indentation": false,
 	"ensure_newline_at_eof_on_save": true,
 	"fallback_encoding": "UTF-8",
@@ -60,6 +60,7 @@
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
+		"SublimeLinter",
 		"Vintage"
 	],
 	"indent_guide_options":
@@ -74,7 +75,7 @@
 	"material_theme_panel_separator": true,
 	"overlay_scroll_bars": "enabled",
 	"tab_size": 2,
-	"theme": "Default.sublime-theme",
+	"theme": "Material-Theme-Darker.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": true,
 	"trim_trailing_white_space_on_save": true,
