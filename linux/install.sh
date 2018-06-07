@@ -1,7 +1,7 @@
 #!/bin/bash
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 source common/utils.sh
 
 update

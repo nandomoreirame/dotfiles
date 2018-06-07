@@ -28,7 +28,37 @@ HIST_STAMPS="dd/mm/yyyy"
 
 # Which plugins would you like to load? (in ~/oh-my-zsh/plugins/*)
 ## Custom plugins may be added to ~/oh-my-zsh/custom/plugins/
-plugins=(git osx npm nvm rvm brew extract z zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(
+  git
+  git-extras
+  git-flow
+  git-hubflow
+  github
+  gitignore
+  gulp
+  heroku
+  iwhois
+  jira
+  laravel5
+  node
+  branch
+  brew
+  composer
+  docker
+  docker-compose
+  emoji
+  emoji-clock
+  dotenv
+  osx
+  rake
+  ruby
+  npm
+  nvm
+  rvm
+  extract
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+)
 
 # User configuration
 export EDITOR=code

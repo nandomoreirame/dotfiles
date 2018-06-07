@@ -5,9 +5,14 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
 # Always recursive and verbose
-alias cp="cp -r"
+alias cp="cp -rv"
 alias rm="rm -rf"
 alias mv="mv -v"
+
+alias g="git"
+alias gs="git status"
+alias gc="git clone"
+alias greset="git reset HEAD~"
 
 # List all files colorized in long format
 alias l="ls -l -G"
@@ -24,14 +29,14 @@ alias psa="ps aux"
 alias ht="htop"
 
 # Easy folder and file loading
-alias www="cd ~/Sites"
-alias cl="cd ~/Sites/clients"
-alias ops="cd ~/Sites/open-source"
-alias pld="cd ~/Sites/playground"
-alias projects="cd ~/Sites/projects"
-alias dl="cd ~/Downloads"
-alias apps="cd /Applications"
-alias files="cd ~/.files"
+alias www="~/Sites"
+alias cl="~/Sites/clients"
+alias ops="~/Sites/open-source"
+alias pld="~/Sites/playground"
+alias pjt="~/Sites/projects"
+alias dl="~/Downloads"
+alias apps="/Applications"
+alias files="~/.files"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
@@ -49,17 +54,47 @@ alias largestf='find -type f -printf '\''%s %p\n'\'' | sort -nr | head -n 40 | g
 alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
 
 # Check web page download time
-alias curltime='curl -s -w "%{time_total} seconds\n" -o /dev/null'
+alias curl:t='curl -s -w "%{time_total} seconds\n" -o /dev/null'
 
-# Git and GitHub (hub.github.com)
-alias g="git"
-alias gs="git status"
-# alias git="hub"
-# alias gh="hub"
-alias chucknorris="sudo"
+# alias chucknorris="sudo"
+alias aliases="print -rl -- ${(k)aliases}"
+alias functions="print -rl -- ${(k)functions}"
+alias parameters="print -rl -- ${(k)parameters}"
+
+# alias for editors
 alias s="subl"
-alias c="code"
+alias ci="code-insiders"
+alias c="ci"
+
+# alias for docker
 alias d="docker"
 alias dc="docker-compose"
-alias gp="gulp"
-alias gw="gulp watch"
+alias dip="docker ps -q | xargs -n 1 docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{ .Name }}' | sed 's/ \// /'"
+
+# alias for yarn
+alias y="yarn"
+alias ys="yarn start"
+alias yd="yarn dev"
+alias yw="yarn watch"
+alias yl="yarn lint"
+
+# alias for docker-compose WordPress
+alias wp:cli="dc exec app wp"
+
+# alias for docker-compose PHP
+alias php:composer="dc exec app composer"
+alias php:dump-autoload="php:composer dump-autoload"
+
+# alias for docker-compose Laravel
+alias l:artisan="dc exec app php artisan"
+alias l:commands="l:artisan list"
+alias l:migrate="l:artisan migrate"
+alias l:rollback="l:artisan migrate:rollback"
+alias l:keyg="l:artisan key:generate"
+alias l:routes="l:artisan route:list"
+alias l:seed="l:artisan db:seed"
+alias l:make:auth="l:artisan make:auth"
+alias l:make:controller="l:artisan make:controller"
+alias l:make:model="l:artisan make:model"
+alias l:make:test="l:artisan make:test"
+alias l:make:seeder="l:artisan make:seeder"

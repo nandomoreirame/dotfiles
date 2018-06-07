@@ -115,3 +115,12 @@
 
 [url "git://gist.github.com/"]
   insteadOf = "gist:"
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[user]
+	name = Fernando Moreira
+	email = nandomoreira.me@gmail.com

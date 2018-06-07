@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 # Removing default system files
 msg_installing "Removing default system files..."

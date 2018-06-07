@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 NODE_VERSION=8
 
@@ -28,11 +28,14 @@ fi
 
 msg_installing "npm packages..."
 
-# Installing global node packages
-if test $(which npm)
+if test $(which yarn)
+then
+  yarn global add $(cat ~/.files/node/globals|grep -v "#")
+  msg_ok "add globals node modules using yarn"
+elif test $(which npm)
 then
   npm install -g $(cat ~/.files/node/globals|grep -v "#")
-  msg_ok "globals node modules"
+  msg_ok "add globals node modules using npm"
 fi
 
 ~/.files/node/npmrc.sh

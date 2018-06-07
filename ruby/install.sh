@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 RUBY_VERSION=2.3.3
 

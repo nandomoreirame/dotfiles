@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 # Installing oh-my-zsh
 msg_installing "oh-my-zsh..."

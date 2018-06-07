@@ -11,13 +11,13 @@ module.exports = {
     fontFamily: '"OperatorMono", "Fira Code", Menlo, "DejaVu Sans Mono", "Lucida Console", monospace',
 
     // terminal cursor background color and opacity (hex, rgb, hsl, hsv, hwb or cmyk)
-    cursorColor: 'rgba(248,228,229,1)',
+    cursorColor: 'rgba(255,255,255,0.9)',
 
     // `BEAM` for |, `UNDERLINE` for _, `BLOCK` for █
-    cursorShape: 'BLOCK',
+    cursorShape: 'UNDERLINE',
 
     // set to true for blinking cursor
-    cursorBlink: true,
+    cursorBlink: false,
 
     // color of the text
     foregroundColor: '#fff',
@@ -32,11 +32,7 @@ module.exports = {
     css: '',
 
     // custom css to embed in the terminal window
-    termCSS: `
-        x-screen x-row {
-            font-variant-ligatures: initial;
-        }
-    `,
+    termCSS: ``,
 
     // set to `true` (without backticks) if you're using a Linux setup that doesn't show native menus
     // default: `false` on Linux, `true` on Windows (ignored on macOS)
@@ -77,7 +73,7 @@ module.exports = {
     // make sure to use a full path if the binary name doesn't work
     // (e.g `C:\\Windows\\System32\\bash.exe` instead of just `bash.exe`)
     // if you're using powershell, make sure to remove the `--login` below
-    shell: '',
+    shell: '/bin/zsh',
 
     // for setting shell arguments (i.e. for using interactive shellArgs: ['-i'])
     // by default ['--login'] will be used
@@ -111,8 +107,8 @@ module.exports = {
   plugins: [
     `hypercwd`,
     `hyperlinks`,
-    // `hyper-dracula`
-    `hyperyellow`
+    `hyper-dracula`
+    // `hyperyellow`
   ],
 
   // in development, you can create a directory under

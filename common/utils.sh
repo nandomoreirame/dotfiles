@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 update () {
   msg_updating "Updating OS..."

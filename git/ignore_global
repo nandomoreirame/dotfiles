@@ -36,7 +36,7 @@ Session.vim
 .sass-cache
 
 # Visual Code Studio
-.vscode
+# .vscode
 
 tmp
 .tmp

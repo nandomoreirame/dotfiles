@@ -41,10 +41,17 @@ load-nvmrc
 # Adding autocomplete for 'we'
 [ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
 
+export PATH="/usr/local/opt/curl/bin:$PATH"
+#export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+#export PATH="/usr/local/opt/findutils/libexec/gnuman:$PATH"
+export PATH="/usr/local/opt/gettext/bin:$PATH"
+export PATH="/usr/local/opt/openssl/bin:$PATH"
+
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-export PATH="/Applications/Google-cloud-sdk/bin:$PATH"
+#export PATH="/Applications/Google-cloud-sdk/bin:$PATH"
 
-source /Applications/Google-cloud-sdk/completion.zsh.inc
-source /Applications/Google-cloud-sdk/path.zsh.inc
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
+#source /Applications/Google-cloud-sdk/completion.zsh.inc
+#source /Applications/Google-cloud-sdk/path.zsh.inc
+#export PATH="/usr/local/opt/sqlite/bin:$PATH"
+export PATH="$HOME/.composer/vendor/bin:$PATH"

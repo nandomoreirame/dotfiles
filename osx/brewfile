@@ -1,13 +1,12 @@
-homebrew/completions/brew-cask-completion
 zsh
 zsh-completions
 coreutils
-curl --with-ssl --with-libssh2
+curl
 ffmpeg
 findutils
-imagemagick --with-webp
+imagemagick
 tree
-wget --with-iri
+wget
 hub
 phantomjs
 gnupg

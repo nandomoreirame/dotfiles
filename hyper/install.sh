@@ -1,7 +1,7 @@
 #!/bin/bash
 # Personal information in your .gitlocal, not .gitconfig!
 
-source common/functions.sh
+source "$HOME/.files/common/functions.sh"
 
 msg_installing "Linking ~/.hyper.js"
 

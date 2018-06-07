@@ -2,7 +2,6 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
-		"SublimeLinter"
 	],
 	"installed_packages":
 	[
@@ -37,10 +36,12 @@
 		"JSHint",
 		"JSX",
 		"LESS",
-		"Markdown Preview",
+		"MarkdownPreview",
 		"Material Theme",
+		"Material Theme - Appbar",
 		"Minifier",
 		"Nunjucks Syntax",
+		"One Dark Material - Theme",
 		"Package Control",
 		"Placeholders",
 		"ProductiveSnippetsERB",
@@ -62,6 +63,7 @@
 		"Twig",
 		"Vue Syntax Highlight",
 		"VueFormatter",
+		"WakaTime",
 		"WordPress",
 		"WordPress Completions",
 		"WordPress Customizer"

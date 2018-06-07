@@ -6,6 +6,13 @@
     ],
     "description": "Print pre to debug"
   },
+   "convert and print array to json and die": {
+    "prefix": "jdie",
+    "body": [
+      "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));"
+    ],
+    "description": "convert and print array to json and die"
+  },
    "PHP Var": {
     "prefix": "v",
     "body": [
