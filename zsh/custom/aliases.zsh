@@ -29,14 +29,14 @@ alias psa="ps aux"
 alias ht="htop"
 
 # Easy folder and file loading
-alias www="~/Sites"
-alias cl="~/Sites/clients"
-alias ops="~/Sites/open-source"
-alias pld="~/Sites/playground"
-alias pjt="~/Sites/projects"
+alias sites="~/Sites"
+alias clients="~/Sites/clients"
+# alias ops="~/Sites/open-source"
+# alias pld="~/Sites/playground"
+alias projects="~/Sites/projects"
 alias dl="~/Downloads"
 alias apps="/Applications"
-alias files="~/.files"
+alias fl="~/.files"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
@@ -87,7 +87,7 @@ alias php:dump-autoload="php:composer dump-autoload"
 
 # alias for docker-compose Laravel
 alias l:artisan="dc exec app php artisan"
-alias l:commands="l:artisan list"
+# alias l:commands="l:artisan list"
 alias l:migrate="l:artisan migrate"
 alias l:rollback="l:artisan migrate:rollback"
 alias l:keyg="l:artisan key:generate"
