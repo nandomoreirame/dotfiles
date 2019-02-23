@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$HOME/.files/common/functions.sh"
+source "$HOME/dotfiles/common/functions.sh"
 
 NPMRC_FILE="$HOME/.npmrc"
 

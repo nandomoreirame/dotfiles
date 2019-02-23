@@ -7,7 +7,7 @@ if [ -x "functions.sh" ]; then
   . "functions.sh" || exit 1
 fi
 
-source "$HOME/.files/common/functions.sh"
+source "$HOME/dotfiles/common/functions.sh"
 
 main() {
 

@@ -26,6 +26,6 @@
   },
   {
     "key": "ctrl+k ctrl+s",
-    "command": "workbench.action.files.saveAll"
+    "command": "workbench.actiondotfiles.saveAll"
   }
 ]

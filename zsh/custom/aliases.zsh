@@ -36,7 +36,7 @@ alias clients="~/Sites/clients"
 alias projects="~/Sites/projects"
 alias dl="~/Downloads"
 alias apps="/Applications"
-alias fl="~/.files"
+alias fl="~/dotfiles"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'

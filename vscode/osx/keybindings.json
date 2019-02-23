@@ -36,10 +36,10 @@
   },
   {
     "key": "cmd+k cmd+s",
-    "command": "workbench.action.files.saveAll"
+    "command": "workbench.actiondotfiles.saveAll"
   },
   {
     "key": "alt+cmd+s",
-    "command": "-workbench.action.files.saveAll"
+    "command": "-workbench.actiondotfiles.saveAll"
   }
 ]

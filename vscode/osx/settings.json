@@ -112,7 +112,6 @@
     "git.autofetch": true,
     "extensions.ignoreRecommendations": true,
     "workbench.colorCustomizations": {},
-    "vsicons.projectDetection.autoReload": true,
     "javascript.updateImportsOnFileMove.enabled": "always",
     "workbench.colorTheme": "Dracula Soft",
     "editor.cursorStyle": "block",

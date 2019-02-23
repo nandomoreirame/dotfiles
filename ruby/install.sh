@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$HOME/.files/common/functions.sh"
+source "$HOME/dotfiles/common/functions.sh"
 
 RUBY_VERSION=2.3.3
 
@@ -35,6 +35,6 @@ msg_installing "gems..."
 if test $(which gem)
 then
   msg_checking "gem"
-  gem install $(cat ~/.files/ruby/gems|grep -v "#")
+  gem install $(cat ~/dotfiles/ruby/gems|grep -v "#")
   msg_ok "gems"
 fi
