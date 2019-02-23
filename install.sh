@@ -23,9 +23,6 @@ main() {
     ./linux/install.sh
   fi
 
-  # Installing sublime text 3
-  ./sublime/install.sh
-
   # Installing vscode
   ./vscode/install.sh
 

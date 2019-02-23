@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Ask for the administrator password upfront
+sudo -v
+
+if [ -x "functions.sh" ]; then
+  . "functions.sh" || exit 1
+fi
+
 source "$HOME/dotfiles/common/functions.sh"
 
 # --------------–-------–--------–--------–-------–--–-----

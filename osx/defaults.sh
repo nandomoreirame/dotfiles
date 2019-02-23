@@ -15,6 +15,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # --------------–-------–--------–--------–-------–--–-----
 # Use Dark theme
 defaults write ~/Library/Preferences/.GlobalPreferences AppleInterfaceStyle Dark
+defaults write NSGlobalDomain NSRequiresAquaSystemAppearance -bool true
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
@@ -23,7 +24,11 @@ sudo nvram SystemAudioVolume=" "
 for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
   defaults write "${domain}" dontAutoLoad -array \
     "/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
-    "/System/Library/CoreServices/Menu Extras/Volume.menu"
+    "/System/Library/CoreServices/Menu Extras/Volume.menu" \
+    "/System/Library/CoreServices/Menu Extras/AirPort.menu" \
+    "/System/Library/CoreServices/Menu Extras/Clock.menu" \
+    "/System/Library/CoreServices/Menu Extras/Battery.menu" \
+    "/System/Library/CoreServices/Menu Extras/Displays.menu"
 done
 
 # Disable the “Are you sure you want to open this application?" dialog
@@ -85,7 +90,7 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
 # Disable “natural" (Lion-style) scrolling
-defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
+# defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
 
 
 # --------------–-------–--------–--------–-------–--–-----
@@ -148,8 +153,8 @@ defaults write com.apple.dock mouse-over-hilite-stack -bool true
 # defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'
 
 # Set the icon size of Dock items to 26 pixels
-defaults write com.apple.dock tilesize -int 26
-defaults write com.apple.dock largesize -float 46
+# defaults write com.apple.dock tilesize -int 26
+# defaults write com.apple.dock largesize -float 46
 
 # Change minimize/maximize window effect
 defaults write com.apple.dock mineffect suck
@@ -199,7 +204,7 @@ defaults write com.apple.dock showhidden -bool true
 find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
 
 # Add iOS Simulator to Launchpad
-sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
+sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simxulator.app"
 # sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
 
 # Add a spacer to the left side of the Dock (where the applications are)
