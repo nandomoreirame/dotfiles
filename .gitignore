@@ -30,7 +30,8 @@ Evernote.sublime-settings
 Gist.sublime-settings
 zsh-autosuggestions
 
-plugins/zsh-autosuggestions
-plugins/nvm-auto
-themes/pure-zsh-theme
+zsh/custom/plugins/zsh-autosuggestions
+zsh/custom/plugins/zsh-syntax-highlighting
+zsh/custom/plugins/nvm-auto
+zsh/custom/themes/pure-zsh-theme
 vscode/vsicons.settings.json
