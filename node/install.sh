@@ -2,15 +2,15 @@
 
 source "$HOME/dotfiles/common/functions.sh"
 
-NODE_VERSION=8
+NODE_VERSION=10
 
-if test $(which curl)
-then
-  msg_checking "curl"
-  msg_installing "NVM and NodeJS..."
-  curl -o- -s https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-  msg_ok "nvm"
-fi
+# if test $(which curl)
+# then
+#   msg_checking "curl"
+#   msg_installing "NVM and NodeJS..."
+#   curl -o- -s https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+#   msg_ok "nvm"
+# fi
 
 # nvm
 if test $(which nvm)
@@ -38,4 +38,4 @@ then
   msg_ok "add globals node modules using npm"
 fi
 
-~/dotfiles/node/npmrc.sh
+# ~/dotfiles/node/npmrc.sh
