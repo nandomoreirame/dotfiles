@@ -32,4 +32,5 @@ zsh-autosuggestions
 
 plugins/zsh-autosuggestions
 plugins/nvm-auto
+themes/pure-zsh-theme
 vscode/vsicons.settings.json

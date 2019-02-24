@@ -1,13 +1,19 @@
+# First, load bash files.
+. ~/.bashrc
+
 # Path to your oh-my-zsh installation
 export ZSH=$HOME/.oh-my-zsh
 export ZSH_CUSTOM=$ZSH/custom
+export ZSH_PLUGINS=$ZSH_CUSTOM/plugins
 
-source $HOME/.profile
-source $HOME/.bash_profile
+# Prevent "Insecure completion-dependent directories detected" warning
+# https://github.com/robbyrussell/oh-my-zsh/issues/6835#issuecomment-390216875
+ZSH_DISABLE_COMPFIX=true
 
 # Load ZSH
 source $ZSH/oh-my-zsh.sh
-source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # export nvm
 export NVM_DIR=$HOME/.nvm
@@ -38,22 +44,13 @@ load-nvmrc() {
 }
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
-# Adding autocomplete for 'we'
-[ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
-#export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
-#export PATH="/usr/local/opt/findutils/libexec/gnuman:$PATH"
 export PATH="/usr/local/opt/gettext/bin:$PATH"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-#export PATH="/Applications/Google-cloud-sdk/bin:$PATH"
-
-#source /Applications/Google-cloud-sdk/completion.zsh.inc
-#source /Applications/Google-cloud-sdk/path.zsh.inc
-#export PATH="/usr/local/opt/sqlite/bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -61,11 +58,15 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/nandomoreira/Desktop/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/nandomoreira/Desktop/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/nandomoreira/Desktop/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/nandomoreira/Desktop/google-cloud-sdk/completion.zsh.inc'; fi
 export PATH="/usr/local/opt/openldap/bin:$PATH"
 export PATH="/usr/local/opt/openldap/sbin:$PATH"
 export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
+
+fpath=("$HOME/.zfunctions" $fpath)
+
+source $HOME/.profile
+source $HOME/.bash_profile
+
+# Load pure prompt theme
+autoload -U promptinit; promptinit
+prompt pure
