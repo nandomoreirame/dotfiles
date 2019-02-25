@@ -1,6 +1,11 @@
 # First, load bash files.
 . ~/.bashrc
 
+source $HOME/.profile
+source $HOME/.bash_profile
+
+fpath=("$HOME/.zfunctions" $fpath)
+
 # Path to your oh-my-zsh installation
 export ZSH=$HOME/.oh-my-zsh
 export ZSH_CUSTOM=$ZSH/custom
@@ -15,12 +20,29 @@ source $ZSH/oh-my-zsh.sh
 source $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# export nvm
-export NVM_DIR=$HOME/.nvm
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/usr/local/opt/gettext/bin:$PATH"
+export PATH="/usr/local/opt/openssl/bin:$PATH"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+export PATH="/usr/local/opt/openldap/bin:$PATH"
+export PATH="/usr/local/opt/openldap/sbin:$PATH"
+export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
 
 # export rvm
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+# export nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # place this after nvm initialization!
@@ -45,28 +67,8 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/usr/local/opt/gettext/bin:$PATH"
-export PATH="/usr/local/opt/openssl/bin:$PATH"
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-export PATH="$HOME/.composer/vendor/bin:$PATH"
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
-
-export PATH="/usr/local/opt/openldap/bin:$PATH"
-export PATH="/usr/local/opt/openldap/sbin:$PATH"
-export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
-
-fpath=("$HOME/.zfunctions" $fpath)
-
-source $HOME/.profile
-source $HOME/.bash_profile
-
 # Load pure prompt theme
 autoload -U promptinit; promptinit
 prompt pure
+
+cowsay Good work! # need `npm i -g cowsay`
