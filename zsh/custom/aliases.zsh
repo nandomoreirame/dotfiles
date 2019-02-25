@@ -60,11 +60,17 @@ alias s="subl"
 alias ci="code-insiders"
 alias c="ci"
 
-#  docker and docker-compose
+# docker
 alias d="docker"
 alias di="docker images"
-alias dc="docker-compose"
 alias dip="docker ps -q | xargs -n 1 docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{ .Name }}' | sed 's/ \// /'"
+
+# docker-compose
+alias dc="docker-compose"
+alias dcu="docker-compose up -d"
+alias dcub="docker-compose up -d --build"
+alias dcd="docker-compose down"
+alias dcps="docker-compose ps"
 
 # npm
 alias npmp="npm publish"
