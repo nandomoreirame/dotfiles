@@ -13,12 +13,13 @@ alias mv="mv -v"
 alias git=hub
 alias g=git
 alias gs=git" status -s"
+alias gpl=git" pull"
 alias gc=git" clone"
 alias ga=git" add --all"
 alias gurl="hub browse"
 alias gup="g up && git-garbage"
 alias gpu=git" push -f origin HEAD^:master"
-alias gmaster=git" push origin/master"
+alias gpm=git" push origin master"
 alias greset=git" reset HEAD~"
 
 # Process status
@@ -71,6 +72,7 @@ alias dcu="docker-compose up -d"
 alias dcub="docker-compose up -d --build"
 alias dcd="docker-compose down"
 alias dcps="docker-compose ps"
+alias dce="docker-compose exec"
 
 # npm
 alias npmp="npm publish"
@@ -87,6 +89,7 @@ alias t="npm test"
 
 # yarn
 alias y="yarn"
+alias yi="yarn install"
 alias ys="yarn start"
 alias yd="yarn dev"
 alias yp="yarn prod"

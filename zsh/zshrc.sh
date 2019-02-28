@@ -45,6 +45,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# Adding autocomplete for 'we'
+[ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
+
 # place this after nvm initialization!
 autoload -U add-zsh-hook
 load-nvmrc() {
@@ -68,7 +71,7 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
 # Load pure prompt theme
-autoload -U promptinit; promptinit
-prompt pure
+# autoload -U promptinit; promptinit
+# prompt pure
 
 cowsay Good work! # need `npm i -g cowsay`

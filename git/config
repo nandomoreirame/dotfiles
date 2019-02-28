@@ -9,6 +9,7 @@
   amend = commit --amend                # ammend your last commit
 
   # Pull
+  pl = pull
   up = pull --rebase --autostash
 
   # Checkout
@@ -136,3 +137,8 @@
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
