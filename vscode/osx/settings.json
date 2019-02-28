@@ -93,7 +93,7 @@
     "extensions.ignoreRecommendations": true,
     "workbench.colorCustomizations": {},
     "javascript.updateImportsOnFileMove.enabled": "always",
-    "workbench.colorTheme": "Dracula Soft",
+    "workbench.colorTheme": "New Moon",
     "editor.cursorStyle": "block",
     "editor.cursorBlinking": "solid",
     "editor.fontWeight": "400",
