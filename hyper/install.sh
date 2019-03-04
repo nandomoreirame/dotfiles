@@ -3,7 +3,6 @@
 
 source "$HOME/dotfiles/common/functions.sh"
 
-msg_installing "Linking ~/.hyper.js"
-
 rm -rf $HOME/.hyper.js
 ln -s $HOME/dotfiles/hyper/hyper.js $HOME/.hyper.js
+msg_installing "Linking $HOME/.hyper.js"

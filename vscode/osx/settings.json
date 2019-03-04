@@ -105,5 +105,6 @@
     "css.lint.duplicateProperties": "warning",
     "css.lint.propertyIgnoredDueToDisplay": "warning",
     "php-cs-fixer.executablePath": "/usr/local/bin/php-cs-fixer",
-    "breadcrumbs.enabled": true
+    "breadcrumbs.enabled": true,
+    "workbench.sideBar.location": "left"
 }

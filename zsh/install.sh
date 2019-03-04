@@ -25,17 +25,8 @@ msg_installing "Installing zsh-syntax-highlighting plugin..."
 rm -rf $HOME/dotfiles/zsh/custom/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
-# Installing pure
+# Installing spaceship-prompt theme
 msg_installing "Installing spaceship-prompt theme..."
 rm -rf $HOME/dotfiles/zsh/custom/themes/spaceship-prompt
 git clone https://github.com/denysdovhan/spaceship-prompt.git $HOME/.oh-my-zsh/custom/themes/spaceship-prompt
 sudo ln -s "$HOME/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
-
-# Installing pure
-msg_installing "Installing pure theme..."
-rm -rf $HOME/dotfiles/zsh/custom/themes/pure-zsh-theme
-sudo rm -rf /usr/local/share/zsh/site-functions/prompt_pure_setup
-sudo rm -rf /usr/local/share/zsh/site-functions/async
-git clone https://github.com/belak/pure-zsh-theme.git $HOME/.oh-my-zsh/custom/themes/pure-zsh-theme
-sudo ln -s "$HOME/.oh-my-zsh/custom/themes/pure-zsh-theme/pure.zsh" /usr/local/share/zsh/site-functions/prompt_pure_setup
-sudo ln -s "$HOME/.oh-my-zsh/custom/themes/pure-zsh-theme/async.zsh" /usr/local/share/zsh/site-functions/async

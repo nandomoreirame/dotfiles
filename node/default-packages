@@ -1,14 +1,13 @@
-npm
 yarn
 gulp
 yo
 http-server
 browser-sync
 gh
+rimraf
 gitignore
 eslint
 diff-so-fancy
-pure-prompt
 git-open
 git-labels-cli
 @vue/cli

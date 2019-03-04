@@ -3,21 +3,21 @@
 source "$HOME/dotfiles/common/functions.sh"
 
 rm -rf $HOME/.bashrc
-ln -s $HOME/dotfiles/common/bashrc $HOME/.bashrc
+ln -s $HOME/dotfiles/common/bashrc.sh $HOME/.bashrc
 msg_ok "$HOME/.bashrc"
 
 rm -rf $HOME/.bash_profile
-ln -s $HOME/dotfiles/common/bash_profile $HOME/.bash_profile
+ln -s $HOME/dotfiles/common/bash_profile.sh $HOME/.bash_profile
 msg_ok "$HOME/.bash_profile"
 
 rm -rf $HOME/.profile
-ln -s $HOME/dotfiles/common/profile $HOME/.profile
+ln -s $HOME/dotfiles/common/profile.sh $HOME/.profile
 msg_ok "$HOME/.profile"
 
 rm -rf $HOME/.curlrc
-ln -s $HOME/dotfiles/common/curlrc $HOME/.curlrc
+ln -s $HOME/dotfiles/common/curlrc.sh $HOME/.curlrc
 msg_ok "$HOME/.curlrc"
 
 rm -rf $HOME/.wgetrc
-ln -s $HOME/dotfiles/common/wgetrc $HOME/.wgetrc
+ln -s $HOME/dotfiles/common/wgetrc.sh $HOME/.wgetrc
 msg_ok "$HOME/.wgetrc"

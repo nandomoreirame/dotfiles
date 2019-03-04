@@ -130,7 +130,7 @@
   signingkey = E907A06FEDF76F42
 
 [commit]
-	gpgsign = true
+	gpgsign = false
 
 [gpg]
 	program = /usr/local/bin/gpg

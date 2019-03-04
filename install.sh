@@ -11,32 +11,25 @@ source "$HOME/dotfiles/common/functions.sh"
 
 main() {
 
-  # Installing dependencies for OS
-  if [ "$(uname)" == "Darwin" ]; then
-    msg_installing "dependencies for OSx..."
-    ./osx/install.sh
-
-    # Installing zsh
-    ./zsh/install.sh
-  elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    msg_installing "dependencies for Linux..."
-    ./linux/install.sh
-  fi
+  # $HOME/dotfiles/osx/install.sh
 
   # Installing vscode
-  ./vscode/install.sh
+  $HOME/dotfiles/vscode/install.sh
 
   # Installing NVM, NodeJS and Node modules
-  ./node/install.sh
+  $HOME/dotfiles/node/install.sh
 
   # Installing git settings
-  ./git/install.sh
+  $HOME/dotfiles/git/install.sh
 
   # Installing Hyper settings
-  ./hyper/install.sh
+  $HOME/dotfiles/hyper/install.sh
+
+  # Installing zsh
+  $HOME/dotfiles/zsh/install.sh
 
   # Installing common files
-  ./common/install.sh
+  $HOME/dotfiles/common/install.sh
 
 }
 

@@ -33,7 +33,6 @@ zsh-autosuggestions
 zsh/custom/plugins/zsh-autosuggestions
 zsh/custom/plugins/zsh-syntax-highlighting
 zsh/custom/plugins/nvm-auto
-zsh/custom/themes/pure-zsh-theme
 zsh/custom/themes/spaceship-prompt
 zsh/custom/themes/spaceship.zsh-theme
 vscode/vsicons.settings.json

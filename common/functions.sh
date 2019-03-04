@@ -14,10 +14,11 @@
 #  37  # White   #
 ##################
 
-print() { echo -e "\033[1;32m==> $1 \033[0m"; }
-msg_checking() { echo -e "\033[1;32m==> $1 ✔ \033[0m"; }
-msg_installing() { echo -e "\033[1;33m==> Installing $1 \033[0m"; }
-msg_updating() { echo -e "\033[1;33m==> $1 [updating] ✔ \033[0m"; }
-msg_ok() { echo -e "\033[1;32m==> $1 ✔ \033[0m"; }
-msg() { echo -e "\033[0;32m$1 \033[0m"; }
-msg_alert() { echo -e "\033[1;31m✖ $1 ✖ \033[0m"; }
+print() { echo -e "\n\033[1;32m==> $1 \033[0m\n"; }
+msg_checking() { echo -e "\n\033[1;32m==> $1 ✔ \033[0m\n"; }
+msg_installing() { echo -e "\n\033[1;33m==> Installing $1 \033[0m\n"; }
+msg_installed() { echo -e "\n\033[1;32m==> $1 successfully installed ✔ \033[0m\n"; }
+msg_updating() { echo -e "\n\033[1;33m==> $1 [updating] ✔ \033[0m\n"; }
+msg_ok() { echo -e "\n\033[1;32m==> $1 ✔ \033[0m\n"; }
+msg() { echo -e "\n\033[0;32m$1 \033[0m\n"; }
+msg_alert() { echo -e "\n\033[1;31m✖ $1 ✖ \033[0m\n"; }

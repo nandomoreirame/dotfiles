@@ -2,10 +2,6 @@
 
 source "$HOME/dotfiles/common/functions.sh"
 
-msg_installing "npm packages... \n"
-
-if test $(which npm)
-then
-  npm install -g $(cat ~/dotfiles/node/globals|grep -v "#")
-  msg_ok "\nglobal modules installed using npm"
-fi
+rm -rf $NVM_DIR/default-packages
+ln -s $HOME/dotfiles/node/default-packages $NVM_DIR/default-packages
+msg_ok "$NVM_DIR/default-packages"
