@@ -1,3 +1,4 @@
+npm
 yarn
 gulp
 yo
@@ -11,6 +12,10 @@ pure-prompt
 git-open
 git-labels-cli
 @vue/cli
+create-vue-app
 react-native-cli
 create-react-native-app
+create-react-app
 exp
+cowsay
+spaceship-prompt

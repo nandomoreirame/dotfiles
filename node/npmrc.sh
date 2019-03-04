@@ -4,24 +4,16 @@ source "$HOME/dotfiles/common/functions.sh"
 
 NPMRC_FILE="$HOME/.npmrc"
 
-# rm -rf $NPMRC_FILE
-
-if [ -e $NPMRC_FILE ]
-then
-  msg_ok "$NPMRC_FILE already exists"
-else
-  msg "Your npm init name:"
-  read NPM_INIT_NAME
-  msg "Your npm init email:"
-  read NPM_INIT_EMAIL
-  msg "Your npm init url:"
-  read NPM_INIT_URL
+NPM_INIT_NAME="Fernando Moreira"
+NPM_INIT_EMAIL="nandomoreira.me@gmail.com"
+NPM_INIT_URL="https://nandomoreira.me/"
+NPM_INIT_VERSION="1.0.0"
+NPM_INIT_LICENSE="MIT"
 
 echo "init.author.name=$NPM_INIT_NAME
 init.author.email=$NPM_INIT_EMAIL
 init.author.url=$NPM_INIT_URL
-init.version=0.0.1
-init.license=MIT" > $HOME/.npmrc
+init.version=$NPM_INIT_VERSION
+init.license=$NPM_INIT_LICENSE" > $HOME/.npmrc
 
-  msg_ok "successfully created file $NPMRC_FILE"
-fi
+msg_checking "successfully created file $NPMRC_FILE"
