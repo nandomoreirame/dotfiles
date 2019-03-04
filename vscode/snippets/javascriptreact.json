@@ -1,0 +1,13 @@
+{
+  "export default React component": {
+    "prefix": "exd",
+    "body": [
+      "export default ($1) => {",
+      "  return (",
+      "    $2",
+      "  )",
+      "}"
+    ],
+    "description": "export default React component"
+  }
+}
