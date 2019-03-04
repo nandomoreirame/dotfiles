@@ -1,5 +1,5 @@
 # Set name of the theme to load
-ZSH_THEME="refined"
+ZSH_THEME="spaceship"
 
 # Uncomment the following line to use case-sensitive completion
 CASE_SENSITIVE="true"

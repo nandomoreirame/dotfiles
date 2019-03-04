@@ -20,6 +20,9 @@ source $ZSH/oh-my-zsh.sh
 source $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# Source rvm scripts
+source /Users/oseunando/.rvm/scripts/rvm
+
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/gettext/bin:$PATH"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
@@ -58,7 +61,7 @@ load-nvmrc() {
     local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
     if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
+      nvm installnvm
     elif [ "$nvmrc_node_version" != "$node_version" ]; then
       nvm use
     fi
@@ -75,3 +78,7 @@ load-nvmrc
 # prompt pure
 
 cowsay Good work! # need `npm i -g cowsay`
+
+  # Set Spaceship ZSH as a prompt
+  autoload -U promptinit; promptinit
+  prompt spaceship

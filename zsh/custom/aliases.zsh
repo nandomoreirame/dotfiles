@@ -9,6 +9,9 @@ alias cp="cp -rv"
 alias rm="rm -rf"
 alias mv="mv -v"
 
+# pwd
+# alias .="pwd"
+
 # git
 alias git=hub
 alias g=git
@@ -39,7 +42,6 @@ alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
 
 # Miscellaneous
-alias cl=clear && printf '\e[3J'
 alias cleanup="sudo find . -name '*.DS_Store' -type f -delete"
 alias kll="killall"
 alias h="history"
