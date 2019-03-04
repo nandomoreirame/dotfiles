@@ -6,3 +6,6 @@ referer = ";auto"
 
 # Wait 60 seconds before timing out.
 connect-timeout = 60
+
+# For a progress bar when downloading RVM / Rubies
+progress-bar
