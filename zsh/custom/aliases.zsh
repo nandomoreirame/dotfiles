@@ -14,11 +14,12 @@ alias mv="mv -v"
 
 # git
 alias git=hub
-alias g=git
-alias gs=git" status -s"
-alias gpl=git" pull"
-alias gc=git" clone"
-alias ga=git" add --all"
+alias g=hub
+alias gs="g status -s"
+alias gpl="g pull"
+alias gc="g clone"
+alias gac="g add --all && g commit -am"
+alias ga="g add --all"
 alias gurl="hub browse"
 alias gup="g up && git-garbage"
 alias gpu=git" push -f origin HEAD^:master"
