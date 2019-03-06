@@ -20,18 +20,26 @@ source $ZSH/oh-my-zsh.sh
 source $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Source rvm scripts
-source /Users/oseunando/.rvm/scripts/rvm
-
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/gettext/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
+
 export PATH="/usr/local/opt/openssl/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/openssl/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl/include"
+export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+
+# export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+# export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+# export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+# export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
+
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
@@ -42,6 +50,8 @@ export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
 
 # export rvm
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# Source rvm scripts
+source $HOME/.rvm/scripts/rvm
 
 # Adding autocomplete for 'we'
 [ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
@@ -72,8 +82,10 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-cowsay Good work! # need `npm i -g cowsay`
+# cowsay "Hello World!" # need `npm i -g cowsay`
 
 # Set Spaceship ZSH as a prompt
 # autoload -U promptinit; promptinit
 # prompt spaceship
+
+vovo-juju # need `npm i -g vovo-juju-cli`

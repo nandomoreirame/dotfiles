@@ -1,3 +1,5 @@
+# ~/.wgetrc
+
 # Use the server-provided last modification date, if available
 timestamping = on
 
