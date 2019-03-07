@@ -85,7 +85,7 @@ load-nvmrc
 # cowsay "Hello World!" # need `npm i -g cowsay`
 
 # Set Spaceship ZSH as a prompt
-# autoload -U promptinit; promptinit
-# prompt spaceship
+autoload -U promptinit; promptinit
+prompt spaceship
 
 vovo-juju # need `npm i -g vovo-juju-cli`
