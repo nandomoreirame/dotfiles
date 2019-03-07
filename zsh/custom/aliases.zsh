@@ -41,6 +41,8 @@ alias fl="~/dotfiles"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
+alias browser="open -a Google\ Chrome $1"
+alias canary="open -a Google\ Chrome\ Canary $1"
 
 # Miscellaneous
 alias cleanup="sudo find . -name '*.DS_Store' -type f -delete"
@@ -147,9 +149,9 @@ alias ping="prettyping --nolegend"
 
 # VIM
 alias v="vim"
+alias sv="sudo vim"
 
 # File size
-
 alias fs="stat -f \"%z bytes\""
 
 # Control the system
