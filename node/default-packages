@@ -18,3 +18,5 @@ create-react-app
 exp
 cowsay
 spaceship-prompt
+gatsby-cli
+@storybook/cli
