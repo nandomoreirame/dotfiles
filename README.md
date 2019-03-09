@@ -12,7 +12,7 @@ My .files and MacOS settings
 - [Author](#author)
 - [License](#license)
 
-### Instalation
+### Installation
 
 ```bash
 sh -c "`curl -fsSL https://raw.githubusercontent.com/nandomoreirame/dotfiles/master/clone.sh`"
