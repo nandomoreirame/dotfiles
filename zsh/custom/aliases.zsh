@@ -102,6 +102,8 @@ alias yb="yarn build"
 alias yw="yarn watch"
 alias yl="yarn lint"
 alias yt="yarn test"
+alias yst="yarn storybook"
+alias yu="yarn upgrade-interactive --latest"
 
 # be nice
 alias please=sudo
