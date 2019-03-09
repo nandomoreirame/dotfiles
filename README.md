@@ -22,7 +22,7 @@ cd ~/dotfiles
 ## Screenshots
 
 ![Screenshot command-cat.png](/screenshots/command-cat.png)
-![Screenshot command-ls-la.png](/screenshots/command-ls-la.png)
+![Screenshot commands-ls-la.png](/screenshots/commands-ls-la.png)
 ![Screenshot git-aliases.png](/screenshots/git-aliases.png)
 ![Screenshot node-default-packages.png](/screenshots/node-default-packages.png)
 ![Screenshot vscode-theme-react-file.png](/screenshots/vscode-theme-react-file.png)
