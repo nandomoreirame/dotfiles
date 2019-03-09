@@ -2,11 +2,10 @@
 
 My .files and MacOS settings
 
-![Screenshot of My Readme Boilerplate](/screenshot.png)
-
 ## Table of Contents
 
 - [Installation](#installation)
+- [Screenshots](#screenshots)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Author](#author)
@@ -19,6 +18,16 @@ sh -c "`curl -fsSL https://raw.githubusercontent.com/nandomoreirame/dotfiles/mas
 cd ~/dotfiles
 ./install.sh
 ```
+
+## Screenshots
+
+![Screenshot command-cat.png](/screenshots/command-cat.png)
+![Screenshot command-ls-la.png](/screenshots/command-ls-la.png)
+![Screenshot git-aliases.png](/screenshots/git-aliases.png)
+![Screenshot node-default-packages.png](/screenshots/node-default-packages.png)
+![Screenshot vscode-theme-react-file.png](/screenshots/vscode-theme-react-file.png)
+![Screenshot vscode-theme-sh-file.png](/screenshots/vscode-theme-sh-file.png)
+![Screenshot vscode-theme-stylus-file.png](/screenshots/vscode-theme-stylus-file.png)
 
 ## Support
 
