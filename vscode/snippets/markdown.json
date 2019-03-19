@@ -1,4 +1,12 @@
 {
+  "language-filename": {
+    "prefix": "filename",
+    "body": [
+      "<div class=\"language-filename\">$1</div>",
+      ""
+    ],
+    "description": "inser html for language-filename"
+  },
   "README.md boilerplate": {
     "prefix": "readme",
     "body": [
