@@ -64,7 +64,8 @@ alias parameters="print -rl -- ${(k)parameters}"
 # alias for editors
 alias s="subl"
 alias ci="code-insiders"
-alias c="ci"
+alias code="ci"
+alias c="ci ."
 
 # docker
 alias d="docker"
@@ -102,7 +103,7 @@ alias yb="yarn build"
 alias yw="yarn watch"
 alias yl="yarn lint"
 alias yt="yarn test"
-alias yst="yarn storybook"
+alias ysb="yarn storybook"
 alias yu="yarn upgrade-interactive --latest"
 
 # be nice
