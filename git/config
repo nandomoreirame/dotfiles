@@ -77,7 +77,7 @@
   untracked = cyan
 
 [mergetool "sublime"]
-  cmd = sublime -w $MERGED
+  cmd = ci -w $MERGED
   trustExitCode = false
 
 [merge]
@@ -127,16 +127,17 @@
 [user]
   email = nandomoreira.me@gmail.com
   name = Fernando Moreira
-  signingkey = E907A06FEDF76F42
+	signingkey = 28DED45A387F8C0F
 
 [commit]
-	gpgsign = false
+	gpgsign = true
 
 [gpg]
-	program = /usr/local/bin/gpg
+	program = gpg
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
+
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
