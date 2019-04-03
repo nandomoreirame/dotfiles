@@ -23,6 +23,7 @@ source $ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/gettext/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/Library/Python/2.7/bin:$PATH"
 
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/openssl/lib"

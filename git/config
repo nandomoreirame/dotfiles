@@ -130,7 +130,7 @@
 	signingkey = 28DED45A387F8C0F
 
 [commit]
-	gpgsign = true
+	gpgsign = false
 
 [gpg]
 	program = gpg

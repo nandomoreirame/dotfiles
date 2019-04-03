@@ -65,7 +65,8 @@ alias parameters="print -rl -- ${(k)parameters}"
 alias s="subl"
 alias ci="code-insiders"
 alias code="ci"
-alias c="ci ."
+alias c="ci"
+alias c.="ci ."
 
 # docker
 alias d="docker"
@@ -79,6 +80,10 @@ alias dcub="docker-compose up -d --build"
 alias dcd="docker-compose down"
 alias dcps="docker-compose ps"
 alias dce="docker-compose exec"
+
+# PHP
+alias phps="php -S localhost:8181"
+alias phpst="phps -t ./"
 
 # npm
 alias npmp="npm publish"
@@ -105,6 +110,11 @@ alias yl="yarn lint"
 alias yt="yarn test"
 alias ysb="yarn storybook"
 alias yu="yarn upgrade-interactive --latest"
+
+# vue
+alias v="vue"
+alias vui="vue ui"
+alias vc="vue create"
 
 # be nice
 alias please=sudo
