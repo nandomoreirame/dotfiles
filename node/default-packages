@@ -1,6 +1,7 @@
 yarn
+npx
+urlint
 gulp
-yo
 http-server
 browser-sync
 gh
@@ -21,3 +22,5 @@ spaceship-prompt
 gatsby-cli
 @storybook/cli
 thank-you-stars
+netlify-cli
+@google/clasp
