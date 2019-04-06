@@ -16,30 +16,26 @@
     "when"    : "editorTextFocus && !editorReadonly"
   },
   {
-    "key": "shift+cmd+a",
-    "command" : "alignment.align",
-    "when"    : "editorHasSelection"
+    "key"    : "shift+cmd+a",
+    "command": "alignment.align",
+    "when"   : "editorHasSelection"
   },
   {
     "key"     : "cmd+r",
     "command" : "workbench.action.openRecent"
   },
   {
-    "key": "cmd+k cmd+f",
+    "key"    : "cmd+k cmd+f",
     "command": "editor.action.formatSelection",
-    "when": "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
+    "when"   : "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
   },
   {
-    "key": "cmd+k cmd+f",
+    "key"    : "cmd+k cmd+f",
     "command": "-editor.action.formatSelection",
-    "when": "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
+    "when"   : "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
   },
   {
-    "key": "cmd+k cmd+s",
-    "command": "workbench.actiondotfiles.saveAll"
-  },
-  {
-    "key": "alt+cmd+s",
-    "command": "-workbench.actiondotfiles.saveAll"
+    "key": "ctrl+alt+p",
+    "command": "extension.transformHtmlToPug",
   }
 ]

@@ -63,10 +63,8 @@ alias parameters="print -rl -- ${(k)parameters}"
 
 # alias for editors
 alias s="subl"
-alias ci="code-insiders"
-alias code="ci"
-alias c="ci"
-alias c.="ci ."
+alias c="code"
+alias c.="code ."
 
 # docker
 alias d="docker"
