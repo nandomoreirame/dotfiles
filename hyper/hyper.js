@@ -14,7 +14,7 @@ module.exports = {
     cursorColor: 'rgba(255,255,255,0.9)',
 
     // `BEAM` for |, `UNDERLINE` for _, `BLOCK` for █
-    cursorShape: 'UNDERLINE',
+    cursorShape: 'BLOCK',
 
     // set to true for blinking cursor
     cursorBlink: false,

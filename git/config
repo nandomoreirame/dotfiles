@@ -57,7 +57,7 @@
   excludesfile = ~/.gitignore
   attributesfile = ~/.gitattributes
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
-  editor = code-insiders
+  editor = code
   autocrlf = input
 
 [color "branch"]
