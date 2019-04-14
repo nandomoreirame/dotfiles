@@ -9,15 +9,13 @@
     "editor.lineHeight": 24,
     "editor.tabCompletion": "on",
     "editor.fontLigatures": true,
-    "editor.insertSpaces": false,
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.snippetSuggestions": "top",
     "editor.autoIndent": false,
-    "editor.cursorBlinking": "solid",
     "editor.fontWeight": "400",
     "editor.quickSuggestionsDelay": 5,
     "editor.formatOnPaste": true,
-    "editor.cursorStyle": "line-thin",
+    "editor.cursorStyle": "block-outline",
     "[php]": {
         "editor.tabSize": 4
     },
@@ -116,5 +114,19 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
     "javascript.suggest.completeJSDocs": true,
     "javascript.format.enable": false,
-    "javascript.autoClosingTags": true
+    "javascript.autoClosingTags": true,
+    "editor.insertSpaces": false,
+    "prettier.stylelintIntegration": true,
+    "stylelint.enable": false,
+    "px2rem-plus.comments": true,
+    "px2rem-plus.base": 16,
+    "px2rem-plus.leadingZero": true,
+    "editor.cursorBlinking": "smooth",
+    "[scss]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "workbench.activityBar.visible": true
 }

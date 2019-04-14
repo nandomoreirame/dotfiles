@@ -64,4 +64,4 @@ plugins=(
 )
 
 # User configuration
-export EDITOR=code-insiders
+export EDITOR=code
