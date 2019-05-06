@@ -16,6 +16,7 @@ create-vue-app
 react-native-cli
 create-react-native-app
 create-react-app
+expo-cli
 exp
 cowsay
 spaceship-prompt
