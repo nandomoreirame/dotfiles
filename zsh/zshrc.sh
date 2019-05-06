@@ -41,6 +41,10 @@ export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+# export PATH="${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:$PATH"
+path=("${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools" $path)
+
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
@@ -83,10 +87,9 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-# cowsay "Hello World!" # need `npm i -g cowsay`
-
 # Set Spaceship ZSH as a prompt
 autoload -U promptinit; promptinit
 prompt spaceship
 
-vovo-juju # need `npm i -g vovo-juju-cli`
+# vovo-juju # need `npm i -g vovo-juju-cli`
+cowsay "Good look dev!" # need `npm i -g cowsay`
