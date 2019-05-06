@@ -68,3 +68,5 @@ bower_components
 # Env file #
 #########
 .env
+
+cert.pem
