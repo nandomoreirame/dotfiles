@@ -37,5 +37,10 @@
   {
     "key": "ctrl+alt+p",
     "command": "extension.transformHtmlToPug",
+  },
+  {
+    "key": "cmd+k cmd+l",
+    "command": "workbench.action.terminal.clear",
+    "when": "terminalFocus"
   }
 ]
