@@ -30,6 +30,8 @@
   remotes = remote -v
 
   # Branches
+  br = branch
+  brs = branch -av
   branches = branch -av
   recent-branches = !git for-each-ref --count=5 --sort=-committerdate refs/heads/ --format='%(refname:short)'
 
@@ -43,9 +45,14 @@
   # Upstream
   set-upstream = !git branch --set-upstream-to=origin/`git symbolic-ref --short HEAD`
 
-  # flow
+  # gitflow
+  f = flow
+
   # more information: http://haacked.com/archive/2014/07/28/github-flow-aliases/
   undo = reset HEAD~1 --mixed
+
+  cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|dev\\|staging' | xargs -n 1 git branch -d"
+  sweep = "!f(){ git branch --merged $([[ $1 != \"-f\" ]] \\\n&& git rev-parse master) | egrep -v \"(^\\*|^\\s*(master|staging)$)\" \\\n| xargs git branch -d; }; f"
 
 [color]
   ui = always
@@ -54,7 +61,7 @@
   whitespace = fix
 
 [core]
-  excludesfile = ~/.gitignore
+	excludesfile = /Users/oseunando/.gitignore_global
   attributesfile = ~/.gitattributes
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
   editor = code
@@ -125,12 +132,13 @@
 	default = current
 
 [user]
-  email = nandomoreira.me@gmail.com
-  name = Fernando Moreira
+	email = nandomoreira.me@gmail.com
+	name = Fernando Moreira
 	signingkey = 28DED45A387F8C0F
 
 [commit]
 	gpgsign = false
+	template = /Users/oseunando/.stCommitMsg
 
 [gpg]
 	program = gpg
@@ -143,3 +151,9 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true

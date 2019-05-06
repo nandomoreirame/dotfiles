@@ -26,6 +26,21 @@ alias gpu=git" push -f origin HEAD^:master"
 alias gpm=git" push origin master"
 alias greset=git" reset HEAD~"
 
+# gitflow
+alias gf="git flow"
+alias flow="gf"
+alias f-init="gf init"
+# gitflow feature
+alias f-feature="gf feature"
+alias f-start="gf feature start"
+alias f-publish="gf feature publish"
+alias f-pull="gf feature pull origin"
+alias f-finish="gf feature finish"
+# gitflow release
+alias f-release="gf release"
+alias r-publish="gf release publish"
+alias r-finish="gf release finish"
+
 # Process status
 alias psa="ps aux"
 alias ht="htop"
@@ -66,10 +81,15 @@ alias s="subl"
 alias c="code"
 alias c.="code ."
 
+# android
+alias android-emulator="$HOME/Library/Android/sdk/tools/emulator"
+alias ae="android-emulator"
+
 # docker
 alias d="docker"
 alias di="docker images"
 alias dip="docker ps -q | xargs -n 1 docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{ .Name }}' | sed 's/ \// /'"
+# alias da="docker attach $(docker-compose ps -q $1)"
 
 # docker-compose
 alias dc="docker-compose"
@@ -113,6 +133,10 @@ alias yu="yarn upgrade-interactive --latest"
 alias v="vue"
 alias vui="vue ui"
 alias vc="vue create"
+
+# rails
+alias r="bin/rails"
+alias rs="bin/rails server"
 
 # be nice
 alias please=sudo
