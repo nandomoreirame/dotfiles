@@ -14,7 +14,7 @@
     "editor.autoIndent": false,
     "editor.fontWeight": "400",
     "editor.quickSuggestionsDelay": 5,
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": false,
     "editor.cursorStyle": "block-outline",
     "[php]": {
         "editor.tabSize": 4
@@ -92,7 +92,6 @@
     "git.enableSmartCommit": true,
     "git.confirmSync": false,
     "trailing-spaces.trimOnSave": true,
-    "trailing-spaces.saveAfterTrim": true,
     "window.zoomLevel": 1,
     "material-icon-theme.showUpdateMessage": false,
     "typescript.check.npmIsInstalled": false,
@@ -128,5 +127,17 @@
     "[javascript]": {
         "editor.defaultFormatter": "HookyQR.beautify"
     },
-    "workbench.activityBar.visible": true
+    "workbench.activityBar.visible": true,
+    "atlascode.jira.workingSite": {
+        "baseUrlSuffix": "atlassian.net"
+    },
+    "terminal.integrated.rendererType": "dom",
+    "yaml.schemas": {
+        "file:///Users/oseunando/.vscode/extensions/atlassian.atlascode-1.2.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+    },
+    "atlascode.bitbucket.pipelines.explorerEnabled": false,
+    "atlascode.bitbucket.pipelines.monitorEnabled": false,
+    "atlascode.bitbucket.explorer.enabled": false,
+    "atlascode.jira.todoIssues.enabled": false,
+    "atlascode.jira.statusbar.showSite": true
 }
