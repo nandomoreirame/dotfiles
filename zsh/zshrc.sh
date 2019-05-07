@@ -92,4 +92,4 @@ autoload -U promptinit; promptinit
 prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay "Good look dev!" # need `npm i -g cowsay`
+cowsay "Good luck dev!" # need `npm i -g cowsay`
