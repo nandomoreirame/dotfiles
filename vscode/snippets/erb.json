@@ -1,0 +1,32 @@
+{
+  "ERB tags": {
+    "prefix": "erb",
+    "body": [
+      "<% $1 %>"
+    ],
+    "description": "ERB Tags"
+  },
+  "ERB debug": {
+    "prefix": "debug",
+    "body": [
+      "<%= debug $1 %>"
+    ],
+    "description": "ERB debug"
+  },
+  "ERB if": {
+    "prefix": "if",
+    "body": [
+      "<% if $1? %>",
+      "  $2",
+      "<% end %>"
+    ],
+    "description": "ERB if"
+  },
+  "ERB render partial": {
+    "prefix": "partial",
+    "body": [
+      "<%= render partial: '$1' %>"
+    ],
+    "description": "ERB render partial"
+  },
+}
