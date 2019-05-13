@@ -39,7 +39,6 @@ plugins=(
   gitignore
   gulp
   heroku
-  iwhois
   jira
   laravel5
   node
