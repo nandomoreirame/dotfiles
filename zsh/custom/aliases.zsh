@@ -202,3 +202,9 @@ alias calendario="cal $year"
 
 # mes
 alias mes='cal'
+
+# ssh add id_sra and ssh keyscan for bitbucket
+alias ssid='ssh-add ~/.ssh/id_rsa && ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts'
+# ssid command and deploy with capstrano command
+alias sdeploy='ssid && cap staging deploy'
+alias pdeploy='ssid && cap production deploy'
