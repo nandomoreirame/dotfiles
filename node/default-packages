@@ -4,6 +4,7 @@ urlint
 gulp
 http-server
 browser-sync
+github-labels
 gh
 rimraf
 gitignore
