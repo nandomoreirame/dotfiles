@@ -36,4 +36,5 @@ zsh/custom/plugins/nvm-auto
 zsh/custom/themes/spaceship-prompt
 zsh/custom/themes/spaceship.zsh-theme
 vscode/vsicons.settings.json
+aliases-local.sh
 *.phar
