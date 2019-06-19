@@ -56,8 +56,14 @@ alias fl="~/dotfiles"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
-alias browser="open -a Google\ Chrome $1"
-alias canary="open -a Google\ Chrome\ Canary $1"
+# alias chrome="open -a Google\ Chrome $1 --args --new-window --disable-web-securitybrowser --user-data-dir=/tmp/chrome"
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $1 --args --new-window --disable-web-securitybrowser --user-data-dir=/tmp/chrome"
+alias canary="open -a Google\ Chrome\ Canary $1 --args --disable-web-security --user-data-dir=/tmp/canary"
+# alias canary="/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary $1 --args --disable-web-security --user-data-dir=/tmp/canary"
+alias chromium="open -a Chromium $1 --args --disable-web-securitybrowser --user-data-dir=/tmp/canary"
+# alias chromium="/Applications/Chromium.app/Contents/MacOS/Chromium $1 --args --disable-web-securitybrowser --user-data-dir=/tmp/chromium"
+alias opera="/Applications/Opera.app/Contents/MacOS/Opera $1 --disable-web-securitybrowser --user-data-dir=~/tmp/opera"
+alias firefox="/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $1"
 
 # Miscellaneous
 alias cleanup="sudo find . -name '*.DS_Store' -type f -delete"
@@ -102,6 +108,7 @@ alias dce="docker-compose exec"
 # PHP
 alias phps="php -S localhost:8181"
 alias phpst="phps -t ./"
+alias artisan="php artisan"
 
 # npm
 alias npmp="npm publish"
@@ -137,6 +144,7 @@ alias vc="vue create"
 # rails
 alias r="bin/rails"
 alias rs="bin/rails server"
+alias frs="foreman start"
 
 # be nice
 alias please=sudo
@@ -198,13 +206,16 @@ alias shutdown='sudo shutdown now'
 
 # calendario
 year=`date +'%Y'`
+alias ano="cal $1"
 alias calendario="cal $year"
 
 # mes
 alias mes='cal'
 
+# ssh
+alias sshcopy="pbcopy < ~/.ssh/id_rsa.pub"
+
 # ssh add id_sra and ssh keyscan for bitbucket
 alias ssid='ssh-add ~/.ssh/id_rsa && ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts'
-# ssid command and deploy with capstrano command
-alias sdeploy='ssid && cap staging deploy'
-alias pdeploy='ssid && cap production deploy'
+
+source "$HOME/dotfiles/zsh/custom/aliases-local.sh"
