@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.fontFamily": "'Fira Code', 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontFamily": "Fira Code, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
     "editor.tabSize": 2,
     "editor.wordWrapColumn": 800,
     "editor.useTabStops": false,
@@ -15,7 +15,13 @@
     "editor.fontWeight": "400",
     "editor.quickSuggestionsDelay": 5,
     "editor.formatOnPaste": false,
-    "editor.cursorStyle": "block-outline",
+    "workbench.colorTheme": "New Moon",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.colorCustomizations": {},
+    "workbench.sideBar.location": "left",
+    "workbench.panel.defaultLocation": "right",
+    "workbench.activityBar.visible": true,
     "[php]": {
         "editor.tabSize": 4
     },
@@ -24,7 +30,7 @@
         "*.vue": "vue",
         "*.gs": "javascript"
     },
-    "files.autoSave": "off",
+	"files.autoSave": "off",
     "files.trimTrailingWhitespace": true,
     "files.exclude": {
         ".git": true,
@@ -49,7 +55,8 @@
     "emmet.includeLanguages": {
         "blade": "html",
         "html": "html",
-        "erb": "erb",
+        "erb": "html",
+        "edge": "html",
         "javascript": "javascriptreact",
         "vue": "html",
         "gs": "javascript",
@@ -61,7 +68,8 @@
         "sass": "css",
         "gs": "javascript",
         "vue-html": "html",
-        "vue": "html"
+        "vue": "html",
+        "erb": "html"
     },
     "search.location": "panel",
     "search.useIgnoreFiles": true,
@@ -98,11 +106,6 @@
     "extensions.ignoreRecommendations": true,
     "php-cs-fixer.executablePath": "/usr/local/bin/php-cs-fixer",
     "breadcrumbs.enabled": false,
-    "workbench.colorTheme": "New Moon",
-    "workbench.iconTheme": "material-icon-theme",
-    "workbench.startupEditor": "newUntitledFile",
-    "workbench.colorCustomizations": {},
-    "workbench.sideBar.location": "left",
     "eslint.autoFixOnSave": false,
     "eslint.alwaysShowStatus": false,
     "eslint.enable": false,
@@ -120,24 +123,15 @@
     "px2rem-plus.comments": true,
     "px2rem-plus.base": 16,
     "px2rem-plus.leadingZero": true,
-    "editor.cursorBlinking": "smooth",
     "[scss]": {
         "editor.defaultFormatter": "HookyQR.beautify"
     },
     "[javascript]": {
         "editor.defaultFormatter": "HookyQR.beautify"
     },
-    "workbench.activityBar.visible": true,
-    "atlascode.jira.workingSite": {
-        "baseUrlSuffix": "atlassian.net"
-    },
     "terminal.integrated.rendererType": "dom",
     "yaml.schemas": {
         "file:///Users/oseunando/.vscode/extensions/atlassian.atlascode-1.2.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
     },
-    "atlascode.bitbucket.pipelines.explorerEnabled": false,
-    "atlascode.bitbucket.pipelines.monitorEnabled": false,
-    "atlascode.bitbucket.explorer.enabled": false,
-    "atlascode.jira.todoIssues.enabled": false,
-    "atlascode.jira.statusbar.showSite": true
+    "team.showWelcomeMessage": false
 }
