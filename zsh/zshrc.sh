@@ -30,6 +30,9 @@ export LDFLAGS="-L/usr/local/opt/openssl/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl/include"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
+# MySQL
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 # export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
 # export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
@@ -92,4 +95,4 @@ autoload -U promptinit; promptinit
 prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay "Good luck dev!" # need `npm i -g cowsay`
+cowsay "Good luck dev!" # need cowsay `npm i -g cowsay`
