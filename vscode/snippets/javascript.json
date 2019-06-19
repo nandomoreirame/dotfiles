@@ -65,7 +65,7 @@
   "Print to console": {
     "prefix": "clog",
     "body": [
-      "console.log(${var})"
+      "window.console.${2:log}(${1:var})"
     ],
     "description": "Log output to console"
   },
@@ -84,5 +84,12 @@
       "Logger.log($0)"
     ],
     "description": "GAS Logger.log"
+  },
+  "Vue Logger": {
+    "prefix": "vlogger",
+    "body": [
+      "Vue.$${2:log}.${3:error}(${4:'${5:error}',}$1)"
+    ],
+    "description": "Vue Logger"
   }
 }
