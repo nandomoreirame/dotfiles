@@ -65,7 +65,7 @@
   "Print to console": {
     "prefix": "clog",
     "body": [
-      "window.console.${2:log}(${1:var})"
+      "console.${2:log}(${1:var})"
     ],
     "description": "Log output to console"
   },
@@ -91,5 +91,33 @@
       "Vue.$${2:log}.${3:error}(${4:'${5:error}',}$1)"
     ],
     "description": "Vue Logger"
+  },
+  "Vuex start": {
+    "prefix": "vx",
+    "body": [
+      "const state = {",
+      "  isLoading: ${1:false},",
+      "}",
+      "",
+      "const mutations = {",
+      "  'TOGGLE_LOADING' (state, payload = false) {",
+      "    state.isLoading = !!payload",
+      "  }",
+      "}",
+      "",
+      "const actions = {",
+      "  toggleLoading ({ commit }, isLoading = false) {",
+      "    commit('TOGGLE_LOADING', isLoading)",
+      "  }",
+      "}",
+      "",
+      "export default {",
+      "  namespaced: true,",
+      "  state,",
+      "  mutations,",
+      "  actions",
+      "}"
+    ],
+    "description": "Vuex start"
   }
 }

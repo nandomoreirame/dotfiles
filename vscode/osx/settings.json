@@ -109,6 +109,11 @@
     "eslint.autoFixOnSave": false,
     "eslint.alwaysShowStatus": false,
     "eslint.enable": false,
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "vue"
+    ],
     "scss.validate": false,
     "css.validate": false,
     "less.validate": false,
@@ -133,5 +138,8 @@
     "yaml.schemas": {
         "file:///Users/oseunando/.vscode/extensions/atlassian.atlascode-1.2.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
     },
-    "team.showWelcomeMessage": false
+    "team.showWelcomeMessage": false,
+    "editor.formatOnSave": false,
+    "editor.formatOnType": false,
+    "terminal.integrated.shell.osx": "/bin/zsh"
 }
