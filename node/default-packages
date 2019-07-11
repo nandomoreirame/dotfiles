@@ -13,6 +13,7 @@ diff-so-fancy
 git-open
 git-labels-cli
 @vue/cli
+@vue/cli-init
 create-vue-app
 react-native-cli
 create-react-native-app
@@ -26,3 +27,4 @@ gatsby-cli
 thank-you-stars
 netlify-cli
 @google/clasp
+electron
