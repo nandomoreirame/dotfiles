@@ -28,7 +28,9 @@
     "files.encoding": "utf8",
     "files.associations": {
         "*.vue": "vue",
-        "*.gs": "javascript"
+        "*.gs": "javascript",
+        ".stylelintrc": "json",
+        "*.mdx": "mdx"
     },
 	"files.autoSave": "off",
     "files.trimTrailingWhitespace": true,
@@ -141,5 +143,8 @@
     "team.showWelcomeMessage": false,
     "editor.formatOnSave": false,
     "editor.formatOnType": false,
-    "terminal.integrated.shell.osx": "/bin/zsh"
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "prettier.eslintIntegration": true
 }
