@@ -134,13 +134,9 @@
         "editor.defaultFormatter": "HookyQR.beautify"
     },
     "[javascript]": {
-        "editor.defaultFormatter": "HookyQR.beautify"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "terminal.integrated.rendererType": "dom",
-    "yaml.schemas": {
-        "file:///Users/oseunando/.vscode/extensions/atlassian.atlascode-1.2.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-    },
-    "team.showWelcomeMessage": false,
     "editor.formatOnSave": false,
     "editor.formatOnType": false,
     "terminal.integrated.shell.osx": "/bin/zsh",

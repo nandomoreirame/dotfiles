@@ -133,6 +133,7 @@ alias yb="yarn build"
 alias yw="yarn watch"
 alias yl="yarn lint"
 alias yt="yarn test"
+alias sb="storybook"
 alias ysb="yarn storybook"
 alias yu="yarn upgrade-interactive --latest"
 
