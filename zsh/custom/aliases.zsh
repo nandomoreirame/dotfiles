@@ -85,7 +85,7 @@ alias parameters="print -rl -- ${(k)parameters}"
 # alias for editors
 alias s="subl"
 alias c="code"
-alias c.="code ."
+alias ci="code-insiders"
 
 # android
 alias android-emulator="$HOME/Library/Android/sdk/tools/emulator"
