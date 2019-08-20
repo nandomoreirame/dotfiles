@@ -17,8 +17,6 @@
     "editor.formatOnPaste": false,
     "workbench.colorTheme": "New Moon",
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.startupEditor": "newUntitledFile",
-    "workbench.colorCustomizations": {},
     "workbench.sideBar.location": "left",
     "workbench.panel.defaultLocation": "right",
     "workbench.activityBar.visible": true,
@@ -109,7 +107,7 @@
     "php-cs-fixer.executablePath": "/usr/local/bin/php-cs-fixer",
     "breadcrumbs.enabled": false,
     "eslint.autoFixOnSave": false,
-    "eslint.alwaysShowStatus": false,
+    "eslint.alwaysShowStatus": true,
     "eslint.enable": false,
     "eslint.validate": [
       "javascript",
@@ -142,5 +140,6 @@
     "terminal.integrated.shell.osx": "/bin/zsh",
     "files.eol": "\n",
     "files.insertFinalNewline": true,
-    "prettier.eslintIntegration": true
+    "prettier.eslintIntegration": true,
+    "materialTheme.accent": "Yellow"
 }

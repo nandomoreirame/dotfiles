@@ -1,99 +1,106 @@
 {
   "Create arrow function": {
     "prefix": "afunc",
+    "description": "Create arrow function",
     "body": [
-      "($1) => {",
-      "  $2",
-      "}"
-    ],
-    "description": "Create arrow function"
+      "const ${1:varHere} = ($2) => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
   },
   "Node module import from": {
     "prefix": "ifrom",
+    "description": "Node module import from",
     "body": [
-      "import ${Module} from '${module}'"
-    ],
-    "description": "Node module import from"
+      "import ${Module} from '${module}'",
+      ""
+    ]
   },
   "Node module require": {
     "prefix": "require",
+    "description": "Node module require",
     "body": [
-      "${const} ${Module} = require('${module}');"
-    ],
-    "description": "Node module require"
+      "${const} ${Module} = require('${module}')",
+      ""
+    ]
   },
   "Create a executable function": {
     "prefix": "exfunc",
+    "description": "auto executable function",
     "body": [
-      "(function(${$}) {",
-      "  $3",
-      "})(${jQuery});"
-    ],
-    "description": "auto executable function"
+      "(function(${1:$}) {",
+      "  ${0:// Do something here...}",
+      "})(${jQuery})",
+      ""
+    ]
   },
   "const function": {
     "prefix": "cfunc",
+    "description": "const function",
     "body": [
       "const ${Var} = () => {",
       "  return {$0}",
-      "}"
-    ],
-    "description": "const function"
+      "}",
+      ""
+    ]
   },
   "Create a jQuery app function": {
     "prefix": "jfunc",
+    "description": "jQuery app function",
     "body": [
-      "var app = app || {};",
+      "var app = app || {}",
       "",
-      "app.general = (function (${$}) {",
-      "  'use strict';",
+      "app.general = (function (${1:$}) {",
+      "  'use strict'",
       "",
-      "  var config = {};",
+      "  var config = {}",
       "",
       "  function init () {",
-      "    console.info('[init]', config);",
+      "    console.info('[init]', config)",
       "  }",
       "",
       "  return {",
       "    init: init",
-      "  };",
-      "})(${jQuery});",
+      "  }",
+      "})(${jQuery})",
       ""
-    ],
-    "description": "jQuery app function"
+    ]
   },
   "Print to console": {
     "prefix": "clog",
+    "description": "Log output to console",
     "body": [
       "console.${2:log}(${1:var})"
-    ],
-    "description": "Log output to console"
+    ]
   },
   "Export default": {
-    "prefix": "edef",
+    "prefix": "expd",
+    "description": "export default",
     "body": [
-      "export default {",
-      "  $0",
-      "}"
-    ],
-    "description": "export default"
+      "export default { ${0:// Do something here...} }",
+      ""
+    ]
   },
   "GAS Logger.log": {
     "prefix": "logger",
+    "description": "GAS Logger.log",
     "body": [
-      "Logger.log($0)"
-    ],
-    "description": "GAS Logger.log"
+      "Logger.log($0)",
+      ""
+    ]
   },
   "Vue Logger": {
     "prefix": "vlogger",
+    "description": "Vue Logger",
     "body": [
-      "Vue.$${2:log}.${3:error}(${4:'${5:error}',}$1)"
-    ],
-    "description": "Vue Logger"
+      "Vue.$${1:log}.${2:error}(${3:'${4:error}',}$0)",
+      ""
+    ]
   },
   "Vuex start": {
     "prefix": "vx",
+    "description": "Vuex start",
     "body": [
       "const state = {",
       "  isLoading: ${1:false},",
@@ -116,8 +123,41 @@
       "  state,",
       "  mutations,",
       "  actions",
-      "}"
-    ],
-    "description": "Vuex start"
+      "}",
+      ""
+    ]
+  },
+  "http-get": {
+    "prefix": "http-get",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http-post": {
+    "prefix": "http-post",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "newp": {
+    "prefix": "newp",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
   }
 }
