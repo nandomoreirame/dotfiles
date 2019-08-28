@@ -134,14 +134,14 @@
 [user]
 	email = nandomoreira.me@gmail.com
 	name = Fernando Moreira
-	signingkey = 28DED45A387F8C0F
+	signingkey = F66195FB71FB6C26
 
 [commit]
-	gpgsign = false
+	gpgsign = true
 	template = /Users/oseunando/.stCommitMsg
 
 [gpg]
-	program = gpg
+	program = gpg2
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
