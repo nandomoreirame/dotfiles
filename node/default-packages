@@ -15,6 +15,7 @@ git-labels-cli
 @vue/cli
 @vue/cli-init
 create-vue-app
+create-nuxt-app
 react-native-cli
 create-react-native-app
 create-react-app
