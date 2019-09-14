@@ -1,0 +1,11 @@
+{
+	"include mixin media": {
+		"prefix": "media",
+		"body": [
+			"@include media(${1:min-width }${2:$}${3:breakpoint-md}) {",
+      "  $0",
+	    "}"
+		],
+		"description": "include sass mixin media query"
+	}
+}
