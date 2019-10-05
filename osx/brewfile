@@ -8,7 +8,6 @@ imagemagick
 tree
 wget
 hub
-phantomjs
 gnupg
 gnupg2
 bat
