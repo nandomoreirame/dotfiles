@@ -16,7 +16,6 @@
     "editor.quickSuggestionsDelay": 5,
     "editor.formatOnPaste": false,
     "workbench.colorTheme": "New Moon",
-    "workbench.iconTheme": "material-icon-theme",
     "workbench.sideBar.location": "left",
     "workbench.panel.defaultLocation": "right",
     "workbench.activityBar.visible": true,
@@ -141,5 +140,6 @@
     "files.eol": "\n",
     "files.insertFinalNewline": true,
     "prettier.eslintIntegration": true,
-    "materialTheme.accent": "Yellow"
+    "materialTheme.accent": "Yellow",
+    "workbench.iconTheme": "material-icon-theme"
 }
