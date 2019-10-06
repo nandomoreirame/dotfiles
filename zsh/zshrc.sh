@@ -78,9 +78,6 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 # Source rvm scripts
 source $HOME/.rvm/scripts/rvm
 
-# Adding autocomplete for 'we'
-[ -f ~/.we_autocomplete ] && source ~/.we_autocomplete
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -113,9 +110,3 @@ prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
 cowsay "Good luck dev!" # need cowsay `npm i -g cowsay`
-
-### Added by Zplugin's installer
-source '/Users/oseunando/.zplugin/bin/zplugin.zsh'
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
