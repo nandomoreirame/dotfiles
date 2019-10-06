@@ -1,0 +1,50 @@
+{
+  "list": [{
+    "id": "1570308151725-600315",
+    "title": "Apps",
+    "content": "# Apps\n\n127.0.0.1 \t\tkubernetes.docker.internal",
+    "on": true,
+    "where": "local",
+    "folder_mode": 0,
+    "last_refresh": null,
+    "refresh_interval": 0,
+    "include": [],
+    "children": []
+  }, {
+    "id": "1570308119483-933140",
+    "title": "Clients",
+    "content": "# Clients",
+    "on": true,
+    "where": "local",
+    "folder_mode": 0,
+    "last_refresh": null,
+    "refresh_interval": 0,
+    "include": [],
+    "children": []
+  }, {
+    "id": "1570308080503-712480",
+    "title": "Localhost",
+    "content": "127.0.0.1\t\t\tlocalhost\n255.255.255.255\t\tbroadcasthost\n::1             \tlocalhost\n",
+    "on": true,
+    "where": "local",
+    "folder_mode": 0,
+    "url": "",
+    "last_refresh": null,
+    "refresh_interval": 0,
+    "include": [],
+    "children": []
+  }, {
+    "id": "1570308080503-59888",
+    "title": "Projects",
+    "content": "# Projects",
+    "on": true,
+    "where": "local",
+    "folder_mode": 0,
+    "url": "",
+    "last_refresh": null,
+    "refresh_interval": 0,
+    "include": [],
+    "children": []
+  }],
+  "version": [3, 5, 0, 5486]
+}

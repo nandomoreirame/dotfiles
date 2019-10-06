@@ -38,3 +38,4 @@ zsh/custom/themes/spaceship.zsh-theme
 vscode/vsicons.settings.json
 aliases-local.sh
 *.phar
+SwitchHosts/*.txt
