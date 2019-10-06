@@ -17,3 +17,6 @@ init.version=$NPM_INIT_VERSION
 init.license=$NPM_INIT_LICENSE" > $HOME/.npmrc
 
 msg_checking "successfully created file $NPMRC_FILE"
+
+echo "registry \"https://registry.npmjs.org/\"
+lastUpdateCheck 0" > "$HOME/.yarnrc"
