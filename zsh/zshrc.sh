@@ -73,10 +73,9 @@ export PATH="/usr/local/opt/openldap/bin:$PATH"
 export PATH="/usr/local/opt/openldap/sbin:$PATH"
 export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
 
-# export rvm
+# rvm
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-# Source rvm scripts
-source $HOME/.rvm/scripts/rvm
+source $HOME/.rvm/scripts/rvm # Source rvm scripts
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
