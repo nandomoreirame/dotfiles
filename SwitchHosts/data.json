@@ -13,7 +13,7 @@
   }, {
     "id": "1570308119483-933140",
     "title": "Clients",
-    "content": "# Clients",
+    "content": "# Clients\n\n127.0.0.1\t\t dev.medprev.online\n127.0.0.1\t\t dev.agendamento.medprev.online",
     "on": true,
     "where": "local",
     "folder_mode": 0,
@@ -24,7 +24,7 @@
   }, {
     "id": "1570308080503-712480",
     "title": "Localhost",
-    "content": "127.0.0.1\t\t\tlocalhost\n255.255.255.255\t\tbroadcasthost\n::1             \tlocalhost\n",
+    "content": "# Localhost\n\n127.0.0.1\t\t\tlocalhost\n255.255.255.255\t\tbroadcasthost\n::1             \tlocalhost\n",
     "on": true,
     "where": "local",
     "folder_mode": 0,
