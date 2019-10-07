@@ -39,3 +39,7 @@ vscode/vsicons.settings.json
 aliases-local.sh
 *.phar
 SwitchHosts/*.txt
+zsh_history.sh
+bash_history.sh
+.nvmrc
+.npmrc
