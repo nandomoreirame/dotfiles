@@ -61,7 +61,7 @@
   whitespace = fix
 
 [core]
-	excludesfile = /Users/oseunando/.gitignore_global
+  excludesfile = ~/.gitignore_global
   attributesfile = ~/.gitattributes
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
   editor = code
@@ -129,31 +129,33 @@
   prompt = false
 
 [push]
-	default = current
+  default = current
 
 [user]
-	email = nandomoreira.me@gmail.com
-	name = Fernando Moreira
-	signingkey = F66195FB71FB6C26
+  email = nandomoreira.me@gmail.com
+  name = Fernando Moreira
+  signingkey = 07F1993864840A9E
 
 [commit]
-	gpgsign = true
-	template = /Users/oseunando/.stCommitMsg
+  gpgsign = true
+  template = "$HOME/.stCommitMsg"
 
 [gpg]
-	program = gpg2
+  program = gpg
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
 
 [filter "lfs"]
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path =
+
 [mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+  cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
