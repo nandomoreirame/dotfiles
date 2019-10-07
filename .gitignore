@@ -43,3 +43,7 @@ zsh_history.sh
 bash_history.sh
 .nvmrc
 .npmrc
+
+browsers/canary/*
+!browsers/canary/Default/Extensions/
+browsers/canary/Default/Extensions/Temp/
