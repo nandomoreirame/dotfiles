@@ -45,5 +45,7 @@ bash_history.sh
 .npmrc
 
 browsers/canary/*
+!browsers/canary/Default/
+browsers/canary/Default/*
 !browsers/canary/Default/Extensions/
 browsers/canary/Default/Extensions/Temp/
