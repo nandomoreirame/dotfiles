@@ -1,3 +1,10 @@
+chrome/*
+!chrome/Default/
+chrome/Default/*
+chrome/Default/Extensions/
+!chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd
+!chrome/Default/Preferences
+
 canary/*
 !canary/Default/
 canary/Default/*
