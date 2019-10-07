@@ -1,0 +1,6 @@
+canary/*
+!canary/Default/
+canary/Default/*
+canary/Default/Extensions/
+!canary/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd
+!canary/Default/Preferences
