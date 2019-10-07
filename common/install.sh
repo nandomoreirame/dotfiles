@@ -21,3 +21,7 @@ msg_ok "$HOME/.curlrc"
 rm -rf $HOME/.wgetrc
 ln -s $HOME/dotfiles/common/wgetrc.sh $HOME/.wgetrc
 msg_ok "$HOME/.wgetrc"
+
+rm -rf $HOME/.bash_history
+ln -s $HOME/dotfiles/common/bash_history.sh $HOME/.bash_history
+msg_ok "$HOME/.bash_history"

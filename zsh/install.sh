@@ -14,3 +14,7 @@ msg_installing "Linking ZSH settings..."
 rm -rf $HOME/.zshrc $HOME/.oh-my-zsh/custom
 ln -s $HOME/dotfiles/zsh/zshrc.sh $HOME/.zshrc
 ln -s $HOME/dotfiles/zsh/custom $HOME/.oh-my-zsh/custom
+
+rm -rf $HOME/.zsh_history
+ln -s $HOME/dotfiles/common/zsh_history.sh $HOME/.zsh_history
+msg_ok "$HOME/.zsh_history"
