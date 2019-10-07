@@ -48,4 +48,5 @@ browsers/canary/*
 !browsers/canary/Default/
 browsers/canary/Default/*
 !browsers/canary/Default/Extensions/
+!browsers/canary/Default/Preferences
 browsers/canary/Default/Extensions/Temp/
