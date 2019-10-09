@@ -4,8 +4,6 @@
 source $HOME/.profile
 source $HOME/.bash_profile
 
-fpath=("$HOME/.zfunctions" $fpath)
-
 # Path to your oh-my-zsh installation
 export ZSH=$HOME/.oh-my-zsh
 export ZSH_CUSTOM=$ZSH/custom
@@ -80,6 +78,9 @@ source $HOME/.rvm/scripts/rvm # Source rvm scripts
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+fpath=("$HOME/.zfunctions" $fpath)
+fpath=("/usr/local/share/zsh-completions" $fpath)
 
 # place this after nvm initialization!
 autoload -U add-zsh-hook
