@@ -107,7 +107,6 @@
   "breadcrumbs.enabled": false,
   "eslint.autoFixOnSave": false,
   "eslint.alwaysShowStatus": true,
-  "eslint.enable": false,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -123,9 +122,7 @@
   "javascript.autoClosingTags": true,
   "editor.insertSpaces": false,
   "stylelint.enable": false,
-  "px2rem-plus.comments": true,
   "px2rem-plus.base": 16,
-  "px2rem-plus.leadingZero": true,
   "[scss]": {
     "editor.defaultFormatter": "HookyQR.beautify"
   },
@@ -166,5 +163,9 @@
     "menubar.selectionForeground": "#00BCD4",
     "editor.findMatchBorder": "#00BCD4",
     "selection.background": "#00BCD440"
-  }
+  },
+  "git.ignoreMissingGitWarning": true,
+  "eslint.enable": false,
+  "px2rem-plus.comments": true,
+  "px2rem-plus.leadingZero": true
 }
