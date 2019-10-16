@@ -36,11 +36,18 @@
   },
   {
     "key": "ctrl+alt+p",
-    "command": "extension.transformHtmlToPug",
+    "command": "extension.transformHtmlToPug"
   },
   {
     "key": "cmd+k cmd+l",
     "command": "workbench.action.terminal.clear",
-    "when": "terminalFocus"
+  },
+  {
+    "key": "cmd+k cmd+p",
+    "command": "workbench.action.toggleMaximizedPanel"
+  },
+  {
+    "key": "cmd+k cmd+b",
+    "command": "workbench.action.tasks.build"
   }
 ]
