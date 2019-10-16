@@ -1,0 +1,32 @@
+{
+  "recommendations": [
+    "annsk.alignment",
+    "christian-kohler.npm-intellisense",
+    "dbaeumer.vscode-eslint",
+    "donjayamanne.githistory",
+    "editorconfig.editorconfig",
+    "eg2.vscode-npm-script",
+    "equinusocio.vsc-material-theme",
+    "esbenp.prettier-vscode",
+    "felipecaputo.git-project-manager",
+    "funkyremi.vscode-google-translate",
+    "gamunu.vscode-yarn",
+    "hex-ci.px2rem-plus",
+    "higoka.php-cs-fixer",
+    "hookyqr.beautify",
+    "junstyle.php-cs-fixer",
+    "kenhowardpdx.vscode-gist",
+    "ms-vscode.sublime-keybindings",
+    "msjsdiag.debugger-for-chrome",
+    "nepaul.editorconfiggenerator",
+    "octref.vetur",
+    "pkief.material-icon-theme",
+    "sdras.vue-vscode-snippets",
+    "shardulm94.trailing-spaces",
+    "shinnn.stylelint",
+    "taniarascia.new-moon-vscode",
+    "ue.alphabetical-sorter",
+    "wmaurer.change-case",
+    "zh9528.file-size"
+  ]
+}
