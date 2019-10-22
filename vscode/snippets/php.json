@@ -55,10 +55,13 @@
   "signature": {
     "prefix": "signature",
     "body": [
-      "",
       "<!--",
-      "    Site designed and developed by nandomoreira.me",
-      "    https://twitter.com/oseunando | https://github.com/nandomoreirame",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> site developed by <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~> https://nandomoreira.dev <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~> https://twitter.com/oseunando <~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~> https://github.com/nandomoreirame <~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
       "-->"
     ],
     "description": "signature"

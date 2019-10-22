@@ -1,0 +1,70 @@
+{
+  "v:base": {
+    "prefix": "v:base",
+    "body": [
+      "<template lang=\"${html}\">",
+      "  <div>",
+      "    ${1:Vue Single File Component}",
+      "  </div>",
+      "</template>",
+      "",
+      "<script>",
+      "export default {",
+      "  ${0}",
+      "}",
+      "</script>",
+      "",
+      "<style lang=\"${scss}\" ${scoped}>",
+      "  ${2}",
+      "</style>",
+      ""
+    ],
+    "description": "Base for Vue File with SCSS"
+  },
+  "v:template": {
+    "prefix": "v:template",
+    "body": [
+      "",
+      "<template lang=\"${html}\">",
+      "  <div>",
+      "    ${0:Vue Single File Component}",
+      "  </div>",
+      "</template>",
+      ""
+    ],
+    "description": "Vue Single File Component Template"
+  },
+  "v:script": {
+    "prefix": "v:script",
+    "body": [
+      "",
+      "<script>",
+      "export default {",
+      "${0}",
+      "}",
+      "</script>",
+      ""
+    ],
+    "description": "Vue Single File Component Script"
+  },
+  "v:style": {
+    "prefix": "v:style",
+    "body": [
+      "",
+      "<style lang=\"${scss}\" ${scoped}>",
+      "${0}",
+      "</style>",
+      ""
+    ],
+    "description": "Vue Single File Component Style"
+  },
+  "v:style-src": {
+    "prefix": "v:style",
+    "body": [
+      "",
+      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\"></style>",
+      ""
+    ],
+    "description": "Vue Single File Component Style"
+  }
+}

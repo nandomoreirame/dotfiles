@@ -1,0 +1,76 @@
+{
+  "v:for": {
+    "prefix": "v:for",
+    "body": [
+      "<${1:div} v-for=\"(${2:item}, i) in ${2:item}s\" :key=\"i\">",
+      "  {{ ${2:item} }}",
+      "</${1:div}>"
+    ],
+    "description": "v-for statement"
+  },
+  "v:nuxt": {
+    "prefix": "v:nuxt",
+    "body": [
+      "<nuxt />"
+    ],
+    "description": "nuxt component"
+  },
+  "v:client-only": {
+    "prefix": "v:client-only",
+    "body": [
+      "<client-only ${1:placeholder=\"${2:Loading...}\"}>",
+      "  ${0}",
+      "</client-only>"
+    ],
+    "description": "nuxt client-only component"
+  },
+  "v:router-view": {
+    "prefix": "v:router-view",
+    "body": [
+      "<router-view>$1</router-view>"
+    ],
+    "description": "router-view element"
+  },
+  "v:router-link": {
+    "prefix": "v:router-link",
+    "body": [
+      "<router-link $1>$2</router-link>"
+    ],
+    "description": "router-link element"
+  },
+  "v:router-link-to": {
+    "prefix": "v:router-link",
+    "body": [
+      "<router-link to=\"$1\">$2</router-link>"
+    ],
+    "description": "<router-link to=''></router-link>. router-link element"
+  },
+  "v:nuxt-link": {
+    "prefix": "v:nuxt-link",
+    "body": [
+      "<nuxt-link to=\"/${1:page}\">${1:page}</nuxt-link>"
+    ],
+    "description": "nuxt routing link"
+  },
+  "v:to": {
+    "prefix": "v:to",
+    "body": [
+      "to=\"$1\""
+    ],
+    "description": "to=''"
+  },
+  "v:model": {
+    "prefix": "v:model",
+    "body": [
+      "v-model=\"${0:var}\""
+    ],
+    "description": "v-model "
+  },
+  "v:click": {
+    "prefix": "v:click",
+    "body": [
+      "@click=\"${1:handler}(${2:arg}, $event)\""
+    ],
+    "description": "v-on click handler with arguments"
+  },
+}
