@@ -166,6 +166,5 @@
   },
   "git.ignoreMissingGitWarning": true,
   "eslint.enable": false,
-  "px2rem-plus.comments": true,
-  "px2rem-plus.leadingZero": true
+  "px2rem-plus.comments": true
 }
