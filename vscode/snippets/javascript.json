@@ -313,10 +313,10 @@
     "description": "scripts: vue props",
     "body": [
       "props: {",
-      "  ${0:title}: {",
-      "    type: ${1:String},",
-      "    required: ${2:false},",
-      "    default: ${3:'Hello Props!'},",
+      "  ${1:title}: {",
+      "    type: ${2:String},",
+      "    required: ${3:false},",
+      "    default: ${4:'Hello Props!'},${0}",
       "  },",
       "},"
     ]

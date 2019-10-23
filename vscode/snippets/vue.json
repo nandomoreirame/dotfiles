@@ -2,20 +2,19 @@
   "v:base": {
     "prefix": "v:base",
     "body": [
-      "<template lang=\"${html}\">",
-      "  <div>",
-      "    ${1:Vue Single File Component}",
+      "<template ${1:lang=\"${2:html}\"}>",
+      "  <div class=\"${3:vue-component}\">",
+      "    <h1>${4:Vue Single File Component}</h1>",
       "  </div>",
       "</template>",
       "",
       "<script>",
       "export default {",
-      "  ${0}",
-      "}",
+      "  name: '${7:VueComponent}',${0}",
+      "};",
       "</script>",
       "",
-      "<style lang=\"${scss}\" ${scoped}>",
-      "  ${2}",
+      "<style lang=\"${5:css}\" ${6:scoped}>",
       "</style>",
       ""
     ],
@@ -24,10 +23,9 @@
   "v:template": {
     "prefix": "v:template",
     "body": [
-      "",
-      "<template lang=\"${html}\">",
-      "  <div>",
-      "    ${0:Vue Single File Component}",
+      "<template ${1:lang=\"${2:html}\"}>",
+      "  <div class=\"${3:vue-component}\">",
+      "    <h1>${4:Vue Single File Component}</h1>${0}",
       "  </div>",
       "</template>",
       ""
@@ -37,21 +35,27 @@
   "v:script": {
     "prefix": "v:script",
     "body": [
-      "",
       "<script>",
       "export default {",
-      "${0}",
-      "}",
+      "  name: '${1:VueComponent}',${0}",
+      "};",
       "</script>",
       ""
     ],
     "description": "Vue Single File Component Script"
   },
+  "v:script-src": {
+    "prefix": "v:script",
+    "body": [
+      "<script src=\"./${2:script}.js\" />",
+      ""
+    ],
+    "description": "Vue Single File Component Style"
+  },
   "v:style": {
     "prefix": "v:style",
     "body": [
-      "",
-      "<style lang=\"${scss}\" ${scoped}>",
+      "<style ${1:lang=\"${2:css}\"} ${3:scoped}>",
       "${0}",
       "</style>",
       ""
@@ -61,10 +65,151 @@
   "v:style-src": {
     "prefix": "v:style",
     "body": [
-      "",
-      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\"></style>",
+      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" />",
       ""
     ],
     "description": "Vue Single File Component Style"
+  },
+  "v:logger": {
+    "prefix": "v:logger",
+    "description": "Vue Logger",
+    "body": [
+      "Vue.$${1:log}.${2:error}(${3:'${4:error}',}$0)",
+      ""
+    ]
+  },
+  "v:import": {
+    "prefix": "v:import",
+    "body": [
+      "import ${1:Name} from '@/components/${1:Name}'",
+      ""
+    ],
+    "description": "Vue import component"
+  },
+  "v:x": {
+    "prefix": "v:x",
+    "description": "Vuex start",
+    "body": [
+      "const state = {",
+      "  ${0}",
+      "}",
+      "",
+      "const mutations = {",
+      "}",
+      "",
+      "const actions = {",
+      "}",
+      "",
+      "export default {",
+      "  namespaced: true,",
+      "  state,",
+      "  mutations,",
+      "  actions",
+      "}",
+      ""
+    ]
+  },
+  "v:state": {
+    "prefix": "v:state",
+    "description": "Vuex state",
+    "body": [
+      "export const state = () => ({",
+      "  ${1:loading}: ${2:false},",
+      "});",
+      ""
+    ]
+  },
+  "v:data": {
+    "prefix": "v:data",
+    "description": "Vue data",
+    "body": [
+      "data() {",
+      "  return {",
+      "    ${0:title}: ${1:'Hello World!'},",
+      "  };",
+      "},"
+    ]
+  },
+  "v:data-arrow": {
+    "prefix": "v:data",
+    "description": "Vue data arrow function",
+    "body": [
+      "data: () => ({",
+      "  ${0:title}: ${1:'Hello World!'},",
+      "}),"
+    ]
+  },
+  "v:asyncData": {
+    "prefix": "v:asyncData",
+    "description": "Nuxt asyncData arrow function",
+    "body": [
+      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
+      "  return {",
+      "    ${0:title: 'Hello World!'},",
+      "  };",
+      "},"
+    ]
+  },
+  "v:fetch": {
+    "prefix": "v:fetch",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "fetch({ store, params }) {",
+      "  return http.get('/end/point')",
+      "    .then((res) => {",
+      "      store.commit('setStars', res.data)",
+      "    });",
+      "},"
+    ]
+  },
+  "v:fetch-async": {
+    "prefix": "v:fetch:async",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "async fetch({ store, params }) {",
+      "  let { data } = await http.get('/end/point')",
+      "  store.commit('setStars', data)",
+      "},"
+    ]
+  },
+  "v:components": {
+    "prefix": "v:components",
+    "description": "scripts: vue components",
+    "body": [
+      "components: {",
+      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
+      "},"
+    ]
+  },
+  "v:methods": {
+    "prefix": "v:methods",
+    "description": "scripts: vue methods",
+    "body": [
+      "methods: {",
+      "  ${0}",
+      "},"
+    ]
+  },
+  "v:computed": {
+    "prefix": "v:computed",
+    "description": "scripts: vue computed",
+    "body": [
+      "computed: {",
+      "  ${0}",
+      "},"
+    ]
+  },
+  "v:props": {
+    "prefix": "v:props",
+    "description": "scripts: vue props",
+    "body": [
+      "props: {",
+      "  ${1:title}: {",
+      "    type: ${2:String},",
+      "    required: ${3:false},",
+      "    default: ${4:'Hello Props!'},${0}",
+      "  },",
+      "},"
+    ]
   }
 }

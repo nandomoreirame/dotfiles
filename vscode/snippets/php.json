@@ -1,50 +1,57 @@
 {
-   "Print pre to debug": {
+  "php1": {
+    "prefix": "php",
+    "body": [
+      "<?php",
+      "${0}"
+    ],
+    "description": "php"
+  },
+  "php2": {
+    "prefix": "php",
+    "body": [
+      "<?php ${0}; ?>"
+    ],
+    "description": "PHP Tags"
+  },
+  "phpe": {
+    "prefix": "php:e",
+    "body": [
+      "<?= $1; ?>"
+    ],
+    "description": "PHP echo"
+  },
+  "prp": {
     "prefix": "prp",
     "body": [
-      "echo '<pre>' . print_r( $1, true ) . '</pre>$2';"
+      "echo '<pre>' . print_r( ${0}, true ) . '</pre>';"
     ],
     "description": "Print pre to debug"
   },
-   "convert and print array to json and die": {
-    "prefix": "jdie",
+  "php:jdie": {
+    "prefix": "php:jdie",
     "body": [
       "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));"
     ],
     "description": "convert and print array to json and die"
   },
-   "PHP Var": {
-    "prefix": "v",
+  "php:var": {
+    "prefix": "php:var",
     "body": [
       "$${1:var}"
     ],
     "description": "PHP Var"
   },
-   "php": {
-    "prefix": "php",
-    "body": [
-      "<?php",
-      ""
-    ],
-    "description": "php"
-  },
-   "PHP echo short tags": {
-    "prefix": "phpecho",
-    "body": [
-      "<?= $${1:var}; ?>"
-    ],
-    "description": "PHP echo short Tags"
-  },
-   "PHP view if": {
-    "prefix": "phpif",
+  "php:if": {
+    "prefix": "php:if",
     "body": [
       "<?php if ($${1:var}): ?>",
       "<?php endif; ?>"
     ],
     "description": "PHP view if"
   },
-   "PHP view ifelse": {
-    "prefix": "phpif",
+  "php:if-else": {
+    "prefix": "php:if",
     "body": [
       "<?php if ($${1:var}): ?>",
       "<?php else: ?>",
@@ -52,48 +59,36 @@
     ],
     "description": "PHP view ifelse"
   },
-  "signature": {
-    "prefix": "signature",
+  "php:class": {
+    "prefix": "php:class",
     "body": [
-      "<!--",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> site developed by <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~> https://nandomoreira.dev <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~> https://twitter.com/oseunando <~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~> https://github.com/nandomoreirame <~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "-->"
-    ],
-    "description": "signature"
-  },
-  "class": {
-    "prefix": "class",
-    "body": [
-      "",
       "namespace ${1:App};",
       "",
-      "class ${2:ClassName} ${3:extends AnotherClass}",
+      "class ${2:ClassName}${3: extends AnotherClass}",
       "{",
+      "${0}",
       "}",
       ""
     ],
     "description": "PHP class"
   },
-  "namespace": {
-    "prefix": "namespace",
+  "php:namespace": {
+    "prefix": "php:namespace",
     "body": [
-      "namespace ${1:App};"
+      "namespace ${1:App};${0}",
+      ""
     ],
-    "description": "namespace"
+    "description": "PHP namespace"
   },
-  "function": {
-    "prefix": "function",
+  "php:function": {
+    "prefix": "php:function",
     "body": [
       "public function ${1:__construct}()",
       "{",
+      "${0}",
       "}",
       ""
     ],
-    "description": "namespace"
+    "description": "PHP function"
   }
 }

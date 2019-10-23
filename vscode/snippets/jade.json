@@ -1,13 +1,13 @@
 {
-  "Image placeholder": {
-    "prefix": "imgp",
+  "img:placehold": {
+    "prefix": "img:placehold",
     "body": [
       "img(src=\"//placehold.it/${1:350}x${2:150}\" alt=\"$3\")"
     ],
     "description": "img tag with placehold.it"
   },
-  "image with lorempixel.com": {
-    "prefix": "imgl",
+  "img:lorempixel": {
+    "prefix": "img:lorempixel",
     "body": [
       "img(src=\"//lorempixel.com/${1:300}/${2:150}\" alt=\"$3\")"
     ],

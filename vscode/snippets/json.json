@@ -1,0 +1,12 @@
+{
+  "json": {
+    "prefix": "json",
+    "body": [
+      "{",
+      "  ${0}",
+      "}",
+      ""
+    ],
+    "description": "Create empty json"
+  }
+}

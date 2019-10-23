@@ -72,5 +72,5 @@
       "@click=\"${1:handler}(${2:arg}, $event)\""
     ],
     "description": "v-on click handler with arguments"
-  },
+  }
 }

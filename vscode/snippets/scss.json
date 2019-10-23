@@ -1,6 +1,6 @@
 {
-  "include mixin media": {
-    "prefix": "media",
+  "scss:media": {
+    "prefix": "scss:media",
     "body": [
       "@include media(${1:min-width }${2:$}${3:breakpoint-md}) {",
       "  $0",

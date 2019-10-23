@@ -1,0 +1,33 @@
+{
+  "img:placehold": {
+    "scope": "html,php,vue,vue-html,javascript",
+    "prefix": "img:placehold",
+    "body": [
+      "<img src=\"//placehold.it/${1:350}x${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:placehold.it}\">"
+    ],
+    "description": "img tag with placehold.it"
+  },
+  "img:lorempixel": {
+    "scope": "html,php,vue,vue-html,javascript",
+    "prefix": "img:lorempixel",
+    "body": [
+      "<img src=\"//lorempixel.com/${1:300}/${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:lorempixel.com}\">"
+    ],
+    "description": "Add placeholder image with lorempixel.com"
+  },
+  "signature": {
+    "scope": "html,php,vue,vue-html,javascript",
+    "prefix": "signature",
+    "body": [
+      "<!--",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> site developed by <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~> https://nandomoreira.dev <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~> https://twitter.com/oseunando <~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~> https://github.com/nandomoreirame <~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "-->"
+    ],
+    "description": "signature by nandomoreira.me"
+  }
+}
