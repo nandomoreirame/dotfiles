@@ -3,6 +3,7 @@
 @vue/cli
 @vue/cli-init
 browser-sync
+cordova
 cowsay
 create-nuxt-app
 create-react-app
@@ -22,6 +23,7 @@ github-labels
 gitignore
 gulp
 http-server
+ios-deploy
 lighthouse
 netlify-cli
 npx
