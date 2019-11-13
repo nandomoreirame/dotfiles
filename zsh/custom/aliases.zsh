@@ -88,8 +88,11 @@ alias c="code"
 alias ci="code-insiders"
 
 # android
+# alias sdkmanager="$HOME/Library/Android/sdk/tools/bin/sdkmanager"
+# alias avdmanager="$HOME/Library/Android/sdk/tools/bin/avdmanager"
 alias android-emulator="$HOME/Library/Android/sdk/tools/emulator"
 alias ae="android-emulator"
+alias cdv="cordova"
 
 # docker
 alias d="docker"
