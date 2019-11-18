@@ -44,14 +44,14 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/openssl/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl/include"
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
-
-# MySQL
-export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
-
+export OPENSSL_CONF="/usr/local/etc/openssl@1.1/openssl.cnf"
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 # export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
 # export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
 # export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+
+# MySQL
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
@@ -84,6 +84,12 @@ fi
 export PATH="/usr/local/opt/openldap/bin:$PATH"
 export PATH="/usr/local/opt/openldap/sbin:$PATH"
 export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
+
+# brew install --HEAD libimobiledevice
+export PATH="/usr/local/opt/libxml2/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/libxml2/lib"
+export CPPFLAGS="-I/usr/local/opt/libxml2/include"
+export PKG_CONFIG_PATH="/usr/local/opt/libxml2/lib/pkgconfig"
 
 # rvm
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
@@ -123,4 +129,4 @@ autoload -U promptinit; promptinit
 prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay -r "Hey ho, let's go!" # need cowsay `npm i -g cowsay`
+cowsay -f "$HOME/dotfiles/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
