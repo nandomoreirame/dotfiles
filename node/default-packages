@@ -23,7 +23,6 @@ github-labels
 gitignore
 gulp
 http-server
-ios-deploy
 lighthouse
 netlify-cli
 npx
