@@ -1,26 +1,4 @@
 {
-  "php1": {
-    "prefix": "php",
-    "body": [
-      "<?php",
-      "${0}"
-    ],
-    "description": "php"
-  },
-  "php2": {
-    "prefix": "php",
-    "body": [
-      "<?php ${0}; ?>"
-    ],
-    "description": "PHP Tags"
-  },
-  "phpe": {
-    "prefix": "php:e",
-    "body": [
-      "<?= $1; ?>"
-    ],
-    "description": "PHP echo"
-  },
   "prp": {
     "prefix": "prp",
     "body": [
@@ -41,23 +19,6 @@
       "$${1:var}"
     ],
     "description": "PHP Var"
-  },
-  "php:if": {
-    "prefix": "php:if",
-    "body": [
-      "<?php if ($${1:var}): ?>",
-      "<?php endif; ?>"
-    ],
-    "description": "PHP view if"
-  },
-  "php:if-else": {
-    "prefix": "php:if",
-    "body": [
-      "<?php if ($${1:var}): ?>",
-      "<?php else: ?>",
-      "<?php endif; ?>"
-    ],
-    "description": "PHP view ifelse"
   },
   "php:class": {
     "prefix": "php:class",
