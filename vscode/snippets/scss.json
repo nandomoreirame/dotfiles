@@ -4,8 +4,19 @@
     "body": [
       "@include media(${1:min-width }${2:$}${3:breakpoint-md}) {",
       "  $0",
-      "}"
+      "}",
+      ""
     ],
     "description": "include sass mixin media query"
+  },
+  "css:class": {
+    "prefix": ".class",
+    "body": [
+      ".${1:class} {",
+      "  $0",
+      "}",
+      ""
+    ],
+    "description": "css class"
   }
 }
