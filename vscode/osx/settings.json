@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite the default settings
 {
-  "editor.fontFamily": "Fira Code, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "FiraFlott, Fira Code, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
