@@ -152,8 +152,8 @@
   "wp:template_part": {
     "prefix": "wp:template_part",
     "body": [
-      "<!-- // Include the page content template. -->",
-      "<?php get_template_part( 'content', 'page' ); ?>",
+      "<!-- // Include the page ${1:inc/site}-${2:content}.php template. -->",
+      "<?php get_template_part( '${1:inc/site}', ${3:'${2:content}'} );${0} ?>",
     ],
     "description": "WordPress get_template_part"
   },
