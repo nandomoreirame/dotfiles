@@ -70,3 +70,4 @@ bower_components
 .env
 
 cert.pem
+aws.sh
