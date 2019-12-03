@@ -143,6 +143,8 @@
   "npm.bin": "yarn",
   "eslint.packageManager": "yarn",
   "workbench.colorCustomizations": {
+    "window.activeBorder": "#212121",
+    "window.inactiveBorder": "#787878",
     "activityBarBadge.background": "#00BCD4",
     "list.activeSelectionForeground": "#00BCD4",
     "list.inactiveSelectionForeground": "#00BCD4",
