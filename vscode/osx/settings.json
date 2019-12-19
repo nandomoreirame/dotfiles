@@ -11,7 +11,7 @@
   "editor.fontLigatures": true,
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.snippetSuggestions": "top",
-  "editor.autoIndent": false,
+  "editor.autoIndent": "none",
   "editor.fontWeight": "400",
   "editor.quickSuggestionsDelay": 5,
   "editor.formatOnPaste": false,
@@ -57,7 +57,8 @@
     "html": "html",
     "erb": "html",
     "edge": "html",
-    "javascript": "javascriptreact",
+    "javascript": "css",
+    "ts": "javascript",
     "vue": "html",
     "gs": "javascript",
     "vue-html": "html",
@@ -76,7 +77,7 @@
   "search.useGlobalIgnoreFiles": false,
   "search.collapseResults": "alwaysCollapse",
   "search.exclude": {
-    "build": true,
+    "**/build": true,
     ".temp": true,
     "temp": true,
     ".tmp": true,
@@ -106,10 +107,11 @@
   "extensions.ignoreRecommendations": true,
   "php-cs-fixer.executablePath": "/usr/local/bin/php-cs-fixer",
   "breadcrumbs.enabled": false,
-  "eslint.autoFixOnSave": false,
   "eslint.alwaysShowStatus": true,
   "eslint.validate": [
     "javascript",
+    "ts",
+    "typescript",
     "javascriptreact",
     "vue"
   ],
@@ -135,7 +137,6 @@
   "editor.formatOnType": false,
   "terminal.integrated.shell.osx": "/bin/zsh",
   "files.eol": "\n",
-  "files.insertFinalNewline": true,
   "materialTheme.accent": "Cyan",
   "workbench.iconTheme": "material-icon-theme",
   "yarn.runInTerminal": true,
@@ -173,5 +174,8 @@
   "diffEditor.ignoreTrimWhitespace": true,
   "workbench.startupEditor": "newUntitledFile",
   "javascript.validate.enable": false,
-  "typescript.validate.enable": false
+  "typescript.validate.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": false
+  }
 }
