@@ -25,7 +25,6 @@ gulp
 http-server
 lighthouse
 netlify-cli
-npx
 react-native-cli
 rimraf
 spaceship-prompt
