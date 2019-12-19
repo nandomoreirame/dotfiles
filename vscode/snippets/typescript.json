@@ -1,0 +1,324 @@
+{
+  "const": {
+    "prefix": "const",
+    "description": "Create const",
+    "body": [
+      "const ${1:varHere} = $0;",
+      ""
+    ]
+  },
+  "const-afunction": {
+    "prefix": "const:arrow-function",
+    "description": "Create arrow function",
+    "body": [
+      "const ${1:functionHere} = ($2) => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "const-afunction2": {
+    "prefix": "const:arrow-function",
+    "description": "const function",
+    "body": [
+      "const ${functionHere} = () => {",
+      "  return {$0}",
+      "}",
+      ""
+    ]
+  },
+  "function =>": {
+    "prefix": "function =>",
+    "description": "Arrow function",
+    "body": [
+      "($1) => {",
+      "  $0",
+      "}"
+    ]
+  },
+  "import": {
+    "prefix": "import",
+    "description": "Node module import from",
+    "body": [
+      "import ${Module} from '${module}'",
+      ""
+    ]
+  },
+  "require": {
+    "prefix": "require",
+    "description": "Node module require",
+    "body": [
+      "${const} ${Module} = require('${module}')",
+      ""
+    ]
+  },
+  "jq:function": {
+    "prefix": "jq:function",
+    "description": "auto executable function",
+    "body": [
+      "(function(${1:$}) {",
+      "  ${0:// Do something here...}",
+      "})(${jQuery})",
+      ""
+    ]
+  },
+  "jq:function-app": {
+    "prefix": "jq:function-app",
+    "description": "jQuery app function",
+    "body": [
+      "var app = app || {}",
+      "",
+      "app.general = (function (${1:$}) {",
+      "  'use strict'",
+      "",
+      "  var config = {}",
+      "",
+      "  function init () {",
+      "    console.info('[init]', config)",
+      "  }",
+      "",
+      "  return {",
+      "    init: init",
+      "  }",
+      "})(${jQuery})",
+      ""
+    ]
+  },
+  "console": {
+    "prefix": "clog",
+    "description": "Log output to console",
+    "body": [
+      "console.${2:log}(${1:var})"
+    ]
+  },
+  "console:block": {
+    "prefix": "console:block",
+    "description": "console.log()",
+    "body": [
+      "console.log('\\n\\n------ begin: $1 ------')",
+      "console.log(${0:''})",
+      "console.log('------ end: $1 ------\\n\\n')"
+    ]
+  },
+  "console.log": {
+    "prefix": "console.log",
+    "body": [
+      "console.log('${1:tag}', ${0:''})"
+    ],
+    "description": "console.log()"
+  },
+  "console.info": {
+    "prefix": "console.info",
+    "body": [
+      "console.info('${1:tag}', ${0:''})"
+    ],
+    "description": "console.info()"
+  },
+  "console.warn": {
+    "prefix": "console.warn",
+    "body": [
+      "console.warn('${1:tag}', ${0:''})"
+    ],
+    "description": "console.warn()"
+  },
+  "console.error": {
+    "prefix": "console.error",
+    "body": [
+      "console.error('${1:tag}', ${0:''})"
+    ],
+    "description": "console.error()"
+  },
+  "export:default": {
+    "prefix": "export",
+    "description": "export default",
+    "body": [
+      "export default {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "g:logger": {
+    "prefix": "g:logger",
+    "description": "GAS Logger.log",
+    "body": [
+      "Logger.log($0)",
+      ""
+    ]
+  },
+  "http:get": {
+    "prefix": "http:get",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http:post": {
+    "prefix": "http:post",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "promise": {
+    "prefix": "promise",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
+  },
+  "v:logger": {
+    "prefix": "v:logger",
+    "description": "Vue Logger",
+    "body": [
+      "Vue.$${1:log}.${2:error}(${3:'${4:error}',}$0)",
+      ""
+    ]
+  },
+  "v:import": {
+    "prefix": "v:import",
+    "body": [
+      "import ${1:Name} from '@/components/${1:Name}'",
+      ""
+    ],
+    "description": "Vue import component"
+  },
+  "v:x": {
+    "prefix": "v:x",
+    "description": "Vuex start",
+    "body": [
+      "const state = {",
+      "  ${0}",
+      "}",
+      "",
+      "const mutations = {",
+      "}",
+      "",
+      "const actions = {",
+      "}",
+      "",
+      "export default {",
+      "  namespaced: true,",
+      "  state,",
+      "  mutations,",
+      "  actions",
+      "}",
+      ""
+    ]
+  },
+  "v:state": {
+    "prefix": "v:state",
+    "description": "Vuex state",
+    "body": [
+      "export const state = () => ({",
+      "  ${1:loading}: ${2:false},",
+      "});",
+      ""
+    ]
+  },
+  "v:data": {
+    "prefix": "v:data",
+    "description": "Vue data",
+    "body": [
+      "data() {",
+      "  return {",
+      "    ${0:title}: ${1:'Hello World!'},",
+      "  };",
+      "},"
+    ]
+  },
+  "v:data-arrow": {
+    "prefix": "v:data",
+    "description": "Vue data arrow function",
+    "body": [
+      "data: () => ({",
+      "  ${0:title}: ${1:'Hello World!'},",
+      "}),"
+    ]
+  },
+  "v:asyncData": {
+    "prefix": "v:asyncData",
+    "description": "Nuxt asyncData arrow function",
+    "body": [
+      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
+      "  return {",
+      "    ${0:title: 'Hello World!'},",
+      "  };",
+      "},"
+    ]
+  },
+  "v:fetch": {
+    "prefix": "v:fetch",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "fetch({ store, params }) {",
+      "  return http.get('/end/point')",
+      "    .then((res) => {",
+      "      store.commit('setStars', res.data)",
+      "    });",
+      "},"
+    ]
+  },
+  "v:fetch-async": {
+    "prefix": "v:fetch:async",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "async fetch({ store, params }) {",
+      "  let { data } = await http.get('/end/point')",
+      "  store.commit('setStars', data)",
+      "},"
+    ]
+  },
+  "v:components": {
+    "prefix": "v:components",
+    "description": "scripts: vue components",
+    "body": [
+      "components: {",
+      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
+      "},"
+    ]
+  },
+  "v:methods": {
+    "prefix": "v:methods",
+    "description": "scripts: vue methods",
+    "body": [
+      "methods: {",
+      "  ${0}",
+      "},"
+    ]
+  },
+  "v:computed": {
+    "prefix": "v:computed",
+    "description": "scripts: vue computed",
+    "body": [
+      "computed: {",
+      "  ${0}",
+      "},"
+    ]
+  },
+  "v:props": {
+    "prefix": "v:props",
+    "description": "scripts: vue props",
+    "body": [
+      "props: {",
+      "  ${1:title}: {",
+      "    type: ${2:String},",
+      "    required: ${3:false},",
+      "    default: ${4:'Hello Props!'},${0}",
+      "  },",
+      "},"
+    ]
+  }
+}
