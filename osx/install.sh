@@ -1,8 +1,13 @@
 #!/bin/bash
 
-  # Installing dependencies for OS
-  msg_installing "dependencies for OSx..."
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
-~/dotfiles/osx/brew.sh
-~/dotfiles/osx/cask.sh
-~/dotfiles/osx/defaults.sh
+# Installing dependencies for OS
+running "dependencies for OSx..."
+
+$DOTFILES/osx/brew.sh
+$DOTFILES/osx/cask.sh
+$DOTFILES/osx/defaults.sh
+
+bot ""

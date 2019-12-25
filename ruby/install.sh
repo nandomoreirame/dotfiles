@@ -1,4 +1,4 @@
 #!/bin/bash
 
-~/dotfiles/ruby/rvm.sh
-~/dotfiles/ruby/gems.sh
+$DOTFILES/ruby/rvm.sh
+$DOTFILES/ruby/gems.sh

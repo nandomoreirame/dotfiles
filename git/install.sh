@@ -1,11 +1,14 @@
 #!/bin/bash
 # Personal information in your .gitlocal, not .gitconfig!
 
-source "$HOME/dotfiles/common/functions.sh"
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
-msg_installing "Linking Git dotfiles..."
+running "Linking Git .dotfiles..."
 
 rm -rf $HOME/.gitconfig $HOME/.gitattributes $HOME/.gitignore_global
-ln -s $HOME/dotfiles/git/config $HOME/.gitconfig
-ln -s $HOME/dotfiles/git/attributes $HOME/.gitattributes
-ln -s $HOME/dotfiles/git/ignore_global $HOME/.gitignore_global
+ln -s $DOTFILES/git/config $HOME/.gitconfig
+ln -s $DOTFILES/git/attributes $HOME/.gitattributes
+ln -s $DOTFILES/git/ignore_global $HOME/.gitignore_global
+
+ok ""
