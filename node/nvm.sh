@@ -1,28 +1,29 @@
 #!/bin/bash
 
-source "$HOME/dotfiles/common/functions.sh"
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
 NODE_VERSION=10
 NVM_FOLDER="$HOME/.nvm"
-NVMRC_FILE="$HOME/dotfiles/.nvmrc"
+NVMRC_FILE="$DOTFILES/.nvmrc"
 
-rm -rf $NVMRC_FILE
+rm -rf $NVMRC_FILE $HOME/.nvmrc
 echo "$NODE_VERSION" > $NVMRC_FILE
 ln -s $NVMRC_FILE $HOME/.nvmrc
-msg_ok "$NVMRC_FILE"
+ok "$NVMRC_FILE"
 
 if [ -d $NVM_FOLDER  ]
 then
-  echo "Directory $NVM_FOLDER exists!"
+  ok "The directory $NVM_FOLDER already exists!"
 else
-  msg_installing "nvm"
+  running "Instalando NVM..."
   curl -o- -s https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-  msg_installed "nvm"
+  ok "nvm"
 
   # nvm
   if test $(which nvm)
   then
-    msg_checking "nvm"
+    bot "NVM installed!"
     nvm install $NODE_VERSION
     nvm use
     nvm alias default $NODE_VERSION

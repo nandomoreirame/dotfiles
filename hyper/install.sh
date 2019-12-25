@@ -1,8 +1,10 @@
 #!/bin/bash
 # Personal information in your .gitlocal, not .gitconfig!
 
-source "$HOME/dotfiles/common/functions.sh"
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
 rm -rf $HOME/.hyper.js
-ln -s $HOME/dotfiles/hyper/hyper.js $HOME/.hyper.js
-msg_installing "Linking $HOME/.hyper.js"
+ln -s $DOTFILES/hyper/hyper.js $HOME/.hyper.js
+running "Linking $HOME/.hyper.js"
+bot ""

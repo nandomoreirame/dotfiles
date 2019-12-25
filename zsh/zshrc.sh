@@ -1,6 +1,9 @@
 # First, load bash files.
 . ~/.bashrc
 
+export DOTFILES="$HOME/.dotfiles"
+export SPACESHIP_ROOT="$DOTFILES/zsh/custom/themes/spaceship-prompt"
+
 source $HOME/.profile
 source $HOME/.bash_profile
 
@@ -129,4 +132,4 @@ autoload -U promptinit; promptinit
 prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay -f "$HOME/dotfiles/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
+cowsay -f "$DOTFILES/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`

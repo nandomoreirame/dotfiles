@@ -52,7 +52,7 @@ alias projects="~/Sites/projects"
 alias dl="~/Downloads"
 alias dt="cd ~/Desktop"
 alias apps="/Applications"
-alias fl="~/dotfiles"
+alias fl="$DOTFILES"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
@@ -221,5 +221,3 @@ alias sshcopy="pbcopy < ~/.ssh/id_rsa.pub"
 
 # ssh add id_sra and ssh keyscan for bitbucket
 alias ssid='ssh-add ~/.ssh/id_rsa && ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts'
-
-source "$HOME/dotfiles/zsh/custom/aliases-local.sh"
