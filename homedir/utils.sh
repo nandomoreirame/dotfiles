@@ -1,24 +1,25 @@
 #!/bin/bash
 
-source "$HOME/dotfiles/common/functions.sh"
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
 update () {
-  msg_updating "Updating OS..."
+  running "Updating OS..."
   sudo apt-get update -qqy
 }
 
 upgrade () {
-  msg_updating "Upgrading OS..."
+  running "Upgrading OS..."
   export DEBIAN_FRONTEND="noninteractive" \
     && sudo apt-get -o Dpkg::Options::="--force-confnew" upgrade -qqy
 }
 
 install_package () {
-  msg_installing "$1..."
+  running "$1..."
   sudo apt-get install $1 -qqy
 }
 
 add_repository () {
-  msg_installing "$1..."
+  running "$1..."
   sudo add-apt-repository $1 -qqy
 }

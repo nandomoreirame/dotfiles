@@ -33,7 +33,7 @@ adjust_extension = on
 # Ignore `robots.txt` and `<meta name=robots content=nofollow>`
 robots = off
 
-# Print the HTTP and FTP server responses
+# bot the HTTP and FTP server responses
 server_response = on
 
 # Disguise as IE 9 on Windows 7

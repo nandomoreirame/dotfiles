@@ -3,12 +3,9 @@
 # Ask for the administrator password upfront
 sudo -v
 
-if [ -x "functions.sh" ]; then
-  . "functions.sh" || exit 1
-fi
+source "`dirname $0`"/../lib/colors.sh
+source "`dirname $0`"/../lib/enviroments.sh
 
-source "$HOME/dotfiles/common/functions.sh"
-
-msg_installing "programs using Homebrew-cask..."
-brew cask install $(cat ~/dotfiles/osx/brewcask | grep -v "#")
-msg_ok $(cat ~/dotfiles/osx/brewcask | grep -v "#")
+running "programs using Homebrew-cask..."
+brew cask install $(cat $DOTFILES/osx/brewcask | grep -v "#")
+ok $(cat $DOTFILES/osx/brewcask | grep -v "#")
