@@ -1,0 +1,14 @@
+##
+## Seal
+## (c) hi@nandomoreira.dev
+##  ______________________________
+## < Véi, na boa. Foca no código! >
+##  ------------------------------
+##    \
+##  \[._.]/
+##
+$the_cow = <<EOC;
+   $thoughts
+ \[._.]/
+
+EOC
