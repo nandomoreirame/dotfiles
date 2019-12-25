@@ -132,4 +132,5 @@ autoload -U promptinit; promptinit
 prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay -f "$DOTFILES/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
+# cowsay -f "$DOTFILES/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
+cowsay -f "$DOTFILES/cowsay/bot.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`

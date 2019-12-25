@@ -76,3 +76,5 @@ main() {
 }
 
 main "$@"
+
+bot "All done"
