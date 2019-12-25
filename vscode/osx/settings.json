@@ -177,5 +177,7 @@
   "typescript.validate.enable": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": false
-  }
+  },
+  "eslint.migration.2_x": "off",
+  "prettier.ignorePath": ".gitignore,.prettierignore"
 }
