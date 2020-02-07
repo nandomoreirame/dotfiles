@@ -1,12 +1,12 @@
 // Place your settings in this file to overwrite the default settings
 {
-  "editor.fontFamily": "FiraFlott, Fira Code, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "Fira Code, FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
   "editor.renderWhitespace": "all",
-  "editor.fontSize": 12,
-  "editor.lineHeight": 24,
+  "editor.fontSize": 11,
+  "editor.lineHeight": 22,
   "editor.tabCompletion": "on",
   "editor.fontLigatures": true,
   "editor.multiCursorModifier": "ctrlCmd",
@@ -137,9 +137,7 @@
   "editor.formatOnType": false,
   "terminal.integrated.shell.osx": "/bin/zsh",
   "files.eol": "\n",
-  "materialTheme.accent": "Cyan",
   "workbench.iconTheme": "material-icon-theme",
-  "yarn.runInTerminal": true,
   "npm.packageManager": "yarn",
   "npm.bin": "yarn",
   "eslint.packageManager": "yarn",
@@ -179,5 +177,8 @@
     "source.fixAll.eslint": false
   },
   "eslint.migration.2_x": "off",
-  "prettier.ignorePath": ".gitignore,.prettierignore"
+  "prettier.ignorePath": ".gitignore,.prettierignore",
+  "material-icon-theme.activeIconPack": "vue_vuex",
+  "materialTheme.accent": "Yellow",
+  "liveServer.settings.donotShowInfoMsg": true
 }

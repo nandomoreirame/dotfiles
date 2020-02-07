@@ -134,7 +134,7 @@
 [user]
   email = nandomoreira.me@gmail.com
   name = Fernando Moreira
-  signingkey = 07F1993864840A9E
+  signingkey = 165A631B806A8D7B
 
 [commit]
   gpgsign = true
@@ -151,11 +151,3 @@
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
-
-[difftool "sourcetree"]
-  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path =
-
-[mergetool "sourcetree"]
-  cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-  trustExitCode = true
