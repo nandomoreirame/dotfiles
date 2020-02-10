@@ -72,7 +72,6 @@
     "vue": "html",
     "erb": "html"
   },
-  "search.location": "panel",
   "search.useIgnoreFiles": true,
   "search.useGlobalIgnoreFiles": false,
   "search.collapseResults": "alwaysCollapse",
