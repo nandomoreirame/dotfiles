@@ -369,5 +369,57 @@
       "  },",
       "},"
     ]
+  },
+  "react:base:class": {
+    "prefix": "react:base",
+    "description": "React class base component",
+    "body": [
+      "import React, { Component } from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "class ${1:ComponentName} extends Component {",
+      "  static propTypes = {",
+      "    ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "  }",
+      "",
+      "  constructor(props) {",
+      "    super(props)",
+      "  }",
+      "",
+      "  render() {",
+      "    return (",
+      "      <>",
+      "        {${2:children}}${0}",
+      "      </>",
+      "    );",
+      "  };",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
+  },
+  "react:base:stateless": {
+    "prefix": "react:base",
+    "description": "React stateless base component",
+    "body": [
+      "import React from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "const ${1:ComponentName} = ({ ${2:children} }) => {",
+      "  return (",
+      "    <>",
+      "      {${2:children}}${0}",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "${1:ComponentName}.propTypes = {",
+      "  ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
   }
 }

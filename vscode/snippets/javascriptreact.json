@@ -1,92 +1,251 @@
 {
-  "export default React component": {
-    "prefix": "exd",
+  "eslint-global": {
+    "prefix": "eslint:global",
+    "description": "Eslint: global",
     "body": [
-      "export default ($1) => {",
-      "  return (",
-      "    $2",
-      "  )",
-      "}"
-    ],
-    "description": "export default React component"
+      "/* global ${1:GlobalVar};*/"
+    ]
   },
-  "Create arrow function": {
-    "prefix": "afunc",
+  "eslint-off": {
+    "prefix": "eslint:off",
+    "description": "Eslint: off",
+    "body": [
+      "/* eslint ${1:eqeqeq}: \"${2:off}\"${3:, ${4:curly}: \"${5:error}\"} $0*/ "
+    ]
+  },
+  "eslint-disable": {
+    "prefix": "eslint:disable",
+    "description": "Eslint: disable",
+    "body": [
+      "/* eslint-disable $0*/"
+    ]
+  },
+  "eslint-enable": {
+    "prefix": "eslint:enable",
+    "description": "Eslint: enable",
+    "body": [
+      "/* eslint-enable */"
+    ]
+  },
+  "eslint-env": {
+    "prefix": "eslint:env",
+    "description": "Eslint: env",
+    "body": [
+      "/* eslint-env $0*/"
+    ]
+  },
+  "eslint-disable-line": {
+    "prefix": "eslint:disable-disable-line",
+    "description": "Eslint: disable line",
+    "body": [
+      "// eslint-disable-line $0"
+    ]
+  },
+  "eslint-disable-next-line": {
+    "prefix": "eslint:disable-next-line",
+    "description": "Eslint: disable next line",
+    "body": [
+      "// eslint-disable-next-line $0"
+    ]
+  },
+  "const": {
+    "prefix": "const",
+    "description": "Create const",
+    "body": [
+      "const ${1:varHere} = $0;",
+      ""
+    ]
+  },
+  "const-afunction": {
+    "prefix": "const:arrow-function",
+    "description": "Create arrow function",
+    "body": [
+      "const ${1:functionHere} = ($2) => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "const-afunction2": {
+    "prefix": "const:arrow-function",
+    "description": "const function",
+    "body": [
+      "const ${functionHere} = () => {",
+      "  return {$0}",
+      "}",
+      ""
+    ]
+  },
+  "function =>": {
+    "prefix": "function =>",
+    "description": "Arrow function",
     "body": [
       "($1) => {",
-      "  $2",
-      "}"
-    ],
-    "description": "Create arrow function"
-  },
-  "Node module import from": {
-    "prefix": "ifrom",
-    "body": [
-      "import ${Module} from '${module}'"
-    ],
-    "description": "Node module import from"
-  },
-  "Node module require": {
-    "prefix": "require",
-    "body": [
-      "${const} ${Module} = require('${module}');"
-    ],
-    "description": "Node module require"
-  },
-  "Create a executable function": {
-    "prefix": "exfunc",
-    "body": [
-      "(function(${$}) {",
-      "  $3",
-      "})(${jQuery});"
-    ],
-    "description": "auto executable function"
-  },
-  "const function": {
-    "prefix": "cfunc",
-    "body": [
-      "const ${Var} = () => {",
-      "  return {$0}",
-      "}"
-    ],
-    "description": "const function"
-  },
-  "Create a jQuery app function": {
-    "prefix": "jfunc",
-    "body": [
-      "var app = app || {};",
-      "",
-      "app.general = (function (${$}) {",
-      "  'use strict';",
-      "",
-      "  var config = {};",
-      "",
-      "  function init () {",
-      "    console.info('[init]', config);",
-      "  }",
-      "",
-      "  return {",
-      "    init: init",
-      "  };",
-      "})(${jQuery});",
-      ""
-    ],
-    "description": "jQuery app function"
-  },
-  "Print to console": {
-    "prefix": "clog",
-    "body": [
-      "console.log(${var})"
-    ],
-    "description": "Log output to console"
-  },
-  "Export default": {
-    "prefix": "edef",
-    "body": [
-      "export default {",
       "  $0",
       "}"
+    ]
+  },
+  "import": {
+    "prefix": "import",
+    "description": "Node module import from",
+    "body": [
+      "import ${Module} from '${module}'",
+      ""
+    ]
+  },
+  "require": {
+    "prefix": "require",
+    "description": "Node module require",
+    "body": [
+      "${const} ${Module} = require('${module}')",
+      ""
+    ]
+  },
+  "console": {
+    "prefix": "clog",
+    "description": "Log output to console",
+    "body": [
+      "console.${2:log}(${1:var})"
+    ]
+  },
+  "console:block": {
+    "prefix": "console:block",
+    "description": "console.log()",
+    "body": [
+      "console.log('\\n\\n------ begin: $1 ------')",
+      "console.log(${0:''})",
+      "console.log('------ end: $1 ------\\n\\n')"
+    ]
+  },
+  "console.log": {
+    "prefix": "console.log",
+    "body": [
+      "console.log('${1:tag}', ${0:''})"
     ],
-    "description": "export default"
+    "description": "console.log()"
+  },
+  "console.info": {
+    "prefix": "console.info",
+    "body": [
+      "console.info('${1:tag}', ${0:''})"
+    ],
+    "description": "console.info()"
+  },
+  "console.warn": {
+    "prefix": "console.warn",
+    "body": [
+      "console.warn('${1:tag}', ${0:''})"
+    ],
+    "description": "console.warn()"
+  },
+  "console.error": {
+    "prefix": "console.error",
+    "body": [
+      "console.error('${1:tag}', ${0:''})"
+    ],
+    "description": "console.error()"
+  },
+  "export:default": {
+    "prefix": "export",
+    "description": "export default",
+    "body": [
+      "export default {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "g:logger": {
+    "prefix": "g:logger",
+    "description": "GAS Logger.log",
+    "body": [
+      "Logger.log($0)",
+      ""
+    ]
+  },
+  "http:get": {
+    "prefix": "http:get",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http:post": {
+    "prefix": "http:post",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "promise": {
+    "prefix": "promise",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
+  },
+  "react:base:class": {
+    "prefix": "react:base",
+    "description": "React class base component",
+    "body": [
+      "import React, { Component } from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "class ${1:ComponentName} extends Component {",
+      "  static propTypes = {",
+      "    ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "  }",
+      "",
+      "  constructor(props) {",
+      "    super(props)",
+      "  }",
+      "",
+      "  render() {",
+      "    return (",
+      "      <>",
+      "        {${2:children}}${0}",
+      "      </>",
+      "    );",
+      "  };",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
+  },
+  "react:base:stateless": {
+    "prefix": "react:base",
+    "description": "React stateless base component",
+    "body": [
+      "import React from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "const ${1:ComponentName} = ({ ${2:children} }) => {",
+      "  return (",
+      "    <>",
+      "      {${2:children}}${0}",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "${1:ComponentName}.propTypes = {",
+      "  ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
   }
 }
