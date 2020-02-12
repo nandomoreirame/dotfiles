@@ -16,7 +16,7 @@
   "editor.quickSuggestionsDelay": 5,
   "editor.formatOnPaste": false,
   "editor.minimap.enabled": false,
-  "workbench.colorTheme": "New Moon",
+  "workbench.colorTheme": "Dracula",
   "workbench.sideBar.location": "left",
   "workbench.panel.defaultLocation": "right",
   "workbench.activityBar.visible": true,
