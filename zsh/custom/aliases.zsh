@@ -140,6 +140,9 @@ alias sb="storybook"
 alias ysb="yarn storybook"
 alias yu="yarn upgrade-interactive --latest"
 
+# npx
+alias npm-check="npx npm-check -u"
+
 # vue
 alias v="vue"
 alias vui="vue ui"
