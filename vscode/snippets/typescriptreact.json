@@ -1,0 +1,239 @@
+{
+  "console": {
+    "prefix": "clog",
+    "description": "Log output to console",
+    "body": [
+      "console.${2:log}(${1:var})"
+    ]
+  },
+  "console:block": {
+    "prefix": "console:block",
+    "description": "console.log()",
+    "body": [
+      "console.log('\\n\\n------ begin: $1 ------')",
+      "console.log(${0:''})",
+      "console.log('------ end: $1 ------\\n\\n')"
+    ]
+  },
+  "export:default": {
+    "prefix": "export",
+    "description": "export default",
+    "body": [
+      "export default {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "http:get": {
+    "prefix": "http:get",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http:post": {
+    "prefix": "http:post",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "promise": {
+    "prefix": "promise",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
+  },
+  "eslint-global": {
+    "prefix": "eslint:global",
+    "description": "Eslint: global",
+    "body": [
+      "/* global ${1:GlobalVar};*/"
+    ]
+  },
+  "eslint-off": {
+    "prefix": "eslint:off",
+    "description": "Eslint: off",
+    "body": [
+      "/* eslint ${1:eqeqeq}: \"${2:off}\"${3:, ${4:curly}: \"${5:error}\"} $0*/ "
+    ]
+  },
+  "eslint-disable": {
+    "prefix": "eslint:disable",
+    "description": "Eslint: disable",
+    "body": [
+      "/* eslint-disable $0*/"
+    ]
+  },
+  "eslint-enable": {
+    "prefix": "eslint:enable",
+    "description": "Eslint: enable",
+    "body": [
+      "/* eslint-enable */"
+    ]
+  },
+  "eslint-env": {
+    "prefix": "eslint:env",
+    "description": "Eslint: env",
+    "body": [
+      "/* eslint-env $0*/"
+    ]
+  },
+  "eslint-disable-line": {
+    "prefix": "eslint:disable-disable-line",
+    "description": "Eslint: disable line",
+    "body": [
+      "// eslint-disable-line $0"
+    ]
+  },
+  "eslint-disable-next-line": {
+    "prefix": "eslint:disable-next-line",
+    "description": "Eslint: disable next line",
+    "body": [
+      "// eslint-disable-next-line $0"
+    ]
+  },
+  "const": {
+    "prefix": "const",
+    "description": "Create const",
+    "body": [
+      "const ${1:varHere} = $0;",
+      ""
+    ]
+  },
+  "const-afunction": {
+    "prefix": "const:arrow-function",
+    "description": "Create arrow function",
+    "body": [
+      "const ${1:functionHere} = ($2) => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "const-afunction2": {
+    "prefix": "const:arrow-function",
+    "description": "const function",
+    "body": [
+      "const ${functionHere} = () => {",
+      "  return {$0}",
+      "}",
+      ""
+    ]
+  },
+  "function =>": {
+    "prefix": "function =>",
+    "description": "Arrow function",
+    "body": [
+      "($1) => {",
+      "  $0",
+      "}"
+    ]
+  },
+  "import": {
+    "prefix": "import",
+    "description": "Node module import from",
+    "body": [
+      "import ${Module} from '${module}'",
+      ""
+    ]
+  },
+  "require": {
+    "prefix": "require",
+    "description": "Node module require",
+    "body": [
+      "${const} ${Module} = require('${module}')",
+      ""
+    ]
+  },
+  "react:base:class": {
+    "prefix": "react:base",
+    "description": "[Class] React base component",
+    "body": [
+      "import React, { Component } from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "class ${1:ComponentName} extends Component {",
+      "  static propTypes = {",
+      "    ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "  }",
+      "",
+      "  constructor(props) {",
+      "    super(props)",
+      "  }",
+      "",
+      "  render() {",
+      "    return (",
+      "      <>",
+      "        {${2:children}}${0}",
+      "      </>",
+      "    );",
+      "  };",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
+  },
+  "react:base:stateless": {
+    "prefix": "react:base",
+    "description": "[PropTypes] React stateless base component",
+    "body": [
+      "import React from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "const ${1:ComponentName} = ({ ${2:children} }) => {",
+      "  return (",
+      "    <>",
+      "      {${2:children}}${0}",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "${1:ComponentName}.propTypes = {",
+      "  ${2:children}: PropTypes.${3:node}${4:.isRequired},",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
+  },
+  "react:base:typescript": {
+    "prefix": "react:base",
+    "description": "[TypesSript] React stateless base component with",
+    "body": [
+      "import React from 'react';",
+      "",
+      "type ${2:ComponentProps} = {",
+      "  title?: string | undefined,",
+      "  children?: React.ReactNode,",
+      "};",
+      "",
+      "const ${1:ComponentName}: React.FC<${2:ComponentProps}> = ({ title, children }: ${2:ComponentProps}) => {",
+      "  return (",
+      "    <>",
+      "      <h1>{title}</h1>",
+      "      {children}${0}",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:ComponentName};",
+      ""
+    ]
+  }
+}
