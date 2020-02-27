@@ -1,215 +1,89 @@
 {
-  "v:base": {
+  "vue:template-base": {
     "prefix": "v:base",
+    "description": "Template Base for Vue",
     "body": [
-      "<template ${1:lang=\"${2:html}\"}>",
-      "  <div class=\"${3:vue-component}\">",
-      "    <h1>${4:Vue Single File Component}</h1>",
+      "<template>",
+      "  <div class=\"${1:ComponentName}\">",
+      "    <h1>${2:Vue Single File Component}</h1>",
       "  </div>",
       "</template>",
       "",
       "<script>",
       "export default {",
-      "  name: '${7:VueComponent}',${0}",
+      "  name: '${1:ComponentName}',${0}",
       "};",
       "</script>",
       "",
-      "<style lang=\"${5:css}\" ${6:scoped}>",
+      "<style lang=\"${3:scss}\" ${4:scoped}>",
+      ".${1:ComponentName} {",
+      "}",
       "</style>",
       ""
-    ],
-    "description": "Base for Vue File with SCSS"
+    ]
   },
-  "v:template": {
+  "vue:template-base-src": {
+    "prefix": "v:base",
+    "description": "[src] Template Base for Vue",
+    "body": [
+      "<script src=\"./${1:script}.js\"></script>",
+      "<style lang=\"${2:scss}\" src=\"./${3:style}.${2:scss}\" ${4:scoped}></style>",
+      "",
+      "<template>",
+      "  <div class=\"${5:ComponentName}\">",
+      "    <h1>${6:Vue Single File Component}</h1>${0}",
+      "  </div>",
+      "</template>",
+      ""
+    ]
+  },
+  "vue:template": {
     "prefix": "v:template",
+    "description": "[template] Vue Single File Component",
     "body": [
-      "<template ${1:lang=\"${2:html}\"}>",
-      "  <div class=\"${3:vue-component}\">",
-      "    <h1>${4:Vue Single File Component}</h1>${0}",
+      "<template>",
+      "  <div class=\"${1:vue-component}\">",
+      "    <h1>${2:Vue Single File Component}</h1>${0}",
       "  </div>",
       "</template>",
       ""
-    ],
-    "description": "Vue Single File Component Template"
+    ]
   },
-  "v:script": {
+  "vue:script": {
     "prefix": "v:script",
+    "description": "[script] Vue Single File Component",
     "body": [
       "<script>",
       "export default {",
-      "  name: '${1:VueComponent}',${0}",
+      "  name: '${1:ComponentName}',${0}",
       "};",
       "</script>",
       ""
-    ],
-    "description": "Vue Single File Component Script"
+    ]
   },
-  "v:script-src": {
+  "vue:script-src": {
     "prefix": "v:script",
+    "description": "[script src] Vue Single File Component",
     "body": [
-      "<script src=\"./${2:script}.js\" />",
-      ""
-    ],
-    "description": "Vue Single File Component Style"
+      "<script src=\"./${1:script}.js\"></script>${0}"
+    ]
   },
-  "v:style": {
+  "vue:style": {
     "prefix": "v:style",
+    "description": "[style] Vue Single File Component",
     "body": [
-      "<style ${1:lang=\"${2:css}\"} ${3:scoped}>",
-      "${0}",
+      "<style ${1:lang=\"${2:scss}\"} ${3:scoped}>",
+      ".${4:ComponentName} {${0}",
+      "}",
       "</style>",
       ""
-    ],
-    "description": "Vue Single File Component Style"
+    ]
   },
-  "v:style-src": {
+  "vue:style-src": {
     "prefix": "v:style",
+    "description": "[style src] Vue Single File Component",
     "body": [
-      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" />",
-      ""
-    ],
-    "description": "Vue Single File Component Style"
-  },
-  "v:logger": {
-    "prefix": "v:logger",
-    "description": "Vue Logger",
-    "body": [
-      "Vue.$${1:log}.${2:error}(${3:'${4:error}',}$0)",
-      ""
-    ]
-  },
-  "v:import": {
-    "prefix": "v:import",
-    "body": [
-      "import ${1:Name} from '@/components/${1:Name}'",
-      ""
-    ],
-    "description": "Vue import component"
-  },
-  "v:x": {
-    "prefix": "v:x",
-    "description": "Vuex start",
-    "body": [
-      "const state = {",
-      "  ${0}",
-      "}",
-      "",
-      "const mutations = {",
-      "}",
-      "",
-      "const actions = {",
-      "}",
-      "",
-      "export default {",
-      "  namespaced: true,",
-      "  state,",
-      "  mutations,",
-      "  actions",
-      "}",
-      ""
-    ]
-  },
-  "v:state": {
-    "prefix": "v:state",
-    "description": "Vuex state",
-    "body": [
-      "export const state = () => ({",
-      "  ${1:loading}: ${2:false},",
-      "});",
-      ""
-    ]
-  },
-  "v:data": {
-    "prefix": "v:data",
-    "description": "Vue data",
-    "body": [
-      "data() {",
-      "  return {",
-      "    ${0:title}: ${1:'Hello World!'},",
-      "  };",
-      "},"
-    ]
-  },
-  "v:data-arrow": {
-    "prefix": "v:data",
-    "description": "Vue data arrow function",
-    "body": [
-      "data: () => ({",
-      "  ${0:title}: ${1:'Hello World!'},",
-      "}),"
-    ]
-  },
-  "v:asyncData": {
-    "prefix": "v:asyncData",
-    "description": "Nuxt asyncData arrow function",
-    "body": [
-      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
-      "  return {",
-      "    ${0:title: 'Hello World!'},",
-      "  };",
-      "},"
-    ]
-  },
-  "v:fetch": {
-    "prefix": "v:fetch",
-    "description": "scripts: Nuxt fetch",
-    "body": [
-      "fetch({ store, params }) {",
-      "  return http.get('/end/point')",
-      "    .then((res) => {",
-      "      store.commit('setStars', res.data)",
-      "    });",
-      "},"
-    ]
-  },
-  "v:fetch-async": {
-    "prefix": "v:fetch:async",
-    "description": "scripts: Nuxt fetch",
-    "body": [
-      "async fetch({ store, params }) {",
-      "  let { data } = await http.get('/end/point')",
-      "  store.commit('setStars', data)",
-      "},"
-    ]
-  },
-  "v:components": {
-    "prefix": "v:components",
-    "description": "scripts: vue components",
-    "body": [
-      "components: {",
-      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
-      "},"
-    ]
-  },
-  "v:methods": {
-    "prefix": "v:methods",
-    "description": "scripts: vue methods",
-    "body": [
-      "methods: {",
-      "  ${0}",
-      "},"
-    ]
-  },
-  "v:computed": {
-    "prefix": "v:computed",
-    "description": "scripts: vue computed",
-    "body": [
-      "computed: {",
-      "  ${0}",
-      "},"
-    ]
-  },
-  "v:props": {
-    "prefix": "v:props",
-    "description": "scripts: vue props",
-    "body": [
-      "props: {",
-      "  ${1:title}: {",
-      "    type: ${2:String},",
-      "    required: ${3:false},",
-      "    default: ${4:'Hello Props!'},${0}",
-      "  },",
-      "},"
+      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" ${3:scoped}></style>${0}"
     ]
   }
 }

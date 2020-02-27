@@ -52,37 +52,18 @@
     "prefix": "const",
     "description": "Create const",
     "body": [
-      "const ${1:varHere} = $0;",
+      "const ${1:varNameHere} = ${0};",
       ""
     ]
   },
-  "const-afunction": {
-    "prefix": "const:arrow-function",
-    "description": "Create arrow function",
+  "arrow": {
+    "prefix": "arrow",
+    "description": "[const] Arrow function",
     "body": [
       "const ${1:functionHere} = ($2) => {",
-      "  ${0:// Do something here...}",
-      "}",
-      ""
-    ]
-  },
-  "const-afunction2": {
-    "prefix": "const:arrow-function",
-    "description": "const function",
-    "body": [
-      "const ${functionHere} = () => {",
       "  return {$0}",
-      "}",
+      "};",
       ""
-    ]
-  },
-  "function =>": {
-    "prefix": "function =>",
-    "description": "Arrow function",
-    "body": [
-      "($1) => {",
-      "  $0",
-      "}"
     ]
   },
   "import": {
@@ -97,38 +78,15 @@
     "prefix": "require",
     "description": "Node module require",
     "body": [
-      "${const} ${Module} = require('${module}')",
-      ""
+      "const ${2:module} = require('${1:module}');${0}"
     ]
   },
-  "jq:function": {
+  "jquery:function": {
     "prefix": "jq:function",
-    "description": "auto executable function",
+    "description": "[jQuery] auto executable function",
     "body": [
       "(function(${1:$}) {",
       "  ${0:// Do something here...}",
-      "})(${jQuery})",
-      ""
-    ]
-  },
-  "jq:function-app": {
-    "prefix": "jq:function-app",
-    "description": "jQuery app function",
-    "body": [
-      "var app = app || {}",
-      "",
-      "app.general = (function (${1:$}) {",
-      "  'use strict'",
-      "",
-      "  var config = {}",
-      "",
-      "  function init () {",
-      "    console.info('[init]', config)",
-      "  }",
-      "",
-      "  return {",
-      "    init: init",
-      "  }",
       "})(${jQuery})",
       ""
     ]
@@ -141,12 +99,22 @@
     ]
   },
   "console:block": {
-    "prefix": "console:block",
-    "description": "console.log()",
+    "prefix": "clog",
+    "description": "Block log output to console",
     "body": [
-      "console.log('\\n\\n------ begin: $1 ------')",
-      "console.log(${0:''})",
-      "console.log('------ end: $1 ------\\n\\n')"
+      "console.log('\\n\\n', '------ BEGIN: ${1:} ------');",
+      "console.log(${2:''});",
+      "console.log('------ END: ${1:} ------', '\\n\\n');"
+    ]
+  },
+  "export": {
+    "prefix": "export",
+    "description": "export",
+    "body": [
+      "export {",
+      "  ${0:// Do something here...}",
+      "};",
+      ""
     ]
   },
   "export:default": {
@@ -155,7 +123,7 @@
     "body": [
       "export default {",
       "  ${0:// Do something here...}",
-      "}",
+      "};",
       ""
     ]
   },
@@ -163,9 +131,9 @@
     "prefix": "http:get",
     "description": "Axios http get",
     "body": [
-      "http",
-      "  .get(`${1:/end/point}`, {})",
-      "  .then(json => json.data)",
+      "${1:http}",
+      "  .get(`${2:/end/point}`, { ${3:params} })",
+      "  .then(({ data }) => data)",
       "  .catch(error => ({ error }))",
       ""
     ]
@@ -174,9 +142,9 @@
     "prefix": "http:post",
     "description": "Axios http POST",
     "body": [
-      "http",
-      "  .post(`${1:/end/point}`, {})",
-      "  .then(json => json.data)",
+      "${1:http}",
+      "  .post(`${2:/end/point}`, { ${3:params} })",
+      "  .then(({ data }) => data)",
       "  .catch(error => ({ error }))",
       ""
     ]
@@ -192,24 +160,143 @@
       ""
     ]
   },
-  "v:logger": {
-    "prefix": "v:logger",
-    "description": "Vue Logger",
-    "body": [
-      "Vue.$${1:log}.${2:error}(${3:'${4:error}',}$0)",
-      ""
-    ]
-  },
-  "v:import": {
+  "vue:import": {
     "prefix": "v:import",
     "body": [
-      "import ${1:Name} from '@/components/${1:Name}'",
-      ""
+      "import Vue from 'vue';${0}"
     ],
     "description": "Vue import component"
   },
-  "v:x": {
-    "prefix": "v:x",
+  "vue:import-component": {
+    "prefix": "v:import",
+    "body": [
+      "import ${1:ComponentHere} from '@/components/${1:ComponentHere}';${0}"
+    ],
+    "description": "Vue import component"
+  },
+  "vue:data": {
+    "prefix": "v:data",
+    "description": "Vue data",
+    "body": [
+      "data() {",
+      "  return {",
+      "    ${1:title}: ${2:'Hello World!'},${0}",
+      "  };",
+      "},"
+    ]
+  },
+  "vue:data-arrow": {
+    "prefix": "v:data",
+    "description": "Vue data [arrow function]",
+    "body": [
+      "data: () => ({",
+      "  ${1:title}: ${2:'Hello World!'},",
+      "}),"
+    ]
+  },
+  "vue:asyncData": {
+    "prefix": "v:asyncData",
+    "description": "Nuxt asyncData arrow function",
+    "body": [
+      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
+      "  return {",
+      "    ${0:title: 'Hello World!'},",
+      "  };",
+      "},"
+    ]
+  },
+  "vue:fetch": {
+    "prefix": "v:fetch",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "fetch({ store, params }) {",
+      "  return http.get('/end/point')",
+      "    .then((res) => {",
+      "      store.commit('setStars', res.data)",
+      "    });",
+      "},"
+    ]
+  },
+  "vue:fetch-async": {
+    "prefix": "v:fetch:async",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "async fetch({ store, params }) {",
+      "  let { data } = await http.get('/end/point')",
+      "  store.commit('setStars', data)",
+      "},"
+    ]
+  },
+  "vue:components": {
+    "prefix": "v:components",
+    "description": "scripts: vue components",
+    "body": [
+      "components: {",
+      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
+      "},"
+    ]
+  },
+  "vue:mounted": {
+    "prefix": "v:mounted",
+    "description": "scripts: vue mounted",
+    "body": [
+      "mounted() {",
+      "  ${1:console.log('mounted...');}${0}",
+      "},"
+    ]
+  },
+  "vue:methods": {
+    "prefix": "v:methods",
+    "description": "scripts: vue methods",
+    "body": [
+      "methods: {",
+      "  ${0}",
+      "},"
+    ]
+  },
+  "vue:computed": {
+    "prefix": "v:computed",
+    "description": "scripts: vue computed",
+    "body": [
+      "computed: {",
+      "  ...mapState({",
+      "    ${2:isLoading}: ({ ${1:user} }) => ${1:user}.${2:isLoading},${0}",
+      "  }),",
+      "},"
+    ]
+  },
+  "vue:props": {
+    "prefix": "v:props",
+    "description": "scripts: vue props",
+    "body": [
+      "props: {",
+      "  ${1:title}: {",
+      "    type: ${2:String},",
+      "    default: ${3:'Hello Props!'},${0}",
+      "  },",
+      "},"
+    ]
+  },
+  "vue:watch": {
+    "prefix": "v:watch",
+    "description": "scripts: vue watch",
+    "body": [
+      "['search']() {",
+      "  const timeout = setTimeout(() => {",
+      "    console.log('watching search...');",
+      "  }, 500);",
+      "},"
+    ]
+  },
+  "vuex:import": {
+    "prefix": "vx:import",
+    "description": "vuex import",
+    "body": [
+      "import { ${1:mapState,} ${2:mapActions,} ${3:mapMutations} } from 'vuex';${0}"
+    ]
+  },
+  "vuex": {
+    "prefix": "vx",
     "description": "Vuex start",
     "body": [
       "const state = {",
@@ -231,8 +318,27 @@
       ""
     ]
   },
-  "v:state": {
-    "prefix": "v:state",
+  "vuex-muxt": {
+    "prefix": "vx",
+    "description": "[Nuxt] Vuex start",
+    "body": [
+      "export const state = () => ({",
+      "  ${0}",
+      "});",
+      "",
+      "export const mutations = {",
+      "};",
+      "",
+      "export const actions = {",
+      "};",
+      "",
+      "export const getters = {",
+      "};",
+      ""
+    ]
+  },
+  "vuex:state": {
+    "prefix": "vx:state",
     "description": "Vuex state",
     "body": [
       "export const state = () => ({",
@@ -241,97 +347,38 @@
       ""
     ]
   },
-  "v:data": {
-    "prefix": "v:data",
-    "description": "Vue data",
+  "vuex:mapState": {
+    "prefix": "vx:mapState",
+    "description": "scripts: vuex mapState",
     "body": [
-      "data() {",
-      "  return {",
-      "    ${0:title}: ${1:'Hello World!'},",
-      "  };",
-      "},"
-    ]
-  },
-  "v:data-arrow": {
-    "prefix": "v:data",
-    "description": "Vue data arrow function",
-    "body": [
-      "data: () => ({",
-      "  ${0:title}: ${1:'Hello World!'},",
+      "...mapState({",
+      "  ${2:stateVar}: ({ ${1:namespace} }) => ${1:namespace}.${2:stateVar},${0}",
       "}),"
     ]
   },
-  "v:asyncData": {
-    "prefix": "v:asyncData",
-    "description": "Nuxt asyncData arrow function",
+  "vuex:mapActions": {
+    "prefix": "vx:mapActions",
+    "description": "scripts: vuex mapActions",
     "body": [
-      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
-      "  return {",
-      "    ${0:title: 'Hello World!'},",
-      "  };",
-      "},"
+      "...mapActions({",
+      "  ${2:storeActionHere}: '${1:namespace/}${2:storeActionHere}',",
+      "}),"
     ]
   },
-  "v:fetch": {
-    "prefix": "v:fetch",
-    "description": "scripts: Nuxt fetch",
+  "vuex:mapMutations": {
+    "prefix": "vx:mapMutations",
+    "description": "scripts: vuex mapMutations",
     "body": [
-      "fetch({ store, params }) {",
-      "  return http.get('/end/point')",
-      "    .then((res) => {",
-      "      store.commit('setStars', res.data)",
-      "    });",
-      "},"
+      "...mapMutations({",
+      "  ${2:storeMutation}: '${1:namespace/}${2:storeMutation}',",
+      "}),"
     ]
   },
-  "v:fetch-async": {
-    "prefix": "v:fetch:async",
-    "description": "scripts: Nuxt fetch",
+  "react:import": {
+    "prefix": "react:import",
+    "description": "import react",
     "body": [
-      "async fetch({ store, params }) {",
-      "  let { data } = await http.get('/end/point')",
-      "  store.commit('setStars', data)",
-      "},"
-    ]
-  },
-  "v:components": {
-    "prefix": "v:components",
-    "description": "scripts: vue components",
-    "body": [
-      "components: {",
-      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
-      "},"
-    ]
-  },
-  "v:methods": {
-    "prefix": "v:methods",
-    "description": "scripts: vue methods",
-    "body": [
-      "methods: {",
-      "  ${0}",
-      "},"
-    ]
-  },
-  "v:computed": {
-    "prefix": "v:computed",
-    "description": "scripts: vue computed",
-    "body": [
-      "computed: {",
-      "  ${0}",
-      "},"
-    ]
-  },
-  "v:props": {
-    "prefix": "v:props",
-    "description": "scripts: vue props",
-    "body": [
-      "props: {",
-      "  ${1:title}: {",
-      "    type: ${2:String},",
-      "    required: ${3:false},",
-      "    default: ${4:'Hello Props!'},${0}",
-      "  },",
-      "},"
+      "import React from 'react';"
     ]
   },
   "react:base:class": {

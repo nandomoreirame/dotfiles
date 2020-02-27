@@ -196,6 +196,13 @@
       ""
     ]
   },
+  "react:import": {
+    "prefix": "react:import",
+    "description": "import react",
+    "body": [
+      "import React from 'react';"
+    ]
+  },
   "react:base:class": {
     "prefix": "react:base",
     "description": "React class base component",
