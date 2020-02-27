@@ -1,7 +1,5 @@
-@google/clasp
 @storybook/cli
 @vue/cli
-@vue/cli-init
 browser-sync
 cordova
 cowsay
@@ -12,9 +10,6 @@ create-vue-app
 diff-so-fancy
 electron
 eslint
-exp
-expo-cli
-expo-cli
 gatsby-cli
 gh
 git-labels-cli
@@ -25,9 +20,8 @@ gulp
 http-server
 lighthouse
 netlify-cli
-react-native-cli
+pm2
 rimraf
 spaceship-prompt
-thank-you-stars
 urlint
 yarn
