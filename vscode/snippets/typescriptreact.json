@@ -1,63 +1,4 @@
 {
-  "console": {
-    "prefix": "clog",
-    "description": "Log output to console",
-    "body": [
-      "console.${2:log}(${1:var})"
-    ]
-  },
-  "console:block": {
-    "prefix": "console:block",
-    "description": "console.log()",
-    "body": [
-      "console.log('\\n\\n------ begin: $1 ------')",
-      "console.log(${0:''})",
-      "console.log('------ end: $1 ------\\n\\n')"
-    ]
-  },
-  "export:default": {
-    "prefix": "export",
-    "description": "export default",
-    "body": [
-      "export default {",
-      "  ${0:// Do something here...}",
-      "}",
-      ""
-    ]
-  },
-  "http:get": {
-    "prefix": "http:get",
-    "description": "Axios http get",
-    "body": [
-      "http",
-      "  .get(`${1:/end/point}`, {})",
-      "  .then(json => json.data)",
-      "  .catch(error => ({ error }))",
-      ""
-    ]
-  },
-  "http:post": {
-    "prefix": "http:post",
-    "description": "Axios http POST",
-    "body": [
-      "http",
-      "  .post(`${1:/end/point}`, {})",
-      "  .then(json => json.data)",
-      "  .catch(error => ({ error }))",
-      ""
-    ]
-  },
-  "promise": {
-    "prefix": "promise",
-    "description": "New Promise",
-    "body": [
-      "new Promise((resolve, reject) => {",
-      "  ${0:// Do something here...}",
-      "  resolve();",
-      "})",
-      ""
-    ]
-  },
   "eslint-global": {
     "prefix": "eslint:global",
     "description": "Eslint: global",
@@ -160,6 +101,101 @@
       ""
     ]
   },
+  "console": {
+    "prefix": "clog",
+    "description": "Log output to console",
+    "body": [
+      "console.${2:log}(${1:var})"
+    ]
+  },
+  "console:block": {
+    "prefix": "console:block",
+    "description": "console.log()",
+    "body": [
+      "console.log('\\n\\n------ begin: $1 ------')",
+      "console.log(${0:''})",
+      "console.log('------ end: $1 ------\\n\\n')"
+    ]
+  },
+  "console.log": {
+    "prefix": "console.log",
+    "body": [
+      "console.log('${1:tag}', ${0:''})"
+    ],
+    "description": "console.log()"
+  },
+  "console.info": {
+    "prefix": "console.info",
+    "body": [
+      "console.info('${1:tag}', ${0:''})"
+    ],
+    "description": "console.info()"
+  },
+  "console.warn": {
+    "prefix": "console.warn",
+    "body": [
+      "console.warn('${1:tag}', ${0:''})"
+    ],
+    "description": "console.warn()"
+  },
+  "console.error": {
+    "prefix": "console.error",
+    "body": [
+      "console.error('${1:tag}', ${0:''})"
+    ],
+    "description": "console.error()"
+  },
+  "export:default": {
+    "prefix": "export",
+    "description": "export default",
+    "body": [
+      "export default {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "g:logger": {
+    "prefix": "g:logger",
+    "description": "GAS Logger.log",
+    "body": [
+      "Logger.log($0)",
+      ""
+    ]
+  },
+  "http:get": {
+    "prefix": "http:get",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http:post": {
+    "prefix": "http:post",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "promise": {
+    "prefix": "promise",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
+  },
   "react:import": {
     "prefix": "react:import",
     "description": "import react",
@@ -169,7 +205,7 @@
   },
   "react:base:class": {
     "prefix": "react:base",
-    "description": "[Class] React base component",
+    "description": "React class base component",
     "body": [
       "import React, { Component } from 'react';",
       "import PropTypes from 'prop-types';",
@@ -198,7 +234,7 @@
   },
   "react:base:stateless": {
     "prefix": "react:base",
-    "description": "[PropTypes] React stateless base component",
+    "description": "React stateless base component",
     "body": [
       "import React from 'react';",
       "import PropTypes from 'prop-types';",
@@ -219,28 +255,257 @@
       ""
     ]
   },
-  "react:base:typescript": {
-    "prefix": "react:base",
-    "description": "[TypesSript] React stateless base component with",
+  "Import React": {
+    "prefix": "react:imr",
     "body": [
-      "import React from 'react';",
+      "import React from 'react';"
+    ],
+    "description": "Import React"
+  },
+  "Import React, { Component }": {
+    "prefix": "react:imrc",
+    "body": [
+      "import React, { Component } from 'react';"
+    ],
+    "description": "Import React, { Component }"
+  },
+  "Import React, { useState }": {
+    "prefix": "react:imrs",
+    "body": [
+      "import React, { useState } from 'react';"
+    ],
+    "description": "Import React, { useState }"
+  },
+  "Import React, { useState, useEffect }": {
+    "prefix": "react:imrse",
+    "body": [
+      "import React, { useState, useEffect } from 'react';"
+    ],
+    "description": "Import React, { useState, useEffect }"
+  },
+  "Import PropTypes": {
+    "prefix": "react:impt",
+    "body": [
+      "import PropTypes from 'prop-types';"
+    ],
+    "description": "Import PropTypes"
+  },
+  "Import Pure Component": {
+    "prefix": "react:impc",
+    "body": [
+      "import React, { PureComponent } from 'react';"
+    ],
+    "description": "Import React, { PureComponent }"
+  },
+  "Class Component": {
+    "prefix": "react:cc",
+    "body": [
+      "class $1 extends Component {",
+      "  state = { $2 }",
+      "  render() { ",
+      "    return ( $0 );",
+      "  }",
+      "}",
       "",
-      "type ${2:ComponentProps} = {",
-      "  title?: string | undefined,",
-      "  children?: React.ReactNode,",
-      "};",
+      "export default $1;"
+    ],
+    "description": "Class Component"
+  },
+  "Class Component With Constructor": {
+    "prefix": "react:ccc",
+    "body": [
+      "class $1 extends Component {",
+      "  constructor(props) {",
+      "    super(props);",
+      "    this.state = { $2 }",
+      "  }",
+      "  render() { ",
+      "    return ( $0 );",
+      "  }",
+      "}",
       "",
-      "const ${1:ComponentName}: React.FC<${2:ComponentProps}> = ({ title, children }: ${2:ComponentProps}) => {",
+      "export default $1;"
+    ],
+    "description": "Class Component With Constructor"
+  },
+  "Stateless Function Component": {
+    "prefix": "react:sfc",
+    "body": [
+      "const $1 = ($2) => {",
+      "  return ( $0 );",
+      "}",
+      "",
+      "export default $1;"
+    ],
+    "description": "Stateless Function Component"
+  },
+  "componentDidMount": {
+    "prefix": "react:cdm",
+    "body": [
+      "componentDidMount() {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentDidMount"
+  },
+  "useEffect": {
+    "prefix": "react:uef",
+    "body": [
+      "useEffect(() => {",
+      "  $1",
+      "}, []);"
+    ],
+    "description": "useEffect Hook"
+  },
+  "componentWillMount": {
+    "prefix": "react:cwm",
+    "body": [
+      "//WARNING! To be deprecated in React v17. Use componentDidMount instead.",
+      "componentWillMount() {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentWillMount"
+  },
+  "componentWillReceiveProps": {
+    "prefix": "react:cwrp",
+    "body": [
+      "//WARNING! To be deprecated in React v17. Use new lifecycle static getDerivedStateFromProps instead.",
+      "componentWillReceiveProps(nextProps) {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentWillReceiveProps"
+  },
+  "getDerivedStateFromProps": {
+    "prefix": "react:gds",
+    "body": [
+      "static getDerivedStateFromProps(nextProps, prevState) {",
+      "  $0",
+      "}"
+    ],
+    "description": "getDerivedStateFromProps"
+  },
+  "shouldComponentUpdate": {
+    "prefix": "react:scu",
+    "body": [
+      "shouldComponentUpdate(nextProps, nextState) {",
+      "  $0",
+      "}"
+    ],
+    "description": "shouldComponentUpdate"
+  },
+  "componentWillUpdate": {
+    "prefix": "react:cwu",
+    "body": [
+      "//WARNING! To be deprecated in React v17. Use componentDidUpdate instead.",
+      "componentWillUpdate(nextProps, nextState) {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentWillUpdate"
+  },
+  "componentDidUpdate": {
+    "prefix": "react:cdu",
+    "body": [
+      "componentDidUpdate(prevProps, prevState) {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentDidUpdate"
+  },
+  "componentWillUnmount": {
+    "prefix": "react:cwun",
+    "body": [
+      "componentWillUnmount() {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentWillUnmount"
+  },
+  "componentDidCatch": {
+    "prefix": "react:cdc",
+    "body": [
+      "componentDidCatch(error, info) {",
+      "  $0",
+      "}"
+    ],
+    "description": "componentDidCatch"
+  },
+  "getSnapshotBeforeUpdate": {
+    "prefix": "react:gsbu",
+    "body": [
+      "getSnapshotBeforeUpdate(prevProps, prevState) {",
+      "  $0",
+      "}"
+    ],
+    "description": "getSnapshotBeforeUpdate"
+  },
+  "setState": {
+    "prefix": "react:ss",
+    "body": [
+      "this.setState({ $1: $2 });"
+    ],
+    "description": "setState"
+  },
+  "Functional setState": {
+    "prefix": "react:ssf",
+    "body": [
+      "this.setState(prevState => {",
+      "  return { $1: prevState.$1 };",
+      "});"
+    ],
+    "description": "Functional setState"
+  },
+  "Declare a new state variable using State Hook": {
+    "prefix": "react:usf",
+    "body": [
+      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = useState($2);"
+    ],
+    "description": "Declare a new state Variable using the State Hook. Hit Tab to apply CamelCase to function"
+  },
+  "render": {
+    "prefix": "react:ren",
+    "body": [
+      "render() {",
       "  return (",
-      "    <>",
-      "      <h1>{title}</h1>",
-      "      {children}${0}",
-      "    </>",
+      "     $0",
       "  );",
-      "};",
+      "}"
+    ],
+    "description": "render"
+  },
+  "Render Prop": {
+    "prefix": "react:rprop",
+    "body": [
+      "class $1 extends Component {",
+      "  state = { $2: $3 }",
+      "  render() { ",
+      "    return this.props.render({",
+      "      $2: this.state.$2",
+      "    });",
+      "  }",
+      "}",
       "",
-      "export default ${1:ComponentName};",
-      ""
-    ]
+      "export default $1;"
+    ],
+    "description": "Render Prop"
+  },
+  "Higher Order Component": {
+    "prefix": "react:hoc",
+    "body": [
+      "function $1($2) {",
+      "  return class extends Component {",
+      "    constructor(props) {",
+      "      super(props);",
+      "    }",
+      "",
+      "    render() {",
+      "      return <$2 {...this.props} $0/>",
+      "    }",
+      "  }",
+      "}"
+    ],
+    "description": "Higher Order Component"
   }
 }
