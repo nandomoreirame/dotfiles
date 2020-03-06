@@ -58,6 +58,7 @@
     "ts": "javascript",
     "javascript": "javascriptreact",
     "vue": "html",
+    "php": "html",
     "gs": "javascript",
     "vue-html": "html",
     "ejs": "html"
@@ -68,6 +69,7 @@
     "gs": "javascript",
     "vue-html": "html",
     "vue": "html",
+    "php": "html",
     "erb": "html"
   },
   "search.useIgnoreFiles": true,
@@ -154,7 +156,6 @@
   "turboConsoleLog.addSemicolonInTheEnd": true,
   "turboConsoleLog.insertEnclosingClass": false,
   "turboConsoleLog.insertEnclosingFunction": false,
-  "turboConsoleLog.wrapLogMessage": true,
-  "turboConsoleLog.logMessagePrefix": "==========",
-  "mocha.files.glob": "test/**/*.js,"
+  "turboConsoleLog.wrapLogMessage": false,
+  "turboConsoleLog.logMessagePrefix": "[  LOG  ] "
 }
