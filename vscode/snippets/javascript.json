@@ -1,4 +1,11 @@
 {
+  "debugger": {
+    "prefix": "deb",
+    "description": "Debugger",
+    "body": [
+      "debugger;${0}"
+    ]
+  },
   "eslint-global": {
     "prefix": "eslint:global",
     "description": "Eslint: global",

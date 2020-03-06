@@ -1,4 +1,11 @@
 {
+  "debugger": {
+    "prefix": "deb",
+    "description": "Debugger",
+    "body": [
+      "debugger;${0}"
+    ]
+  },
   "const": {
     "prefix": "const",
     "description": "Create const",

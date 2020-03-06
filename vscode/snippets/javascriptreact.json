@@ -1,4 +1,11 @@
 {
+  "debugger": {
+    "prefix": "deb",
+    "description": "Debugger",
+    "body": [
+      "debugger;${0}"
+    ]
+  },
   "eslint-global": {
     "prefix": "eslint:global",
     "description": "Eslint: global",
@@ -507,5 +514,30 @@
       "}"
     ],
     "description": "Higher Order Component"
+  },
+  // https://material-ui.com/getting-started/usage/
+  "Material-ui/Core": {
+    "prefix": "mui:core",
+    "body": [
+      "import ${1:Box} from '@material-ui/core/${1:Box}';",
+    ],
+    "description": "Material-ui Core Components"
+  },
+  // https://material-ui.com/components/about-the-lab/
+  "Material-ui/Lab": {
+    "prefix": "mui:lab",
+    "body": [
+      "import ${1:Alert} from '@material-ui/lab/${1:Alert}';",
+    ],
+    "description": "Material-ui Lab Components"
+  },
+  // https://material-ui.com/components/icons/
+  // https://material-ui.com/components/material-icons/
+  "Material-ui/Icons": {
+    "prefix": "mui:icons",
+    "body": [
+      "import ${1:Delete}Icon from '@material-ui/icons/${1:Delete}';",
+    ],
+    "description": "Material-ui Icons Components"
   }
 }
