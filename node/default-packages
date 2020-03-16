@@ -1,3 +1,4 @@
+@nrwl/cli
 @storybook/cli
 @vue/cli
 browser-sync
@@ -19,6 +20,7 @@ gitignore
 gulp
 http-server
 lighthouse
+maildev
 netlify-cli
 pm2
 rimraf
