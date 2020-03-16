@@ -6,6 +6,17 @@
       "debugger;${0}"
     ]
   },
+  "try-catch": {
+    "prefix": "try:catch",
+    "description": "try catch error",
+    "body": [
+      "try {",
+      "  ${0}",
+      "} catch (${1:error}) {",
+      "  throw new Error(${1:error});",
+      "}",
+    ]
+  },
   "eslint-global": {
     "prefix": "eslint:global",
     "description": "Eslint: global",
