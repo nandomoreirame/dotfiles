@@ -33,13 +33,15 @@
   "files.trimTrailingWhitespace": true,
   "files.exclude": {
     ".git": true,
+    "**/.sass-cache": true,
     "**/.tmp": true,
-    "**/node_modules": true,
-    "**/*.zip": true,
-    "**/*.tar": true,
     "**/*.gz": true,
     "**/*.nyc_output": true,
-    "**/.sass-cache": true
+    "**/*.tar": true,
+    "**/*.zip": true,
+    "**/node_modules": true,
+    "api/**/*": true,
+    "node_modules/**/*": true
   },
   "html.format.wrapLineLength": 160,
   "html.format.endWithNewline": true,
@@ -74,7 +76,6 @@
   },
   "search.useIgnoreFiles": true,
   "search.useGlobalIgnoreFiles": false,
-  "search.collapseResults": "alwaysCollapse",
   "search.exclude": {
     "**/build": true,
     ".temp": true,
@@ -132,7 +133,6 @@
   "editor.formatOnType": false,
   "terminal.integrated.shell.osx": "/bin/zsh",
   "files.eol": "\n",
-  "workbench.iconTheme": "material-icon-theme",
   "npm.packageManager": "yarn",
   "npm.bin": "yarn",
   "eslint.packageManager": "yarn",
@@ -157,5 +157,6 @@
   "turboConsoleLog.insertEnclosingClass": false,
   "turboConsoleLog.insertEnclosingFunction": false,
   "turboConsoleLog.wrapLogMessage": false,
-  "turboConsoleLog.logMessagePrefix": "[  LOG  ] "
+  "turboConsoleLog.logMessagePrefix": "[  LOG  ] ",
+  "workbench.iconTheme": "material-icon-theme"
 }
