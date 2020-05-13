@@ -108,8 +108,8 @@ module.exports = {
   plugins: [
     `hypercwd`,
     `hyperlinks`,
-    `hyper-dracula`
-    // `hyperyellow`
+    // `hyper-dracula`
+    `hyperyellow`
   ],
 
   // in development, you can create a directory under

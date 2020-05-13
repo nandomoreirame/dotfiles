@@ -10,3 +10,6 @@ insert_final_newline = true
 
 [**.{md,sh}]
 insert_final_newline = ignore
+
+[{default-packages,brewcask,brewfile,gems}]
+insert_final_newline = false
