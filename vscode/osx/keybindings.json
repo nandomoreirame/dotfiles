@@ -1,42 +1,33 @@
 // Place your key bindings in this file to overwrite the defaults
 [
   {
-    "key"     : "cmd+shift+d",
-    "command" : "editor.action.copyLinesDownAction",
-    "when"    : "editorTextFocus && !editorReadonly"
+    "key": "cmd+shift+d",
+    "command": "editor.action.copyLinesDownAction",
+    "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key"     : "alt+down",
-    "command" : "editor.action.moveLinesDownAction",
-    "when"    : "editorTextFocus && !editorReadonly"
+    "key": "alt+down",
+    "command": "editor.action.moveLinesDownAction",
+    "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key"     : "alt+up",
-    "command" : "editor.action.moveLinesUpAction",
-    "when"    : "editorTextFocus && !editorReadonly"
+    "key": "alt+up",
+    "command": "editor.action.moveLinesUpAction",
+    "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key"    : "shift+cmd+a",
-    "command": "alignment.align",
-    "when"   : "editorHasSelection"
+    "key": "cmd+r",
+    "command": "workbench.action.openRecent"
   },
   {
-    "key"     : "cmd+r",
-    "command" : "workbench.action.openRecent"
-  },
-  {
-    "key"    : "cmd+k cmd+f",
+    "key": "cmd+k cmd+f",
     "command": "editor.action.formatSelection",
-    "when"   : "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
+    "when": "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
   },
   {
-    "key"    : "cmd+k cmd+f",
+    "key": "cmd+k cmd+f",
     "command": "-editor.action.formatSelection",
-    "when"   : "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
-  },
-  {
-    "key": "ctrl+alt+p",
-    "command": "extension.transformHtmlToPug"
+    "when": "editorHasDocumentSelectionFormattingProvider && editorHasSelection && editorTextFocus && !editorReadonly"
   },
   {
     "key": "cmd+k cmd+l",
@@ -49,5 +40,17 @@
   {
     "key": "cmd+k cmd+b",
     "command": "workbench.action.tasks.build"
-  }
+  },
+  {
+    "key": "cmd+k cmd+s",
+    "command": "workbench.action.files.saveAll"
+  },
+  {
+    "key": "cmd+k cmd+s",
+    "command": "workbench.action.files.saveFiles"
+  },
+  {
+    "key": "cmd+k cmd+,",
+    "command": "workbench.action.openGlobalKeybindings"
+  },
 ]

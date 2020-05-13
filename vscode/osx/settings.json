@@ -75,7 +75,6 @@
     "erb": "html"
   },
   "search.useIgnoreFiles": true,
-  "search.useGlobalIgnoreFiles": false,
   "search.exclude": {
     "**/build": true,
     ".temp": true,
@@ -114,6 +113,16 @@
     "javascriptreact",
     "vue"
   ],
+  "eslint.options": {
+    "extensions": [
+      ".html",
+      ".js",
+      ".vue",
+      ".jsx"
+    ]
+  },
+  "vetur.validation.script": false,
+  "vetur.validation.template": false,
   "scss.validate": false,
   "css.validate": false,
   "less.validate": false,
@@ -126,8 +135,14 @@
   "stylelint.enable": false,
   "px2rem-plus.base": 16,
   "[javascript]": {
+    "editor.tabSize": 2,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[vue]": {
+    "editor.tabSize": 2
+  },
+  "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
+  "javascript.referencesCodeLens.enabled": true,
   "terminal.integrated.rendererType": "dom",
   "editor.formatOnSave": false,
   "editor.formatOnType": false,
@@ -139,12 +154,12 @@
   "git.ignoreMissingGitWarning": true,
   "eslint.enable": false,
   "px2rem-plus.comments": true,
-  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "workbench.startupEditor": "newUntitledFile",
   "javascript.validate.enable": false,
   "typescript.validate.enable": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": false
+    "source.fixAll.eslint": true
   },
   "eslint.migration.2_x": "off",
   "prettier.ignorePath": ".gitignore,.prettierignore",
@@ -152,11 +167,20 @@
   "liveServer.settings.donotShowInfoMsg": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "workbench.fontAliasing": "antialiased",
-  "turboConsoleLog.quote": "'",
+  "turboConsoleLog.quote": "`",
   "turboConsoleLog.addSemicolonInTheEnd": true,
-  "turboConsoleLog.insertEnclosingClass": false,
-  "turboConsoleLog.insertEnclosingFunction": false,
   "turboConsoleLog.wrapLogMessage": false,
   "turboConsoleLog.logMessagePrefix": "[  LOG  ] ",
-  "workbench.iconTheme": "material-icon-theme"
+  "workbench.iconTheme": "material-icon-theme",
+  "search.collapseResults": "alwaysCollapse",
+  "search.showLineNumbers": true,
+  "explorer.confirmDelete": false,
+  "editor.rulers": [
+    100,
+    120,
+  ],
+  "turboConsoleLog.insertEnclosingClass": false,
+  "turboConsoleLog.insertEnclosingFunction": false,
+  "window.titleSeparator": "  💻  ",
+  "git.showCommitInput": false
 }
