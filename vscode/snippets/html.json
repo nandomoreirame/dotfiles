@@ -34,21 +34,21 @@
     ],
     "description": "Print pre to debug"
   },
-  "php1": {
-    "prefix": "php",
-    "body": [
-      "<?php",
-      "${0};",
-      "?>"
-    ],
-    "description": "php"
-  },
-  "php2": {
+  "php": {
     "prefix": "php",
     "body": [
       "<?php ${0}; ?>"
     ],
-    "description": "PHP Tags"
+    "description": "php tag"
+  },
+  "php2": {
+    "prefix": "php",
+    "body": [
+      "<?php",
+      "\t${0};",
+      "?>"
+    ],
+    "description": "php"
   },
   "phpe": {
     "prefix": "php:e",
@@ -90,12 +90,19 @@
     ],
     "description": "WordPress body_class()"
   },
-  "wp:e": {
-    "prefix": "wp:e",
+  "wp:_e": {
+    "prefix": "wp:_e",
     "body": [
       "<?php _e( '${1:Skip to content}', '${0}' ); ?>"
     ],
     "description": "WordPress echo"
+  },
+  "wp:__": {
+    "prefix": "wp:__",
+    "body": [
+      "<?php __( '${1:Skip to content}', '${0}' ); ?>"
+    ],
+    "description": "WordPress __"
   },
   "wp:home-link": {
     "prefix": "wp:home-link",
@@ -111,41 +118,58 @@
     ],
     "description": "WordPress bloginfo()"
   },
-  "wp:while1": {
+  "wp:query": {
+    "prefix": "wp:query",
+    "body": [
+      "<?php $${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} ); ?>",
+      "<?php $${1:videos}_query = new WP_Query( $${1:videos}_args ); ?>",
+      "",
+      "\t${0:<!-- // Start white here. -->}",
+      "",
+      "<?php wp_reset_postdata(); ?>"
+    ],
+    "description": "PHP function"
+  },
+  "wp:while": {
     "prefix": "wp:while",
     "body": [
       "<?php if ( have_posts() ) : ?>",
-      "    <!-- // Start the Loop. -->",
-      "    <?php while ( have_posts() ) : the_post(); ?>",
-      "        <!-- // ... -->",
-      "    <?php endwhile; ?>",
+      "\t<!-- // Start the Loop. -->",
+      "\t<?php while ( have_posts() ) : the_post(); ?>",
+      "\t\t${0:<!-- // ... -->}",
+      "\t<?php endwhile; ?>",
       "<?php else : ?>",
-      "    <!-- // ... -->",
+      "\t<?php _e( 'Sorry, no ${1:posts} found.' ); ?>",
       "<?php endif; ?>",
     ],
     "description": "WordPress While"
   },
-  "wp:while2": {
+  "wp:while-query": {
     "prefix": "wp:while",
     "body": [
-      "if ( have_posts() ) :",
-      "    // Start the Loop.",
-      "    while ( have_posts() ) : the_post();",
-      "        // ...",
-      "    endwhile;",
-      "else :",
-      "    // ...",
-      "endif;",
+      "<?php $${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} ); ?>",
+      "<?php $${1:videos}_query = new WP_Query( $${1:videos}_args ); ?>",
+      "",
+      "<?php if ( $${1:videos}_query->have_posts() ) : ?>",
+      "\t<!-- // Start the ${1:videos} loop. -->",
+      "\t<?php while ( $${1:videos}_query->have_posts() ) : $${1:videos}_query->the_post(); ?>",
+      "\t\t${0:<!-- // ... -->}",
+      " \t<?php endwhile; ?>",
+      "<?php else : ?>",
+      "\t<?php _e( 'Sorry, no ${1:videos} found.' ); ?>",
+      "<?php endif; ?>",
+      "",
+      "<?php wp_reset_postdata(); ?>"
     ],
-    "description": "WordPress While"
+    "description": "WordPress While with WP_Query()"
   },
   "wp:comments": {
     "prefix": "wp:comments",
     "body": [
-      "// If comments are open or we have at least one comment, load up the comment template.",
-      "if ( comments_open() || get_comments_number() ) :",
-      "    comments_template();",
-      "endif;",
+      "<!-- // If comments are open or we have at least one comment, load up the comment template. -->",
+      "<?php if ( comments_open() || get_comments_number() ) : ?>",
+      "\t<?php comments_template(); ?>",
+      "<?php endif; ?>",
     ],
     "description": "WordPress Comments"
   },
@@ -164,7 +188,7 @@
     ],
     "description": "WordPress image"
   },
-  "wp:the_title1": {
+  "wp:the_title": {
     "prefix": "wp:the_title",
     "body": [
       "<?php the_title( '<h1 class=\"entry-title\">', '</h1>' ); ?>"
@@ -203,8 +227,8 @@
     "prefix": "wp:article",
     "body": [
       "<article id=\"post-<?php the_ID(); ?>\" <?php post_class(); ?>>",
-      "    <!-- // wp:while -->",
-      "</article><!-- #post-## -->",
+      "\t${0:<!-- // wp:while -->}",
+      "</article><!-- #post-<?php the_ID(); ?> -->",
       ""
     ],
     "description": "WordPress article"
@@ -215,5 +239,37 @@
       "<?php get_search_form(); ?>"
     ],
     "description": "WordPress get_search_form"
+  },
+  "wp:get_posts": {
+    "prefix": "wp:get_posts",
+    "body": [
+      "<?php $${1:posts} = get_posts( array( 'post_type' => '${1:posts}' ) ); ?>",
+      "<?php if ( $${1:posts} ): ?>",
+      "\t${2:wp:while}${0}",
+      "<?php endif; ?>",
+    ],
+    "description": "WordPress get_posts()"
+  },
+  "wp:get_page_by_title": {
+    "prefix": "wp:get_page_by_title",
+    "body": [
+      "<?php $${1:page} = get_page_by_title('${2:Your Title}');  ?>",
+      "<?php $${3:content} = apply_filters('the_content', $${1:page}->post_content); ?>",
+      "<?php if ( $${3:content} ): ?>",
+      "\t<?= $${3:content}; ?>${0}",
+      "<?php endif; ?>",
+    ],
+    "description": "WordPress get_page_by_title()"
+  },
+  "wp:get_page_by_path": {
+    "prefix": "wp:get_page_by_path",
+    "body": [
+      "<?php $${1:page} = get_page_by_path('${2:your-title-slug}');  ?>",
+      "<?php $${3:content} = apply_filters('the_content', $${1:page}->post_content); ?>",
+      "<?php if ( $${3:content} ): ?>",
+      "\t<?= $${3:content}; ?>${0}",
+      "<?php endif; ?>",
+    ],
+    "description": "WordPress get_page_by_path()"
   }
 }

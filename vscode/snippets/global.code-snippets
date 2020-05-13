@@ -1,30 +1,47 @@
 {
-  ".editorconfig": {
-    "prefix": ".editorconfig",
+  "lorem": {
+    "prefix": "lorem",
     "body": [
-      "# editorconfig.org",
-      "root = true",
-      "",
-      "[*]",
-      "indent_style = space",
-      "indent_size = 2",
-      "end_of_line = lf",
-      "charset = utf-8",
-      "trim_trailing_whitespace = true",
-      "insert_final_newline = true",
-      "",
-      "[**.{min.js,min.css}]",
-      "indent_style = ignore",
-      "insert_final_newline = ignore",
-      "",
-      "[.{env,env.*}]",
-      "insert_final_newline = false",
-      "trim_trailing_whitespace = false",
-      "",
-      "[*.md]",
-      "trim_trailing_whitespace = false",
-      "$0"
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ultricies lacus. Phasellus quam velit, dictum imperdiet erat eu, eleifend feugiat felis. Phasellus varius, dui quis commodo faucibus, urna est consequat sem, at ornare neque lectus vel justo. Nunc ultricies enim dolor, et tincidunt mi vestibulum malesuada. Sed a tempor sem. Quisque in porttitor mi. Nam lacinia non risus id malesuada."
     ],
-    "description": ".editorconfig"
-  }
+    "description": "Lorem Ipsum 1 paragraph"
+  },
+  "lorem2": {
+    "prefix": "lorem2",
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ultricies lacus. Phasellus quam velit, dictum imperdiet erat eu, eleifend feugiat felis. Phasellus varius, dui quis commodo faucibus, urna est consequat sem, at ornare neque lectus vel justo. Nunc ultricies enim dolor, et tincidunt mi vestibulum malesuada. Sed a tempor sem. Quisque in porttitor mi. Nam lacinia non risus id malesuada.",
+      "Donec ultricies libero nec libero tincidunt, sit amet mollis ante efficitur. Donec sapien odio, vulputate in quam id, vehicula ultrices nisl. Praesent viverra finibus varius. Cras tortor nisi, euismod ac enim laoreet, condimentum egestas massa. Nunc facilisis rutrum nulla, ut ultricies purus tincidunt eu. Donec in eleifend turpis. Quisque et dignissim urna. Duis augue velit, laoreet ut dui nec, porta malesuada lectus. Pellentesque pharetra lacus in efficitur aliquam. In hac habitasse platea dictumst. Vivamus malesuada, ipsum vitae pretium fringilla, ligula eros semper mauris, in posuere nulla tellus at metus. Etiam sed felis vitae arcu blandit gravida ut et turpis. Nam molestie lectus non neque posuere, sit amet ornare ante dapibus. Mauris sed rutrum dolor."
+    ],
+    "description": "Lorem Ipsum 2 paragraphs"
+  },
+  "lorem3": {
+    "prefix": "lorem3",
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ultricies lacus. Phasellus quam velit, dictum imperdiet erat eu, eleifend feugiat felis. Phasellus varius, dui quis commodo faucibus, urna est consequat sem, at ornare neque lectus vel justo. Nunc ultricies enim dolor, et tincidunt mi vestibulum malesuada. Sed a tempor sem. Quisque in porttitor mi. Nam lacinia non risus id malesuada.",
+      "Donec ultricies libero nec libero tincidunt, sit amet mollis ante efficitur. Donec sapien odio, vulputate in quam id, vehicula ultrices nisl. Praesent viverra finibus varius. Cras tortor nisi, euismod ac enim laoreet, condimentum egestas massa. Nunc facilisis rutrum nulla, ut ultricies purus tincidunt eu. Donec in eleifend turpis. Quisque et dignissim urna. Duis augue velit, laoreet ut dui nec, porta malesuada lectus. Pellentesque pharetra lacus in efficitur aliquam. In hac habitasse platea dictumst. Vivamus malesuada, ipsum vitae pretium fringilla, ligula eros semper mauris, in posuere nulla tellus at metus. Etiam sed felis vitae arcu blandit gravida ut et turpis. Nam molestie lectus non neque posuere, sit amet ornare ante dapibus. Mauris sed rutrum dolor.",
+      "In volutpat neque tellus, a interdum est tristique quis. Integer nunc nibh, laoreet sed imperdiet at, elementum id enim. Fusce orci diam, cursus ut nisi a, pharetra sodales felis. Etiam ac finibus dui. Aenean scelerisque sagittis ligula id rhoncus. Nullam ut venenatis enim. Proin ac vestibulum nunc, at gravida est."
+    ],
+    "description": "Lorem Ipsum 3 paragraphs"
+  },
+  "lorem4": {
+    "prefix": "lorem4",
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ultricies lacus. Phasellus quam velit, dictum imperdiet erat eu, eleifend feugiat felis. Phasellus varius, dui quis commodo faucibus, urna est consequat sem, at ornare neque lectus vel justo. Nunc ultricies enim dolor, et tincidunt mi vestibulum malesuada. Sed a tempor sem. Quisque in porttitor mi. Nam lacinia non risus id malesuada.",
+      "Donec ultricies libero nec libero tincidunt, sit amet mollis ante efficitur. Donec sapien odio, vulputate in quam id, vehicula ultrices nisl. Praesent viverra finibus varius. Cras tortor nisi, euismod ac enim laoreet, condimentum egestas massa. Nunc facilisis rutrum nulla, ut ultricies purus tincidunt eu. Donec in eleifend turpis. Quisque et dignissim urna. Duis augue velit, laoreet ut dui nec, porta malesuada lectus. Pellentesque pharetra lacus in efficitur aliquam. In hac habitasse platea dictumst. Vivamus malesuada, ipsum vitae pretium fringilla, ligula eros semper mauris, in posuere nulla tellus at metus. Etiam sed felis vitae arcu blandit gravida ut et turpis. Nam molestie lectus non neque posuere, sit amet ornare ante dapibus. Mauris sed rutrum dolor.",
+      "In volutpat neque tellus, a interdum est tristique quis. Integer nunc nibh, laoreet sed imperdiet at, elementum id enim. Fusce orci diam, cursus ut nisi a, pharetra sodales felis. Etiam ac finibus dui. Aenean scelerisque sagittis ligula id rhoncus. Nullam ut venenatis enim. Proin ac vestibulum nunc, at gravida est.",
+      "Fusce lacinia porta vulputate. Sed risus quam, aliquam at nisl molestie, facilisis scelerisque metus. Fusce vitae blandit odio, nec scelerisque nibh. Aliquam faucibus eu felis vitae ultricies. Sed finibus, orci tincidunt congue lacinia, erat nibh euismod diam, at sodales turpis mauris nec diam. Donec nisi ligula, dapibus non tellus id, varius sodales risus. Sed sit amet turpis non felis faucibus tristique. Suspendisse eget nulla vitae sem eleifend viverra et ut ante. Proin sapien nisl, placerat non tellus eu, tristique convallis ipsum. In vehicula, magna eget sollicitudin euismod, odio velit tincidunt lacus, a auctor dui dolor vitae sem. Nam euismod mauris ac purus laoreet consequat. Integer sit amet venenatis eros, aliquet porta risus. Praesent tincidunt tempus leo ut auctor. Etiam orci tellus, sodales sit amet volutpat quis, facilisis eget sem. Mauris euismod tellus eget mi luctus, id gravida sapien tincidunt."
+    ],
+    "description": "Lorem Ipsum 4 paragraphs"
+  },
+  "lorem5": {
+    "prefix": "lorem5",
+    "body": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ultricies lacus. Phasellus quam velit, dictum imperdiet erat eu, eleifend feugiat felis. Phasellus varius, dui quis commodo faucibus, urna est consequat sem, at ornare neque lectus vel justo. Nunc ultricies enim dolor, et tincidunt mi vestibulum malesuada. Sed a tempor sem. Quisque in porttitor mi. Nam lacinia non risus id malesuada.",
+      "Donec ultricies libero nec libero tincidunt, sit amet mollis ante efficitur. Donec sapien odio, vulputate in quam id, vehicula ultrices nisl. Praesent viverra finibus varius. Cras tortor nisi, euismod ac enim laoreet, condimentum egestas massa. Nunc facilisis rutrum nulla, ut ultricies purus tincidunt eu. Donec in eleifend turpis. Quisque et dignissim urna. Duis augue velit, laoreet ut dui nec, porta malesuada lectus. Pellentesque pharetra lacus in efficitur aliquam. In hac habitasse platea dictumst. Vivamus malesuada, ipsum vitae pretium fringilla, ligula eros semper mauris, in posuere nulla tellus at metus. Etiam sed felis vitae arcu blandit gravida ut et turpis. Nam molestie lectus non neque posuere, sit amet ornare ante dapibus. Mauris sed rutrum dolor.",
+      "In volutpat neque tellus, a interdum est tristique quis. Integer nunc nibh, laoreet sed imperdiet at, elementum id enim. Fusce orci diam, cursus ut nisi a, pharetra sodales felis. Etiam ac finibus dui. Aenean scelerisque sagittis ligula id rhoncus. Nullam ut venenatis enim. Proin ac vestibulum nunc, at gravida est.",
+      "Fusce lacinia porta vulputate. Sed risus quam, aliquam at nisl molestie, facilisis scelerisque metus. Fusce vitae blandit odio, nec scelerisque nibh. Aliquam faucibus eu felis vitae ultricies. Sed finibus, orci tincidunt congue lacinia, erat nibh euismod diam, at sodales turpis mauris nec diam. Donec nisi ligula, dapibus non tellus id, varius sodales risus. Sed sit amet turpis non felis faucibus tristique. Suspendisse eget nulla vitae sem eleifend viverra et ut ante. Proin sapien nisl, placerat non tellus eu, tristique convallis ipsum. In vehicula, magna eget sollicitudin euismod, odio velit tincidunt lacus, a auctor dui dolor vitae sem. Nam euismod mauris ac purus laoreet consequat. Integer sit amet venenatis eros, aliquet porta risus. Praesent tincidunt tempus leo ut auctor. Etiam orci tellus, sodales sit amet volutpat quis, facilisis eget sem. Mauris euismod tellus eget mi luctus, id gravida sapien tincidunt.",
+      "Sed quis laoreet nulla. Suspendisse tristique consectetur nisl, nec euismod est dictum at. Phasellus nunc lectus, porttitor quis dapibus sed, malesuada vitae sapien. Nunc molestie magna vitae cursus rhoncus. Vestibulum et orci id diam efficitur faucibus. Maecenas accumsan et tellus nec euismod. Suspendisse potenti. Nulla vitae lorem ligula. Aliquam tristique, tellus vel gravida iaculis, orci sapien finibus elit, sit amet auctor felis lectus a dui. Fusce dignissim sapien et justo gravida vulputate. Maecenas egestas mauris nec tortor porttitor ultricies. Morbi vitae elit leo."
+    ],
+    "description": "Lorem Ipsum 5 paragraphs"
+  },
 }

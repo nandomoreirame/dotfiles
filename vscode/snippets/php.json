@@ -6,6 +6,13 @@
     ],
     "description": "Print pre to debug"
   },
+  "php": {
+    "prefix": "php",
+    "body": [
+      "<?php ${0}; ?>"
+    ],
+    "description": "php tag"
+  },
   "php:jdie": {
     "prefix": "php:jdie",
     "body": [
@@ -51,5 +58,38 @@
       ""
     ],
     "description": "PHP function"
+  },
+  "wp:query": {
+    "prefix": "wp:query",
+    "body": [
+      "$${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} );",
+      "$${1:videos}_query = new WP_Query( $${1:videos}_args );${0}",
+      ""
+    ],
+    "description": "PHP function"
+  },
+  "wp:comments": {
+    "prefix": "wp:comments",
+    "body": [
+      "// If comments are open or we have at least one comment, load up the comment template.",
+      "if ( comments_open() || get_comments_number() ) :",
+      "    comments_template();",
+      "endif;",
+    ],
+    "description": "WordPress Comments"
+  },
+  "wp:while": {
+    "prefix": "wp:while",
+    "body": [
+      "if ( have_posts() ) :",
+      "    // Start the Loop.",
+      "    while ( have_posts() ) : the_post();",
+      "        // ...",
+      "    endwhile;",
+      "else :",
+      "    // ...",
+      "endif;",
+    ],
+    "description": "WordPress While"
   }
 }

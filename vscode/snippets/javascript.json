@@ -113,16 +113,7 @@
     "prefix": "clog",
     "description": "Log output to console",
     "body": [
-      "console.${2:log}(${1:var})"
-    ]
-  },
-  "console:block": {
-    "prefix": "clog",
-    "description": "Block log output to console",
-    "body": [
-      "console.log('\\n\\n', '------ BEGIN: ${1:} ------');",
-      "console.log(${2:''});",
-      "console.log('------ END: ${1:} ------', '\\n\\n');"
+      "console.${2:log}({ ${1:var} });"
     ]
   },
   "export": {
