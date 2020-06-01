@@ -18,7 +18,9 @@
   "workbench.colorTheme": "New Moon",
   "workbench.sideBar.location": "left",
   "workbench.panel.defaultLocation": "right",
-  "workbench.activityBar.visible": true,
+  "workbench.startupEditor": "newUntitledFile",
+  "workbench.fontAliasing": "antialiased",
+  "workbench.iconTheme": "material-icon-theme",
   "[php]": {
     "editor.tabSize": 4
   },
@@ -77,6 +79,7 @@
   "search.useIgnoreFiles": true,
   "search.exclude": {
     "**/build": true,
+    "**/__*": true,
     ".temp": true,
     "temp": true,
     ".tmp": true,
@@ -114,12 +117,7 @@
     "vue"
   ],
   "eslint.options": {
-    "extensions": [
-      ".html",
-      ".js",
-      ".vue",
-      ".jsx"
-    ]
+    "extensions": [".html", ".js", ".vue", ".jsx"]
   },
   "vetur.validation.script": false,
   "vetur.validation.template": false,
@@ -155,7 +153,6 @@
   "eslint.enable": false,
   "px2rem-plus.comments": true,
   "diffEditor.ignoreTrimWhitespace": false,
-  "workbench.startupEditor": "newUntitledFile",
   "javascript.validate.enable": false,
   "typescript.validate.enable": false,
   "editor.codeActionsOnSave": {
@@ -166,21 +163,18 @@
   "material-icon-theme.activeIconPack": "vue_vuex",
   "liveServer.settings.donotShowInfoMsg": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "workbench.fontAliasing": "antialiased",
+  "vsicons.projectDetection.disableDetect": true,
   "turboConsoleLog.quote": "`",
   "turboConsoleLog.addSemicolonInTheEnd": true,
   "turboConsoleLog.wrapLogMessage": false,
   "turboConsoleLog.logMessagePrefix": "[  LOG  ] ",
-  "workbench.iconTheme": "material-icon-theme",
   "search.collapseResults": "alwaysCollapse",
   "search.showLineNumbers": true,
-  "explorer.confirmDelete": false,
-  "editor.rulers": [
-    100,
-    120,
-  ],
+  "explorer.confirmDelete": true,
+  "editor.rulers": [100, 120],
   "turboConsoleLog.insertEnclosingClass": false,
   "turboConsoleLog.insertEnclosingFunction": false,
   "window.titleSeparator": "  💻  ",
-  "git.showCommitInput": false
+  "git.showCommitInput": true,
+  "javascript.format.semicolons": "insert"
 }
