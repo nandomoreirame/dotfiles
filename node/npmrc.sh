@@ -10,7 +10,7 @@ rm -rf $NPMRC_FILE $HOME/.npmrc
 NPM_INIT_NAME="Fernando Moreira"
 NPM_INIT_EMAIL="nandomoreira.me@gmail.com"
 NPM_INIT_URL="https://nandomoreira.dev/"
-NPM_INIT_VERSION="0.1.0"
+NPM_INIT_VERSION="1.0.0"
 NPM_INIT_LICENSE="MIT"
 
 echo "init.author.name=$NPM_INIT_NAME

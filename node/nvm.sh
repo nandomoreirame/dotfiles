@@ -3,9 +3,9 @@
 source "`dirname $0`"/../lib/colors.sh
 source "`dirname $0`"/../lib/enviroments.sh
 
-NODE_VERSION=10
+NODE_VERSION=14
 NVM_FOLDER="$HOME/.nvm"
-NVMRC_FILE="$DOTFILES/.nvmrc"
+NVMRC_FILE="$DOTFILES/node/.nvmrc"
 
 rm -rf $NVMRC_FILE $HOME/.nvmrc
 echo "$NODE_VERSION" > $NVMRC_FILE
