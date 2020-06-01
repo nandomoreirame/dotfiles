@@ -113,6 +113,10 @@ alias phps="php -S localhost:8181"
 alias phpst="phps -t ./"
 alias artisan="php artisan"
 
+# npx
+alias npm-check="npx npm-check -u"
+alias readme-generator="npx readme-md-generator"
+
 # npm
 alias npmp="npm publish"
 alias npma="npm adduser"
@@ -139,9 +143,6 @@ alias yt="yarn test"
 alias sb="storybook"
 alias ysb="yarn storybook"
 alias yu="yarn upgrade-interactive --latest"
-
-# npx
-alias npm-check="npx npm-check -u"
 
 # vue
 alias v="vue"
@@ -175,7 +176,7 @@ alias l="ls -lh ${colorflag}"
 alias la="ls -lah ${colorflag}"
 
 # List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+alias lsd="ls -lF ${colorflag}"
 
 # Stopwatch
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
@@ -186,8 +187,8 @@ alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date
 alias cat="bat"
 
 # IP addresses
-alias ip="digshort myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en1"
+# alias ip="digshort myip.opendns.com @resolver1.opendns.com"
+# alias localip="ipconfig getifaddr en1"
 alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
 
 # Enhanced WHOIS lookups
@@ -208,16 +209,11 @@ alias fs="stat -f \"%z bytes\""
 alias restart='sudo shutdown -r now'
 alias shutdown='sudo shutdown now'
 
-# # tempo
-# alias tempo='curl --silent "http://wttr.in/curitiba"'
-
 # calendario
 year=`date +'%Y'`
-alias ano="cal $1"
-alias calendario="cal $year"
-
-# mes
 alias mes='cal'
+alias ano="cal $year"
+alias calendario="ano"
 
 # ssh
 alias sshcopy="pbcopy < ~/.ssh/id_rsa.pub"

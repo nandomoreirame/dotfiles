@@ -15,10 +15,14 @@ export ZSH_PLUGINS=$ZSH_CUSTOM/plugins
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section
   dir           # Current directory section
-  host          # Hostname section
+  # host          # Hostname section
   git           # Git section (git_branch + git_status)
-  hg            # Mercurial section (hg_branch  + hg_status)
+  node          # Node.js section
+  ruby          # Ruby section
+  php           # PHP section
+  # pyenv         # Pyenv section
   exec_time     # Execution time
+  battery       # Line break
   line_sep      # Line break
   vi_mode       # Vi-mode indicator
   jobs          # Background jobs indicator
@@ -26,6 +30,8 @@ SPACESHIP_PROMPT_ORDER=(
   char          # Prompt character
 )
 SPACESHIP_USER_SHOW=always
+SPACESHIP_HOST_SHOW=false
+SPACESHIP_BATTERY_THRESHOLD=90
 SPACESHIP_PROMPT_ADD_NEWLINE=false
 SPACESHIP_CHAR_SYMBOL="❯"
 SPACESHIP_CHAR_SUFFIX=" "
@@ -135,4 +141,4 @@ prompt spaceship
 
 # vovo-juju # need `npm i -g vovo-juju-cli`
 # cowsay -f "$DOTFILES/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
-cowsay -f "$DOTFILES/cowsay/bot.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
+# cowsay -f "$DOTFILES/cowsay/bot.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
