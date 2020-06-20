@@ -227,6 +227,7 @@
       "",
       "interface ${1:HomePage}Props {}",
       "",
+      "// eslint-disable-next-line no-unused-vars",
       "const ${1:HomePage}: NextPage<${1:HomePage}Props> = (props: ${1:HomePage}Props) => {",
       "  return <>${1:HomePage}${0}</>;",
       "};",

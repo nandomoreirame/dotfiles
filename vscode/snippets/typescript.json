@@ -17,6 +17,55 @@
       "}",
     ]
   },
+  "eslint-global": {
+    "prefix": "eslint:global",
+    "description": "Eslint: global",
+    "body": [
+      "/* global ${1:GlobalVar};*/"
+    ]
+  },
+  "eslint-off": {
+    "prefix": "eslint:off",
+    "description": "Eslint: off",
+    "body": [
+      "/* eslint ${1:eqeqeq}: \"${2:off}\"${3:, ${4:curly}: \"${5:error}\"} $0*/ "
+    ]
+  },
+  "eslint-disable": {
+    "prefix": "eslint:disable",
+    "description": "Eslint: disable",
+    "body": [
+      "/* eslint-disable $0*/"
+    ]
+  },
+  "eslint-enable": {
+    "prefix": "eslint:enable",
+    "description": "Eslint: enable",
+    "body": [
+      "/* eslint-enable */"
+    ]
+  },
+  "eslint-env": {
+    "prefix": "eslint:env",
+    "description": "Eslint: env",
+    "body": [
+      "/* eslint-env $0*/"
+    ]
+  },
+  "eslint-disable-line": {
+    "prefix": "eslint:disable-disable-line",
+    "description": "Eslint: disable line",
+    "body": [
+      "// eslint-disable-line $0"
+    ]
+  },
+  "eslint-disable-next-line": {
+    "prefix": "eslint:disable-next-line",
+    "description": "Eslint: disable next line",
+    "body": [
+      "// eslint-disable-next-line $0"
+    ]
+  },
   "const": {
     "prefix": "const",
     "description": "Create const",
@@ -109,12 +158,42 @@
       "console.${2:log}({ ${1:var} });"
     ]
   },
+  "export": {
+    "prefix": "export",
+    "description": "export",
+    "body": [
+      "export ${1} {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
   "export:default": {
     "prefix": "export",
     "description": "export default",
     "body": [
       "export default {",
       "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:const": {
+    "prefix": "export",
+    "description": "export const",
+    "body": [
+      "export const ${1:MyConst} = () => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:function": {
+    "prefix": "export",
+    "description": "export default function",
+    "body": [
+      "export default function () {",
+      "  return ${0};",
       "}",
       ""
     ]

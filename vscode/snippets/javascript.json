@@ -120,9 +120,9 @@
     "prefix": "export",
     "description": "export",
     "body": [
-      "export {",
+      "export ${1} {",
       "  ${0:// Do something here...}",
-      "};",
+      "}",
       ""
     ]
   },
@@ -132,7 +132,27 @@
     "body": [
       "export default {",
       "  ${0:// Do something here...}",
-      "};",
+      "}",
+      ""
+    ]
+  },
+  "export:const": {
+    "prefix": "export",
+    "description": "export const",
+    "body": [
+      "export const ${1:MyConst} = () => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:function": {
+    "prefix": "export",
+    "description": "export default function",
+    "body": [
+      "export default function () {",
+      "  return ${0};",
+      "}",
       ""
     ]
   },
