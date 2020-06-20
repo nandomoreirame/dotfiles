@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite the default settings
 {
-  "editor.fontFamily": "Fira Code, FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "'Fira Code', FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
@@ -15,7 +15,6 @@
   "editor.fontWeight": "500",
   "editor.quickSuggestionsDelay": 5,
   "editor.formatOnPaste": false,
-  "workbench.colorTheme": "New Moon",
   "workbench.sideBar.location": "left",
   "workbench.panel.defaultLocation": "right",
   "workbench.startupEditor": "newUntitledFile",
@@ -76,7 +75,6 @@
     "php": "html",
     "erb": "html"
   },
-  "search.useIgnoreFiles": true,
   "search.exclude": {
     "**/build": true,
     "**/__*": true,
@@ -161,14 +159,12 @@
   "eslint.migration.2_x": "off",
   "prettier.ignorePath": ".gitignore,.prettierignore",
   "material-icon-theme.activeIconPack": "vue_vuex",
-  "liveServer.settings.donotShowInfoMsg": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "vsicons.projectDetection.disableDetect": true,
   "turboConsoleLog.quote": "`",
   "turboConsoleLog.addSemicolonInTheEnd": true,
   "turboConsoleLog.wrapLogMessage": false,
   "turboConsoleLog.logMessagePrefix": "[  LOG  ] ",
-  "search.collapseResults": "alwaysCollapse",
   "search.showLineNumbers": true,
   "explorer.confirmDelete": true,
   "editor.rulers": [100, 120],
@@ -176,5 +172,11 @@
   "turboConsoleLog.insertEnclosingFunction": false,
   "window.titleSeparator": "  💻  ",
   "git.showCommitInput": true,
-  "javascript.format.semicolons": "insert"
+  "javascript.format.semicolons": "insert",
+  "workbench.colorTheme": "New Moon",
+  "peacock.affectAccentBorders": true,
+  "search.actionsPosition": "right",
+  "search.collapseResults": "auto",
+  "search.quickOpen.includeHistory": false,
+  "search.smartCase": true
 }
