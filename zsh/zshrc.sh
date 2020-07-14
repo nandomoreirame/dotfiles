@@ -71,8 +71,8 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
 # export JAVA_HOME=$(/usr/libexec/java_home)
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-export PATH="$JAVA_HOME/bin:$PATH"
+# export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+# export PATH="$JAVA_HOME/bin:$PATH"
 
 # export ANDROID_HOME=$HOME/Library/Android/
 # export ANDROID_HOME="$HOME/Library/Android/sdk"
@@ -80,13 +80,13 @@ export PATH="$JAVA_HOME/bin:$PATH"
 # path=("${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools" $path)
 
 # export JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
-export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export ANDROID_HOME="$HOME/Library/Android/sdk"
-PATH="$PATH:$ANDROID_SDK_ROOT"
-PATH="$PATH:$ANDROID_SDK_ROOT/emulator"
-PATH="$PATH:$ANDROID_SDK_ROOT/tools"
-PATH="$PATH:$ANDROID_SDK_ROOT/tools/bin"
-PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools"
+# export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+# export ANDROID_HOME="$HOME/Library/Android/sdk"
+# PATH="$PATH:$ANDROID_SDK_ROOT"
+# PATH="$PATH:$ANDROID_SDK_ROOT/emulator"
+# PATH="$PATH:$ANDROID_SDK_ROOT/tools"
+# PATH="$PATH:$ANDROID_SDK_ROOT/tools/bin"
+# PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools"
 
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
@@ -103,8 +103,8 @@ export CPPFLAGS="-I/usr/local/opt/libxml2/include"
 export PKG_CONFIG_PATH="/usr/local/opt/libxml2/lib/pkgconfig"
 
 # rvm
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-source $HOME/.rvm/scripts/rvm # Source rvm scripts
+# export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# source $HOME/.rvm/scripts/rvm # Source rvm scripts
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi

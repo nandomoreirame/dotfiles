@@ -45,15 +45,6 @@ alias r-finish="gf release finish"
 alias psa="ps aux"
 alias ht="htop"
 
-# Easy folder and file loading
-alias sites="~/Sites"
-alias clients="~/Sites/clients"
-alias projects="~/Sites/projects"
-alias dl="~/Downloads"
-alias dt="cd ~/Desktop"
-alias apps="/Applications"
-alias fl="$DOTFILES"
-
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
 # alias chrome="open -a Google\ Chrome $1 --args --new-window --disable-web-securitybrowser --user-data-dir=/tmp/chrome"
@@ -66,7 +57,6 @@ alias opera="/Applications/Opera.app/Contents/MacOS/Opera $1 --disable-web-secur
 alias firefox="/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $1"
 
 # Miscellaneous
-alias cleanup="sudo find . -name '*.DS_Store' -type f -delete"
 alias kll="killall"
 alias h="history"
 alias q="exit"
@@ -146,6 +136,17 @@ alias npm-check="npx npm-check -u" # https://github.com/dylang/npm-check#npm-che
 alias readme-g="npx readme-md-generator" # https://github.com/kefranabg/readme-md-generator#welcome-to-readme-md-generator-
 alias lorem="npx lorem-ipsum 1 paragraph --copy" # https://github.com/knicklabs/lorem-ipsum.js#lorem-ipsum
 alias tldr="npx tldr" # https://github.com/tldr-pages/tldr
+alias browser-sync="npx browser-sync"
+alias yarn="npx yarn"
+alias cowsay="npx cowsay"
+alias eslint="npx eslint"
+alias gitignore="npx gitignore"
+alias gulp="npx gulp"
+alias http-server="npx http-server"
+alias lighthouse="npx lighthouse"
+alias maildev="npx maildev"
+alias netlify="npx netlify-cli"
+alias rimraf="npx rimraf"
 
 # vue
 alias v="vue"
