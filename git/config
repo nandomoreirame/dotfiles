@@ -134,10 +134,10 @@
 [user]
   email = nandomoreira.me@gmail.com
   name = Fernando Moreira
-  signingkey = 165A631B806A8D7B
+  signingkey = B3EEB486B89DE529
 
 [commit]
-  gpgsign = true
+	gpgsign = true
   template = "$HOME/.stCommitMsg"
 
 [gpg]
