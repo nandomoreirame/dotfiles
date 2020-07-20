@@ -202,11 +202,11 @@
     "prefix": "react:base",
     "description": "React stateless base component",
     "body": [
-      "import React from 'react';",
+      "import React, { memo } from 'react';",
       "",
       "interface ${1:ComponentName}Props {}",
       "",
-      "export const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = (props: ${1:ComponentName}Props) => {",
+      "const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = (props: ${1:ComponentName}Props) => {",
       "  return (",
       "    <>",
       "      <h1>${1:ComponentName}${0}</h1>",
@@ -214,7 +214,7 @@
       "  );",
       "};",
       "",
-      "export default ${1:ComponentName};",
+      "export default memo(${1:ComponentName});",
       ""
     ]
   },

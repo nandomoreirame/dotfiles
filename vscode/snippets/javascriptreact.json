@@ -231,10 +231,10 @@
     "prefix": "react:base",
     "description": "React stateless base component",
     "body": [
-      "import React from 'react';",
+      "import React, { memo } from 'react';",
       "import PropTypes from 'prop-types';",
       "",
-      "export const ${1:ComponentName} = ({ ${2:children} }) => {",
+      "const ${1:ComponentName} = ({ ${2:children} }) => {",
       "  return (",
       "    <>",
       "      {${2:children}}${0}",
@@ -246,7 +246,7 @@
       "  ${2:children}: PropTypes.${3:node}${4:.isRequired},",
       "};",
       "",
-      "export default ${1:ComponentName};",
+      "export default memo(${1:ComponentName});",
       ""
     ]
   },
