@@ -137,7 +137,6 @@ alias readme-g="npx readme-md-generator" # https://github.com/kefranabg/readme-m
 alias lorem="npx lorem-ipsum 1 paragraph --copy" # https://github.com/knicklabs/lorem-ipsum.js#lorem-ipsum
 alias tldr="npx tldr" # https://github.com/tldr-pages/tldr
 alias browser-sync="npx browser-sync"
-alias yarn="npx yarn"
 alias cowsay="npx cowsay"
 alias eslint="npx eslint"
 alias gitignore="npx gitignore"
@@ -146,6 +145,7 @@ alias http-server="npx http-server"
 alias lighthouse="npx lighthouse"
 alias maildev="npx maildev"
 alias netlify="npx netlify-cli"
+alias pm2="npx pm2"
 alias rimraf="npx rimraf"
 
 # vue
