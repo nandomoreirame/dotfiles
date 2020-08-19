@@ -1,6 +1,7 @@
 {
   "img:placehold": {
     "prefix": "img:placehold",
+    "scope": "html,php",
     "body": [
       "<img src=\"//placehold.it/${1:350}x${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:placehold.it}\">"
     ],
@@ -8,27 +9,15 @@
   },
   "img:lorempixel": {
     "prefix": "img:lorempixel",
+    "scope": "html,php",
     "body": [
       "<img src=\"//lorempixel.com/${1:300}/${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:lorempixel.com}\">"
     ],
     "description": "Add placeholder image with lorempixel.com"
   },
-  "signature": {
-    "prefix": "signature",
-    "body": [
-      "<!--",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> site developed by <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~> https://nandomoreira.dev <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~> https://twitter.com/oseunando <~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~> https://github.com/nandomoreirame <~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      "-->"
-    ],
-    "description": "signature by nandomoreira.me"
-  },
   "prp": {
     "prefix": "prp",
+    "scope": "html,php",
     "body": [
       "<?php echo '<pre>' . print_r( ${0}, true ) . '</pre>'; ?>"
     ],
@@ -36,6 +25,7 @@
   },
   "php": {
     "prefix": "php",
+    "scope": "html,php",
     "body": [
       "<?php ${0}; ?>"
     ],
@@ -43,6 +33,7 @@
   },
   "php2": {
     "prefix": "php",
+    "scope": "html,php",
     "body": [
       "<?php",
       "\t${0};",
@@ -52,6 +43,7 @@
   },
   "phpe": {
     "prefix": "php:e",
+    "scope": "html,php",
     "body": [
       "<?= ${0}; ?>"
     ],
@@ -59,6 +51,7 @@
   },
   "wp:head-tags": {
     "prefix": "wp:head-tags",
+    "scope": "html,php",
     "body": [
       "<meta charset=\"<?php bloginfo( 'charset' ); ?>\">",
       "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
@@ -71,6 +64,7 @@
   },
   "wp:head": {
     "prefix": "wp:head",
+    "scope": "html,php",
     "body": [
       "<?php wp_head(); ?>"
     ],
@@ -78,6 +72,7 @@
   },
   "wp:footer": {
     "prefix": "wp:footer",
+    "scope": "html,php",
     "body": [
       "<?php wp_footer(); ?>"
     ],
@@ -85,6 +80,7 @@
   },
   "wp:body_class": {
     "prefix": "wp:body_class",
+    "scope": "html,php",
     "body": [
       "<?php body_class(); ?>"
     ],
@@ -92,6 +88,7 @@
   },
   "wp:_e": {
     "prefix": "wp:_e",
+    "scope": "html,php",
     "body": [
       "<?php _e( '${1:Skip to content}', '${0}' ); ?>"
     ],
@@ -99,6 +96,7 @@
   },
   "wp:__": {
     "prefix": "wp:__",
+    "scope": "html,php",
     "body": [
       "<?php __( '${1:Skip to content}', '${0}' ); ?>"
     ],
@@ -106,6 +104,7 @@
   },
   "wp:home-link": {
     "prefix": "wp:home-link",
+    "scope": "html,php",
     "body": [
       "<?php echo esc_url( home_url( '/' ) ); ?>"
     ],
@@ -113,6 +112,7 @@
   },
   "wp:bloginfo": {
     "prefix": "wp:bloginfo",
+    "scope": "html,php",
     "body": [
       "<?php bloginfo( '${1:name}' ); ?>"
     ],
@@ -120,6 +120,7 @@
   },
   "wp:query": {
     "prefix": "wp:query",
+    "scope": "html,php",
     "body": [
       "<?php $${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} ); ?>",
       "<?php $${1:videos}_query = new WP_Query( $${1:videos}_args ); ?>",
@@ -132,6 +133,7 @@
   },
   "wp:while": {
     "prefix": "wp:while",
+    "scope": "html,php",
     "body": [
       "<?php if ( have_posts() ) : ?>",
       "\t<!-- // Start the Loop. -->",
@@ -140,12 +142,13 @@
       "\t<?php endwhile; ?>",
       "<?php else : ?>",
       "\t<?php _e( 'Sorry, no ${1:posts} found.' ); ?>",
-      "<?php endif; ?>",
+      "<?php endif; ?>"
     ],
     "description": "WordPress While"
   },
   "wp:while-query": {
     "prefix": "wp:while",
+    "scope": "html,php",
     "body": [
       "<?php $${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} ); ?>",
       "<?php $${1:videos}_query = new WP_Query( $${1:videos}_args ); ?>",
@@ -165,24 +168,27 @@
   },
   "wp:comments": {
     "prefix": "wp:comments",
+    "scope": "html,php",
     "body": [
       "<!-- // If comments are open or we have at least one comment, load up the comment template. -->",
       "<?php if ( comments_open() || get_comments_number() ) : ?>",
       "\t<?php comments_template(); ?>",
-      "<?php endif; ?>",
+      "<?php endif; ?>"
     ],
     "description": "WordPress Comments"
   },
   "wp:template_part": {
     "prefix": "wp:template_part",
+    "scope": "html,php",
     "body": [
       "<!-- // Include the page ${1:inc/site}-${2:content}.php template. -->",
-      "<?php get_template_part( '${1:inc/site}', ${3:'${2:content}'} );${0} ?>",
+      "<?php get_template_part( '${1:inc/site}', ${3:'${2:content}'} );${0} ?>"
     ],
     "description": "WordPress get_template_part"
   },
   "wp:img": {
     "prefix": "wp:img",
+    "scope": "html,php",
     "body": [
       "<img src=\"<?php echo get_template_directory_uri(); ?>/${0}\" width=\"${1:150}\" height=\"${2:150}\" alt=\"${3:WP image}\">"
     ],
@@ -190,6 +196,7 @@
   },
   "wp:the_title": {
     "prefix": "wp:the_title",
+    "scope": "html,php",
     "body": [
       "<?php the_title( '<h1 class=\"entry-title\">', '</h1>' ); ?>"
     ],
@@ -197,6 +204,7 @@
   },
   "wp:the_title2": {
     "prefix": "wp:the_title",
+    "scope": "html,php",
     "body": [
       "<?php the_title( '<h2 class=\"entry-title\"><a href=\"' . esc_url( get_permalink() ) . '\" rel=\"bookmark\">', '</a></h2>' ); ?>"
     ],
@@ -204,6 +212,7 @@
   },
   "wp:the_content": {
     "prefix": "wp:the_content",
+    "scope": "html,php",
     "body": [
       "<?php the_content(${0}); ?>"
     ],
@@ -211,6 +220,7 @@
   },
   "wp:the_content2": {
     "prefix": "wp:the_content",
+    "scope": "html,php",
     "body": [
       "<?php the_content( __( '${1:Continue reading} <span class=\"meta-nav\">&rarr;</span>', '${0}' ) ); ?>"
     ],
@@ -218,6 +228,7 @@
   },
   "wp:the_excerpt": {
     "prefix": "wp:the_excerpt",
+    "scope": "html,php",
     "body": [
       "<?php the_excerpt(); ?>"
     ],
@@ -225,6 +236,7 @@
   },
   "wp:article": {
     "prefix": "wp:article",
+    "scope": "html,php",
     "body": [
       "<article id=\"post-<?php the_ID(); ?>\" <?php post_class(); ?>>",
       "\t${0:<!-- // wp:while -->}",
@@ -235,6 +247,7 @@
   },
   "wp:search_form": {
     "prefix": "wp:search_form",
+    "scope": "html,php",
     "body": [
       "<?php get_search_form(); ?>"
     ],
@@ -242,34 +255,53 @@
   },
   "wp:get_posts": {
     "prefix": "wp:get_posts",
+    "scope": "html,php",
     "body": [
       "<?php $${1:posts} = get_posts( array( 'post_type' => '${1:posts}' ) ); ?>",
       "<?php if ( $${1:posts} ): ?>",
       "\t${2:wp:while}${0}",
-      "<?php endif; ?>",
+      "<?php endif; ?>"
     ],
     "description": "WordPress get_posts()"
   },
   "wp:get_page_by_title": {
     "prefix": "wp:get_page_by_title",
+    "scope": "html,php",
     "body": [
       "<?php $${1:page} = get_page_by_title('${2:Your Title}');  ?>",
       "<?php $${3:content} = apply_filters('the_content', $${1:page}->post_content); ?>",
       "<?php if ( $${3:content} ): ?>",
       "\t<?= $${3:content}; ?>${0}",
-      "<?php endif; ?>",
+      "<?php endif; ?>"
     ],
     "description": "WordPress get_page_by_title()"
   },
   "wp:get_page_by_path": {
     "prefix": "wp:get_page_by_path",
+    "scope": "html,php",
     "body": [
       "<?php $${1:page} = get_page_by_path('${2:your-title-slug}');  ?>",
       "<?php $${3:content} = apply_filters('the_content', $${1:page}->post_content); ?>",
       "<?php if ( $${3:content} ): ?>",
       "\t<?= $${3:content}; ?>${0}",
-      "<?php endif; ?>",
+      "<?php endif; ?>"
     ],
     "description": "WordPress get_page_by_path()"
+  },
+  "img:placehold:pug": {
+    "prefix": "img:placehold",
+    "scope": "pug,jade",
+    "body": [
+      "img(src=\"//placehold.it/${1:350}x${2:150}\" alt=\"$3\")"
+    ],
+    "description": "img tag with placehold.it"
+  },
+  "img:lorempixel:pug": {
+    "prefix": "img:lorempixel",
+    "scope": "pug,jade",
+    "body": [
+      "img(src=\"//lorempixel.com/${1:300}/${2:150}\" alt=\"$3\")"
+    ],
+    "description": "Add placeholder image with lorempixel.com"
   }
 }

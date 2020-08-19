@@ -1,6 +1,7 @@
 {
   "scss:media": {
     "prefix": "scss:media",
+    "scope": "scss",
     "body": [
       "@include media(${1:min-width }${2:$}${3:breakpoint-md}) {",
       "  $0",
@@ -11,6 +12,7 @@
   },
   "css:class": {
     "prefix": ".class",
+    "scope": "css,scss",
     "body": [
       ".${1:class} {",
       "  $0",

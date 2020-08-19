@@ -1,0 +1,87 @@
+{
+  "react:import": {
+    "prefix": "react:import",
+    "scope": "javascriptreact,typescriptreact",
+    "description": "import react",
+    "body": [
+      "import React from 'react';"
+    ]
+  },
+  "react:base:stateless": {
+    "prefix": "react:base",
+    "scope": "javascriptreact,typescriptreact",
+    "description": "React stateless base component",
+    "body": [
+      "import React, { Fragment, memo } from 'react';",
+      "",
+      "const ${1:ComponentName} = () => {",
+      "  return (",
+      "    <Fragment>",
+      "      <h1>${1:ComponentName}${0}</h1>",
+      "    </Fragment>",
+      "  );",
+      "};",
+      "",
+      "export default memo(${1:ComponentName});",
+      ""
+    ]
+  },
+  "react:useEffect": {
+    "prefix": "react:useEffect",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "useEffect(() => {",
+      "  $0",
+      "}, [$1]);"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react:useState": {
+    "prefix": "react:useState",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = useState($0);"
+    ],
+    "description": "React useState hook"
+  },
+  "react:render": {
+    "prefix": "react:render",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "render() {",
+      "  return (",
+      "     $0",
+      "  );",
+      "}"
+    ],
+    "description": "React render function"
+  },
+  // https://material-ui.com/getting-started/usage/
+  "Material-ui/Core": {
+    "prefix": "mui:core",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "import ${1:Box} from '@material-ui/core/${1:Box}';"
+    ],
+    "description": "Material-ui Core Components"
+  },
+  // https://material-ui.com/components/about-the-lab/
+  "Material-ui/Lab": {
+    "prefix": "mui:lab",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "import ${1:Alert} from '@material-ui/lab/${1:Alert}';"
+    ],
+    "description": "Material-ui Lab Components"
+  },
+  // https://material-ui.com/components/icons/
+  // https://material-ui.com/components/material-icons/
+  "Material-ui/Icons": {
+    "prefix": "mui:icons",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "import ${1:Delete}Icon from '@material-ui/icons/${1:Delete}';"
+    ],
+    "description": "Material-ui Icons Components"
+  }
+}

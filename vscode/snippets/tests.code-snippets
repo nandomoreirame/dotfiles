@@ -1,0 +1,59 @@
+{
+  "test": {
+    "prefix": "test",
+    "scope": "javascript,typescript",
+    "description": "jest test",
+    "body": [
+      "${3:test}('should \"${0}\"', () => {",
+      "  expect(${1:someResult}).${2:toEqual}('${0}');",
+      "});"
+    ]
+  },
+  "test:describe": {
+    "prefix": "test:describe",
+    "scope": "javascript,typescript",
+    "description": "test jest describe",
+    "body": [
+      "describe('${1:someFunction}()', () => {",
+      "  ${3:test}('should \"${0}\"', () => {",
+      "    expect(${1:someResult}).${2:toEqual}('${0}');",
+      "  });",
+      "});"
+    ]
+  },
+  "test:it": {
+    "prefix": "test:it",
+    "scope": "javascript,typescript",
+    "description": "test jest it",
+    "body": [
+      "${3:it}('should \"${0}\"', () => {",
+      "  expect(${1:someResult}).${2:toEqual}('${0}');",
+      "});"
+    ]
+  },
+  "test:expect": {
+    "prefix": "test:expect",
+    "scope": "javascript,typescript",
+    "description": "test jest expect",
+    "body": [
+      "expect(${1:someResult}).${2:toEqual}('${0}');"
+    ]
+  },
+  "test:vue": {
+    "prefix": "test:vue",
+    "scope": "javascript,typescript",
+    "description": "test for Vue components",
+    "body": [
+      "import { shallowMount } from '@vue/test-utils';",
+      "import $1 from './$1';",
+      "",
+      "describe('<$1 />', () => {",
+      "  test('should match the snapshot', () => {",
+      "    const mountedComponent = shallowMount($1, ${2:{ propsData: { $0 }}});",
+      "    expect(mountedComponent).toMatchSnapshot();",
+      "  });",
+      "});",
+      ""
+    ]
+  }
+}

@@ -1,11 +1,11 @@
 {
   "json": {
     "prefix": "json",
+    "scope": "json,jsonc",
     "body": [
       "{",
       "  ${0}",
-      "}",
-      ""
+      "}"
     ],
     "description": "Create empty json"
   }

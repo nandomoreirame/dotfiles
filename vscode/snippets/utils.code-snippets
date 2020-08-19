@@ -1,4 +1,36 @@
 {
+  "signature": {
+    "prefix": "sig",
+    "body": [
+      "$BLOCK_COMMENT_START",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> site developed by <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~> https://nandomoreira.dev <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~> https://twitter.com/oseunando <~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~> https://github.com/nandomoreirame <~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "$BLOCK_COMMENT_END"
+    ],
+    "description": "my signature"
+  },
+  "comm:block": {
+    "prefix": "comm:block",
+    "body": [
+      "$BLOCK_COMMENT_START",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "${1:Your comment block here}",
+      "~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "$BLOCK_COMMENT_END"
+    ],
+    "description": "Block Comment"
+  },
+  "comm:line": {
+    "prefix": "comm:line",
+    "body": [
+      "$LINE_COMMENT ${1:Your comment block here}"
+    ],
+    "description": "Line Comment"
+  },
   "lorem": {
     "prefix": "lorem",
     "body": [
@@ -43,5 +75,5 @@
       "Sed quis laoreet nulla. Suspendisse tristique consectetur nisl, nec euismod est dictum at. Phasellus nunc lectus, porttitor quis dapibus sed, malesuada vitae sapien. Nunc molestie magna vitae cursus rhoncus. Vestibulum et orci id diam efficitur faucibus. Maecenas accumsan et tellus nec euismod. Suspendisse potenti. Nulla vitae lorem ligula. Aliquam tristique, tellus vel gravida iaculis, orci sapien finibus elit, sit amet auctor felis lectus a dui. Fusce dignissim sapien et justo gravida vulputate. Maecenas egestas mauris nec tortor porttitor ultricies. Morbi vitae elit leo."
     ],
     "description": "Lorem Ipsum 5 paragraphs"
-  },
+  }
 }

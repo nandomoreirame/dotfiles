@@ -1,6 +1,7 @@
 {
   "prp": {
     "prefix": "prp",
+    "scope": "php",
     "body": [
       "echo '<pre>' . print_r( ${0}, true ) . '</pre>';"
     ],
@@ -8,6 +9,7 @@
   },
   "php": {
     "prefix": "php",
+    "scope": "php",
     "body": [
       "<?php ${0}; ?>"
     ],
@@ -15,6 +17,7 @@
   },
   "php:jdie": {
     "prefix": "php:jdie",
+    "scope": "php",
     "body": [
       "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));"
     ],
@@ -22,6 +25,7 @@
   },
   "php:var": {
     "prefix": "php:var",
+    "scope": "php",
     "body": [
       "$${1:var}"
     ],
@@ -29,6 +33,7 @@
   },
   "php:class": {
     "prefix": "php:class",
+    "scope": "php",
     "body": [
       "namespace ${1:App};",
       "",
@@ -42,6 +47,7 @@
   },
   "php:namespace": {
     "prefix": "php:namespace",
+    "scope": "php",
     "body": [
       "namespace ${1:App};${0}",
       ""
@@ -50,6 +56,7 @@
   },
   "php:function": {
     "prefix": "php:function",
+    "scope": "php",
     "body": [
       "public function ${1:__construct}()",
       "{",
@@ -61,6 +68,7 @@
   },
   "wp:query": {
     "prefix": "wp:query",
+    "scope": "php",
     "body": [
       "$${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} );",
       "$${1:videos}_query = new WP_Query( $${1:videos}_args );${0}",
@@ -70,16 +78,18 @@
   },
   "wp:comments": {
     "prefix": "wp:comments",
+    "scope": "php",
     "body": [
       "// If comments are open or we have at least one comment, load up the comment template.",
       "if ( comments_open() || get_comments_number() ) :",
       "    comments_template();",
-      "endif;",
+      "endif;"
     ],
     "description": "WordPress Comments"
   },
   "wp:while": {
     "prefix": "wp:while",
+    "scope": "php",
     "body": [
       "if ( have_posts() ) :",
       "    // Start the Loop.",
@@ -88,7 +98,7 @@
       "    endwhile;",
       "else :",
       "    // ...",
-      "endif;",
+      "endif;"
     ],
     "description": "WordPress While"
   }

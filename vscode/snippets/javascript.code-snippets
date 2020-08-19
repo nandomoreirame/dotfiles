@@ -1,0 +1,158 @@
+{
+  "debugger": {
+    "prefix": "dbgg",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Debugger",
+    "body": [
+      "debugger;${0}"
+    ]
+  },
+  "try:catch": {
+    "prefix": "try:catch",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "try catch error",
+    "body": [
+      "try {",
+      "  ${0}",
+      "} catch (${1:error}) {",
+      "  throw new Error(${1:error});",
+      "}"
+    ]
+  },
+  "const": {
+    "prefix": "const",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Create const",
+    "body": [
+      "const ${1:varHere} = $0;",
+      ""
+    ]
+  },
+  "arrow:fn": {
+    "prefix": "arrow:fn",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Arrow function",
+    "body": [
+      "($1) => {",
+      "  $0",
+      "}"
+    ]
+  },
+  "arrow:const": {
+    "prefix": "arrow:const",
+    "description": "[const] Arrow function",
+    "body": [
+      "const ${1:functionHere} = ($2) => {",
+      "  return {$0}",
+      "};",
+      ""
+    ]
+  },
+  "import": {
+    "prefix": "import",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Node module import from",
+    "body": [
+      "import ${Module} from '${module}'",
+      ""
+    ]
+  },
+  "require": {
+    "prefix": "require",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Node module require",
+    "body": [
+      "${const} ${Module} = require('${module}')",
+      ""
+    ]
+  },
+  "console": {
+    "prefix": "clog",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Log output to console",
+    "body": [
+      "// eslint-disable-next-line",
+      "console.${1:log}(${2:{var}});$0"
+    ]
+  },
+  "http:get": {
+    "prefix": "http:get",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "  .get(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "http:post": {
+    "prefix": "http:post",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "  .post(`${1:/end/point}`, {})",
+      "  .then(json => json.data)",
+      "  .catch(error => ({ error }))",
+      ""
+    ]
+  },
+  "promise": {
+    "prefix": "promise",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "New Promise",
+    "body": [
+      "new Promise((resolve, reject) => {",
+      "  ${0:// Do something here...}",
+      "  resolve();",
+      "})",
+      ""
+    ]
+  },
+  "export": {
+    "prefix": "export",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export",
+    "body": [
+      "export ${1} {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:default": {
+    "prefix": "export",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "description": "export default",
+    "body": [
+      "export default {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:const": {
+    "prefix": "export",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export const",
+    "body": [
+      "export const ${1:MyConst} = () => {",
+      "  ${0:// Do something here...}",
+      "}",
+      ""
+    ]
+  },
+  "export:function": {
+    "prefix": "export",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export default function",
+    "body": [
+      "export default function () {",
+      "  return ${0};",
+      "}",
+      ""
+    ]
+  }
+}

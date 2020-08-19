@@ -1,196 +1,212 @@
 {
-  "debugger": {
-    "prefix": "deb",
-    "description": "Debugger",
+  "vue:v-for": {
+    "prefix": "v:for",
+    "scope": "vue-html",
     "body": [
-      "debugger;${0}"
-    ]
+      "<${1:div} v-for=\"(${2:item}, i) in ${2:item}s\" :key=\"i\">",
+      "  {{ ${2:item} }}",
+      "</${1:div}>"
+    ],
+    "description": "v-for statement"
   },
-  "try-catch": {
-    "prefix": "try:catch",
-    "description": "try catch error",
+  "vue:router-view": {
+    "prefix": "v:router-view",
+    "scope": "vue-html",
     "body": [
-      "try {",
+      "<router-view>$1</router-view>"
+    ],
+    "description": "router-view element"
+  },
+  "vue:router-link": {
+    "prefix": "v:router-link",
+    "scope": "vue-html",
+    "body": [
+      "<router-link $1>$2</router-link>"
+    ],
+    "description": "router-link element"
+  },
+  "vue:router-link-to": {
+    "prefix": "v:router-link",
+    "scope": "vue-html",
+    "body": [
+      "<router-link to=\"$1\">$2</router-link>"
+    ],
+    "description": "<router-link to=''></router-link>. router-link element"
+  },
+  "vue:nuxt-tag": {
+    "prefix": "v:nuxt",
+    "scope": "vue-html",
+    "body": [
+      "<nuxt />${0}"
+    ],
+    "description": "[nuxt] component tag"
+  },
+  "vue:nuxt-client-only": {
+    "prefix": "v:client-only",
+    "scope": "vue-html",
+    "body": [
+      "<client-only ${1:placeholder=\"${2:Loading...}\"}>",
       "  ${0}",
-      "} catch (${1:error}) {",
-      "  throw new Error(${1:error});",
-      "}",
-    ]
+      "</client-only>"
+    ],
+    "description": "[nuxt] client-only component"
   },
-  "eslint-global": {
-    "prefix": "eslint:global",
-    "description": "Eslint: global",
+  "vue:nuxt-link": {
+    "prefix": "v:nuxt-link",
+    "scope": "vue-html",
     "body": [
-      "/* global ${1:GlobalVar};*/"
-    ]
+      "<nuxt-link to=\"/${1:path}\">${1:title}</nuxt-link>${0}"
+    ],
+    "description": "[nuxt] routing link"
   },
-  "eslint-off": {
-    "prefix": "eslint:off",
-    "description": "Eslint: off",
+  "vue:to": {
+    "prefix": "v:to",
+    "scope": "vue-html",
     "body": [
-      "/* eslint ${1:eqeqeq}: \"${2:off}\"${3:, ${4:curly}: \"${5:error}\"} $0*/ "
-    ]
+      "to=\"$1\"${0}"
+    ],
+    "description": "[vue] to=''"
   },
-  "eslint-disable": {
-    "prefix": "eslint:disable",
-    "description": "Eslint: disable",
+  "vue:v-text": {
+    "prefix": "v:text",
+    "scope": "vue-html",
     "body": [
-      "/* eslint-disable $0*/"
-    ]
+      "v-text=\"${1:var}\"${0}"
+    ],
+    "description": "[vue] v-text"
   },
-  "eslint-enable": {
-    "prefix": "eslint:enable",
-    "description": "Eslint: enable",
+  "vue:v-model": {
+    "prefix": "v:model",
+    "scope": "vue-html",
     "body": [
-      "/* eslint-enable */"
-    ]
+      "v-model=\"${1:var}\"${0}"
+    ],
+    "description": "[vue] v-model"
   },
-  "eslint-env": {
-    "prefix": "eslint:env",
-    "description": "Eslint: env",
+  "vue:v-if": {
+    "prefix": "v:if",
+    "scope": "vue-html",
     "body": [
-      "/* eslint-env $0*/"
-    ]
+      "v-if=\"${1:condition}\"${0}"
+    ],
+    "description": "[vue] v-if"
   },
-  "eslint-disable-line": {
-    "prefix": "eslint:disable-disable-line",
-    "description": "Eslint: disable line",
+  "vue:v-else": {
+    "prefix": "v:else",
+    "scope": "vue-html",
     "body": [
-      "// eslint-disable-line $0"
-    ]
+      "v-else${0}"
+    ],
+    "description": "[vue] v-else"
   },
-  "eslint-disable-next-line": {
-    "prefix": "eslint:disable-next-line",
-    "description": "Eslint: disable next line",
+  "vue:@click": {
+    "prefix": "v:@click",
+    "scope": "vue-html",
     "body": [
-      "// eslint-disable-next-line $0"
-    ]
+      "@click=\"${1:handler}(${2:arg}, $event)\""
+    ],
+    "description": "[vue] @click handler with arguments"
   },
-  "const": {
-    "prefix": "const",
-    "description": "Create const",
+  "vue:template-base": {
+    "prefix": "v:base",
+    "scope": "vue",
+    "description": "Template Base for Vue",
     "body": [
-      "const ${1:varNameHere} = ${0};",
-      ""
-    ]
-  },
-  "arrow": {
-    "prefix": "arrow",
-    "description": "[const] Arrow function",
-    "body": [
-      "const ${1:functionHere} = ($2) => {",
-      "  return {$0}",
-      "};",
-      ""
-    ]
-  },
-  "import": {
-    "prefix": "import",
-    "description": "Node module import from",
-    "body": [
-      "import ${Module} from '${module}'",
-      ""
-    ]
-  },
-  "require": {
-    "prefix": "require",
-    "description": "Node module require",
-    "body": [
-      "const ${2:module} = require('${1:module}');${0}"
-    ]
-  },
-  "jquery:function": {
-    "prefix": "jq:function",
-    "description": "[jQuery] auto executable function",
-    "body": [
-      "(function(${1:$}) {",
-      "  ${0:// Do something here...}",
-      "})(${jQuery})",
-      ""
-    ]
-  },
-  "console": {
-    "prefix": "clog",
-    "description": "Log output to console",
-    "body": [
-      "console.${2:log}({ ${1:var} });"
-    ]
-  },
-  "export": {
-    "prefix": "export",
-    "description": "export",
-    "body": [
-      "export ${1} {",
-      "  ${0:// Do something here...}",
-      "}",
-      ""
-    ]
-  },
-  "export:default": {
-    "prefix": "export",
-    "description": "export default",
-    "body": [
+      "<template>",
+      "  <div class=\"${1:ComponentName}\">",
+      "    <h1>${2:Vue Single File Component}</h1>",
+      "  </div>",
+      "</template>",
+      "",
+      "<script>",
       "export default {",
-      "  ${0:// Do something here...}",
+      "  name: '${1:ComponentName}',${0}",
+      "};",
+      "</script>",
+      "",
+      "<style lang=\"${3:scss}\" ${4:scoped}>",
+      ".${1:ComponentName} {",
       "}",
+      "</style>",
       ""
     ]
   },
-  "export:const": {
-    "prefix": "export",
-    "description": "export const",
+  "vue:template-base-src": {
+    "prefix": "v:base",
+    "scope": "vue",
+    "description": "[src] Template Base for Vue",
     "body": [
-      "export const ${1:MyConst} = () => {",
-      "  ${0:// Do something here...}",
+      "<script src=\"./${1:script}.js\"></script>",
+      "<style lang=\"${2:scss}\" src=\"./${3:style}.${2:scss}\" ${4:scoped}></style>",
+      "",
+      "<template>",
+      "  <div class=\"${5:ComponentName}\">",
+      "    <h1>${6:Vue Single File Component}</h1>${0}",
+      "  </div>",
+      "</template>",
+      ""
+    ]
+  },
+  "vue:template": {
+    "prefix": "v:template",
+    "scope": "vue",
+    "description": "[template] Vue Single File Component",
+    "body": [
+      "<template>",
+      "  <div class=\"${1:vue-component}\">",
+      "    <h1>${2:Vue Single File Component}</h1>${0}",
+      "  </div>",
+      "</template>",
+      ""
+    ]
+  },
+  "vue:script": {
+    "prefix": "v:script",
+    "scope": "vue",
+    "description": "[script] Vue Single File Component",
+    "body": [
+      "<script>",
+      "export default {",
+      "  name: '${1:ComponentName}',${0}",
+      "};",
+      "</script>",
+      ""
+    ]
+  },
+  "vue:script-src": {
+    "prefix": "v:script",
+    "scope": "vue",
+    "description": "[script src] Vue Single File Component",
+    "body": [
+      "<script src=\"./${1:script}.js\"></script>${0}"
+    ]
+  },
+  "vue:style": {
+    "prefix": "v:style",
+    "scope": "vue",
+    "description": "[style] Vue Single File Component",
+    "body": [
+      "<style ${1:lang=\"${2:scss}\"} ${3:scoped}>",
+      ".${4:ComponentName} {${0}",
       "}",
+      "</style>",
       ""
     ]
   },
-  "export:function": {
-    "prefix": "export",
-    "description": "export default function",
+  "vue:style-src": {
+    "prefix": "v:style",
+    "scope": "vue",
+    "description": "[style src] Vue Single File Component",
     "body": [
-      "export default function () {",
-      "  return ${0};",
-      "}",
-      ""
+      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" ${3:scoped}></style>${0}"
     ]
   },
-  "http:get": {
-    "prefix": "http:get",
-    "description": "Axios http get",
-    "body": [
-      "${1:http}",
-      "  .get(`${2:/end/point}`, { ${3:params} })",
-      "  .then(({ data }) => data)",
-      "  .catch(error => ({ error }))",
-      ""
-    ]
-  },
-  "http:post": {
-    "prefix": "http:post",
-    "description": "Axios http POST",
-    "body": [
-      "${1:http}",
-      "  .post(`${2:/end/point}`, { ${3:params} })",
-      "  .then(({ data }) => data)",
-      "  .catch(error => ({ error }))",
-      ""
-    ]
-  },
-  "promise": {
-    "prefix": "promise",
-    "description": "New Promise",
-    "body": [
-      "new Promise((resolve, reject) => {",
-      "  ${0:// Do something here...}",
-      "  resolve();",
-      "})",
-      ""
-    ]
-  },
+
+
+
   "vue:import": {
     "prefix": "v:import",
+    "scope": "vue,javascript,typescript",
     "body": [
       "import Vue from 'vue';${0}"
     ],
@@ -198,6 +214,7 @@
   },
   "vue:import-component": {
     "prefix": "v:import",
+    "scope": "vue,javascript,typescript",
     "body": [
       "import ${1:ComponentHere} from '@/components/${1:ComponentHere}';${0}"
     ],
@@ -205,6 +222,7 @@
   },
   "vue:data": {
     "prefix": "v:data",
+    "scope": "vue,javascript,typescript",
     "description": "Vue data",
     "body": [
       "data() {",
@@ -216,6 +234,7 @@
   },
   "vue:data-arrow": {
     "prefix": "v:data",
+    "scope": "vue,javascript,typescript",
     "description": "Vue data [arrow function]",
     "body": [
       "data: () => ({",
@@ -225,6 +244,7 @@
   },
   "vue:asyncData": {
     "prefix": "v:asyncData",
+    "scope": "vue,javascript,typescript",
     "description": "Nuxt asyncData arrow function",
     "body": [
       "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
@@ -236,6 +256,7 @@
   },
   "vue:fetch": {
     "prefix": "v:fetch",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: Nuxt fetch",
     "body": [
       "fetch({ store, params }) {",
@@ -248,6 +269,7 @@
   },
   "vue:fetch-async": {
     "prefix": "v:fetch:async",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: Nuxt fetch",
     "body": [
       "async fetch({ store, params }) {",
@@ -258,6 +280,7 @@
   },
   "vue:components": {
     "prefix": "v:components",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue components",
     "body": [
       "components: {",
@@ -267,6 +290,7 @@
   },
   "vue:mounted": {
     "prefix": "v:mounted",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue mounted",
     "body": [
       "mounted() {",
@@ -276,6 +300,7 @@
   },
   "vue:methods": {
     "prefix": "v:methods",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue methods",
     "body": [
       "methods: {",
@@ -285,6 +310,7 @@
   },
   "vue:computed": {
     "prefix": "v:computed",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue computed",
     "body": [
       "computed: {",
@@ -296,6 +322,7 @@
   },
   "vue:props": {
     "prefix": "v:props",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue props",
     "body": [
       "props: {",
@@ -308,6 +335,7 @@
   },
   "vue:watch": {
     "prefix": "v:watch",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vue watch",
     "body": [
       "['search']() {",
@@ -319,6 +347,7 @@
   },
   "vuex:import": {
     "prefix": "vx:import",
+    "scope": "vue,javascript,typescript",
     "description": "vuex import",
     "body": [
       "import { ${1:mapState,} ${2:mapActions,} ${3:mapMutations} } from 'vuex';${0}"
@@ -326,6 +355,7 @@
   },
   "vuex": {
     "prefix": "vx",
+    "scope": "vue,javascript,typescript",
     "description": "Vuex start",
     "body": [
       "const state = {",
@@ -349,6 +379,7 @@
   },
   "vuex-muxt": {
     "prefix": "vx",
+    "scope": "vue,javascript,typescript",
     "description": "[Nuxt] Vuex start",
     "body": [
       "export const state = () => ({",
@@ -368,6 +399,7 @@
   },
   "vuex:state": {
     "prefix": "vx:state",
+    "scope": "vue,javascript,typescript",
     "description": "Vuex state",
     "body": [
       "export const state = () => ({",
@@ -378,6 +410,7 @@
   },
   "vuex:mapState": {
     "prefix": "vx:mapState",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vuex mapState",
     "body": [
       "...mapState({",
@@ -387,6 +420,7 @@
   },
   "vuex:mapActions": {
     "prefix": "vx:mapActions",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vuex mapActions",
     "body": [
       "...mapActions({",
@@ -396,70 +430,12 @@
   },
   "vuex:mapMutations": {
     "prefix": "vx:mapMutations",
+    "scope": "vue,javascript,typescript",
     "description": "scripts: vuex mapMutations",
     "body": [
       "...mapMutations({",
       "  ${2:storeMutation}: '${1:namespace/}${2:storeMutation}',",
       "}),"
-    ]
-  },
-  "react:import": {
-    "prefix": "react:import",
-    "description": "import react",
-    "body": [
-      "import React from 'react';"
-    ]
-  },
-  "react:base:class": {
-    "prefix": "react:base",
-    "description": "React class base component",
-    "body": [
-      "import React, { Component } from 'react';",
-      "import PropTypes from 'prop-types';",
-      "",
-      "class ${1:ComponentName} extends Component {",
-      "  static propTypes = {",
-      "    ${2:children}: PropTypes.${3:node}${4:.isRequired},",
-      "  }",
-      "",
-      "  constructor(props) {",
-      "    super(props)",
-      "  }",
-      "",
-      "  render() {",
-      "    return (",
-      "      <>",
-      "        {${2:children}}${0}",
-      "      </>",
-      "    );",
-      "  };",
-      "};",
-      "",
-      "export default ${1:ComponentName};",
-      ""
-    ]
-  },
-  "react:base:stateless": {
-    "prefix": "react:base",
-    "description": "React stateless base component",
-    "body": [
-      "import React from 'react';",
-      "import PropTypes from 'prop-types';",
-      "",
-      "const ${1:ComponentName} = ({ ${2:children} }) => {",
-      "  return (",
-      "    <>",
-      "      {${2:children}}${0}",
-      "    </>",
-      "  );",
-      "};",
-      "",
-      "${1:ComponentName}.propTypes = {",
-      "  ${2:children}: PropTypes.${3:node}${4:.isRequired},",
-      "};",
-      "",
-      "export default ${1:ComponentName};",
-      ""
     ]
   }
 }

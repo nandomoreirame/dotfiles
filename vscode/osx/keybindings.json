@@ -31,7 +31,7 @@
   },
   {
     "key": "cmd+k cmd+l",
-    "command": "workbench.action.terminal.clear",
+    "command": "workbench.action.terminal.clear"
   },
   {
     "key": "cmd+k cmd+p",
@@ -52,5 +52,5 @@
   {
     "key": "cmd+k cmd+,",
     "command": "workbench.action.openGlobalKeybindings"
-  },
+  }
 ]
