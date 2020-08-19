@@ -184,5 +184,6 @@
     "User-Agent": "vscode-restclient",
     "content-type": "application/json"
   },
-  "editor.fontSize": 11
+  "editor.fontSize": 11,
+  "todo-tree.tree.showScanModeButton": false
 }

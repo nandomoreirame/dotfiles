@@ -7,7 +7,16 @@
       "import React from 'react';"
     ]
   },
-  "react:base:stateless": {
+  "react:import-styled-file": {
+    "prefix": "react:import:s",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "description": "Import styled file as S const",
+    "body": [
+      "import * as S from './${1:ComponentName}.styles",
+      ""
+    ]
+  },
+  "react:base": {
     "prefix": "react:base",
     "scope": "javascriptreact,typescriptreact",
     "description": "React stateless base component",
@@ -15,15 +24,46 @@
       "import React, { Fragment, memo } from 'react';",
       "",
       "const ${1:ComponentName} = () => {",
-      "  return (",
-      "    <Fragment>",
-      "      <h1>${1:ComponentName}${0}</h1>",
-      "    </Fragment>",
-      "  );",
+      "\treturn (",
+      "\t\t<Fragment>",
+      "\t\t\t<h1>${1:ComponentName}${0}</h1>",
+      "\t\t</Fragment>",
+      "\t);",
       "};",
       "",
       "export default memo(${1:ComponentName});",
       ""
+    ]
+  },
+  "react:base:ts": {
+    "prefix": "react:base",
+    "scope": "typescriptreact",
+    "description": "React (TypeScript) stateless base component",
+    "body": [
+      "import React, { Fragment, memo } from 'react';",
+      "",
+      "type ${1:ComponentName}Props = {",
+      "\tchildren: React.ReactNode;",
+      "};",
+      "",
+      "const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = ({ children }: ${1:ComponentName}Props) => {",
+      "\treturn (",
+      "\t\t<Fragment>",
+      "\t\t\t<h1>{children}${0}</h1>",
+      "\t\t</Fragment>",
+      "\t);",
+      "};",
+      "",
+      "export default memo(${1:ComponentName});",
+      ""
+    ]
+  },
+  "react:children:props": {
+    "prefix": "react:base",
+    "scope": "typescriptreact",
+    "description": "React children React.ReactNode",
+    "body": [
+      "children${1:?}: React.ReactNode;"
     ]
   },
   "react:useEffect": {
@@ -31,7 +71,7 @@
     "scope": "javascriptreact,typescriptreact",
     "body": [
       "useEffect(() => {",
-      "  $0",
+      "\t$0",
       "}, [$1]);"
     ],
     "description": "React useEffect Hook"
@@ -49,9 +89,9 @@
     "scope": "javascriptreact,typescriptreact",
     "body": [
       "render() {",
-      "  return (",
-      "     $0",
-      "  );",
+      "\treturn (",
+      "\t\t $0",
+      "\t);",
       "}"
     ],
     "description": "React render function"

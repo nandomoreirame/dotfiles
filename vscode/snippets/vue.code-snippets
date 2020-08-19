@@ -4,7 +4,7 @@
     "scope": "vue-html",
     "body": [
       "<${1:div} v-for=\"(${2:item}, i) in ${2:item}s\" :key=\"i\">",
-      "  {{ ${2:item} }}",
+      "\t{{ ${2:item} }}",
       "</${1:div}>"
     ],
     "description": "v-for statement"
@@ -46,7 +46,7 @@
     "scope": "vue-html",
     "body": [
       "<client-only ${1:placeholder=\"${2:Loading...}\"}>",
-      "  ${0}",
+      "\t${0}",
       "</client-only>"
     ],
     "description": "[nuxt] client-only component"
@@ -113,14 +113,14 @@
     "description": "Template Base for Vue",
     "body": [
       "<template>",
-      "  <div class=\"${1:ComponentName}\">",
-      "    <h1>${2:Vue Single File Component}</h1>",
-      "  </div>",
+      "\t<div class=\"${1:ComponentName}\">",
+      "\t\t<h1>${2:Vue Single File Component}</h1>",
+      "\t</div>",
       "</template>",
       "",
       "<script>",
       "export default {",
-      "  name: '${1:ComponentName}',${0}",
+      "\tname: '${1:ComponentName}',${0}",
       "};",
       "</script>",
       "",
@@ -140,9 +140,9 @@
       "<style lang=\"${2:scss}\" src=\"./${3:style}.${2:scss}\" ${4:scoped}></style>",
       "",
       "<template>",
-      "  <div class=\"${5:ComponentName}\">",
-      "    <h1>${6:Vue Single File Component}</h1>${0}",
-      "  </div>",
+      "\t<div class=\"${5:ComponentName}\">",
+      "\t\t<h1>${6:Vue Single File Component}</h1>${0}",
+      "\t</div>",
       "</template>",
       ""
     ]
@@ -153,9 +153,9 @@
     "description": "[template] Vue Single File Component",
     "body": [
       "<template>",
-      "  <div class=\"${1:vue-component}\">",
-      "    <h1>${2:Vue Single File Component}</h1>${0}",
-      "  </div>",
+      "\t<div class=\"${1:vue-component}\">",
+      "\t\t<h1>${2:Vue Single File Component}</h1>${0}",
+      "\t</div>",
       "</template>",
       ""
     ]
@@ -167,7 +167,7 @@
     "body": [
       "<script>",
       "export default {",
-      "  name: '${1:ComponentName}',${0}",
+      "\tname: '${1:ComponentName}',${0}",
       "};",
       "</script>",
       ""
@@ -201,9 +201,6 @@
       "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" ${3:scoped}></style>${0}"
     ]
   },
-
-
-
   "vue:import": {
     "prefix": "v:import",
     "scope": "vue,javascript,typescript",
@@ -226,9 +223,9 @@
     "description": "Vue data",
     "body": [
       "data() {",
-      "  return {",
-      "    ${1:title}: ${2:'Hello World!'},${0}",
-      "  };",
+      "\treturn {",
+      "\t\t${1:title}: ${2:'Hello World!'},${0}",
+      "\t};",
       "},"
     ]
   },
@@ -238,7 +235,7 @@
     "description": "Vue data [arrow function]",
     "body": [
       "data: () => ({",
-      "  ${1:title}: ${2:'Hello World!'},",
+      "\t${1:title}: ${2:'Hello World!'},",
       "}),"
     ]
   },
@@ -248,9 +245,9 @@
     "description": "Nuxt asyncData arrow function",
     "body": [
       "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
-      "  return {",
-      "    ${0:title: 'Hello World!'},",
-      "  };",
+      "\treturn {",
+      "\t\t${0:title: 'Hello World!'},",
+      "\t};",
       "},"
     ]
   },
@@ -260,10 +257,10 @@
     "description": "scripts: Nuxt fetch",
     "body": [
       "fetch({ store, params }) {",
-      "  return http.get('/end/point')",
-      "    .then((res) => {",
-      "      store.commit('setStars', res.data)",
-      "    });",
+      "\treturn http.get('/end/point')",
+      "\t\t.then((res) => {",
+      "\t\t\tstore.commit('setStars', res.data)",
+      "\t\t});",
       "},"
     ]
   },
@@ -273,8 +270,8 @@
     "description": "scripts: Nuxt fetch",
     "body": [
       "async fetch({ store, params }) {",
-      "  let { data } = await http.get('/end/point')",
-      "  store.commit('setStars', data)",
+      "\tlet { data } = await http.get('/end/point')",
+      "\tstore.commit('setStars', data)",
       "},"
     ]
   },
@@ -284,7 +281,7 @@
     "description": "scripts: vue components",
     "body": [
       "components: {",
-      "  ${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
+      "\t${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
       "},"
     ]
   },
@@ -294,7 +291,7 @@
     "description": "scripts: vue mounted",
     "body": [
       "mounted() {",
-      "  ${1:console.log('mounted...');}${0}",
+      "\t${1:console.log('mounted...');}${0}",
       "},"
     ]
   },
@@ -304,7 +301,7 @@
     "description": "scripts: vue methods",
     "body": [
       "methods: {",
-      "  ${0}",
+      "\t${0}",
       "},"
     ]
   },
@@ -314,9 +311,9 @@
     "description": "scripts: vue computed",
     "body": [
       "computed: {",
-      "  ...mapState({",
-      "    ${2:isLoading}: ({ ${1:user} }) => ${1:user}.${2:isLoading},${0}",
-      "  }),",
+      "\t...mapState({",
+      "\t\t${2:isLoading}: ({ ${1:user} }) => ${1:user}.${2:isLoading},${0}",
+      "\t}),",
       "},"
     ]
   },
@@ -326,10 +323,10 @@
     "description": "scripts: vue props",
     "body": [
       "props: {",
-      "  ${1:title}: {",
-      "    type: ${2:String},",
-      "    default: ${3:'Hello Props!'},${0}",
-      "  },",
+      "\t${1:title}: {",
+      "\t\ttype: ${2:String},",
+      "\t\tdefault: ${3:'Hello Props!'},${0}",
+      "\t},",
       "},"
     ]
   },
@@ -339,9 +336,9 @@
     "description": "scripts: vue watch",
     "body": [
       "['search']() {",
-      "  const timeout = setTimeout(() => {",
-      "    console.log('watching search...');",
-      "  }, 500);",
+      "\tconst timeout = setTimeout(() => {",
+      "\t\tconsole.log('watching search...');",
+      "\t}, 500);",
       "},"
     ]
   },
@@ -359,7 +356,7 @@
     "description": "Vuex start",
     "body": [
       "const state = {",
-      "  ${0}",
+      "\t${0}",
       "}",
       "",
       "const mutations = {",
@@ -369,10 +366,10 @@
       "}",
       "",
       "export default {",
-      "  namespaced: true,",
-      "  state,",
-      "  mutations,",
-      "  actions",
+      "\tnamespaced: true,",
+      "\tstate,",
+      "\tmutations,",
+      "\tactions",
       "}",
       ""
     ]
@@ -383,7 +380,7 @@
     "description": "[Nuxt] Vuex start",
     "body": [
       "export const state = () => ({",
-      "  ${0}",
+      "\t${0}",
       "});",
       "",
       "export const mutations = {",
@@ -403,7 +400,7 @@
     "description": "Vuex state",
     "body": [
       "export const state = () => ({",
-      "  ${1:loading}: ${2:false},",
+      "\t${1:loading}: ${2:false},",
       "});",
       ""
     ]
@@ -414,7 +411,7 @@
     "description": "scripts: vuex mapState",
     "body": [
       "...mapState({",
-      "  ${2:stateVar}: ({ ${1:namespace} }) => ${1:namespace}.${2:stateVar},${0}",
+      "\t${2:stateVar}: ({ ${1:namespace} }) => ${1:namespace}.${2:stateVar},${0}",
       "}),"
     ]
   },
@@ -424,7 +421,7 @@
     "description": "scripts: vuex mapActions",
     "body": [
       "...mapActions({",
-      "  ${2:storeActionHere}: '${1:namespace/}${2:storeActionHere}',",
+      "\t${2:storeActionHere}: '${1:namespace/}${2:storeActionHere}',",
       "}),"
     ]
   },
@@ -434,7 +431,7 @@
     "description": "scripts: vuex mapMutations",
     "body": [
       "...mapMutations({",
-      "  ${2:storeMutation}: '${1:namespace/}${2:storeMutation}',",
+      "\t${2:storeMutation}: '${1:namespace/}${2:storeMutation}',",
       "}),"
     ]
   }

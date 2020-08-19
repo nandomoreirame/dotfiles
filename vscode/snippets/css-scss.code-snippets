@@ -4,18 +4,18 @@
     "scope": "scss",
     "body": [
       "@include media(${1:min-width }${2:$}${3:breakpoint-md}) {",
-      "  $0",
+      "\t${0:// Write something here...}",
       "}",
       ""
     ],
     "description": "include sass mixin media query"
   },
   "css:class": {
-    "prefix": ".class",
+    "prefix": "css:class",
     "scope": "css,scss",
     "body": [
       ".${1:class} {",
-      "  $0",
+      "\t${0:/* Write something here... */}",
       "}",
       ""
     ],

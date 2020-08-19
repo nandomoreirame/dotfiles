@@ -3,103 +3,97 @@
     "prefix": "prp",
     "scope": "php",
     "body": [
-      "echo '<pre>' . print_r( ${0}, true ) . '</pre>';"
+      "echo '<pre>' . print_r( $1, true ) . '</pre>';",
+      "$0"
     ],
     "description": "Print pre to debug"
   },
-  "php": {
-    "prefix": "php",
-    "scope": "php",
+  "prp:tag": {
+    "prefix": "prp:t",
+    "scope": "html",
     "body": [
-      "<?php ${0}; ?>"
+      "<?php echo '<pre>' . print_r( $1, true ) . '</pre>'; ?>",
+      "$0"
+    ],
+    "description": "Print pre to debug"
+  },
+  "php:tag": {
+    "prefix": "php:t",
+    "scope": "html",
+    "body": [
+      "<?php $1 ?>",
+      "$0"
     ],
     "description": "php tag"
   },
+  "php:t": {
+    "prefix": "php:t",
+    "scope": "html",
+    "body": [
+      "<?php",
+      "$0"
+    ],
+    "description": "php"
+  },
+  "php:e": {
+    "prefix": "php:e",
+    "scope": "html",
+    "body": [
+      "<?= $0 ?>",
+      "$0"
+    ],
+    "description": "PHP echo"
+  },
   "php:jdie": {
-    "prefix": "php:jdie",
+    "prefix": "php:j",
     "scope": "php",
     "body": [
-      "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));"
+      "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));",
+      "$0"
     ],
     "description": "convert and print array to json and die"
   },
   "php:var": {
-    "prefix": "php:var",
+    "prefix": "php:v",
     "scope": "php",
     "body": [
-      "$${1:var}"
+      "$${1:var}$0"
     ],
     "description": "PHP Var"
   },
   "php:class": {
-    "prefix": "php:class",
+    "prefix": "php:c",
     "scope": "php",
     "body": [
       "namespace ${1:App};",
       "",
       "class ${2:ClassName}${3: extends AnotherClass}",
       "{",
-      "${0}",
+      "\t$1",
       "}",
-      ""
+      "$0"
     ],
     "description": "PHP class"
   },
   "php:namespace": {
-    "prefix": "php:namespace",
+    "prefix": "php:n",
     "scope": "php",
     "body": [
-      "namespace ${1:App};${0}",
-      ""
+      "namespace ${1:App};",
+      "$0"
     ],
     "description": "PHP namespace"
   },
   "php:function": {
-    "prefix": "php:function",
+    "prefix": "php:f",
     "scope": "php",
     "body": [
       "public function ${1:__construct}()",
       "{",
-      "${0}",
+      "\t$1",
       "}",
-      ""
+      "$0"
     ],
     "description": "PHP function"
-  },
-  "wp:query": {
-    "prefix": "wp:query",
-    "scope": "php",
-    "body": [
-      "$${1:videos}_args = array( 'post_type' => '${1:videos}', 'posts_per_page' => ${2:-1} );",
-      "$${1:videos}_query = new WP_Query( $${1:videos}_args );${0}",
-      ""
-    ],
-    "description": "PHP function"
-  },
-  "wp:comments": {
-    "prefix": "wp:comments",
-    "scope": "php",
-    "body": [
-      "// If comments are open or we have at least one comment, load up the comment template.",
-      "if ( comments_open() || get_comments_number() ) :",
-      "    comments_template();",
-      "endif;"
-    ],
-    "description": "WordPress Comments"
-  },
-  "wp:while": {
-    "prefix": "wp:while",
-    "scope": "php",
-    "body": [
-      "if ( have_posts() ) :",
-      "    // Start the Loop.",
-      "    while ( have_posts() ) : the_post();",
-      "        // ...",
-      "    endwhile;",
-      "else :",
-      "    // ...",
-      "endif;"
-    ],
-    "description": "WordPress While"
   }
 }

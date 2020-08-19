@@ -1,6 +1,6 @@
 {
   "signature": {
-    "prefix": "sig",
+    "prefix": ["sig", "signature"],
     "body": [
       "$BLOCK_COMMENT_START",
       "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -14,7 +14,7 @@
     "description": "my signature"
   },
   "comm:block": {
-    "prefix": "comm:block",
+    "prefix": ["comm:block", "comment", "comment-block"],
     "body": [
       "$BLOCK_COMMENT_START",
       "~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -25,7 +25,7 @@
     "description": "Block Comment"
   },
   "comm:line": {
-    "prefix": "comm:line",
+    "prefix": ["comm:line", "comment", "comment-line"],
     "body": [
       "$LINE_COMMENT ${1:Your comment block here}"
     ],

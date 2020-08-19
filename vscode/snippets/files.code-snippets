@@ -1,0 +1,56 @@
+{
+  ".editorConfig": {
+    "prefix": ".editorconfig",
+    "body": [
+      "# https://editorconfig.org",
+      "root = true",
+      "",
+      "[*]",
+      "indent_style = space",
+      "indent_size = 2",
+      "end_of_line = lf",
+      "charset = utf-8",
+      "trim_trailing_whitespace = true",
+      "insert_final_newline = true",
+      "max_line_length = 100",
+      "",
+      "[*.{php,rb}]",
+      "tab_width = 4",
+      "indent_size = 4",
+      "indent_style = tab",
+      "",
+      "[**.{min.js,min.css}]",
+      "indent_style = ignore",
+      "insert_final_newline = ignore",
+      "",
+      "[*.{md,env,env.*,nvmrc,npmrc,prettierignore,prettierrc,eslintignore}]",
+      "insert_final_newline = false",
+      "trim_trailing_whitespace = false",
+      "",
+      "[*.{md,json}]",
+      "insert_final_newline = false"
+    ],
+    "description": ".editorconfig file"
+  },
+  ".env": {
+    "prefix": ".env",
+    "body": [
+      "API_BASE_URL=http://localhost:1337",
+      "BASE_URL=http://localhost:3000"
+    ],
+    "description": ".env file"
+  },
+  ".prettierrc": {
+    "prefix": ".prettierrc",
+    "scope": "jsonc,json",
+    "body": [
+      "{",
+      "\t\"semi\": true,",
+      "\t\"singleQuote\": true,",
+      "\t\"trailingComma\": \"all\",",
+      "\t\"tabWidth\": 2",
+      "}"
+    ],
+    "description": ".prettierrc file"
+  }
+}

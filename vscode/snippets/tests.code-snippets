@@ -1,57 +1,80 @@
 {
   "test": {
     "prefix": "test",
-    "scope": "javascript,typescript",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "description": "jest test",
     "body": [
       "${3:test}('should \"${0}\"', () => {",
-      "  expect(${1:someResult}).${2:toEqual}('${0}');",
+      "\texpect(${1:someResult}).${2:toEqual}('${0}');",
       "});"
     ]
   },
   "test:describe": {
     "prefix": "test:describe",
-    "scope": "javascript,typescript",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "description": "test jest describe",
     "body": [
       "describe('${1:someFunction}()', () => {",
-      "  ${3:test}('should \"${0}\"', () => {",
-      "    expect(${1:someResult}).${2:toEqual}('${0}');",
-      "  });",
+      "\t${3:test}('should \"${0}\"', () => {",
+      "\t\texpect(${1:someResult}).${2:toEqual}('${0}');",
+      "\t});",
       "});"
     ]
   },
   "test:it": {
     "prefix": "test:it",
-    "scope": "javascript,typescript",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "description": "test jest it",
     "body": [
       "${3:it}('should \"${0}\"', () => {",
-      "  expect(${1:someResult}).${2:toEqual}('${0}');",
+      "\texpect(${1:someResult}).${2:toEqual}('${0}');",
       "});"
     ]
   },
   "test:expect": {
     "prefix": "test:expect",
-    "scope": "javascript,typescript",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "description": "test jest expect",
     "body": [
       "expect(${1:someResult}).${2:toEqual}('${0}');"
     ]
   },
+  "test:react": {
+    "prefix": "test:react",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "description": "test for React components with @testing-library/react",
+    "body": [
+      "import React, { Fragment } from 'react';",
+      "import { render } from '@testing-library/react';",
+      "import { ${1:YourComponent} } from '.';",
+      "",
+      "describe('<${1:YourComponent} />', () => {",
+      "\ttest('Render component', () => {",
+      "\t\tconst componentTree = render(",
+      "\t\t\t<Fragment>",
+      "\t\t\t\t<${1:YourComponent} />",
+      "\t\t\t</Fragment>,",
+      "\t\t);",
+      "",
+      "\t\texpect(componentTree).toMatchSnapshot();",
+      "\t});",
+      "});",
+      ""
+    ]
+  },
   "test:vue": {
     "prefix": "test:vue",
     "scope": "javascript,typescript",
-    "description": "test for Vue components",
+    "description": "test for Vue components with @vue/test-utils",
     "body": [
       "import { shallowMount } from '@vue/test-utils';",
       "import $1 from './$1';",
       "",
       "describe('<$1 />', () => {",
-      "  test('should match the snapshot', () => {",
-      "    const mountedComponent = shallowMount($1, ${2:{ propsData: { $0 }}});",
-      "    expect(mountedComponent).toMatchSnapshot();",
-      "  });",
+      "\ttest('should match the snapshot', () => {",
+      "\t\tconst mountedComponent = shallowMount($1, ${2:{ propsData: { $0 }}});",
+      "\t\texpect(mountedComponent).toMatchSnapshot();",
+      "\t});",
       "});",
       ""
     ]
