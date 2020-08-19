@@ -117,6 +117,7 @@ alias npmurl="npm-url"
 alias t="npm test"
 
 # yarn
+alias yarn="time yarn $1"
 alias y="yarn"
 alias yi="yarn install"
 alias ys="yarn start"
@@ -138,7 +139,6 @@ alias lorem="npx lorem-ipsum 1 paragraph --copy" # https://github.com/knicklabs/
 alias tldr="npx tldr" # https://github.com/tldr-pages/tldr
 alias browser-sync="npx browser-sync"
 alias cowsay="npx cowsay"
-alias eslint="npx eslint"
 alias gitignore="npx gitignore"
 alias gulp="npx gulp"
 alias http-server="npx http-server"
@@ -183,7 +183,7 @@ alias la="ls -lah ${colorflag}"
 alias lsd="ls -lF ${colorflag}"
 
 # Show the size of everything in current directory
-alias sizes="du -sh *"
+alias sizes="sudo du -sh *"
 
 # Stopwatch
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
