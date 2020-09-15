@@ -17,7 +17,7 @@
   "editor.insertSpaces": false,
   "editor.formatOnSave": false,
   "editor.formatOnType": false,
-  "editor.rulers": [100, 120],
+  "editor.rulers": [100],
   "editor.rename.enablePreview": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
