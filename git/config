@@ -134,7 +134,7 @@
 [user]
   email = nandomoreira.me@gmail.com
   name = Fernando Moreira
-  signingkey = B3EEB486B89DE529
+	signingkey = 00B5BED9AC72F2DE
 
 [commit]
 	gpgsign = true
