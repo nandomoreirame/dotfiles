@@ -47,13 +47,13 @@ alias ht="htop"
 
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
-# alias chrome="open -a Google\ Chrome $1 --args --new-window --disable-web-securitybrowser --user-data-dir=/tmp/chrome"
-alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $1 --args --new-window --disable-web-securitybrowser --user-data-dir=/tmp/chrome"
+# alias chrome="open -a Google\ Chrome $1 --args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=/tmp/chrome"
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $1 --args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=/tmp/chrome"
 alias canary="open -a Google\ Chrome\ Canary $1 --args --disable-web-security --user-data-dir=/tmp/canary"
 # alias canary="/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary $1 --args --disable-web-security --user-data-dir=/tmp/canary"
-alias chromium="open -a Chromium $1 --args --disable-web-securitybrowser --user-data-dir=/tmp/canary"
-# alias chromium="/Applications/Chromium.app/Contents/MacOS/Chromium $1 --args --disable-web-securitybrowser --user-data-dir=/tmp/chromium"
-alias opera="/Applications/Opera.app/Contents/MacOS/Opera $1 --disable-web-securitybrowser --user-data-dir=~/tmp/opera"
+alias chromium="open -a Chromium $1 --args --disable-web-security --disable-site-isolation-trials --user-data-dir=/tmp/canary"
+# alias chromium="/Applications/Chromium.app/Contents/MacOS/Chromium $1 --args --disable-web-security --disable-site-isolation-trials --user-data-dir=/tmp/chromium"
+alias opera="/Applications/Opera.app/Contents/MacOS/Opera $1 --disable-web-security --disable-site-isolation-trials --user-data-dir=~/tmp/opera"
 alias firefox="/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $1"
 
 # Miscellaneous

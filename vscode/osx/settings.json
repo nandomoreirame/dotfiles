@@ -15,7 +15,7 @@
   "editor.quickSuggestionsDelay": 5,
   "editor.formatOnPaste": false,
   "editor.insertSpaces": false,
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.formatOnType": false,
   "editor.rulers": [100],
   "editor.rename.enablePreview": false,
@@ -93,7 +93,6 @@
   "material-icon-theme.showUpdateMessage": false,
   "typescript.check.npmIsInstalled": false,
   "extensions.ignoreRecommendations": true,
-  "eslint.enable": true,
   "eslint.alwaysShowStatus": true,
   "eslint.packageManager": "yarn",
   "eslint.migration.2_x": "off",
@@ -101,6 +100,9 @@
   "eslint.options": {
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
+  "vetur.format.defaultFormatter.js": "vscode-typescript",
+  "vetur.format.defaultFormatter.html": "js-beautify-html",
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "eslint.format.enable": true,
   "vetur.validation.script": false,
   "vetur.validation.template": false,
@@ -149,6 +151,10 @@
     "editor.formatOnSave": false,
     "editor.tabSize": 2
   },
+  "[html]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 4
+  },
   "javascript.format.semicolons": "insert",
   "search.actionsPosition": "right",
   "search.collapseResults": "auto",
@@ -185,5 +191,8 @@
     "content-type": "application/json"
   },
   "editor.fontSize": 11,
-  "todo-tree.tree.showScanModeButton": false
+  "todo-tree.tree.showScanModeButton": false,
+  "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
+  "breadcrumbs.enabled": false,
+  "editor.minimap.enabled": false
 }

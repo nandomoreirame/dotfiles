@@ -3,7 +3,7 @@ coreutils
 curl
 ffmpeg
 findutils
-github/gh/gh
+gh
 gnupg
 gnupg2
 htop
