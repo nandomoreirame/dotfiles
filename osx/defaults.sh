@@ -21,7 +21,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # --------------–-------–--------–--------–-------–--–-----
 # Use Dark theme
 defaults write ~/Library/Preferences/.GlobalPreferences AppleInterfaceStyle Dark
-defaults write NSGlobalDomain NSRequiresAquaSystemAppearance -bool true
+# defaults write NSGlobalDomain NSRequiresAquaSystemAppearance -bool true
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
@@ -127,7 +127,7 @@ defaults write com.apple.screencapture type -string "png"
 # Create Dev folders
 # --------------–-------–--------–--------–-------–--–-----
 
-DevFolders="$HOME/Sites/projects $HOME/Sites/clients $HOME/Sites/playground $HOME/Sites/open-source"
+DevFolders="$HOME/Dev/projects $HOME/Dev/clients $HOME/Dev/playground $HOME/Dev/open-source"
 
 for folder in $DevFolders
 do
@@ -153,7 +153,7 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 defaults write com.apple.Dock orientation -string bottom
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
-defaults write com.apple.dock mouse-over-hilite-stack -bool true
+defaults write com.apple.dock mouse-over-hilite-stack -bool false
 
 # Add a spacer tile in Dock
 # defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'
@@ -201,7 +201,7 @@ defaults write com.apple.dock autohide-delay -float 0
 defaults write com.apple.dock autohide-time-modifier -int 1
 
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -bool false
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
