@@ -96,8 +96,8 @@ export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
 # export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 # source $HOME/.rvm/scripts/rvm # Source rvm scripts
 
-# export PATH="$HOME/bin:$PATH";
-# [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+export PATH="$HOME/bin:$PATH";
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
 export GPG_TTY=$(tty)
 
