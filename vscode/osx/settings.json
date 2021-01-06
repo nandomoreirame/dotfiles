@@ -162,7 +162,9 @@
   "search.smartCase": true,
   "search.showLineNumbers": true,
   "search.exclude": {
+    "**/out": true,
     "**/build": true,
+    "**/dist": true,
     "**/__*": true,
     ".temp": true,
     "temp": true,
@@ -177,7 +179,7 @@
     "**/local": true,
     "**/prod": true,
     "**/.nuxt": true,
-    "**/dist": true,
+    "**/.next": true,
     "**/wp-admin": true,
     "**/wp-includes": true,
     "**/node_modules": true,
@@ -194,5 +196,6 @@
   "todo-tree.tree.showScanModeButton": false,
   "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
   "breadcrumbs.enabled": false,
-  "editor.minimap.enabled": false
+  "editor.minimap.enabled": false,
+  "files.insertFinalNewline": true
 }
