@@ -27,4 +27,8 @@ rm -rf $HOME/.bash_history
 ln -s $DOTFILES/homedir/bash_history.sh $HOME/.bash_history
 ok "$HOME/.bash_history"
 
+rm -rf $HOME/.rvmrc
+ln -s $DOTFILES/homedir/rvmrc.sh $HOME/.rvmrc
+ok "$HOME/.rvmrc"
+
 bot ""
