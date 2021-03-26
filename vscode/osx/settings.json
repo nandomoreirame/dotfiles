@@ -27,7 +27,6 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.panel.defaultLocation": "right",
   "workbench.sideBar.location": "left",
-  "workbench.startupEditor": "newUntitledFile",
   "workbench.editor.enablePreviewFromQuickOpen": false,
   "workbench.editor.enablePreview": false,
   "files.encoding": "utf8",
@@ -155,6 +154,9 @@
     "editor.formatOnSave": false,
     "editor.tabSize": 4
   },
+  "[markdown]":  {
+    "editor.quickSuggestions": true
+  },
   "javascript.format.semicolons": "insert",
   "search.actionsPosition": "right",
   "search.collapseResults": "auto",
@@ -185,7 +187,6 @@
     "**/node_modules": true,
     "**/.sass-cache": true
   },
-  "window.zoomLevel": 1,
   "window.titleSeparator": "  💻  ",
   "liveServer.settings.donotShowInfoMsg": true,
   "rest-client.defaultHeaders": {
@@ -195,7 +196,12 @@
   "editor.fontSize": 11,
   "todo-tree.tree.showScanModeButton": false,
   "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
-  "breadcrumbs.enabled": false,
+  "files.insertFinalNewline": true,
+  "workbench.editor.decorations.badges": true,
+  "gist.defaultPrivate": true,
   "editor.minimap.enabled": false,
-  "files.insertFinalNewline": true
+  "breadcrumbs.enabled": false,
+  "workbench.productIconTheme": "icons-carbon",
+  "window.zoomLevel": 1,
+  "githubPullRequests.fileListLayout": "tree"
 }
