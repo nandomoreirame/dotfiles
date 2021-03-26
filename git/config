@@ -36,6 +36,8 @@
   recent-branches = !git for-each-ref --count=5 --sort=-committerdate refs/heads/ --format='%(refname:short)'
 
   # Tags
+  ts = tag -l
+  t = tag -a
   tags = tag -l
   tag = tag -a
 
@@ -44,9 +46,6 @@
 
   # Upstream
   set-upstream = !git branch --set-upstream-to=origin/`git symbolic-ref --short HEAD`
-
-  # gitflow
-  f = flow
 
   # more information: http://haacked.com/archive/2014/07/28/github-flow-aliases/
   undo = reset HEAD~1 --mixed
