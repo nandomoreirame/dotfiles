@@ -210,7 +210,7 @@ defaults write com.apple.dock showhidden -bool true
 find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
 
 # Add iOS Simulator to Launchpad
-sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simxulator.app"
+# sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simxulator.app"
 # sudo ln -sf "/Applications/Xcode-beta.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
 
 # Add a spacer to the left side of the Dock (where the applications are)
