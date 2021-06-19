@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite the default settings
 {
-  "editor.fontFamily": "'Fira Code', FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "Fira Code, FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
@@ -22,9 +22,9 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "workbench.colorTheme": "Atom One Dark",
+  "workbench.colorTheme": "New Moon",
   "workbench.fontAliasing": "antialiased",
-  "workbench.iconTheme": "material-icon-theme",
+  "workbench.iconTheme": "vscode-icons",
   "workbench.panel.defaultLocation": "right",
   "workbench.sideBar.location": "left",
   "workbench.editor.enablePreviewFromQuickOpen": false,
@@ -37,7 +37,18 @@
     "*.vue": "vue",
     "*.gs": "javascript",
     ".stylelintrc": "json",
-    "*.mdx": "mdx"
+    "*.mdx": "mdx",
+    "*.vue.hbs": "vue",
+    "*.js.hbs": "javascript",
+    "*.ts.hbs": "typescript",
+    "*.tsx.hbs": "typescriptreact",
+    "*.jsx.hbs": "javascriptreact",
+    "*.css.hbs": "css",
+    "*.scss.hbs": "scss",
+    "*.json.hbs": "json",
+    "*.md.hbs": "markdown",
+    ".env.template": "dotenv",
+    ".env.sample": "dotenv"
   },
   "files.exclude": {
     ".git": true,
@@ -99,8 +110,6 @@
   "eslint.options": {
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
-  "vetur.format.defaultFormatter.js": "vscode-typescript",
-  "vetur.format.defaultFormatter.html": "js-beautify-html",
   "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "eslint.format.enable": true,
   "vetur.validation.script": false,
@@ -115,13 +124,13 @@
   "javascript.autoClosingTags": true,
   "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
   "javascript.referencesCodeLens.enabled": true,
-  "terminal.integrated.rendererType": "dom",
-  "terminal.integrated.shell.osx": "/bin/zsh",
   "npm.packageManager": "yarn",
   "diffEditor.ignoreTrimWhitespace": false,
   "javascript.validate.enable": false,
   "typescript.validate.enable": false,
   "prettier.printWidth": 100,
+  "prettier.enableDebugLogs": true,
+  "prettier.singleQuote": true,
   "prettier.ignorePath": ".gitignore,.prettierignore",
   "material-icon-theme.activeIconPack": "vue_vuex",
   "typescript.updateImportsOnFileMove.enabled": "always",
@@ -144,7 +153,8 @@
   },
   "[typescriptreact]": {
     "editor.tabSize": 2,
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "[vue]": {
     "editor.formatOnSave": false,
@@ -168,6 +178,7 @@
     "**/build": true,
     "**/dist": true,
     "**/__*": true,
+    "**/*.lock": true,
     ".temp": true,
     "temp": true,
     ".tmp": true,
@@ -186,8 +197,9 @@
     "**/wp-includes": true,
     "**/node_modules": true,
     "**/.sass-cache": true
-  },
-  "window.titleSeparator": "  💻  ",
+},
+"window.zoomLevel": 1,
+  "window.titleSeparator": " // ",
   "liveServer.settings.donotShowInfoMsg": true,
   "rest-client.defaultHeaders": {
     "User-Agent": "vscode-restclient",
@@ -201,7 +213,31 @@
   "gist.defaultPrivate": true,
   "editor.minimap.enabled": false,
   "breadcrumbs.enabled": false,
-  "workbench.productIconTheme": "icons-carbon",
-  "window.zoomLevel": 1,
-  "githubPullRequests.fileListLayout": "tree"
+  "workbench.productIconTheme": "fluent-icons",
+  "githubPullRequests.fileListLayout": "tree",
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "TODO",
+    "XXX",
+    "[ ]",
+    "[x]"
+  ],
+	"todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
+  "editor.largeFileOptimizations": false,
+  "terminal.external.osxExec": "Hyper.app",
+  "terminal.integrated.automationShell.osx": "/bin/zsh",
+  "terminal.integrated.defaultProfile.osx": "/bin/zsh",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.env.osx": {
+    "NODE_ENV": "development"
+  },
+  "window.title": "${activeEditorShort} ${separator} ${rootName}",
+  "terminal.integrated.tabs.enabled": true,
+  "cssrem.addMark": true,
+  "window.menuBarVisibility": "compact",
+  "cssrem.fixedDigits": 5,
+  "vsicons.dontShowNewVersionMessage": true
 }
