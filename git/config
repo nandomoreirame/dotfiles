@@ -131,8 +131,8 @@
   default = current
 
 [user]
-  email = nandomoreira.me@gmail.com
-  name = Fernando Moreira
+	email = nandomoreira.me@gmail.com
+	name = Fernando Moreira
 	signingkey = 00B5BED9AC72F2DE
 
 [commit]
@@ -150,3 +150,8 @@
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
+[pull]
+	rebase = true
+	ff = only
+[init]
+	defaultBranch = dev
