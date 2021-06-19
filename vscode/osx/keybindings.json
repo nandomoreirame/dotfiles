@@ -52,5 +52,13 @@
   {
     "key": "cmd+k cmd+,",
     "command": "workbench.action.openGlobalKeybindings"
+  },
+  {
+    "key": "ctrl+shift+cmd+down",
+    "command": "editor.emmet.action.balanceIn"
+  },
+  {
+    "key": "ctrl+shift+cmd+up",
+    "command": "editor.emmet.action.balanceOut"
   }
 ]
