@@ -127,9 +127,9 @@ defaults write com.apple.screencapture type -string "png"
 # Create Dev folders
 # --------------–-------–--------–--------–-------–--–-----
 
-DevFolders="$HOME/Dev/projects $HOME/Dev/clients $HOME/Dev/playground $HOME/Dev/open-source"
+SitesFolders="$HOME/Sites/projects $HOME/Sites/clients $HOME/Sites/playground $HOME/Sites/open-source"
 
-for folder in $DevFolders
+for folder in $SitesFolders
 do
   if [ -d $folder  ]
   then
