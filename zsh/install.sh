@@ -6,6 +6,8 @@ sudo -v
 source "`dirname $0`"/../lib/colors.sh
 source "`dirname $0`"/../lib/enviroments.sh
 
+# rm -rf $HOME/.oh-my-zsh
+
 # Installing oh-my-zsh
 running "Installing oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

@@ -65,6 +65,7 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
 
 # export JAVA_HOME=$(/usr/libexec/java_home)
 # export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
@@ -140,6 +141,9 @@ load-nvmrc
 # autoload -U promptinit; promptinit
 # prompt spaceship
 
-# vovo-juju # need `npm i -g vovo-juju-cli`
-cowsay -f "$DOTFILES/cowsay/seal.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
-# cowsay -f "$DOTFILES/cowsay/bot.cow" "Véi, na boa. Foca no código!" # need cowsay `npm i -g cowsay`
+# need cowsay # npm i -g cowsay
+cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
+
+# Set Spaceship ZSH as a prompt
+autoload -U promptinit; promptinit
+prompt spaceship
