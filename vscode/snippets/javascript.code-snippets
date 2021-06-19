@@ -105,7 +105,8 @@
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Log output to console",
     "body": [
-      "console.${1:log}(${2:{ ${3:something} \\}}); // eslint-disable-line"
+      "// eslint-disable-next-line no-console",
+      "console.${1:log}(${2:{ ${3:something} \\}});"
     ]
   },
   "http:get": {

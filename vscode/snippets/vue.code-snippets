@@ -291,6 +291,7 @@
     "description": "scripts: vue mounted",
     "body": [
       "mounted() {",
+      "\t// eslint-disable-next-line no-console",
       "\t${1:console.log('mounted...');}${0}",
       "},"
     ]
