@@ -106,7 +106,13 @@
   "eslint.alwaysShowStatus": true,
   "eslint.packageManager": "yarn",
   "eslint.migration.2_x": "off",
-  "eslint.validate": ["javascript", "ts", "typescript", "javascriptreact", "vue"],
+  "eslint.validate": [
+    "javascript",
+    "ts",
+    "typescript",
+    "javascriptreact",
+    "vue"
+  ],
   "eslint.options": {
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
@@ -164,7 +170,7 @@
     "editor.formatOnSave": false,
     "editor.tabSize": 4
   },
-  "[markdown]":  {
+  "[markdown]": {
     "editor.quickSuggestions": true
   },
   "javascript.format.semicolons": "insert",
@@ -197,9 +203,7 @@
     "**/wp-includes": true,
     "**/node_modules": true,
     "**/.sass-cache": true
-},
-"window.zoomLevel": 1,
-  "window.titleSeparator": " // ",
+  },
   "liveServer.settings.donotShowInfoMsg": true,
   "rest-client.defaultHeaders": {
     "User-Agent": "vscode-restclient",
@@ -224,7 +228,7 @@
     "[ ]",
     "[x]"
   ],
-	"todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
+  "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
   "editor.largeFileOptimizations": false,
   "terminal.external.osxExec": "Hyper.app",
   "terminal.integrated.automationShell.osx": "/bin/zsh",
@@ -239,5 +243,9 @@
   "cssrem.addMark": true,
   "window.menuBarVisibility": "compact",
   "cssrem.fixedDigits": 5,
-  "vsicons.dontShowNewVersionMessage": true
+  "vsicons.dontShowNewVersionMessage": true,
+  "window.zoomLevel": 1,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
