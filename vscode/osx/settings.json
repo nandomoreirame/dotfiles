@@ -4,8 +4,10 @@
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
+  "editor.fontSize": 12,
+  "editor.lineHeight": 24,
+  "editor.semanticHighlighting.enabled": false,
   "editor.renderWhitespace": "all",
-  "editor.lineHeight": 22,
   "editor.tabCompletion": "on",
   "editor.fontLigatures": true,
   "editor.multiCursorModifier": "ctrlCmd",
@@ -17,14 +19,14 @@
   "editor.insertSpaces": false,
   "editor.formatOnSave": true,
   "editor.formatOnType": false,
-  "editor.rulers": [100],
+  "editor.rulers": [80, 120],
   "editor.rename.enablePreview": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
   "workbench.colorTheme": "New Moon",
   "workbench.fontAliasing": "antialiased",
-  "workbench.iconTheme": "vscode-icons",
+  "workbench.iconTheme": "material-icon-theme",
   "workbench.panel.defaultLocation": "right",
   "workbench.sideBar.location": "left",
   "workbench.editor.enablePreviewFromQuickOpen": false,
@@ -48,10 +50,17 @@
     "*.json.hbs": "json",
     "*.md.hbs": "markdown",
     ".env.template": "dotenv",
-    ".env.sample": "dotenv"
+    ".env.sample": "dotenv",
+    ".sequelizerc": "javascript",
+    ".prettierrc": "json",
+    "*.tsx": "typescriptreact"
   },
   "files.exclude": {
     ".git": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
     "**/.sass-cache": true,
     "**/.tmp": true,
     "**/*.gz": true,
@@ -59,7 +68,6 @@
     "**/*.tar": true,
     "**/*.zip": true,
     "**/node_modules": true,
-    "api/**/*": true,
     "node_modules/**/*": true
   },
   "html.format.wrapLineLength": 100,
@@ -100,19 +108,11 @@
   "git.ignoreMissingGitWarning": true,
   "git.showCommitInput": true,
   "trailing-spaces.trimOnSave": true,
-  "material-icon-theme.showUpdateMessage": false,
-  "typescript.check.npmIsInstalled": false,
   "extensions.ignoreRecommendations": true,
   "eslint.alwaysShowStatus": true,
   "eslint.packageManager": "yarn",
   "eslint.migration.2_x": "off",
-  "eslint.validate": [
-    "javascript",
-    "ts",
-    "typescript",
-    "javascriptreact",
-    "vue"
-  ],
+  "eslint.validate": ["javascript", "ts", "typescript", "javascriptreact", "vue"],
   "eslint.options": {
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
@@ -133,13 +133,47 @@
   "npm.packageManager": "yarn",
   "diffEditor.ignoreTrimWhitespace": false,
   "javascript.validate.enable": false,
+  "typescript.tsserver.log": "off",
   "typescript.validate.enable": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.check.npmIsInstalled": false,
   "prettier.printWidth": 100,
   "prettier.enableDebugLogs": true,
   "prettier.singleQuote": true,
   "prettier.ignorePath": ".gitignore,.prettierignore",
-  "material-icon-theme.activeIconPack": "vue_vuex",
-  "typescript.updateImportsOnFileMove.enabled": "always",
+  "material-icon-theme.showUpdateMessage": false,
+  "material-icon-theme.activeIconPack": "nest",
+  "material-icon-theme.folders.associations": {
+    "infra": "app",
+    "entities": "class",
+    "domain": "class",
+    "schemas": "class",
+    "typeorm": "database",
+    "repositories": "mappings",
+    "http": "container",
+    "migrations": "tools",
+    "modules": "components",
+    "implementations": "core",
+    "dtos": "typescript",
+    "fakes": "mock",
+    "websockets": "pipe",
+    "protos": "pipe",
+    "grpc": "pipe",
+    "providers": "include",
+    "subscribers": "messages",
+    "useCases": "controller",
+    "kafka": "scripts",
+    "mappers": "meta",
+    "_shared": "shared",
+    "eslint-config": "tools",
+    "kube": "kubernetes"
+  },
+  "material-icon-theme.files.associations": {
+    "ormconfig.json": "database",
+    "tsconfig.json": "tune",
+    "*.proto": "3d",
+    "*.webpack.js": "webpack"
+  },
   "explorer.confirmDelete": true,
   "[php]": {
     "editor.tabSize": 4
@@ -171,7 +205,8 @@
     "editor.tabSize": 4
   },
   "[markdown]": {
-    "editor.quickSuggestions": true
+    "editor.quickSuggestions": true,
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "javascript.format.semicolons": "insert",
   "search.actionsPosition": "right",
@@ -209,7 +244,6 @@
     "User-Agent": "vscode-restclient",
     "content-type": "application/json"
   },
-  "editor.fontSize": 11,
   "todo-tree.tree.showScanModeButton": false,
   "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
   "files.insertFinalNewline": true,
@@ -218,34 +252,29 @@
   "editor.minimap.enabled": false,
   "breadcrumbs.enabled": false,
   "workbench.productIconTheme": "fluent-icons",
-  "githubPullRequests.fileListLayout": "tree",
-  "todo-tree.general.tags": [
-    "BUG",
-    "HACK",
-    "FIXME",
-    "TODO",
-    "XXX",
-    "[ ]",
-    "[x]"
-  ],
+  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "XXX", "[ ]", "[x]"],
   "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
   "editor.largeFileOptimizations": false,
+  "terminal.integrated.fontSize": 12,
   "terminal.external.osxExec": "Hyper.app",
+  "terminal.integrated.showExitAlert": false,
   "terminal.integrated.automationShell.osx": "/bin/zsh",
-  "terminal.integrated.defaultProfile.osx": "/bin/zsh",
+  "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.env.osx": {
     "NODE_ENV": "development"
   },
-  "window.title": "${activeEditorShort} ${separator} ${rootName}",
   "terminal.integrated.tabs.enabled": true,
   "cssrem.addMark": true,
-  "window.menuBarVisibility": "compact",
   "cssrem.fixedDigits": 5,
   "vsicons.dontShowNewVersionMessage": true,
-  "window.zoomLevel": 1,
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "tabnine.experimentalAutoImports": true,
+  "editor.suggestSelection": "first",
+  "splitHTMLAttributes.closingBracketOnNewLine": true,
+  "window.title": "${activeEditorShort} ${separator} ${rootName}",
+  "window.zoomLevel": 1
 }
