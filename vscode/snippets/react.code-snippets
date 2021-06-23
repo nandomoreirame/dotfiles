@@ -3,35 +3,36 @@
     "prefix": "react:import",
     "scope": "javascriptreact,typescriptreact",
     "description": "import react",
-    "body": [
-      "import React from 'react';"
-    ]
+    "body": ["import React from 'react';"]
+  },
+  "react:all:import": {
+    "prefix": "react:import",
+    "scope": "javascriptreact,typescriptreact",
+    "description": "import react",
+    "body": ["import * as React from 'react';"]
   },
   "react:import-styled-file": {
     "prefix": "react:import:s",
     "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "description": "Import styled file as S const",
-    "body": [
-      "import * as S from './${1:ComponentName}.styles",
-      ""
-    ]
+    "body": ["import * as S from './${1:ComponentName}.styles", ""]
   },
   "react:base": {
     "prefix": "react:base",
     "scope": "javascriptreact,typescriptreact",
     "description": "React stateless base component",
     "body": [
-      "import React, { Fragment, memo } from 'react';",
+      "import * as React from 'react';",
       "",
       "const ${1:ComponentName} = () => {",
       "\treturn (",
-      "\t\t<Fragment>",
+      "\t\t<React.Fragment>",
       "\t\t\t<h1>${1:ComponentName}${0}</h1>",
-      "\t\t</Fragment>",
+      "\t\t</React.Fragment>",
       "\t);",
       "};",
       "",
-      "export default memo(${1:ComponentName});",
+      "export default React.memo(${1:ComponentName});",
       ""
     ]
   },
@@ -40,7 +41,7 @@
     "scope": "typescriptreact",
     "description": "React (TypeScript) stateless base component",
     "body": [
-      "import React, { Fragment, memo } from 'react';",
+      "import * as React from 'react';",
       "",
       "type ${1:ComponentName}Props = {",
       "\tchildren: React.ReactNode;",
@@ -48,13 +49,13 @@
       "",
       "const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = ({ children }: ${1:ComponentName}Props) => {",
       "\treturn (",
-      "\t\t<Fragment>",
+      "\t\t<React.Fragment>",
       "\t\t\t<h1>{children}${0}</h1>",
-      "\t\t</Fragment>",
+      "\t\t</React.Fragment>",
       "\t);",
       "};",
       "",
-      "export default memo(${1:ComponentName});",
+      "export default React.memo(${1:ComponentName});",
       ""
     ]
   },
@@ -62,56 +63,40 @@
     "prefix": "react:base",
     "scope": "typescriptreact",
     "description": "React children React.ReactNode",
-    "body": [
-      "children${1:?}: React.ReactNode;"
-    ]
+    "body": ["children${1:?}: React.ReactNode;"]
   },
   "react:useEffect": {
     "prefix": "react:useEffect",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "useEffect(() => {",
-      "\t$0",
-      "}, [$1]);"
-    ],
+    "body": ["React.useEffect(() => {", "\t$0", "}, [$1]);"],
     "description": "React useEffect Hook"
   },
   "react:useState": {
     "prefix": "react:useState",
     "scope": "javascriptreact,typescriptreact",
     "body": [
-      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = useState($0);"
+      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = React.useState($0);"
     ],
     "description": "React useState hook"
   },
   "react:render": {
     "prefix": "react:render",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "render() {",
-      "\treturn (",
-      "\t\t $0",
-      "\t);",
-      "}"
-    ],
+    "body": ["render() {", "\treturn (", "\t\t $0", "\t);", "}"],
     "description": "React render function"
   },
   // https://material-ui.com/getting-started/usage/
   "Material-ui/Core": {
     "prefix": "mui:core",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "import ${1:Box} from '@material-ui/core/${1:Box}';"
-    ],
+    "body": ["import ${1:Box} from '@material-ui/core/${1:Box}';"],
     "description": "Material-ui Core Components"
   },
   // https://material-ui.com/components/about-the-lab/
   "Material-ui/Lab": {
     "prefix": "mui:lab",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "import ${1:Alert} from '@material-ui/lab/${1:Alert}';"
-    ],
+    "body": ["import ${1:Alert} from '@material-ui/lab/${1:Alert}';"],
     "description": "Material-ui Lab Components"
   },
   // https://material-ui.com/components/icons/
@@ -119,9 +104,7 @@
   "Material-ui/Icons": {
     "prefix": "mui:icons",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "import ${1:Delete}Icon from '@material-ui/icons/${1:Delete}';"
-    ],
+    "body": ["import ${1:Delete}Icon from '@material-ui/icons/${1:Delete}';"],
     "description": "Material-ui Icons Components"
   }
 }
