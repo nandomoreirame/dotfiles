@@ -4,8 +4,7 @@
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
-  "editor.fontSize": 12,
-  "editor.lineHeight": 24,
+  "editor.lineHeight": 26,
   "editor.semanticHighlighting.enabled": false,
   "editor.renderWhitespace": "all",
   "editor.tabCompletion": "on",
@@ -24,9 +23,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "workbench.colorTheme": "New Moon",
+  "workbench.colorTheme": "Atom One Dark",
   "workbench.fontAliasing": "antialiased",
-  "workbench.iconTheme": "material-icon-theme",
   "workbench.panel.defaultLocation": "right",
   "workbench.sideBar.location": "left",
   "workbench.editor.enablePreviewFromQuickOpen": false,
@@ -67,6 +65,10 @@
     "**/*.nyc_output": true,
     "**/*.tar": true,
     "**/*.zip": true,
+    "**/*.bundle.js": true,
+    "**/*.bundle.css": true,
+    "**/*.min.js": true,
+    "**/*.min.css": true,
     "**/node_modules": true,
     "node_modules/**/*": true
   },
@@ -117,7 +119,6 @@
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
   "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
-  "eslint.format.enable": true,
   "vetur.validation.script": false,
   "vetur.validation.template": false,
   "scss.validate": false,
@@ -189,7 +190,8 @@
   },
   "[typescript]": {
     "editor.tabSize": 2,
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
     "editor.tabSize": 2,
@@ -246,12 +248,10 @@
   },
   "todo-tree.tree.showScanModeButton": false,
   "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
-  "files.insertFinalNewline": true,
   "workbench.editor.decorations.badges": true,
   "gist.defaultPrivate": true,
   "editor.minimap.enabled": false,
   "breadcrumbs.enabled": false,
-  "workbench.productIconTheme": "fluent-icons",
   "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "XXX", "[ ]", "[x]"],
   "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
   "editor.largeFileOptimizations": false,
@@ -268,7 +268,6 @@
   "terminal.integrated.tabs.enabled": true,
   "cssrem.addMark": true,
   "cssrem.fixedDigits": 5,
-  "vsicons.dontShowNewVersionMessage": true,
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -276,5 +275,24 @@
   "editor.suggestSelection": "first",
   "splitHTMLAttributes.closingBracketOnNewLine": true,
   "window.title": "${activeEditorShort} ${separator} ${rootName}",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
+  "eslint.format.enable": true,
+  "todo-tree.filtering.excludeGlobs": ["**/node_modules", "node_modules/**", "**/node_modules/**"],
+  "todo-tree.filtering.ignoreGitSubmodules": true,
+  "VSCord.appName": "Visual Studio Code",
+  "editor.fontSize": 11,
+  "workbench.productIconTheme": "material-product-icons",
+  "discord.detailsIdling": "Inativo",
+  "discord.largeImage": "{lang}",
+  "discord.largeImageIdling": "Inativo",
+  "discord.detailsEditing": "Editando {file_name} na linha {current_line}",
+  "discord.detailsDebugging": "Depurando {file_name}",
+  "discord.lowerDetailsDebugging": "Depurando: {workspace}",
+  "discord.lowerDetailsIdling": "Inativo",
+  "discord.lowerDetailsNoWorkspaceFound": "Nenhum workspace",
+  "discord.removeRemoteRepository": true,
+  "workbench.iconTheme": "eq-material-theme-icons-ocean",
   "window.zoomLevel": 1
 }
