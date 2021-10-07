@@ -131,13 +131,13 @@
   default = current
 
 [user]
-	email = nandomoreira.me@gmail.com
-	name = Fernando Moreira
-	signingkey = 00B5BED9AC72F2DE
+  email = nandomoreira.me@gmail.com
+  name = Fernando Moreira
+  signingkey = 00B5BED9AC72F2DE
 
 [commit]
-	gpgsign = true
-  template = "$HOME/.stCommitMsg"
+  gpgsign = true
+  template = $HOME/.stCommitMsg
 
 [gpg]
   program = gpg
@@ -151,7 +151,7 @@
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
 [pull]
-	rebase = true
-	ff = only
+  rebase = true
+  ff = only
 [init]
-	defaultBranch = dev
+  defaultBranch = dev
