@@ -138,12 +138,9 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
 # Set Spaceship ZSH as a prompt
-# autoload -U promptinit; promptinit
-# prompt spaceship
-
-# need cowsay # npm i -g cowsay
-cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
-
-# Set Spaceship ZSH as a prompt
 autoload -U promptinit; promptinit
 prompt spaceship
+
+# need cowsay # npm i -g cowsay
+# cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
+cowsay "NÃO FAÇA DEPLOY NA SEXTA-FEIRA!"
