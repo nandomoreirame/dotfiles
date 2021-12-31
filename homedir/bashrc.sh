@@ -1,3 +1,8 @@
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the start of this file.
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
+
 # ~/.bashrc
 
 [ -n "$PS1" ] && source ~/.bash_profile;
@@ -12,3 +17,8 @@ export NVM_DIR="$HOME/.nvm"
 
 export YVM_DIR="$HOME/.yvm"
 [ -r $YVM_DIR/yvm.sh ] && . $YVM_DIR/yvm.sh
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the end of this file.
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####

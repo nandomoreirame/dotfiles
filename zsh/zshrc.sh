@@ -1,3 +1,8 @@
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the start of this file.
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
+
 # First, load bash files.
 . ~/.bashrc
 
@@ -71,19 +76,11 @@ export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
 # export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 # export PATH="$JAVA_HOME/bin:$PATH"
 
-# export ANDROID_HOME=$HOME/Library/Android/
-# export ANDROID_HOME="$HOME/Library/Android/sdk"
-# export PATH="$ANDROID_HOME:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
-# path=("${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools" $path)
-
-# export JAVA_OPTS='-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee'
-# export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-# export ANDROID_HOME="$HOME/Library/Android/sdk"
-# PATH="$PATH:$ANDROID_SDK_ROOT"
-# PATH="$PATH:$ANDROID_SDK_ROOT/emulator"
-# PATH="$PATH:$ANDROID_SDK_ROOT/tools"
-# PATH="$PATH:$ANDROID_SDK_ROOT/tools/bin"
-# PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools"
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
@@ -92,6 +89,12 @@ fi
 export PATH="/usr/local/opt/openldap/bin:$PATH"
 export PATH="/usr/local/opt/openldap/sbin:$PATH"
 export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
+
+# PHP Composer
+export PATH="$PATH:$HOME/.composer/vendor/bin"
+
+# PHP Env - https://github.com/phpenv/phpenv
+export PATH="$HOME/.phpenv/bin:$PATH"
 
 # rvm
 # export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
@@ -144,3 +147,15 @@ prompt spaceship
 # need cowsay # npm i -g cowsay
 # cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
 cowsay "NÃO FAÇA DEPLOY NA SEXTA-FEIRA!"
+
+eval "$(phpenv init -)"
+
+source $HOME/.phpbrew/bashrc
+
+export PHPBREW_SET_PROMPT=1
+export PHPBREW_RC_ENABLE=1
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the end of this file.
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####
