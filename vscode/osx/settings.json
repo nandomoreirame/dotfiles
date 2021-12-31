@@ -2,6 +2,7 @@
 {
   "editor.fontFamily": "Fira Code, FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
+  "editor.fontSize": 11,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
   "editor.lineHeight": 26,
@@ -75,7 +76,6 @@
   "html.format.wrapLineLength": 100,
   "html.format.endWithNewline": true,
   "extensions.autoUpdate": true,
-  "telemetry.enableTelemetry": false,
   "html.format.indentHandlebars": true,
   "emmet.triggerExpansionOnTab": true,
   "emmet.preferences": {
@@ -258,12 +258,12 @@
   "terminal.integrated.fontSize": 12,
   "terminal.external.osxExec": "Hyper.app",
   "terminal.integrated.showExitAlert": false,
-  "terminal.integrated.automationShell.osx": "/bin/zsh",
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.env.osx": {
-    "NODE_ENV": "development"
+    "NODE_ENV": "development",
+    "FIG_NEW_SESSION": "1"
   },
   "terminal.integrated.tabs.enabled": true,
   "cssrem.addMark": true,
@@ -282,7 +282,6 @@
   "todo-tree.filtering.excludeGlobs": ["**/node_modules", "node_modules/**", "**/node_modules/**"],
   "todo-tree.filtering.ignoreGitSubmodules": true,
   "VSCord.appName": "Visual Studio Code",
-  "editor.fontSize": 11,
   "workbench.productIconTheme": "material-product-icons",
   "discord.detailsIdling": "Inativo",
   "discord.largeImage": "{lang}",
@@ -293,6 +292,34 @@
   "discord.lowerDetailsIdling": "Inativo",
   "discord.lowerDetailsNoWorkspaceFound": "Nenhum workspace",
   "discord.removeRemoteRepository": true,
-  "workbench.iconTheme": "eq-material-theme-icons-ocean",
-  "window.zoomLevel": 1
+  "workbench.iconTheme": "material-icon-theme",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "workbench.startupEditor": "none",
+  "window.zoomLevel": 1,
+  "json.schemas": [
+    {
+      "name": "vscode-expo-manifest",
+      "url": "file:///Users/nandomoreira/Library/Application%20Support/Code/User/globalStorage/bycedric.vscode-expo/manifest-44.0.0.json",
+      "fileMatch": [
+        "app.json",
+        "app.config.json"
+      ]
+    }
+  ],
+  "editor.unicodeHighlight.allowedCharacters": {
+    "❯": true
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.accessibilitySupport": "off",
+  "security.workspace.trust.untrustedFiles": "open",
+  "php-cs-fixer.executablePath": "php-cs-fixer",
+  "php-cs-fixer.onsave": true,
+  "php-cs-fixer.rules": "@PSR1,@PSR2,@Symfony",
+  "php-cs-fixer.allowRisky": true,
+  "php-cs-fixer.pathMode": "override",
+  "php-cs-fixer.exclude": [],
+  "php-cs-fixer.autoFixByBracket": true,
+  "php-cs-fixer.autoFixBySemicolon": true,
+  "php-cs-fixer.formatHtml": false,
+  "php-cs-fixer.documentFormattingProvider": true
 }

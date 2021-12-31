@@ -50,7 +50,7 @@ plugins=(
   emoji
   emoji-clock
   dotenv
-  osx
+  macos
   rake
   ruby
   npm
