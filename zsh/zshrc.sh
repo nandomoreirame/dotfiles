@@ -94,7 +94,13 @@ export PATH="/usr/local/Cellar/php/7.2.11/bin/php:$PATH"
 export PATH="$PATH:$HOME/.composer/vendor/bin"
 
 # PHP Env - https://github.com/phpenv/phpenv
-export PATH="$HOME/.phpenv/bin:$PATH"
+# export PATH="$HOME/.phpenv/bin:$PATH"
+# eval "$(phpenv init -)"
+
+source $HOME/.phpbrew/bashrc
+
+export PHPBREW_SET_PROMPT=1
+export PHPBREW_RC_ENABLE=1
 
 # rvm
 # export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
@@ -140,20 +146,13 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
+# need cowsay # npm i -g cowsay
+# cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
+cowsay "DON'T DEPLOY ON FRIDAY!"
+
 # Set Spaceship ZSH as a prompt
 autoload -U promptinit; promptinit
 prompt spaceship
-
-# need cowsay # npm i -g cowsay
-# cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
-cowsay "NÃO FAÇA DEPLOY NA SEXTA-FEIRA!"
-
-eval "$(phpenv init -)"
-
-source $HOME/.phpbrew/bashrc
-
-export PHPBREW_SET_PROMPT=1
-export PHPBREW_RC_ENABLE=1
 
 #### FIG ENV VARIABLES ####
 # Please make sure this block is at the end of this file.
