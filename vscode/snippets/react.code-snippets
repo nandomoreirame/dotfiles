@@ -22,17 +22,15 @@
     "scope": "javascriptreact,typescriptreact",
     "description": "React stateless base component",
     "body": [
-      "import * as React from 'react';",
+      "import { Fragment } from 'react';",
       "",
-      "const ${1:ComponentName} = () => {",
+      "export default function ${1:ComponentName}() {",
       "\treturn (",
-      "\t\t<React.Fragment>",
+      "\t\t<Fragment>",
       "\t\t\t<h1>${1:ComponentName}${0}</h1>",
-      "\t\t</React.Fragment>",
+      "\t\t</Fragment>",
       "\t);",
       "};",
-      "",
-      "export default React.memo(${1:ComponentName});",
       ""
     ]
   },
@@ -43,19 +41,17 @@
     "body": [
       "import * as React from 'react';",
       "",
-      "type ${1:ComponentName}Props = {",
+      "export interface ${1:ComponentName}Props {",
       "\tchildren: React.ReactNode;",
-      "};",
+      "}",
       "",
-      "const ${1:ComponentName}: React.FC<${1:ComponentName}Props> = ({ children }: ${1:ComponentName}Props) => {",
+      "export default function ${1:ComponentName}({ children }: ${1:ComponentName}Props): React.ReactElement {",
       "\treturn (",
       "\t\t<React.Fragment>",
       "\t\t\t<h1>{children}${0}</h1>",
       "\t\t</React.Fragment>",
       "\t);",
-      "};",
-      "",
-      "export default React.memo(${1:ComponentName});",
+      "}",
       ""
     ]
   },
@@ -71,12 +67,22 @@
     "body": ["React.useEffect(() => {", "\t$0", "}, [$1]);"],
     "description": "React useEffect Hook"
   },
+  "react:sync:useEffect": {
+    "prefix": "react:sync:useEffect",
+    "scope": "javascriptreact,typescriptreact",
+    "body": [
+      "React.useEffect(() => {",
+      "\t(async () => {",
+      "\t\tawait doSomefn();",
+      "\t})();",
+      "}, [$0]);"
+    ],
+    "description": "React useEffect Hook"
+  },
   "react:useState": {
     "prefix": "react:useState",
     "scope": "javascriptreact,typescriptreact",
-    "body": [
-      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = React.useState($0);"
-    ],
+    "body": ["const [${1}, set${1/(.*)/${1:/capitalize}/}] = React.useState($0);"],
     "description": "React useState hook"
   },
   "react:render": {

@@ -2,7 +2,7 @@
 {
   "editor.fontFamily": "Fira Code, FiraFlott, 'Operator Mono', 'OperatorMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
   "editor.tabSize": 2,
-  "editor.fontSize": 11,
+  "editor.fontSize": 10,
   "editor.wordWrapColumn": 800,
   "editor.useTabStops": false,
   "editor.lineHeight": 26,
@@ -24,7 +24,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "workbench.colorTheme": "Atom One Dark",
+  "workbench.colorTheme": "New Moon",
   "workbench.fontAliasing": "antialiased",
   "workbench.panel.defaultLocation": "right",
   "workbench.sideBar.location": "left",
@@ -66,8 +66,6 @@
     "**/*.nyc_output": true,
     "**/*.tar": true,
     "**/*.zip": true,
-    "**/*.bundle.js": true,
-    "**/*.bundle.css": true,
     "**/*.min.js": true,
     "**/*.min.css": true,
     "**/node_modules": true,
@@ -108,6 +106,7 @@
   "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
   "git.ignoreMissingGitWarning": true,
+  "git.ignoreLimitWarning": true,
   "git.showCommitInput": true,
   "trailing-spaces.trimOnSave": true,
   "extensions.ignoreRecommendations": true,
@@ -119,8 +118,6 @@
     "extensions": [".html", ".js", ".vue", ".jsx"]
   },
   "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
-  "vetur.validation.script": false,
-  "vetur.validation.template": false,
   "scss.validate": false,
   "css.validate": false,
   "less.validate": false,
@@ -176,6 +173,8 @@
     "*.webpack.js": "webpack"
   },
   "explorer.confirmDelete": true,
+  "php.validate.executablePath": "/usr/local/bin/php",
+  "phpcs.executablePath": "/Users/nandomoreira/.composer/vendor/bin/phpcs",
   "[php]": {
     "editor.tabSize": 4
   },
@@ -212,7 +211,7 @@
   },
   "javascript.format.semicolons": "insert",
   "search.actionsPosition": "right",
-  "search.collapseResults": "auto",
+  "search.collapseResults": "alwaysCollapse",
   "search.quickOpen.includeHistory": false,
   "search.smartCase": true,
   "search.showLineNumbers": true,
@@ -241,69 +240,43 @@
     "**/node_modules": true,
     "**/.sass-cache": true
   },
-  "liveServer.settings.donotShowInfoMsg": true,
-  "rest-client.defaultHeaders": {
-    "User-Agent": "vscode-restclient",
-    "content-type": "application/json"
-  },
-  "todo-tree.tree.showScanModeButton": false,
   "vscodeGoogleTranslate.preferredLanguage": "Portuguese",
   "workbench.editor.decorations.badges": true,
   "gist.defaultPrivate": true,
   "editor.minimap.enabled": false,
-  "breadcrumbs.enabled": false,
-  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "XXX", "[ ]", "[x]"],
-  "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
   "editor.largeFileOptimizations": false,
   "terminal.integrated.fontSize": 12,
   "terminal.external.osxExec": "Hyper.app",
+  "terminal.integrated.confirmOnKill": "never",
   "terminal.integrated.showExitAlert": false,
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.copyOnSelection": true,
-  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.tabs.enabled": true,
   "terminal.integrated.env.osx": {
     "NODE_ENV": "development",
     "FIG_NEW_SESSION": "1"
   },
-  "terminal.integrated.tabs.enabled": true,
-  "cssrem.addMark": true,
-  "cssrem.fixedDigits": 5,
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "tabnine.experimentalAutoImports": true,
   "editor.suggestSelection": "first",
-  "splitHTMLAttributes.closingBracketOnNewLine": true,
+  "html.autoClosingTags": true,
   "window.title": "${activeEditorShort} ${separator} ${rootName}",
   "workbench.editorAssociations": {
-    "*.ipynb": "jupyter.notebook.ipynb"
+    "*.ipynb": "jupyter.notebook.ipynb",
+    "*.rdb": "default",
+    "*.log": "default"
   },
   "eslint.format.enable": true,
-  "todo-tree.filtering.excludeGlobs": ["**/node_modules", "node_modules/**", "**/node_modules/**"],
-  "todo-tree.filtering.ignoreGitSubmodules": true,
-  "VSCord.appName": "Visual Studio Code",
   "workbench.productIconTheme": "material-product-icons",
-  "discord.detailsIdling": "Inativo",
-  "discord.largeImage": "{lang}",
-  "discord.largeImageIdling": "Inativo",
-  "discord.detailsEditing": "Editando {file_name} na linha {current_line}",
-  "discord.detailsDebugging": "Depurando {file_name}",
-  "discord.lowerDetailsDebugging": "Depurando: {workspace}",
-  "discord.lowerDetailsIdling": "Inativo",
-  "discord.lowerDetailsNoWorkspaceFound": "Nenhum workspace",
-  "discord.removeRemoteRepository": true,
   "workbench.iconTheme": "material-icon-theme",
   "terminal.integrated.defaultProfile.windows": "Git Bash",
   "workbench.startupEditor": "none",
-  "window.zoomLevel": 1,
   "json.schemas": [
     {
       "name": "vscode-expo-manifest",
       "url": "file:///Users/nandomoreira/Library/Application%20Support/Code/User/globalStorage/bycedric.vscode-expo/manifest-44.0.0.json",
-      "fileMatch": [
-        "app.json",
-        "app.config.json"
-      ]
+      "fileMatch": ["app.json", "app.config.json"]
     }
   ],
   "editor.unicodeHighlight.allowedCharacters": {
@@ -312,14 +285,24 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.accessibilitySupport": "off",
   "security.workspace.trust.untrustedFiles": "open",
-  "php-cs-fixer.executablePath": "php-cs-fixer",
-  "php-cs-fixer.onsave": true,
-  "php-cs-fixer.rules": "@PSR1,@PSR2,@Symfony",
+  "html.format.templating": true,
+  "todo-tree.filtering.excludeGlobs": [
+    "**/node_modules/**/*",
+    "**/dist/**/*",
+    "**/build/**/*",
+    "**/ios/**/*",
+    "**/android/**/*"
+  ],
+  "redhat.telemetry.enabled": false,
+  "discord.removeRemoteRepository": true,
+  "discord.removeTimestamp": true,
+  "discord.swapBigAndSmallImage": true,
+  "discord.detailsIdling": "{empty}",
+  "discord.lowerDetailsEditing": "{git_branch}",
+  "discord.detailsEditing": "Editing {dir_name}/{file_name}",
+  "breadcrumbs.filePath": "off",
+  "debug.terminal.clearBeforeReusing": true,
   "php-cs-fixer.allowRisky": true,
-  "php-cs-fixer.pathMode": "override",
-  "php-cs-fixer.exclude": [],
-  "php-cs-fixer.autoFixByBracket": true,
-  "php-cs-fixer.autoFixBySemicolon": true,
-  "php-cs-fixer.formatHtml": false,
-  "php-cs-fixer.documentFormattingProvider": true
+  "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+  "window.zoomLevel": 1
 }

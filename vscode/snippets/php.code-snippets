@@ -2,63 +2,37 @@
   "prp": {
     "prefix": "prp",
     "scope": "php",
-    "body": [
-      "echo '<pre>' . print_r( $1, true ) . '</pre>';",
-      "$0"
-    ],
+    "body": ["echo '<pre>[ $1 ] ' . print_r( $1, true ) . '</pre>';", "$0"],
     "description": "Print pre to debug"
   },
   "prp:tag": {
     "prefix": "prp:t",
     "scope": "html",
-    "body": [
-      "<?php echo '<pre>' . print_r( $1, true ) . '</pre>'; ?>",
-      "$0"
-    ],
+    "body": ["<?php echo '<pre>' . print_r( $1, true ) . '</pre>'; ?>", "$0"],
     "description": "Print pre to debug"
   },
   "php:tag": {
     "prefix": "php:t",
     "scope": "html",
-    "body": [
-      "<?php $1 ?>",
-      "$0"
-    ],
+    "body": ["<?php $1 ?>", "$0"],
     "description": "php tag"
   },
   "php:t": {
     "prefix": "php:t",
     "scope": "html",
-    "body": [
-      "<?php",
-      "$0"
-    ],
+    "body": ["<?php", "$0"],
     "description": "php"
-  },
-  "php:e": {
-    "prefix": "php:e",
-    "scope": "html",
-    "body": [
-      "<?= $0 ?>",
-      "$0"
-    ],
-    "description": "PHP echo"
   },
   "php:jdie": {
     "prefix": "php:j",
     "scope": "php",
-    "body": [
-      "jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));",
-      "$0"
-    ],
+    "body": ["jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));", "$0"],
     "description": "convert and print array to json and die"
   },
   "php:var": {
     "prefix": "php:v",
     "scope": "php",
-    "body": [
-      "$${1:var}$0"
-    ],
+    "body": ["$${1:var}$0"],
     "description": "PHP Var"
   },
   "php:class": {
@@ -78,22 +52,31 @@
   "php:namespace": {
     "prefix": "php:n",
     "scope": "php",
-    "body": [
-      "namespace ${1:App};",
-      "$0"
-    ],
+    "body": ["namespace ${1:App};", "$0"],
     "description": "PHP namespace"
   },
   "php:function": {
     "prefix": "php:f",
     "scope": "php",
-    "body": [
-      "public function ${1:__construct}()",
-      "{",
-      "\t$1",
-      "}",
-      "$0"
-    ],
+    "body": ["public function ${1:__construct}()", "{", "\t$1", "}", "$0"],
     "description": "PHP function"
+  },
+  "if:template": {
+    "prefix": "if:t",
+    "scope": "php,html",
+    "body": ["<?php if ($1): ?>", "\t$2", "<?php endif; ?>$0"],
+    "description": "PHP if template"
+  },
+  "else:template": {
+    "prefix": "else:t",
+    "scope": "php,html",
+    "body": ["<?php else: ?>", "\t$0"],
+    "description": "PHP else template"
+  },
+  "endif:template": {
+    "prefix": "endif:t",
+    "scope": "php,html",
+    "body": ["<?php endif; ?>$0"],
+    "description": "PHP else template"
   }
 }
