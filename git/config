@@ -63,7 +63,7 @@
   excludesfile = ~/.gitignore_global
   attributesfile = ~/.gitattributes
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
-  editor = code
+	editor = code -w
   autocrlf = input
 
 [color "branch"]
@@ -137,7 +137,7 @@
 
 [commit]
   gpgsign = true
-  template = $HOME/.stCommitMsg
+  template = ~/.stCommitMsg
 
 [gpg]
   program = gpg
