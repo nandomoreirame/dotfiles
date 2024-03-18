@@ -3,10 +3,7 @@
     "prefix": "dbgg",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Debugger",
-    "body": [
-      "debugger;",
-      "$0"
-    ]
+    "body": ["debugger;", "$0"]
   },
   "try:catch": {
     "prefix": "try:catch",
@@ -24,90 +21,61 @@
   "for-of": {
     "prefix": ["for", "for:of"],
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
-    "body": [
-      "for (const ${2:item} of ${1:arrayVar}) {",
-      "\t${3:// Write something here...}",
-      "}",
-      "$0"
-    ],
+    "body": ["for (const ${2:item} of ${1:arrayVar}) {", "\t${3:// Write something here...}", "}", "$0"],
     "description": "for of loop"
   },
   "const": {
     "prefix": "const",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Create const",
-    "body": [
-      "const ${1:varHere} = $0;"
-    ]
+    "body": ["const ${1:varHere} = $0;"]
   },
   "arrow:fn": {
     "prefix": "arrow:fn",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Arrow function",
-    "body": [
-      "($1) => {",
-      "\t${0:// Write something here...}",
-      "}"
-    ]
+    "body": ["($1) => {", "\t${0:// Write something here...}", "}"]
   },
   "arrow:const": {
     "prefix": "arrow:const",
     "description": "[const] Arrow function",
-    "body": [
-      "const ${1:functionHere} = ($2) => {",
-      "\t${3:// Write something here...}",
-      "};",
-      "$0"
-    ]
+    "body": ["const ${1:functionHere} = ($2) => {", "\t${3:// Write something here...}", "};", "$0"]
   },
   "import:default": {
     "prefix": "import:d",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "import default from module",
-    "body": [
-      "import ${1:Module} from '${2:module}';$0"
-    ]
+    "body": ["import ${1:Module} from '${2:module}';$0"]
   },
   "import:const": {
     "prefix": "import:c",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "import consts module",
-    "body": [
-      "import { ${1:Const1}${2:, ${3:Const2}} } from '${4:module}';$0"
-    ]
+    "body": ["import { ${1:Const1}${2:, ${3:Const2}} } from '${4:module}';$0"]
   },
   "require": {
     "prefix": "require",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "import module using CommonJS require",
-    "body": [
-      "const ${1:Module} = require('${2:module}');$0"
-    ]
+    "body": ["const ${1:Module} = require('${2:module}');$0"]
   },
   "require:default": {
     "prefix": "require:d",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "import default module using CommonJS require",
-    "body": [
-      "const ${1:Module} = require('${2:module}').default;$0"
-    ]
+    "body": ["const ${1:Module} = require('${2:module}').default;$0"]
   },
   "require:const": {
     "prefix": "require:c",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "import consts module using CommonJS require",
-    "body": [
-      "const { ${1:Const1}${2:, ${3:Const2}} } = require('${4:module}');$0"
-    ]
+    "body": ["const { ${1:Const1}${2:, ${3:Const2}} } = require('${4:module}');$0"]
   },
   "console": {
     "prefix": ["clog", "console", "log"],
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Log output to console",
-    "body": [
-      "// eslint-disable-next-line no-console",
-      "console.${1:log}(${2:{ ${3:something} \\}});"
-    ]
+    "body": ["// eslint-disable-next-line no-console", "console.${1:log}(${2:{ ${3:something} \\}});"]
   },
   "http:get": {
     "prefix": "http:get",
@@ -137,92 +105,84 @@
     "prefix": ["promise", "new:promise", "promise:new"],
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "New Promise",
-    "body": [
-      "new Promise((resolve, reject) => {",
-      "\t${0:// Write something here...}",
-      "\tresolve();",
-      "})",
-      "$0"
-    ]
+    "body": ["new Promise((resolve, reject) => {", "\t${0:// Write something here...}", "\tresolve();", "})", "$0"]
   },
   "promise:then": {
     "prefix": "promise:then",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Promise then",
-    "body": [
-      "${1:promise}.then((${2:value}) => {",
-      "\t${0:// Write something here...}",
-      "})",
-      "$0"
-    ]
+    "body": ["${1:promise}.then((${2:value}) => {", "\t${0:// Write something here...}", "})", "$0"]
   },
   "then:chain": {
     "prefix": "then:chain",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "chain .then()",
-    "body": [
-      ".then((${1:value}) => {$0})"
-    ]
+    "body": [".then((${1:value}) => {$0})"]
   },
   "promise:catch": {
     "prefix": "promise:catch",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "Promise catch",
-    "body": [
-      "${1:promise}.catch((${2:err}) => {",
-      "\t${3:// Write something here...}",
-      "})",
-      "$0"
-    ]
+    "body": ["${1:promise}.catch((${2:err}) => {", "\t${3:// Write something here...}", "})", "$0"]
   },
   "catch:chain": {
     "prefix": "catch:chain",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "chain .catch()",
-    "body": [
-      ".catch((${1:err}) => {$0})"
-    ]
+    "body": [".catch((${1:err}) => {$0})"]
   },
 
   "export:default": {
     "prefix": "export:d",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "export default",
-    "body": [
-      "export default {",
-      "\t${1:// Write something here...}",
-      "}",
-      "$0"
-    ]
+    "body": ["export default {", "\t${1:// Write something here...}", "}", "$0"]
+  },
+  "export:*": {
+    "prefix": "export:*",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export * from",
+    "body": ["export * from '${1:./NameOfComponentFile}';", "$0"]
   },
   "export:default:as": {
     "prefix": "export:d",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "export default as a const",
-    "body": [
-      "export { default as ${1:Const} } from './${2:File}';$0"
-    ]
+    "body": ["export { default as ${1:Const} } from './${2:File}';$0"]
   },
   "export:const": {
     "prefix": "export:c",
     "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
     "description": "export arrow function const",
+    "body": ["export const ${1:Const} = () => {", "\t${2:// Write something here...}", "}", "$0"]
+  },
+  "export:function": {
+    "prefix": "export:fn",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export default function",
+    "body": ["export function ${1:functionName}() {", "\t${2:// Write something here...}", "}", "$0"]
+  },
+  "export:default:function": {
+    "prefix": "export:default:fn",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
+    "description": "export default function",
+    "body": ["export default function () {", "\t${1:// Write something here...}", "}"]
+  },
+  "styled:import": {
+    "prefix": "styled:import",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "description": "import styled from 'styled-components';",
     "body": [
-      "export const ${1:Const} = () => {",
-      "\t${2:// Write something here...}",
-      "}",
+      "import styled from 'styled-components';",
+      "",
+      "export const ${1:Wrapper} = styled.${2:div}${3:<{ selected?: boolean \\}>}``;",
       "$0"
     ]
   },
-  "export:function": {
-    "prefix": "export",
-    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue",
-    "description": "export default function",
-    "body": [
-      "export default function () {",
-      "\t${1:// Write something here...}",
-      "}",
-      "$0"
-    ]
+  "styled:export": {
+    "prefix": "styled:export",
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "description": "export default styled const",
+    "body": ["export const ${1:Wrapper} = styled.${2:div}${3:<{ selected?: boolean \\}>}``;", "$0"]
   }
 }

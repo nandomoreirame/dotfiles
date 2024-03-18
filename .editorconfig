@@ -8,8 +8,13 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[**.{md,sh}]
-insert_final_newline = ignore
-
-[{default-packages,brewcask,brewfile,gems}]
+[**.{md,sh,json}]
 insert_final_newline = false
+
+[.{env,env.*,nvmrc,yvmrc,npmrc,prettierignore,prettierrc,eslintignore,eslintrc,babelrc,stylelintrc,editorconfig}]
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+[default-packages]
+insert_final_newline = false
+trim_trailing_whitespace = false

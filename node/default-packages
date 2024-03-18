@@ -1,3 +1,4 @@
+@angular/cli
 cowsay
 diff-so-fancy
 eas-cli
@@ -8,4 +9,3 @@ prettier
 spaceship-prompt
 typescript
 vovo-juju-cli
-yarn

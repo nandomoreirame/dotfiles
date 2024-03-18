@@ -4,17 +4,23 @@
 
 module.exports = {
   config: {
+    // hyper-opacity - Set the opacity of your Hyper window.
+    opacity: 0.99,
+
     // default font size in pixels for all tabs
     fontSize: 14,
 
     // font family with optional fallbacks
-    fontFamily: '"Fira Code", Menlo, "DejaVu Sans Mono", "Lucida Console", monospace',
+    fontFamily: '"Dank Mono", "Fira Code", Menlo, "DejaVu Sans Mono", Consolas, "Lucida Console", monospace',
+
+    // https://github.com/tolbertam/hyper-font-ligatures#disabling-webgl-rendering
+    webGLRenderer: false,
 
     // terminal cursor background color and opacity (hex, rgb, hsl, hsv, hwb or cmyk)
-    cursorColor: 'rgba(255,255,255,0.9)',
+    cursorColor: '#1df9ca',
 
     // `BEAM` for |, `UNDERLINE` for _, `BLOCK` for █
-    cursorShape: 'UNDERLINE',
+    cursorShape: 'BLOCK',
 
     // set to true for blinking cursor
     cursorBlink: true,
@@ -44,7 +50,7 @@ module.exports = {
     showWindowControls: '',
 
     // custom padding (css format, i.e.: `top right bottom left`)
-    padding: '12px 20px',
+    padding: '25px 25px',
 
     // the full list. if you're going to provide the full color palette,
     // including the 6 x 6 color cubes and the grayscale map, just provide
@@ -80,7 +86,9 @@ module.exports = {
     shellArgs: ['--login'],
 
     // for environment variables
-    env: {},
+    env: {
+      NODE_ENV: 'development'
+    },
 
     // set to false for no bell
     // bell: 'SOUND',
@@ -106,15 +114,20 @@ module.exports = {
   //   `@company/project`
   //   `project#1.0.1`
   plugins: [
-    // `hyperpower`,
-    `hypercwd`,
-    `hyperlinks`,
-    // `hyper-dracula`
-    `hyperyellow`
+    "hyper-active-tab",
+    "hyper-fading-scrollbar",
+    "hyper-pane",
+    "hyper-search",
+    "hyperlinks",
+    "hypercwd",
+    "hyper-opacity",
+    "hyper-tabs-enhanced",
+    "hyper-font-ligatures"
   ],
 
   // in development, you can create a directory under
   // `~/.hyper_plugins/local/` and include it here
   // to load it and avoid it being `npm install`ed
-  localPlugins: []
+  localPlugins: [
+  ]
 };

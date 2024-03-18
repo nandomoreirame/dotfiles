@@ -8,6 +8,5 @@ running "dependencies for OSx..."
 
 $DOTFILES/osx/brew.sh
 $DOTFILES/osx/cask.sh
-$DOTFILES/osx/defaults.sh
 
 bot ""

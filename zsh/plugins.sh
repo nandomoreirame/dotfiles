@@ -21,6 +21,8 @@ running "Installing spaceship-prompt theme..."
 rm -rf $DOTFILES/zsh/custom/themes/spaceship-prompt $DOTFILES/zsh/custom/themes/spaceship.zsh-theme
 git clone https://github.com/denysdovhan/spaceship-prompt.git $DOTFILES/zsh/custom/themes/spaceship-prompt
 sudo ln -s "$DOTFILES/zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$DOTFILES/zsh/custom/themes/spaceship.zsh-theme"
+unlink /usr/local/share/zsh/site-functions/prompt_spaceship_setup
+ln -s $DOTFILES/zsh/custom/themes/spaceship-prompt/prompt_spaceship_setup /usr/local/share/zsh/site-functions/prompt_spaceship_setup
 
 # Installing zsh-git-semantic-commits plugin...
 running "Installing zsh-git-semantic-commits plugin..."

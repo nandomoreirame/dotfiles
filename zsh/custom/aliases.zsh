@@ -12,6 +12,12 @@ alias mv="mv -v"
 # pwd
 # alias .="pwd"
 
+# Heroku CLI
+alias h=heroku
+alias ha="heroku apps"
+alias hl="heroku logs"
+alias hc="heroku config"
+
 # git
 alias git=hub
 alias g=hub
@@ -52,15 +58,13 @@ alias ht="htop"
 alias zload="source ~/.zshrc"
 alias finder='open . -a finder.app'
 alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome $1 --args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=${HOME}/tmp/chrome"
-alias canary="open -a Google\ Chrome\ Canary $1 --args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=${HOME}/tmp/canary"
-alias chromium="open -a Chromium $1 -args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=${HOME}/tmp/canary"
-alias opera="/Applications/Opera.app/Contents/MacOS/Opera $1 --disable-web-security --disable-site-isolation-trials --user-data-dir=~${HOME}/tmp/opera"
-alias firefox="/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $1"
+alias canary="/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary $1 --args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=${HOME}/tmp/canary"
+alias chromium="/Applications/Chromium.app/Contents/MacOS/Chromium $1 -args --new-window --disable-web-security --disable-site-isolation-trials --user-data-dir=${HOME}/tmp/chromium"
 
 # Miscellaneous
-alias kll="killall"
-alias h="history"
-alias q="exit"
+# alias kll="killall"
+# alias h="history"
+# alias q="exit"
 
 # Show the external IP
 alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
@@ -116,6 +120,9 @@ alias npmug="npm uninstall -g"
 alias npmlink="npm link"
 alias npmurl="npm-url"
 alias t="npm test"
+
+# pnpm https://pnpm.io/pnpm-cli
+alias pn=pnpm
 
 # yarn
 alias yarn="time yarn $1"

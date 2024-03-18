@@ -1,13 +1,8 @@
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the start of this file.
-[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
-#### END FIG ENV VARIABLES ####
-
 # First, load bash files.
 . ~/.bashrc
 
 export DOTFILES="$HOME/.dotfiles"
-export SPACESHIP_ROOT="$DOTFILES/zsh/custom/themes/spaceship-prompt"
+# export SPACESHIP_ROOT="$DOTFILES/zsh/custom/themes/spaceship-prompt"
 
 source $HOME/.profile
 source $HOME/.bash_profile
@@ -29,7 +24,6 @@ SPACESHIP_PROMPT_ORDER=(
   exec_time     # Execution time
   battery       # Line break
   line_sep      # Line break
-  vi_mode       # Vi-mode indicator
   jobs          # Background jobs indicator
   exit_code     # Exit code section
   char          # Prompt character
@@ -96,11 +90,9 @@ export PATH="$PATH:$HOME/.composer/vendor/bin"
 # PHP Env - https://github.com/phpenv/phpenv
 # export PATH="$HOME/.phpenv/bin:$PATH"
 # eval "$(phpenv init -)"
-
-source $HOME/.phpbrew/bashrc
-
-export PHPBREW_SET_PROMPT=1
-export PHPBREW_RC_ENABLE=1
+# source $HOME/.phpbrew/bashrc
+# export PHPBREW_SET_PROMPT=1
+# export PHPBREW_RC_ENABLE=1
 
 # rvm
 # export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
@@ -146,15 +138,20 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
+
+# pnpm
+export PNPM_HOME="/Users/nandomoreira/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+
 # need cowsay # npm i -g cowsay
 # cowsay -f "$DOTFILES/cowsay/bot.cow" $(vovo-juju) # and vovo-juju-cli # npm i -g vovo-juju-cli
-cowsay "DON'T DEPLOY ON FRIDAY!"
+# cowsay "DON'T DEPLOY ON FRIDAY!"
 
 # Set Spaceship ZSH as a prompt
 autoload -U promptinit; promptinit
 prompt spaceship
-
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the end of this file.
-[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
-#### END FIG ENV VARIABLES ####

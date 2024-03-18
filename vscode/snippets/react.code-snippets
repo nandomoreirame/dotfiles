@@ -1,94 +1,54 @@
 {
-  "react:import": {
-    "prefix": "react:import",
-    "scope": "javascriptreact,typescriptreact",
-    "description": "import react",
-    "body": ["import React from 'react';"]
-  },
-  "react:all:import": {
-    "prefix": "react:import",
-    "scope": "javascriptreact,typescriptreact",
-    "description": "import react",
-    "body": ["import * as React from 'react';"]
-  },
-  "react:import-styled-file": {
-    "prefix": "react:import:s",
-    "scope": "javascript,typescript,javascriptreact,typescriptreact",
-    "description": "Import styled file as S const",
-    "body": ["import * as S from './${1:ComponentName}.styles", ""]
-  },
-  "react:base": {
-    "prefix": "react:base",
-    "scope": "javascriptreact,typescriptreact",
-    "description": "React stateless base component",
-    "body": [
-      "import { Fragment } from 'react';",
-      "",
-      "export default function ${1:ComponentName}() {",
-      "\treturn (",
-      "\t\t<Fragment>",
-      "\t\t\t<h1>${1:ComponentName}${0}</h1>",
-      "\t\t</Fragment>",
-      "\t);",
-      "};",
-      ""
-    ]
-  },
-  "react:base:ts": {
-    "prefix": "react:base",
-    "scope": "typescriptreact",
-    "description": "React (TypeScript) stateless base component",
-    "body": [
-      "import * as React from 'react';",
-      "",
-      "export interface ${1:ComponentName}Props {",
-      "\tchildren: React.ReactNode;",
-      "}",
-      "",
-      "export default function ${1:ComponentName}({ children }: ${1:ComponentName}Props): React.ReactElement {",
-      "\treturn (",
-      "\t\t<React.Fragment>",
-      "\t\t\t<h1>{children}${0}</h1>",
-      "\t\t</React.Fragment>",
-      "\t);",
-      "}",
-      ""
-    ]
-  },
-  "react:children:props": {
-    "prefix": "react:base",
-    "scope": "typescriptreact",
-    "description": "React children React.ReactNode",
-    "body": ["children${1:?}: React.ReactNode;"]
-  },
-  "react:useEffect": {
+  "react:useEffect:js": {
     "prefix": "react:useEffect",
-    "scope": "javascriptreact,typescriptreact",
+    "scope": "javascript,javascriptreact",
+    "body": ["useEffect(() => {", "\t$0", "}, [$1]);"],
+    "description": "React useEffect Hook"
+  },
+  "react:useEffect:ts": {
+    "prefix": "react:useEffect",
+    "scope": "typescript,typescriptreact",
     "body": ["React.useEffect(() => {", "\t$0", "}, [$1]);"],
     "description": "React useEffect Hook"
   },
-  "react:sync:useEffect": {
-    "prefix": "react:sync:useEffect",
-    "scope": "javascriptreact,typescriptreact",
+  "react:useEffect:sync:js": {
+    "prefix": "react:useEffect:sync",
+    "scope": "javascript,javascriptreact",
+    "body": [
+      "useEffect(() => {",
+      "\t(async () => {",
+      "\t\tawait doSomefn();",
+      "\t})();",
+      "\t// eslint-disable-next-line react-hooks/exhaustive-deps",
+      "}, [$0]);"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react:useEffect:sync:ts": {
+    "prefix": "react:useEffect:sync",
+    "scope": "typescript,typescriptreact",
     "body": [
       "React.useEffect(() => {",
       "\t(async () => {",
       "\t\tawait doSomefn();",
       "\t})();",
+      "\t// eslint-disable-next-line react-hooks/exhaustive-deps",
       "}, [$0]);"
     ],
     "description": "React useEffect Hook"
   },
-  "react:useState": {
+  "react:useState:ts": {
     "prefix": "react:useState",
-    "scope": "javascriptreact,typescriptreact",
+    "scope": "typescript,typescriptreact",
     "body": ["const [${1}, set${1/(.*)/${1:/capitalize}/}] = React.useState($0);"],
     "description": "React useState hook"
   },
-  "react:render": {
-    "prefix": "react:render",
-    "scope": "javascriptreact,typescriptreact",
-    "body": ["render() {", "\treturn (", "\t\t $0", "\t);", "}"],
-    "description": "React render function"
+  "react:useBoolean": {
+    "prefix": "react:useBoolean",
+    "scope": "javascript,javascriptreact,typescript,typescriptreact",
+    "body": [
+      "const { value: ${1:isBoolean}, setValue: ${2:setBoolean}, setTrue: ${3:setBooleanTrue}, setFalse: ${4:setBooleanFalse}, toggle: ${5:toggleBoolean} } = useBoolean($0);"
+    ],
+    "description": "React useBoolean() sexy hook"
   }
 }

@@ -140,7 +140,7 @@
   template = ~/.stCommitMsg
 
 [gpg]
-  program = gpg
+	program = /usr/local/bin/gpg
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
@@ -150,8 +150,10 @@
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
+
 [pull]
   rebase = true
   ff = only
+
 [init]
   defaultBranch = dev
