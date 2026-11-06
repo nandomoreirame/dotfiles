@@ -1,0 +1,11 @@
+# Local-only planning documents: specs, plans, state and reviews never leave this computer.
+docs/*
+# Public documentation is allowlisted explicitly, one line per file.
+!docs/private-overlay.md
+
+# Private overlay and secrets
+/private/
+.env*
+*.local
+*.bak
+tests/.tmp/

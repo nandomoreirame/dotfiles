@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Run the BATS suite with the pinned submodules under tests/bats/lib/.
+set -eo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BATS_BIN="$ROOT/tests/bats/lib/bats-core/bin/bats"
+
+if [ ! -x "$BATS_BIN" ]; then
+    printf '%s\n' "tests/run-tests: bats-core is missing. Run: git submodule update --init --recursive" >&2
+    exit 2
+fi
+
+# BATS needs a real terminal type; dumb/empty breaks some helpers.
+case "${TERM:-}" in
+    ""|dumb) export TERM=xterm-256color ;;
+esac
+
+targets=()
+if [ "$#" -eq 0 ]; then
+    for group in unit integration; do
+        if [ -d "$ROOT/tests/$group" ]; then
+            targets+=("$ROOT/tests/$group")
+        fi
+    done
+else
+    for arg in "$@"; do
+        case "$arg" in
+            unit|integration)
+                targets+=("$ROOT/tests/$arg")
+                ;;
+            /*)
+                targets+=("$arg")
+                ;;
+            *)
+                if [ -e "$arg" ]; then
+                    targets+=("$(cd "$(dirname "$arg")" && pwd)/$(basename "$arg")")
+                elif [ -e "$ROOT/$arg" ]; then
+                    targets+=("$ROOT/$arg")
+                else
+                    printf '%s\n' "tests/run-tests: path not found: $arg" >&2
+                    exit 1
+                fi
+                ;;
+        esac
+    done
+fi
+
+if [ "${#targets[@]}" -eq 0 ]; then
+    printf '%s\n' "tests/run-tests: no test targets found" >&2
+    exit 1
+fi
+
+exec "$BATS_BIN" --recursive "${targets[@]}"
