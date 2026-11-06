@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Private overlay helpers. Safe to source when private/ is absent.
 # No set -e, no output, no side effects beyond defining helpers.
 

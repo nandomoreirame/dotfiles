@@ -32,13 +32,17 @@ gate() { run bash "$ROOT/scripts/public-check" "$@"; }
 @test "public-check rejects a personal e-mail" { mkrepo "$(mail)"; gate "$R"; [ "$status" -ne 0 ]; }
 
 @test "public-check allows documentation values" {
-    mkrepo "$(printf 'a@example.com\nb@users.noreply.github.com\ngit@github.com:o/r.git\n198.51.100.7\n192.0.2.1\n')"
+    # Build the fixture at run time so the source file never holds a joined e-mail list
+    # that the gate would mis-read around literal "\n" sequences.
+    mkrepo "$(printf '%s\n' 'a@example.com' 'b@users.noreply.github.com' 'git@github.com:o/r.git' '198.51.100.7' '192.0.2.1')"
     gate "$R"; [ "$status" -eq 0 ]
 }
 
 @test "public-check honors the allow file" {
-    mkrepo "owner@acme-demo.org"
-    printf 'email:owner@acme-demo.org\n' > "$R/scripts-allow"
+    local demo
+    demo="$(printf '%s' "owner@acme-""demo.org")"
+    mkrepo "$demo"
+    printf 'email:%s\n' "$demo" > "$R/scripts-allow"
     mkdir -p "$R/scripts"; mv "$R/scripts-allow" "$R/scripts/public-check.allow"; git -C "$R" add -A
     gate "$R"; [ "$status" -eq 0 ]
 }

@@ -36,7 +36,7 @@ jobs:
           gitleaks version
 
       - name: ShellCheck
-        run: shellcheck -x scripts/* lib/*.sh tests/run-tests
+        run: shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
 
       - name: Tests
         run: bash tests/run-tests

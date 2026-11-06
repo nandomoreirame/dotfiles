@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# Verify the repository from a clean recursive clone (or a worktree copy of the index).
+set -eo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MODE="clone"
+if [ "${1:-}" = "--worktree" ]; then
+    MODE="worktree"
+    shift
+fi
+if [ "$#" -gt 0 ]; then
+    printf '%s\n' "Usage: simulate-clean-clone [--worktree]" >&2
+    exit 2
+fi
+
+TMP="$(mktemp -d)"
+FAKE_HOME="$(mktemp -d)"
+cleanup() {
+    rm -rf "$TMP" "$FAKE_HOME"
+}
+trap cleanup EXIT
+
+export HOME="$FAKE_HOME"
+export SIMULATE_ACTIVE=1
+WORKDIR="$TMP/repo"
+
+stage() {
+    local name="$1"
+    shift
+    if [ "${SIMULATE_FAIL_STAGE:-}" = "$name" ]; then
+        printf '%s\n' "$name: forced failure" >&2
+        exit 1
+    fi
+    if "$@"; then
+        printf '%s\n' "$name: ok"
+    else
+        printf '%s\n' "$name: failed" >&2
+        exit 1
+    fi
+}
+
+if [ "$MODE" = "clone" ]; then
+    git clone --recurse-submodules "$ROOT" "$WORKDIR"
+else
+    mkdir -p "$WORKDIR"
+    # Copy tracked and untracked non-ignored files (leaves ignored docs/ out, as a real clone would).
+    while IFS= read -r -d '' rel || [ -n "$rel" ]; do
+        [ -n "$rel" ] || continue
+        mkdir -p "$WORKDIR/$(dirname "$rel")"
+        cp -a "$ROOT/$rel" "$WORKDIR/$rel"
+    done < <(git -C "$ROOT" ls-files -z --cached --others --exclude-standard)
+    # Link real BATS submodules so uncommitted work can run without re-fetching.
+    if [ -d "$ROOT/tests/bats/lib" ]; then
+        mkdir -p "$WORKDIR/tests/bats"
+        rm -rf "$WORKDIR/tests/bats/lib"
+        ln -s "$ROOT/tests/bats/lib" "$WORKDIR/tests/bats/lib"
+    fi
+    # Ensure the copy is a git repo so public-check can ls-files.
+    if [ ! -d "$WORKDIR/.git" ]; then
+        git -C "$WORKDIR" init -q -b main
+        git -C "$WORKDIR" add -A
+        git -C "$WORKDIR" \
+            -c user.name=simulate \
+            -c user.email=simulate@example.com \
+            -c commit.gpgsign=false \
+            -c core.hooksPath=/dev/null \
+            commit -qm "simulate worktree"
+    fi
+fi
+
+cd "$WORKDIR"
+
+run_tests() {
+    env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color SIMULATE_ACTIVE=1 \
+        bash tests/run-tests
+}
+
+run_shellcheck() {
+    if ! command -v shellcheck >/dev/null 2>&1; then
+        printf '%s\n' "shellcheck: skipped (not installed)"
+        return 0
+    fi
+    shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
+}
+
+run_public_check() {
+    bash scripts/public-check .
+}
+
+stage tests run_tests
+stage shellcheck run_shellcheck
+stage public-check run_public_check
