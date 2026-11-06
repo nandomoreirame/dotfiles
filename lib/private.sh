@@ -1,0 +1,13 @@
+# Private overlay helpers. Safe to source when private/ is absent.
+# No set -e, no output, no side effects beyond defining helpers.
+
+: "${DOTFILES:=${HOME}/.dotfiles}"
+: "${DOTFILES_PRIVATE:=${DOTFILES}/private}"
+
+_private_path() {
+    printf '%s\n' "${DOTFILES_PRIVATE}/${1}"
+}
+
+_private_has() {
+    [ -e "${DOTFILES_PRIVATE}/${1}" ]
+}
