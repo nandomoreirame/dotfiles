@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a change to the public foundation or a later milestone
+title: "[request] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Who hits this, and what does it cost them today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change in this repository?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else did you try or rule out?
+    validations:
+      required: false

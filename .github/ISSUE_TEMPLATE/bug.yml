@@ -1,0 +1,57 @@
+name: Bug report
+description: Something broke on Arch/CachyOS with Niri or Noctalia
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Strip secrets, tokens, hostnames and personal data** from logs before pasting.
+  - type: input
+    id: distribution
+    attributes:
+      label: Distribution and version
+      description: e.g. CachyOS (rolling), Arch Linux
+      placeholder: CachyOS
+    validations:
+      required: true
+  - type: input
+    id: niri
+    attributes:
+      label: Niri version
+      placeholder: niri 25.x
+    validations:
+      required: false
+  - type: input
+    id: noctalia
+    attributes:
+      label: Noctalia version
+      placeholder: v5.x
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands or clicks that trigger the bug
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste relevant logs. Remove tokens, secrets, personal e-mails, private IPs and hostnames first.
+    validations:
+      required: false
