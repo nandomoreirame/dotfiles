@@ -30,9 +30,18 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
 }
 
 @test "gitignore keeps docs local and protects the overlay" {
-    grep -qx "docs/\*" "$ROOT/.gitignore"
-    grep -qx "!docs/private-overlay.md" "$ROOT/.gitignore"
-    grep -qx "/private/" "$ROOT/.gitignore"
+    grep -qx "/docs/" "$ROOT/.gitignore"
+    grep -qx "/private/\*" "$ROOT/.gitignore"
+    grep -qx "!/private/README.md" "$ROOT/.gitignore"
+    grep -qx "!/private/private-overlay.md" "$ROOT/.gitignore"
+}
+
+@test "readme links the overlay guide and never points into docs" {
+    grep -q "private/private-overlay.md" "$ROOT/README.md"
+    [ ! -e "$ROOT/guides" ]
+    [ ! -e "$ROOT/private.example" ]
+    run grep -nE "\(docs/|\`docs/" "$ROOT/README.md" "$ROOT/private/README.md"
+    [ "$status" -ne 0 ]
 }
 
 @test "shellcheck follows sources" {

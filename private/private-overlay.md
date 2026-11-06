@@ -24,7 +24,7 @@ A public clone of this repository must stay free of personal data. Anything that
 | `profiles/` | Host or role profiles |
 | `docs/` | Private notes (never published) |
 
-Copy [private.example/](../private.example/) as a starting point, then clone or symlink your real overlay at `DOTFILES_PRIVATE`.
+Use [README.md](README.md) in this directory as the starting point: put your files here, or clone your real overlay elsewhere and set `DOTFILES_PRIVATE`. Because git ignores everything in `private/` except these two documents, never track overlay content from this repository.
 
 ## Wiring (later milestones)
 

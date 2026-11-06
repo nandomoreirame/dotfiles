@@ -57,6 +57,24 @@ gate() { run bash "$ROOT/scripts/public-check" "$@"; }
     [[ "$output" == *"docs/plans/p.md"* ]]
 }
 
+@test "public-check allows only the two overlay docs under private" {
+    mkrepo ok
+    mkdir -p "$R/private"; echo x > "$R/private/README.md"; echo x > "$R/private/private-overlay.md"
+    git -C "$R" add -f private/README.md private/private-overlay.md
+    gate "$R"; [ "$status" -eq 0 ]
+    echo x > "$R/private/secret.txt"; git -C "$R" add -f private/secret.txt
+    gate "$R"; [ "$status" -ne 0 ]
+    [[ "$output" == *"private/secret.txt"* ]]
+}
+
+@test "public-check rejects any tracked docs path" {
+    mkrepo ok
+    mkdir -p "$R/docs"; echo x > "$R/docs/guide.md"
+    git -C "$R" add -f docs/guide.md
+    gate "$R"; [ "$status" -ne 0 ]
+    [[ "$output" == *"docs/guide.md"* ]]
+}
+
 @test "public-check ignores untracked files" {
     mkrepo ok
     printf 'p %s\n' "$(home)" > "$R/untracked.txt"

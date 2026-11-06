@@ -31,10 +31,10 @@ setup() {
 }
 
 @test "the overlay docs describe every directory and the variable" {
-    for f in "$ROOT/docs/private-overlay.md" "$ROOT/private.example/README.md"; do
+    for f in "$ROOT/private/private-overlay.md" "$ROOT/private/README.md"; do
         for k in bin shell links.conf packages setup espanso profiles docs; do
             grep -q "$k" "$f"
         done
     done
-    grep -q "DOTFILES_PRIVATE" "$ROOT/docs/private-overlay.md"
+    grep -q "DOTFILES_PRIVATE" "$ROOT/private/private-overlay.md"
 }

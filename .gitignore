@@ -1,10 +1,13 @@
-# Local-only planning documents: specs, plans, state and reviews never leave this computer.
-docs/*
-# Public documentation is allowlisted explicitly, one line per file.
-!docs/private-overlay.md
+# Local-only planning documents (specs, plans, state, reviews) never leave this computer.
+# The whole directory is ignored, with no exceptions.
+/docs/
 
 # Private overlay and secrets
-/private/
+# private/ is the default location of the private overlay: everything in it is ignored
+# except the two public documents that describe it.
+/private/*
+!/private/README.md
+!/private/private-overlay.md
 .env*
 *.local
 *.bak

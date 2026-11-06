@@ -67,11 +67,12 @@ report() {
 path_forbidden() {
     local rel="$1"
     case "$rel" in
+        private/README.md|private/private-overlay.md) return 1 ;;
         private|private/*) return 0 ;;
         .env|.env.*|*/.env|*/.env.*) return 0 ;;
         *.pem) return 0 ;;
         id_rsa|id_rsa.*|*/id_rsa|*/id_rsa.*) return 0 ;;
-        docs/specs|docs/specs/*|docs/plans|docs/plans/*|docs/reviews|docs/reviews/*) return 0 ;;
+        docs|docs/*) return 0 ;;
     esac
     return 1
 }
