@@ -46,6 +46,8 @@ else
     # Copy tracked and untracked non-ignored files (leaves ignored docs/ out, as a real clone would).
     while IFS= read -r -d '' rel || [ -n "$rel" ]; do
         [ -n "$rel" ] || continue
+        # A tracked file can be deleted from disk but not yet committed: a clone would not have it.
+        [ -e "$ROOT/$rel" ] || [ -L "$ROOT/$rel" ] || continue
         mkdir -p "$WORKDIR/$(dirname "$rel")"
         cp -a "$ROOT/$rel" "$WORKDIR/$rel"
     done < <(git -C "$ROOT" ls-files -z --cached --others --exclude-standard)
