@@ -1,0 +1,7 @@
+# Allowlist for scripts/public-check.
+# One entry per line. Blank lines and # comments are ignored.
+#
+# email:<address>   permit that exact e-mail address in tracked files
+#
+# Example (do not commit real personal addresses):
+# email:owner@example.com
