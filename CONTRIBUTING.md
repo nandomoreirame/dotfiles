@@ -1,0 +1,45 @@
+# Contributing
+
+## Setup
+
+```bash
+git clone --recurse-submodules git@github.com:nandomoreirame/dotfiles.git
+cd dotfiles
+```
+
+If the clone skipped submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
+## Tests
+
+```bash
+bash tests/run-tests
+# or a single file / group:
+bash tests/run-tests tests/unit/repo
+bash tests/run-tests unit
+```
+
+Always run under a real `TERM` when diagnosing failures. The runner itself rewrites empty/`dumb` to `xterm-256color`.
+
+## Personal data gate
+
+Before every commit:
+
+```bash
+bash scripts/public-check .
+# or only what you staged:
+bash scripts/public-check --staged
+```
+
+**No personal data** may enter the public tree: CPF/CNPJ, phone numbers, private IPv4 ranges, `/home/<user>` or `/Users/<user>` paths, personal e-mails, secrets, or anything under `private/`. Tests that need samples must assemble them at run time (string concatenation), never as literals in the file.
+
+## Language
+
+README, docs, comments and runtime messages are **English**. Identifiers stay English.
+
+## Pull requests
+
+Use the pull request template. Keep the change small, add tests with the feature, and leave `docs/` (specs, plans, reviews) untracked: that directory is local-only.
