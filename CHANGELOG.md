@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Eight tested optional helpers under `bin/sys/` and `bin/utils/` (`sys-btrfs-backup`, `sys-clean-cache`, `clean-claude-sessions`, `notify-open`, `video-to-gif`, `localsend-clip`, `espanso-hotplug`, `droidcam-ctl`) with BATS coverage, `bin/README.md` table and CI shellcheck on `bin/*/*`
 - MIT license and English README, CONTRIBUTING and THIRD-PARTY notes
 - BATS test runner via pinned git submodules (`tests/run-tests`)
 - Personal-data gate (`scripts/public-check`) and allowfile

@@ -6,7 +6,7 @@ Setting up a new Arch machine from scratch still costs a full day of hand work. 
 
 ## Status
 
-**Under construction.** Milestone 0 (foundation) only. Do not use this as a daily driver yet; later milestones will migrate scripts and configs.
+**Under construction.** Milestone 1 (helpers) landed eight tested optional scripts under [`bin/`](bin/README.md). Do not use this as a daily driver yet; later milestones will migrate more configs and PATH wiring.
 
 ## Why
 
@@ -42,9 +42,9 @@ Optional helper scripts live under [`bin/`](bin/README.md) (see that table for P
 
 ## Security
 
-Nothing in this repository opens a network port, binds a socket or runs privileged code yet. The foundation only reads tracked files for the personal-data gate and runs local shell checks.
+The foundation only reads tracked files for the personal-data gate and runs local shell checks. Optional helpers under [`bin/`](bin/README.md) include privileged and network-talking scripts (`sys-btrfs-backup`, `sys-clean-cache`, `localsend-clip`, `droidcam-ctl`); none of them run unless you invoke them. See that file's Security section for details.
 
-Later milestones will list every global git hook, sudo script and piped installer they add. Until then, treat any unreviewed script as untrusted and run `scripts/public-check` before you push.
+Later milestones will list every global git hook and piped installer they add. Treat any unreviewed script as untrusted and run `scripts/public-check` before you push.
 
 Report security issues privately to the maintainer; do not open a public issue with secrets, hostnames or personal data.
 

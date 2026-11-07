@@ -23,4 +23,20 @@ export PATH="$PATH:$DOTFILES/bin/sys:$DOTFILES/bin/utils"
 | `localsend-clip` | Send clipboard text to a LocalSend favorite on the LAN | `localsend-clip <favorite-alias>` | `curl`, `jq`, `openssl`, `wl-paste`, `notify-send` | none (sends clipboard text to a device on the local network) |
 | `clean-claude-sessions` | Remove old Claude Code session files under the user home | `clean-claude-sessions [--help]` | `python3` | none (deletes session files under the user home) |
 | `sys-clean-cache` | Interactive cache cleanup across pacman, docker, npm and more | `sys-clean-cache` (`--help` / `--list` / `--dry-run` / `--only <step>`) | `sudo`/`paccache`, `docker`, `npm`, `pnpm`, `cargo`, `uv`, `journalctl` (optional) | root for some steps |
-| `sys-btrfs-backup` | Incremental OS backup to a remote host via btrfs send/receive | `sys-btrfs-backup` (`--dry-run` / `--help`); requires `BTRFS_BACKUP_HOST` and `BTRFS_BACKUP_DIR` | `btrfs`, `ssh` | **root**; contacts a remote host over SSH; deletes old snapshots on both sides (designed for a systemd timer). Security: use a dedicated key and a restricted remote user. |
+| `sys-btrfs-backup` | Incremental OS backup to a remote host via btrfs send/receive | `sys-btrfs-backup` (`--dry-run` / `--help`); requires `BTRFS_BACKUP_HOST` and `BTRFS_BACKUP_DIR` | `btrfs`, `ssh` | **root**; contacts a remote host over SSH; deletes old snapshots on both sides (designed for a systemd timer) |
+
+## Adding a helper
+
+1. Put the script under `bin/sys/` or `bin/utils/` with a shebang and `chmod +x`.
+2. Add `tests/unit/bin/<name>.bats` with English test names.
+3. Add a row to the table above.
+4. Run `bash tests/run-tests` and `bash scripts/public-check .`.
+
+## Security
+
+Every helper here is optional. The repository never invokes them; you run them yourself (or from a unit you install).
+
+- `sys-btrfs-backup` runs as **root**, opens an **SSH** session to a remote host and **deletes** old btrfs snapshots on both sides. Set `BTRFS_BACKUP_HOST` and `BTRFS_BACKUP_DIR` yourself; there are no baked-in defaults. Use a dedicated SSH key and a restricted remote user.
+- `sys-clean-cache` can call `sudo`/`paccache`, `docker`, package managers and `journalctl`. Some steps need root; review the printed command before confirming.
+- `clean-claude-sessions` **deletes** Claude Code session files under the user home. Prefer `--dry-run` first.
+- `localsend-clip` and `droidcam-ctl` talk to a device on the local network; they do not open inbound ports.
