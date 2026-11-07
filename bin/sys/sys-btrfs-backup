@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# sys-btrfs-backup - Incremental OS backup to a remote host via btrfs send/receive
+#
+# Takes a read-only snapshot of the running system (subvolume @) and ships it to
+# a backup host over SSH. The first run sends a full stream; every run after
+# that sends only the delta since the last snapshot that still exists on both
+# ends (btrfs send -p). Old generations are pruned on both sides.
+#
+# Designed to run as root from a systemd timer (see sys-btrfs-backup.timer).
+# Requires BTRFS_BACKUP_HOST and BTRFS_BACKUP_DIR; there are no baked-in defaults.
+#
+# Usage:
+#   sys-btrfs-backup            # Run the backup (full first time, then incremental)
+#   sys-btrfs-backup --dry-run  # Show what would happen, transfer nothing
+#   sys-btrfs-backup --help     # Show this help
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+SOURCE_SUBVOL="${BTRFS_BACKUP_SOURCE:-/}"                 # mounted @ subvolume (the OS)
+BACKUP_DIR="${BTRFS_BACKUP_LOCAL_DIR:-/.btrfs-backups}"   # local read-only snapshots (send sources)
+KEEP_LOCAL="${BTRFS_BACKUP_KEEP_LOCAL:-3}"                # reference snapshots kept locally
+KEEP_REMOTE="${BTRFS_BACKUP_KEEP_REMOTE:-14}"             # generations kept on the remote host
+SSH_KEY="${BTRFS_BACKUP_SSH_KEY:-/root/.ssh/id_btrfs_backup}"
+# ServerAlive*: a stalled remote host (saturated I/O, full disk) can accept the
+# TCP connection and then never answer. Without keepalives ssh hangs forever
+# and the whole run dies on systemd's TimeoutStartSec instead of failing fast.
+SSH_OPTS=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15
+          -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
+[ -f "$SSH_KEY" ] && SSH_OPTS+=(-i "$SSH_KEY")
+
+DRY_RUN=0
+REMOTE_HOST=""
+REMOTE_DIR=""
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+log()  { echo "[$(date '+%F %T')] $*"; }
+die()  { echo "[$(date '+%F %T')] ERROR: $*" >&2; exit 1; }
+# Client-side expansion of "$@" is intentional: ssh receives the remote argv as built here.
+# shellcheck disable=SC2029
+ssh_r() { ssh "${SSH_OPTS[@]}" "$REMOTE_HOST" "$@"; }
+# ssh_rn: -n keeps ssh from reading stdin. Mandatory for every call inside a
+# `while read` loop, otherwise ssh drains the loop's input pipe and the loop
+# ends after a single iteration.
+# shellcheck disable=SC2029
+ssh_rn() { ssh -n "${SSH_OPTS[@]}" "$REMOTE_HOST" "$@"; }
+
+# Newest-first list of local os_* snapshots under $1 (name-sorted, reversed).
+list_os_snapshots() {
+  local dir="$1" d
+  for d in "$dir"/os_*; do
+    [ -e "$d" ] || continue
+    printf '%s\n' "$d"
+  done | sort -r
+}
+
+usage() { sed -n '3,20p' "$0" | sed 's/^# \{0,1\}//'; }
+
+case "${1:-}" in
+  --help|-h) usage; exit 0 ;;
+  --dry-run) DRY_RUN=1 ;;
+  "") ;;
+  *) die "unknown argument: $1 (see --help)" ;;
+esac
+
+if [ -z "${BTRFS_BACKUP_HOST:-}" ]; then
+  echo "error: BTRFS_BACKUP_HOST is required" >&2
+  usage
+  exit 2
+fi
+if [ -z "${BTRFS_BACKUP_DIR:-}" ]; then
+  echo "error: BTRFS_BACKUP_DIR is required" >&2
+  usage
+  exit 2
+fi
+REMOTE_HOST="$BTRFS_BACKUP_HOST"
+REMOTE_DIR="$BTRFS_BACKUP_DIR"
+
+[ "$(id -u)" -eq 0 ] || die "must run as root (btrfs send needs root)"
+command -v btrfs >/dev/null || die "btrfs-progs not found"
+
+# ---------------------------------------------------------------------------
+# 1. Fresh read-only snapshot of the running system
+# ---------------------------------------------------------------------------
+btrfs subvolume show "$BACKUP_DIR" >/dev/null 2>&1 || {
+  [ "$DRY_RUN" -eq 1 ] || btrfs subvolume create "$BACKUP_DIR" >/dev/null
+  log "created local backup subvolume $BACKUP_DIR"
+}
+
+TS="$(date +%Y%m%d-%H%M%S)"
+NEW="$BACKUP_DIR/os_$TS"
+
+if [ "$DRY_RUN" -eq 1 ]; then
+  log "[dry-run] would snapshot $SOURCE_SUBVOL -> $NEW"
+else
+  btrfs subvolume snapshot -r "$SOURCE_SUBVOL" "$NEW" >/dev/null
+  log "snapshot created: $NEW"
+fi
+
+# ---------------------------------------------------------------------------
+# 2. Pick an incremental parent: newest local snapshot that also exists remote
+# ---------------------------------------------------------------------------
+PARENT=""
+while IFS= read -r cand; do
+  [ -z "$cand" ] && continue
+  [ "$cand" = "$NEW" ] && continue
+  base="$(basename "$cand")"
+  if ssh_rn "sudo btrfs subvolume show '$REMOTE_DIR/$base'" >/dev/null 2>&1; then
+    PARENT="$cand"
+    break
+  fi
+done < <(list_os_snapshots "$BACKUP_DIR")
+
+# ---------------------------------------------------------------------------
+# 3. Send (full or incremental) into the remote receive dir
+# ---------------------------------------------------------------------------
+if [ "$DRY_RUN" -eq 1 ]; then
+  if [ -n "$PARENT" ]; then
+    log "[dry-run] would send INCREMENTAL (parent=$(basename "$PARENT")) -> $REMOTE_HOST:$REMOTE_DIR"
+  else
+    log "[dry-run] would send FULL -> $REMOTE_HOST:$REMOTE_DIR"
+  fi
+else
+  if [ -n "$PARENT" ]; then
+    log "incremental send (parent=$(basename "$PARENT"))"
+    btrfs send -p "$PARENT" "$NEW" | ssh_r "sudo btrfs receive '$REMOTE_DIR/'"
+  else
+    log "full send (no common parent on remote)"
+    btrfs send "$NEW" | ssh_r "sudo btrfs receive '$REMOTE_DIR/'"
+  fi
+  log "send completed: $(basename "$NEW")"
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Prune local reference snapshots (keep newest KEEP_LOCAL)
+# ---------------------------------------------------------------------------
+list_os_snapshots "$BACKUP_DIR" | tail -n +$((KEEP_LOCAL + 1)) | while IFS= read -r old; do
+  if [ "$DRY_RUN" -eq 1 ]; then
+    log "[dry-run] would delete local $(basename "$old")"
+  else
+    btrfs subvolume delete "$old" >/dev/null && log "pruned local: $(basename "$old")"
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# 5. Prune remote generations (keep newest KEEP_REMOTE)
+# ---------------------------------------------------------------------------
+if [ "$DRY_RUN" -eq 1 ]; then
+  log "[dry-run] would prune remote generations beyond newest $KEEP_REMOTE"
+else
+  # Remote command string is expanded on the client on purpose: KEEP_REMOTE and
+  # REMOTE_DIR are local values interpolated into the remote shell script.
+  # shellcheck disable=SC2029
+  ssh_rn "for d in '$REMOTE_DIR'/os_*; do [ -e \"\$d\" ] || continue; printf '%s\n' \"\$d\"; done | sort -r | tail -n +$((KEEP_REMOTE + 1)) | while IFS= read -r old; do sudo btrfs subvolume delete \"\$old\" >/dev/null && echo pruned-remote:\$(basename \"\$old\"); done" || true
+fi
+
+log "backup finished."
