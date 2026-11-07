@@ -139,6 +139,23 @@ seed_snapshots() {
     [ "$status" -ne 0 ]
 }
 
+@test "refuses a BTRFS_BACKUP_HOST that starts with a dash" {
+    run env -i HOME="$HOME" PATH="$STUB_DIR:/usr/bin:/bin" CALL_LOG="$CALL_LOG" \
+        BTRFS_BACKUP_HOST="-oProxyCommand=evil" \
+        BTRFS_BACKUP_DIR="/srv/example/backups" bash "$SCRIPT" --dry-run
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"must not start with"* ]]
+    [ ! -s "$CALL_LOG" ]
+}
+
+@test "ssh invocations separate the host with --" {
+    seed_snapshots os_20260101T000000
+    export FAKE_REMOTE_HAS="os_20260101T000000"
+    run_backup --dry-run
+    [ "$status" -eq 0 ]
+    grep -E 'ssh .* -- backup@example\.com ' "$CALL_LOG"
+}
+
 # ---------------------------------------------------------------------------
 # Incremental parent selection
 # ---------------------------------------------------------------------------

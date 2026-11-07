@@ -17,8 +17,11 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; R="$ROOT/bin/README
 
 @test "bin readme has a security section for privileged and remote helpers" {
     grep -q "^## Security" "$R"
-    grep -q "sys-btrfs-backup" "$R"
-    grep -q "sys-clean-cache" "$R"
+    # Names must appear in the Security section, not only elsewhere in the file.
+    sec="$(awk '/^## Security/{flag=1;next} /^## /{flag=0} flag' "$R")"
+    for n in sys-btrfs-backup sys-clean-cache clean-claude-sessions localsend-clip droidcam-ctl; do
+        grep -q "$n" <<< "$sec"
+    done
 }
 
 @test "the root readme links the helper table" {

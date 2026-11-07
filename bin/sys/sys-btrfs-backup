@@ -42,12 +42,13 @@ log()  { echo "[$(date '+%F %T')] $*"; }
 die()  { echo "[$(date '+%F %T')] ERROR: $*" >&2; exit 1; }
 # Client-side expansion of "$@" is intentional: ssh receives the remote argv as built here.
 # shellcheck disable=SC2029
-ssh_r() { ssh "${SSH_OPTS[@]}" "$REMOTE_HOST" "$@"; }
+ssh_r() { ssh "${SSH_OPTS[@]}" -- "$REMOTE_HOST" "$@"; }
 # ssh_rn: -n keeps ssh from reading stdin. Mandatory for every call inside a
 # `while read` loop, otherwise ssh drains the loop's input pipe and the loop
 # ends after a single iteration.
+# SC2029: same intentional client-side expansion of "$@" as ssh_r.
 # shellcheck disable=SC2029
-ssh_rn() { ssh -n "${SSH_OPTS[@]}" "$REMOTE_HOST" "$@"; }
+ssh_rn() { ssh -n "${SSH_OPTS[@]}" -- "$REMOTE_HOST" "$@"; }
 
 # Newest-first list of local os_* snapshots under $1 (name-sorted, reversed).
 list_os_snapshots() {
@@ -77,6 +78,12 @@ if [ -z "${BTRFS_BACKUP_DIR:-}" ]; then
   usage
   exit 2
 fi
+case "$BTRFS_BACKUP_HOST" in
+  -*)
+    echo "error: BTRFS_BACKUP_HOST must not start with '-'" >&2
+    exit 2
+    ;;
+esac
 REMOTE_HOST="$BTRFS_BACKUP_HOST"
 REMOTE_DIR="$BTRFS_BACKUP_DIR"
 

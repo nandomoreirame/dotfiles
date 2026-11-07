@@ -96,6 +96,6 @@ _run_script() {
 @test "user unit is oneshot and runs the helper" {
     run grep -E '^Type=oneshot$' "$USER_UNIT"
     assert_success
-    run grep -E '^ExecStart=%h/\.dotfiles/bin/utils/espanso-hotplug$' "$USER_UNIT"
+    run grep -E '^ExecStart=/usr/bin/env espanso-hotplug$' "$USER_UNIT"
     assert_success
 }

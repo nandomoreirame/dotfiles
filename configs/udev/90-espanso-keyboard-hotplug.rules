@@ -1,5 +1,6 @@
 # Restart espanso when a keyboard appears: its evdev backend only opens input
 # nodes at startup, so a re-enumerated keyboard goes unseen. The user manager
 # starts espanso-hotplug.service (configs/systemd/user/), which runs
-# bin/utils/espanso-hotplug. Installed by `dotfiles setup:run espanso`.
+# bin/utils/espanso-hotplug via PATH. Install by copying this rule to
+# /etc/udev/rules.d/ and the user unit to ~/.config/systemd/user/ (see bin/README.md).
 ACTION=="add", SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_KEYBOARD}=="1", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="espanso-hotplug.service"

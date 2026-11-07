@@ -387,7 +387,10 @@ if before != after:
 " 2>/dev/null || true)
 
   if [[ -n "$removed_json" ]]; then
-    echo "$removed_json" > "$index_file"
+    # Atomic replace: write beside the index, then mv over it.
+    tmp_index="$(mktemp "${index_file}.XXXXXX")"
+    printf '%s\n' "$removed_json" > "$tmp_index"
+    mv -f "$tmp_index" "$index_file"
     proj_name=$(basename "$project_dir")
     echo -e "  ${CYAN}[index]${NC} updated ${proj_name}/sessions-index.json"
   fi

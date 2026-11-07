@@ -1,9 +1,10 @@
 [Unit]
 Description=Restart espanso after a keyboard is plugged in
-Documentation=file://%h/.dotfiles/bin/utils/espanso-hotplug
+Documentation=man:espanso(1)
 
 [Service]
 Type=oneshot
 # Let every event node of the new keyboard show up before restarting.
+# Resolve the helper through PATH (see bin/README.md PATH snippet).
 ExecStartPre=/usr/bin/sleep 2
-ExecStart=%h/.dotfiles/bin/utils/espanso-hotplug
+ExecStart=/usr/bin/env espanso-hotplug

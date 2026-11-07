@@ -17,10 +17,10 @@ gif_notify() {
   notify-send -a "Screen Recorder" "$1" "${2:-}" 2>/dev/null || true
 }
 
+videos_dir="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")"
 if [[ $# -ge 1 ]]; then
   input="$1"
 else
-  videos_dir="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")"
   # Names are recording_<timestamp>.mp4, so glob order == chronological order.
   shopt -s nullglob
   files=("${videos_dir}/Recordings"/recording_*.mp4)
@@ -29,8 +29,14 @@ else
 fi
 
 if [[ -z "$input" || ! -f "$input" ]]; then
-  gif_notify "Failed to create GIF" "No video found${input:+: $input}"
-  echo "video-to-gif: no input video${input:+: $input}" >&2
+  look="${videos_dir}/Recordings"
+  if [[ $# -ge 1 ]]; then
+    gif_notify "Failed to create GIF" "No video found: $input"
+    echo "video-to-gif: no input video: $input" >&2
+  else
+    gif_notify "Failed to create GIF" "No video found (looked in ${look})"
+    echo "video-to-gif: no input video (looked in ${look})" >&2
+  fi
   exit 1
 fi
 

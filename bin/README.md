@@ -17,7 +17,7 @@ export PATH="$PATH:$DOTFILES/bin/sys:$DOTFILES/bin/utils"
 | Helper | Purpose | Usage | Needs | Privileges |
 |---|---|---|---|---|
 | `notify-open` | Notify about a file and open, reveal or trash it on click | `notify-open [-a app] <summary> <file> [body]` | `notify-send`, `xdg-open`, `gio` (optional `nautilus`) | none |
-| `video-to-gif` | Convert a screen recording to GIF and copy its path | `video-to-gif [input.mp4] [output.gif]` | `ffmpeg`, `notify-send`, `wl-copy` | none |
+| `video-to-gif` | Convert a screen recording to GIF and copy its path | `video-to-gif [input.mp4] [output.gif]`; with no args, uses the newest `recording_*.mp4` under `$XDG_VIDEOS/Recordings` (or `~/Videos/Recordings`) | `ffmpeg`, `notify-send`, `wl-copy` | none |
 | `espanso-hotplug` | Restart espanso after a keyboard is plugged in | `espanso-hotplug` (via udev + user unit) | `espanso`, `systemctl` | none (user systemd). Install the udev rule under `/etc/udev/rules.d/` and the unit under `~/.config/systemd/user/`. |
 | `droidcam-ctl` | Connect or disconnect a DroidCam phone camera headless | `droidcam-ctl start` / `stop` | `droidcam-cli`, `notify-send` | none (talks to the phone on the local network) |
 | `localsend-clip` | Send clipboard text to a LocalSend favorite on the LAN | `localsend-clip <favorite-alias>` | `curl`, `jq`, `openssl`, `wl-paste`, `notify-send` | none (sends clipboard text to a device on the local network) |
@@ -38,5 +38,6 @@ Every helper here is optional. The repository never invokes them; you run them y
 
 - `sys-btrfs-backup` runs as **root**, opens an **SSH** session to a remote host and **deletes** old btrfs snapshots on both sides. Set `BTRFS_BACKUP_HOST` and `BTRFS_BACKUP_DIR` yourself; there are no baked-in defaults. Use a dedicated SSH key and a restricted remote user.
 - `sys-clean-cache` can call `sudo`/`paccache`, `docker`, package managers and `journalctl`. Some steps need root; review the printed command before confirming.
-- `clean-claude-sessions` **deletes** Claude Code session files under the user home. Prefer `--dry-run` first.
-- `localsend-clip` and `droidcam-ctl` talk to a device on the local network; they do not open inbound ports.
+- `clean-claude-sessions` **deletes** Claude Code session files and each matching subagent directory under the user home. Prefer `--dry-run` first.
+- `localsend-clip` sends **clipboard text** (often secrets) to a LocalSend favorite on the LAN over HTTPS. It pins the favorite's TLS certificate (`--cacert` of the verified peer PEM) and does not disable verification with `-k`. It opens no inbound ports.
+- `droidcam-ctl` talks to a phone camera on the local network; it opens no inbound ports.

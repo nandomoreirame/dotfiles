@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Send the clipboard text to a LocalSend favorite (e.g. the phone) as a text
-# message, without opening the LocalSend window. Bound in niri (Mod+Alt+L).
+# message, without opening the LocalSend window. Bind it in your compositor
+# (for instance Mod+Alt+L in niri).
 #
 # Speaks LocalSend protocol v2 directly: POST prepare-upload with one text/plain
 # file whose `preview` carries the text. The receiver shows it as a message and
@@ -11,6 +12,7 @@
 # certificate/key (mTLS client cert) identify us.
 # The device is trusted only if its TLS certificate hash matches the favorite's
 # fingerprint (same check LocalSend does). A stale IP triggers a /24 scan.
+# The verified peer PEM is pinned on the real request via --cacert (no -k).
 #
 # iOS suspends LocalSend in the background: the app must be open on the phone.
 #
@@ -31,24 +33,42 @@ fail() {
   exit 1
 }
 
-cert_fp() {
-  # SHA-256 (uppercase hex) of the DER certificate served at $1:$2, or empty.
-  local der
-  der="$(timeout 2 openssl s_client -connect "$1:$2" < /dev/null 2> /dev/null \
-    | openssl x509 -outform DER 2> /dev/null | base64 -w0)" || true
-  [[ -n "$der" ]] || return 0
-  base64 -d <<< "$der" | sha256sum | cut -d' ' -f1 | tr 'a-f' 'A-F'
+# Write the peer PEM at $3 (if given) and print its SHA-256 fingerprint
+# (uppercase hex), or print nothing when the host does not answer.
+fetch_peer() {
+  local host="$1" port="$2" pem_out="${3:-}" pem
+  pem="$(/usr/bin/timeout 2 openssl s_client -connect "$host:$port" < /dev/null 2> /dev/null \
+    | openssl x509 -outform PEM 2> /dev/null)" || true
+  [[ -n "$pem" ]] || return 0
+  if [[ -n "$pem_out" ]]; then
+    printf '%s' "$pem" > "$pem_out"
+    # PEM from openssl ends with a newline; the test stub may not.
+    [[ "$pem" == *$'\n' ]] || printf '\n' >> "$pem_out"
+  fi
+  printf '%s' "$pem" | openssl x509 -outform DER 2> /dev/null \
+    | sha256sum | cut -d' ' -f1 | tr 'a-f' 'A-F'
+}
+
+# CN of the leaf in $1, or empty.
+peer_cn() {
+  openssl x509 -in "$1" -noout -subject 2> /dev/null \
+    | sed -n 's/.*[Cc][Nn] *= *\([^,\/]*\).*/\1/p' | head -n1
 }
 
 scan_subnet() {
   # Prints the first host in the /24 of $1 whose certificate matches $3.
-  export -f cert_fp
+  # Writes matches to a temp file (no SIGPIPE race with head on a live pipe).
+  # Parallelism is capped so a busy CI host does not exhaust process slots.
+  export -f fetch_peer
+  local base="${1%.*}" port="$2" want="$3" out jobs="${LOCALSEND_SCAN_JOBS:-16}"
+  out="$(mktemp)"
   # shellcheck disable=SC2016 # expanded by the child bash, not here
   seq 1 254 \
-    | xargs -P 64 -I{} bash -c \
-      '[[ "$(cert_fp "$0.{}" "$1")" == "$2" ]] && echo "$0.{}"; true' \
-      "${1%.*}" "$2" "$3" \
-    | head -n1
+    | xargs -P "$jobs" -I{} bash -c \
+      'fp=$(fetch_peer "$0.{}" "$1"); [[ "$fp" == "$2" ]] && echo "$0.{}" >> "$3"; true' \
+      "$base" "$port" "$want" "$out" || true
+  head -n1 "$out"
+  rm -f "$out"
 }
 
 target="${1:-}"
@@ -66,10 +86,20 @@ want_fp="$(jq -r .fingerprint <<< "$device")"
 text="$(wl-paste --no-newline --type text/plain 2> /dev/null)" || true
 [[ -n "$text" ]] || fail "the clipboard has no text"
 
-if [[ "$(cert_fp "$ip" "$port")" != "$want_fp" ]]; then
+# Workspace for client mTLS material and the pinned peer PEM.
+work="$(umask 077 && mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/localsend-clip.XXXXXX")"
+trap 'rm -rf "$work"' EXIT
+peer_pem="$work/peer.pem"
+
+if [[ "$(fetch_peer "$ip" "$port" "$peer_pem")" != "$want_fp" ]]; then
   ip="$(scan_subnet "$ip" "$port" "$want_fp")"
   [[ -n "$ip" ]] || fail "$target did not answer. Open LocalSend on the device."
+  [[ "$(fetch_peer "$ip" "$port" "$peer_pem")" == "$want_fp" ]] \
+    || fail "$target certificate changed during scan"
 fi
+
+cn="$(peer_cn "$peer_pem")"
+[[ -n "$cn" ]] || fail "peer certificate has no CN; cannot pin without a hostname"
 
 file_id="$(cat /proc/sys/kernel/random/uuid)"
 body="$(jq -nc \
@@ -86,22 +116,22 @@ body="$(jq -nc \
                     fileType: "text/plain", preview: $text}}
   }')"
 
-# Receivers require mutual TLS: present the desktop app's own certificate. The
-# key lives only in a private tmpfs dir for the length of the request.
-work="$(umask 077 && mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/localsend-clip.XXXXXX")"
-trap 'rm -rf "$work"' EXIT
 resp="$work/resp.json"
 (
   umask 077
   jq -r '.["flutter.ls_security_context"] | fromjson | .certificate' "$PREFS" > "$work/cert.pem"
   jq -r '.["flutter.ls_security_context"] | fromjson | .privateKey' "$PREFS" > "$work/key.pem"
 )
-tls=(--cert "$work/cert.pem" --key "$work/key.pem")
+# Pin the verified peer PEM on the real request. --resolve maps the cert CN to
+# the reachable IP so hostname verification succeeds without curl -k.
+tls=(--cert "$work/cert.pem" --key "$work/key.pem"
+     --cacert "$peer_pem" --resolve "${cn}:${port}:${ip}")
+base_url="https://${cn}:${port}/$API"
 
 # The receiver may hold the request open until the user accepts it.
-code="$(curl -sk "${tls[@]}" --max-time 60 -o "$resp" -w '%{http_code}' \
+code="$(curl -s "${tls[@]}" --max-time 60 -o "$resp" -w '%{http_code}' \
   -H 'Content-Type: application/json' --data-binary @- \
-  "https://$ip:$port/$API/prepare-upload" <<< "$body")" || true
+  "$base_url/prepare-upload" <<< "$body")" || true
 
 case "$code" in
   204) ;;
@@ -109,9 +139,9 @@ case "$code" in
     session="$(jq -r .sessionId "$resp")"
     up_id="$(jq -r '.files | keys[0]' "$resp")"
     token="$(jq -r --arg k "$up_id" '.files[$k]' "$resp")"
-    code="$(printf '%s' "$text" | curl -sk "${tls[@]}" --max-time 30 -o /dev/null -w '%{http_code}' \
+    code="$(printf '%s' "$text" | curl -s "${tls[@]}" --max-time 30 -o /dev/null -w '%{http_code}' \
       --data-binary @- \
-      "https://$ip:$port/$API/upload?sessionId=$session&fileId=$up_id&token=$token")" || true
+      "$base_url/upload?sessionId=$session&fileId=$up_id&token=$token")" || true
     [[ "$code" == 200 ]] || fail "failed to send the text to $target (HTTP $code)"
     ;;
   403) fail "$target rejected the transfer" ;;

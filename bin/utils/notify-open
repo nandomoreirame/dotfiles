@@ -7,7 +7,7 @@
 # until the notification is clicked, dismissed or expires (notify-send --wait),
 # so callers run it in the background.
 #
-# Used by screenshot helpers, screen-recording helpers and video-to-gif (GIFs).
+# Used by video-to-gif and any other helper that wants a clickable file notification.
 #
 # Usage: notify-open [-a app-name] <summary> <file> [body]
 #   body defaults to the file name.

@@ -7,9 +7,9 @@
 #        one of them can own the device.
 # stop : ends the session (the GUI "Stop" button, headless).
 #
-# Open Mini Video Me after `start`: it picks the DroidCam when it launches.
+# Open a v4l2 viewer after `start` if you want a preview window.
 #
-# Bound in niri via spawn-sh: Mod+Alt+C (start), Mod+Alt+X (stop).
+# Bind start/stop in your compositor (for instance Mod+Alt+C / Mod+Alt+X).
 # Usage: droidcam-ctl start|stop
 set -euo pipefail
 

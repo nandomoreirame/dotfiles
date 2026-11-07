@@ -4,8 +4,8 @@ setup() {
     ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"
     # Expected test count per helper (source repo numbers; a migrated file may have more).
     declare -gA MIN_TESTS=(
-        [sys-btrfs-backup]=7 [sys-clean-cache]=30 [clean-claude-sessions]=38 [notify-open]=8
-        [video-to-gif]=8 [localsend-clip]=9 [espanso-hotplug]=5 [droidcam-ctl]=7
+        [sys-btrfs-backup]=12 [sys-clean-cache]=30 [clean-claude-sessions]=40 [notify-open]=8
+        [video-to-gif]=8 [localsend-clip]=11 [espanso-hotplug]=5 [droidcam-ctl]=7
     )
     HELPERS=()
     shopt -s nullglob

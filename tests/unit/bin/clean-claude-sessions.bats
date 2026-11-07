@@ -495,6 +495,77 @@ print('ok')
     assert_file_not_exists "$project_dir/${session_id}.jsonl"
 }
 
+@test "sessions-index.json: second run is a byte-identical no-op" {
+    local session_id="abababab-a040-a040-a040-000000000040"
+    local keep_id="cdcdcdcd-a041-a041-a041-000000000041"
+    local project_dir="$PROJECTS_DIR/-srv-example-index-idem"
+    mkdir -p "$project_dir"
+
+    _make_session_file "$project_dir/${session_id}.jsonl" "$(_days_ago 45)"
+    _make_session_file "$project_dir/${keep_id}.jsonl" "$(_days_ago 1)"
+
+    cat > "$project_dir/sessions-index.json" << EOF
+{
+  "entries": [
+    {"sessionId": "${session_id}", "projectPath": "/srv/example/old"},
+    {"sessionId": "${keep_id}", "projectPath": "/srv/example/keep"}
+  ]
+}
+EOF
+
+    run bash "$SCRIPT" --all --yes
+    assert_success
+    local sum1
+    sum1="$(md5sum "$project_dir/sessions-index.json" | cut -d' ' -f1)"
+
+    run bash "$SCRIPT" --all --yes
+    assert_success
+    local sum2
+    sum2="$(md5sum "$project_dir/sessions-index.json" | cut -d' ' -f1)"
+    [ "$sum1" = "$sum2" ]
+}
+
+@test "sessions-index.json: unknown top-level keys and entry fields survive" {
+    local session_id="efefefef-a042-a042-a042-000000000042"
+    local keep_id="f0f0f0f0-a043-a043-a043-000000000043"
+    local project_dir="$PROJECTS_DIR/-srv-example-index-tolerant"
+    mkdir -p "$project_dir"
+
+    _make_session_file "$project_dir/${session_id}.jsonl" "$(_days_ago 45)"
+    _make_session_file "$project_dir/${keep_id}.jsonl" "$(_days_ago 1)"
+
+    cat > "$project_dir/sessions-index.json" << EOF
+{
+  "version": 2,
+  "customNote": "preserve-me-do-not-delete",
+  "entries": [
+    {"sessionId": "${session_id}", "projectPath": "/srv/example/old", "extra": "gone-with-row"},
+    {"sessionId": "${keep_id}", "projectPath": "/srv/example/keep", "extraField": "still-here", "label": "keep-extra"}
+  ]
+}
+EOF
+
+    run bash "$SCRIPT" --all --yes
+    assert_success
+
+    run python3 -c "
+import json
+with open('$project_dir/sessions-index.json') as f:
+    data = json.load(f)
+assert data.get('version') == 2, data
+assert data.get('customNote') == 'preserve-me-do-not-delete', data
+ids = [e['sessionId'] for e in data['entries']]
+assert '${session_id}' not in ids
+assert '${keep_id}' in ids
+kept = next(e for e in data['entries'] if e['sessionId'] == '${keep_id}')
+assert kept.get('extraField') == 'still-here', kept
+assert kept.get('label') == 'keep-extra', kept
+print('ok')
+"
+    assert_success
+    assert_output --partial "ok"
+}
+
 # ============================================
 # Summary output
 # ============================================
