@@ -83,6 +83,14 @@ run_shellcheck() {
         return 0
     fi
     shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
+    local bins=()
+    # Guard an empty bin/*/* glob so shellcheck is not given a literal pattern.
+    shopt -s nullglob
+    bins=(bin/*/*)
+    shopt -u nullglob
+    if [ "${#bins[@]}" -gt 0 ]; then
+        shellcheck -x "${bins[@]}"
+    fi
 }
 
 run_public_check() {

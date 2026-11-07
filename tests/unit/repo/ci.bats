@@ -34,3 +34,7 @@ setup() { WF="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)/.github/workflows/ci.ym
     grep -q "pull_request:" "$WF"
     grep -q "main" "$WF"
 }
+
+@test "ci shellchecks the bin directory" {
+    grep -qF 'bin/*/*' "$WF"
+}

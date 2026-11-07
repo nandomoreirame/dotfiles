@@ -38,7 +38,7 @@ bash scripts/public-check .
 | `bash scripts/public-check [--staged] [path]` | Fail on personal data, forbidden paths and (when installed) gitleaks |
 | `bash scripts/simulate-clean-clone` | Clone into a temp dir and re-run tests, shellcheck and the gate |
 
-The private overlay lives outside this repo. See [private/private-overlay.md](private/private-overlay.md) and [private/README.md](private/README.md).
+Optional helper scripts live under [`bin/`](bin/README.md) (see that table for PATH, needs and privileges). The private overlay lives outside this repo. See [private/private-overlay.md](private/private-overlay.md) and [private/README.md](private/README.md).
 
 ## Security
 

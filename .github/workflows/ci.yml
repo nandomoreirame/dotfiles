@@ -36,7 +36,14 @@ jobs:
           gitleaks version
 
       - name: ShellCheck
-        run: shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
+        run: |
+          set -eo pipefail
+          shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
+          shopt -s nullglob
+          bins=(bin/*/*)
+          if [ "${#bins[@]}" -gt 0 ]; then
+            shellcheck -x "${bins[@]}"
+          fi
 
       - name: Tests
         run: bash tests/run-tests
