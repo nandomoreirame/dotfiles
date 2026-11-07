@@ -1,0 +1,333 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# sys-clean-cache - Interactive disk cleanup: caches, build dirs and temp files
+#
+# Walks a fixed list of cleanup steps. For each one it shows the size, a note
+# and the exact command, then asks before running it (Enter means yes). Steps
+# with nothing to clean are skipped without a prompt. When a root step is
+# selected, sudo is asked once upfront and kept alive until the script ends.
+#
+# Usage:
+#   sys-clean-cache                    # Ask step by step: [Y]es / [s]kip / [q]uit
+#   sys-clean-cache --only npm,docker  # Only these steps (see --list)
+#   sys-clean-cache --list             # List the step ids
+#   sys-clean-cache --dry-run          # Show every step and command, run nothing
+#   sys-clean-cache --help             # Show this help
+#
+# Environment:
+#   SYS_CLEAN_DEV_DIR       where to look for Rust target/ dirs (default ~/dev)
+#   SYS_CLEAN_COREDUMP_DIR  systemd coredump dir (default /var/lib/systemd/coredump)
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+DEV_DIR="${SYS_CLEAN_DEV_DIR:-$HOME/dev}"
+COREDUMP_DIR="${SYS_CLEAN_COREDUMP_DIR:-/var/lib/systemd/coredump}"
+SUDO="sudo"
+
+STEPS=(
+  pacman-old pacman-uninstalled orphans aur docker rust-targets
+  npm uv pip pnpm poetry bun go cargo
+  browsers spotify test-browsers thumbnails trash
+  tmp journal coredumps
+)
+
+declare -A TITLES=(
+  [pacman-old]="pacman cache: old versions (keeps the last 2)"
+  [pacman-uninstalled]="pacman cache: packages no longer installed"
+  [orphans]="orphan packages (installed as deps, required by nothing)"
+  [aur]="AUR helper build caches (paru, yay, Shelly)"
+  [docker]="docker: unused images, containers and build cache"
+  [rust-targets]="Rust target/ build dirs under $DEV_DIR"
+  [npm]="npm cache"
+  [uv]="uv cache"
+  [pip]="pip cache"
+  [pnpm]="pnpm cache"
+  [poetry]="poetry cache (virtualenvs are kept)"
+  [bun]="bun cache"
+  [go]="go build cache"
+  [cargo]="cargo registry download cache"
+  [browsers]="browser caches (Chrome, Chromium, Zen, Firefox)"
+  [spotify]="Spotify cache"
+  [test-browsers]="Playwright/Puppeteer browser downloads"
+  [thumbnails]="thumbnails and file previews"
+  [trash]="trash"
+  [tmp]="/tmp and /var/tmp (aged files only)"
+  [journal]="systemd journal older than 2 weeks"
+  [coredumps]="systemd coredumps"
+)
+
+# Steps whose command runs through sudo
+ROOT_STEPS=" pacman-old pacman-uninstalled orphans tmp journal coredumps "
+
+DRY_RUN=0
+ONLY=""
+
+if [ -t 1 ]; then
+  BOLD=$'\033[1m'; CYAN=$'\033[0;36m'; GREEN=$'\033[0;32m'
+  YELLOW=$'\033[1;33m'; RED=$'\033[0;31m'; DIM=$'\033[2m'; NC=$'\033[0m'
+else
+  BOLD=""; CYAN=""; GREEN=""; YELLOW=""; RED=""; DIM=""; NC=""
+fi
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+usage() { sed -n '4,20p' "$0" | sed 's/^# \{0,1\}//'; }
+die()   { echo "${RED}error:${NC} $*" >&2; exit 1; }
+
+non_empty_dir() { [ -d "$1" ] && [ -n "$(find "$1" -mindepth 1 -print -quit 2>/dev/null)" ]; }
+
+human_size() {
+  local total
+  total=$(du -scb "$@" 2>/dev/null | tail -1 | cut -f1)
+  numfmt --to=iec --suffix=B "${total:-0}"
+}
+
+# Step state, filled by each step_* function
+STEP_SIZE=""; STEP_CMD=""; STEP_NOTE=""; STEP_SKIP=""
+
+# Common shape: clear the contents of every non-empty dir, keep the dirs.
+# $1 is an optional command prefix (sudo), the rest are dirs.
+clear_dirs() {
+  local prefix="$1"; shift
+  local dirs=() d cmd=""
+  for d in "$@"; do
+    non_empty_dir "$d" && dirs+=("$d")
+  done
+  if [ "${#dirs[@]}" -eq 0 ]; then
+    STEP_SKIP="nothing to clean"
+    return
+  fi
+  for d in "${dirs[@]}"; do
+    cmd+="${cmd:+ && }${prefix:+$prefix }find $(printf '%q' "$d") -mindepth 1 -delete"
+  done
+  STEP_SIZE=$(human_size "${dirs[@]}")
+  STEP_CMD="$cmd"
+}
+
+# ---------------------------------------------------------------------------
+# Steps
+# ---------------------------------------------------------------------------
+paccache_step() {
+  local dry_flags="$1" run_flags="$2" out saved
+  command -v paccache >/dev/null || { STEP_SKIP="paccache not found (install pacman-contrib)"; return; }
+  out=$(paccache "$dry_flags" 2>/dev/null || true)
+  saved=$(sed -n 's/.*disk space saved: \(.*\))$/\1/p' <<< "$out" | tail -1)
+  [ -n "$saved" ] || { STEP_SKIP="nothing to clean"; return; }
+  STEP_SIZE="$saved"
+  STEP_CMD="$SUDO paccache $run_flags"
+}
+
+step_pacman_old()         { paccache_step -dk2 -rk2; }
+step_pacman_uninstalled() { paccache_step -duk0 -ruk0; }
+
+step_orphans() {
+  local pkgs=()
+  mapfile -t pkgs < <(pacman -Qdtq 2>/dev/null || true)
+  [ "${#pkgs[@]}" -gt 0 ] || { STEP_SKIP="nothing to clean"; return; }
+  STEP_SIZE="${#pkgs[@]} packages"
+  STEP_NOTE="Review the list: pacman asks again before removing. To keep one, answer n there and run: sudo pacman -D --asexplicit <pkg>"
+  STEP_CMD="$SUDO pacman -Rns $(printf '%q ' "${pkgs[@]}")"
+  STEP_CMD="${STEP_CMD% }"
+}
+
+step_aur() {
+  clear_dirs "" "$HOME/.cache/paru/clone" "$HOME/.cache/yay" "$HOME/.cache/Shelly"
+  STEP_NOTE="Packages are downloaded and rebuilt on the next AUR update."
+}
+
+step_docker() {
+  command -v docker >/dev/null || { STEP_SKIP="docker not installed"; return; }
+  docker info >/dev/null 2>&1 || { STEP_SKIP="docker daemon not reachable"; return; }
+  STEP_SIZE=$(docker system df --format '{{.Type}}: {{.Reclaimable}}' 2>/dev/null | paste -sd ',' | sed 's/,/, /g')
+  STEP_NOTE="Removes ALL images not used by a container; they are pulled again when needed."
+  STEP_CMD="docker system prune -a -f"
+}
+
+step_rust_targets() {
+  local dirs=() d
+  [ -d "$DEV_DIR" ] || { STEP_SKIP="nothing to clean"; return; }
+  while IFS= read -r -d '' d; do
+    [ -f "$(dirname "$d")/Cargo.toml" ] && dirs+=("$d")
+  done < <(find "$DEV_DIR" -maxdepth 6 \( -name node_modules -o -name .git \) -prune \
+             -o -type d -name target -prune -print0 2>/dev/null)
+  [ "${#dirs[@]}" -gt 0 ] || { STEP_SKIP="nothing to clean"; return; }
+  STEP_SIZE=$(human_size "${dirs[@]}")
+  STEP_NOTE="The next cargo build of each project starts from scratch."
+  STEP_CMD="rm -rf -- $(printf '%q ' "${dirs[@]}")"
+  STEP_CMD="${STEP_CMD% }"
+}
+
+step_npm()    { clear_dirs "" "$HOME/.npm/_cacache"; }
+step_uv()     { clear_dirs "" "$HOME/.cache/uv"; }
+step_pip()    { clear_dirs "" "$HOME/.cache/pip"; }
+step_pnpm()   { clear_dirs "" "$HOME/.cache/pnpm"; }
+step_poetry() { clear_dirs "" "$HOME/.cache/pypoetry/cache" "$HOME/.cache/pypoetry/artifacts"; }
+step_bun()    { clear_dirs "" "$HOME/.bun/install/cache" "$HOME/.cache/bun"; }
+step_go()     { clear_dirs "" "$HOME/.cache/go-build"; }
+step_cargo()  { clear_dirs "" "$HOME/.cargo/registry/cache"; }
+
+step_browsers() {
+  clear_dirs "" "$HOME/.cache/google-chrome" "$HOME/.cache/chromium" \
+    "$HOME/.cache/zen" "$HOME/.cache/mozilla"
+  STEP_NOTE="Close the browsers first. Only the disk cache goes: logins, history and tabs stay."
+}
+
+step_spotify() {
+  clear_dirs "" "$HOME/.cache/spotify"
+  STEP_NOTE="Offline downloads are fetched again."
+}
+
+step_test_browsers() {
+  clear_dirs "" "$HOME/.cache/ms-playwright" "$HOME/.cache/ms-playwright-go" \
+    "$HOME/.cache/chromium-headless"
+  STEP_NOTE="Run 'npx playwright install' again before the next E2E run."
+}
+
+step_thumbnails() { clear_dirs "" "$HOME/.cache/thumbnails" "$HOME/.cache/sushi"; }
+step_trash()      { clear_dirs "" "$HOME/.local/share/Trash"; }
+
+step_tmp() {
+  STEP_SIZE="$(human_size /tmp /var/tmp) total"
+  STEP_NOTE="Removes only files past their tmpfiles.d age; open files are kept."
+  STEP_CMD="$SUDO systemd-tmpfiles --clean"
+}
+
+step_journal() {
+  STEP_SIZE=$(journalctl --disk-usage 2>/dev/null | sed -n 's/.*take up \(.*\) in the.*/\1/p')
+  STEP_SIZE="${STEP_SIZE:-?} total"
+  STEP_CMD="$SUDO journalctl --vacuum-time=2weeks"
+}
+
+step_coredumps() { clear_dirs "$SUDO" "$COREDUMP_DIR"; }
+
+# ---------------------------------------------------------------------------
+# Runner
+# ---------------------------------------------------------------------------
+declare -A RESULT=()
+QUIT=0
+
+run_step() {
+  local id="$1" n="$2" total="$3" answer
+  STEP_SIZE=""; STEP_CMD=""; STEP_NOTE=""; STEP_SKIP=""
+  "step_${id//-/_}"
+
+  echo ""
+  echo "${BOLD}${CYAN}[$n/$total] ${TITLES[$id]}${NC} ${DIM}($id)${NC}"
+
+  if [ -n "$STEP_SKIP" ]; then
+    echo "  ${DIM}$STEP_SKIP${NC}"
+    RESULT[$id]="empty"
+    return
+  fi
+
+  [ -n "$STEP_SIZE" ] && echo "  size:    $STEP_SIZE"
+  [ -n "$STEP_NOTE" ] && echo "  ${YELLOW}note:${NC}    $STEP_NOTE"
+  echo "  command: ${BOLD}$STEP_CMD${NC}"
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    RESULT[$id]="dry-run"
+    return
+  fi
+
+  printf '  Run? [Y]es / [s]kip / [q]uit (default: yes): '
+  if ! read -r answer; then
+    echo ""
+    QUIT=1
+    RESULT[$id]="skipped"
+    return
+  fi
+
+  case "$answer" in
+    ""|y|Y|yes|sim)
+      # The shown string is the executed string: STEP_CMD is built only from
+      # fixed commands and printf %q-quoted paths/package names.
+      if bash -c "$STEP_CMD"; then
+        echo "  ${GREEN}done${NC}"
+        RESULT[$id]="done"
+      else
+        echo "  ${RED}failed${NC} (exit $?), moving on"
+        RESULT[$id]="failed"
+      fi
+      ;;
+    q|Q|quit)
+      QUIT=1
+      RESULT[$id]="skipped"
+      ;;
+    s|S|skip|n|N|no)
+      echo "  ${DIM}skipped${NC}"
+      RESULT[$id]="skipped"
+      ;;
+    *)
+      echo "  ${DIM}unknown answer '$answer', skipped${NC}"
+      RESULT[$id]="skipped"
+      ;;
+  esac
+}
+
+# Authenticate sudo once, then refresh the timestamp in the background so long
+# steps (a 40 GB find) cannot outlive it and prompt again mid-run.
+sudo_upfront() {
+  echo "${BOLD}sudo is needed for some steps; asking once now.${NC}"
+  $SUDO -v || die "sudo authentication failed (use --only to run just the user steps)"
+  ( while kill -0 "$$" 2>/dev/null; do $SUDO -n true; sleep 50; done ) >/dev/null 2>&1 &
+  SUDO_KEEPALIVE=$!
+  trap 'kill "$SUDO_KEEPALIVE" 2>/dev/null || true' EXIT
+}
+
+disk_free() { df -h --output=target,avail / "$HOME" 2>/dev/null | tail -n +2 | sort -u; }
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --help|-h) usage; exit 0 ;;
+    --list)    for id in "${STEPS[@]}"; do printf '%-20s %s\n' "$id" "${TITLES[$id]}"; done; exit 0 ;;
+    --dry-run) DRY_RUN=1; shift ;;
+    --only)    [ $# -ge 2 ] || die "--only needs a comma-separated list"; ONLY="$2"; shift 2 ;;
+    *)         die "unknown option: $1 (see --help)" ;;
+  esac
+done
+
+SELECTED=("${STEPS[@]}")
+if [ -n "$ONLY" ]; then
+  IFS=',' read -r -a wanted <<< "$ONLY"
+  for w in "${wanted[@]}"; do
+    [ -n "${TITLES[$w]:-}" ] || die "unknown step: $w (see --list)"
+  done
+  SELECTED=()
+  for id in "${STEPS[@]}"; do
+    for w in "${wanted[@]}"; do
+      [ "$id" = "$w" ] && SELECTED+=("$id")
+    done
+  done
+fi
+
+if [ "$DRY_RUN" -eq 0 ]; then
+  for id in "${SELECTED[@]}"; do
+    if [[ "$ROOT_STEPS" == *" $id "* ]]; then sudo_upfront; break; fi
+  done
+fi
+
+echo "${BOLD}Free space before:${NC}"
+disk_free | sed 's/^/  /'
+
+n=0
+for id in "${SELECTED[@]}"; do
+  n=$((n + 1))
+  run_step "$id" "$n" "${#SELECTED[@]}"
+  [ "$QUIT" -eq 1 ] && { echo ""; echo "${YELLOW}quit requested, stopping${NC}"; break; }
+done
+
+echo ""
+echo "${BOLD}Summary:${NC}"
+for id in "${SELECTED[@]}"; do
+  [ -n "${RESULT[$id]:-}" ] && printf '  %-8s %s\n' "${RESULT[$id]}" "$id"
+done
+
+echo ""
+echo "${BOLD}Free space after:${NC}"
+disk_free | sed 's/^/  /'

@@ -1,0 +1,404 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# clean-claude-sessions - Remove old Claude Code session files
+#
+# By default, removes sessions only for the current directory (pwd).
+# Use --all to clean sessions across all projects.
+# Lists all matching sessions and asks for confirmation before deleting.
+#
+# Usage:
+#   clean-claude-sessions              # Current project, older than 30 days
+#   clean-claude-sessions 60           # Current project, older than 60 days
+#   clean-claude-sessions --all        # All projects, older than 30 days
+#   clean-claude-sessions --all 14     # All projects, older than 14 days
+#   clean-claude-sessions --dry-run    # Show what would be removed
+#   clean-claude-sessions --yes        # Skip confirmation prompt
+#   clean-claude-sessions --help       # Show this help
+
+# ---------------------------------------------------------------------------
+# Config
+# ---------------------------------------------------------------------------
+
+CLAUDE_PROJECTS_DIR="$HOME/.claude/projects"
+DAYS=30
+DRY_RUN=false
+ALL_PROJECTS=false
+SKIP_CONFIRM=false
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+_print_usage() {
+  cat << EOF
+clean-claude-sessions - Remove old Claude Code session files
+
+Usage:
+  $(basename "$0")                Current project, sessions older than 30 days
+  $(basename "$0") 60             Current project, sessions older than 60 days
+  $(basename "$0") --all          All projects, sessions older than 30 days
+  $(basename "$0") --all 14       All projects, sessions older than 14 days
+  $(basename "$0") --dry-run      Show what would be removed (no deletions)
+  $(basename "$0") --dry-run 7    Dry-run, sessions older than 7 days
+  $(basename "$0") --yes          Skip confirmation prompt
+  $(basename "$0") --help         Show this help
+
+Options:
+  --all         Clean sessions from all projects (default: current directory only)
+  --dry-run     Show what would be removed without deleting
+  --yes, -y     Skip confirmation prompt (useful for cron/scripts)
+  --help, -h    Show this help
+
+Arguments:
+  [DAYS]        Age threshold in days (default: 30). Positional argument.
+
+Directory: $CLAUDE_PROJECTS_DIR
+
+What gets removed:
+  - Session .jsonl files older than N days (based on last message timestamp)
+  - Corresponding subagent directories (same UUID)
+  - Stale entries from sessions-index.json
+EOF
+}
+
+_log() {
+  echo -e "${CYAN}[sessions]${NC} $1"
+}
+
+_ok() {
+  echo -e "${GREEN}[done]${NC} $1"
+}
+
+_warn() {
+  echo -e "${YELLOW}[skip]${NC} $1"
+}
+
+_err() {
+  echo -e "${RED}[error]${NC} $1"
+}
+
+# Convert a filesystem path to the Claude projects directory name format.
+# /srv/example/dev/myproject -> -srv-example-dev-myproject
+_path_to_project_dir() {
+  local path="$1"
+  echo "$path" | sed 's|/$||; s|/|-|g'
+}
+
+# Convert a project dir name back to a readable path.
+# -srv-example-dev-myproject -> /srv/example/dev/myproject
+_project_dir_to_path() {
+  local name="$1"
+  echo "$name" | sed 's|^-|/|; s|-|/|g'
+}
+
+# ---------------------------------------------------------------------------
+# Parse args
+# ---------------------------------------------------------------------------
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run) DRY_RUN=true; shift ;;
+    --all) ALL_PROJECTS=true; shift ;;
+    --yes|-y) SKIP_CONFIRM=true; shift ;;
+    --help|-h) _print_usage; exit 0 ;;
+    -*)
+      _err "unknown option: $1"
+      _print_usage
+      exit 1
+      ;;
+    *)
+      if [[ "$1" =~ ^[0-9]+$ ]]; then
+        DAYS="$1"
+        shift
+      else
+        _err "invalid argument: $1 (expected a number of days)"
+        _print_usage
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+# ---------------------------------------------------------------------------
+# Resolve target project directory
+# ---------------------------------------------------------------------------
+
+if $ALL_PROJECTS; then
+  TARGET_DIRS=("$CLAUDE_PROJECTS_DIR"/*/)
+  SCOPE_LABEL="all projects"
+else
+  current_dir=$(pwd -P)
+  project_dir_name=$(_path_to_project_dir "$current_dir")
+  target="$CLAUDE_PROJECTS_DIR/$project_dir_name"
+
+  if [[ ! -d "$target" ]]; then
+    _warn "no sessions found for current directory: $current_dir"
+    _log "expected: $target"
+    _log "use --all to clean all projects"
+    exit 0
+  fi
+
+  TARGET_DIRS=("$target/")
+  SCOPE_LABEL="$current_dir"
+fi
+
+# ---------------------------------------------------------------------------
+# Validate
+# ---------------------------------------------------------------------------
+
+if [[ ! -d "$CLAUDE_PROJECTS_DIR" ]]; then
+  _warn "claude projects directory not found: $CLAUDE_PROJECTS_DIR"
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Phase 1: Scan and collect old sessions
+# ---------------------------------------------------------------------------
+
+_log "scanning sessions older than $DAYS days..."
+_log "scope: $SCOPE_LABEL"
+echo ""
+
+# Temporary file to store scan results (filepath\tproject_dir\tproject_name\tsession_id\tsize\tdate\tslug)
+SCAN_RESULTS=$(mktemp)
+trap 'rm -f "$SCAN_RESULTS"' EXIT
+
+for project_dir in "${TARGET_DIRS[@]}"; do
+  [[ -d "$project_dir" ]] || continue
+
+  project_name=$(basename "$project_dir")
+
+  # Collect all .jsonl files in this project directory
+  mapfile -t jsonl_files < <(find "$project_dir" -maxdepth 1 -name '*.jsonl' -type f 2>/dev/null)
+
+  [[ ${#jsonl_files[@]} -eq 0 ]] && continue
+
+  # Batch: find all old sessions with metadata in a single python3 call
+  printf '%s\n' "${jsonl_files[@]}" | python3 -c "
+import sys, json, os
+from datetime import datetime, timedelta, timezone
+
+cutoff = datetime.now(timezone.utc) - timedelta(days=$DAYS)
+
+for filepath in sys.stdin:
+    filepath = filepath.strip()
+    if not filepath:
+        continue
+    try:
+        with open(filepath, 'rb') as f:
+            try:
+                f.seek(0, 2)
+                fsize = f.tell()
+                chunk = min(fsize, 32768)
+                f.seek(-chunk, 2)
+                tail_lines = f.read().decode('utf-8', errors='replace').splitlines()
+            except Exception:
+                continue
+
+            # Also read first chunk for slug/summary
+            f.seek(0)
+            head_data = f.read(min(fsize, 16384)).decode('utf-8', errors='replace').splitlines()
+
+        last_ts = None
+        for line in tail_lines[-20:]:
+            try:
+                d = json.loads(line)
+                t = d.get('timestamp')
+                if t:
+                    last_ts = t
+            except Exception:
+                pass
+
+        if not last_ts:
+            continue
+
+        ts_clean = last_ts.replace('Z', '+00:00')
+        try:
+            dt = datetime.fromisoformat(ts_clean)
+        except Exception:
+            continue
+
+        if dt >= cutoff:
+            continue
+
+        # Extract slug or summary from first lines
+        slug = ''
+        summary = ''
+        for line in head_data[:10]:
+            try:
+                d = json.loads(line)
+                if not slug and d.get('slug'):
+                    slug = d['slug']
+                if not summary and d.get('type') == 'human':
+                    msg = d.get('message', {})
+                    content = msg.get('content', '')
+                    if isinstance(content, list):
+                        for c in content:
+                            if isinstance(c, dict) and c.get('type') == 'text':
+                                content = c['text']
+                                break
+                        else:
+                            content = ''
+                    if isinstance(content, str) and content.strip():
+                        summary = content.strip()[:80].replace('\t', ' ').replace('\n', ' ')
+            except Exception:
+                pass
+
+        label = slug or summary or '(no name)'
+        session_id = os.path.basename(filepath).replace('.jsonl', '')
+        date_str = dt.strftime('%Y-%m-%d %H:%M')
+
+        # Calculate total size (file + subagent dir)
+        total_size = os.path.getsize(filepath)
+        subagent_dir = os.path.join(os.path.dirname(filepath), session_id)
+        if os.path.isdir(subagent_dir):
+            for root, dirs, files in os.walk(subagent_dir):
+                for fname in files:
+                    try:
+                        total_size += os.path.getsize(os.path.join(root, fname))
+                    except Exception:
+                        pass
+
+        # Output: filepath\tproject_dir\tproject_name\tsession_id\tsize\tdate\tlabel
+        print(f'{filepath}\t$project_dir\t$project_name\t{session_id}\t{total_size}\t{date_str}\t{label}')
+    except Exception:
+        pass
+" >> "$SCAN_RESULTS" 2>/dev/null || true
+done
+
+# ---------------------------------------------------------------------------
+# Phase 2: Display results
+# ---------------------------------------------------------------------------
+
+total_count=$(wc -l < "$SCAN_RESULTS")
+
+if [[ "$total_count" -eq 0 ]]; then
+  _ok "no sessions older than $DAYS days found"
+  exit 0
+fi
+
+# Calculate totals
+total_size=0
+declare -A projects_seen
+while IFS=$'\t' read -r _ _ proj_name _ size _ _; do
+  total_size=$((total_size + size))
+  projects_seen["$proj_name"]=1
+done < "$SCAN_RESULTS"
+projects_count=${#projects_seen[@]}
+
+freed=$(numfmt --to=iec --suffix=B "$total_size" 2>/dev/null || echo "${total_size}B")
+
+# Print session list grouped by project
+current_project=""
+while IFS=$'\t' read -r _ _ proj_name session_id size date label; do
+  if [[ "$proj_name" != "$current_project" ]]; then
+    current_project="$proj_name"
+    readable_path=$(_project_dir_to_path "$proj_name")
+    echo -e "\n  ${BOLD}${CYAN}$readable_path${NC}"
+  fi
+
+  size_human=$(numfmt --to=iec --suffix=B "$size" 2>/dev/null || echo "${size}B")
+  # Truncate label to fit nicely
+  display_label="${label:0:50}"
+
+  printf "    ${DIM}%s${NC}  ${YELLOW}%-8s${NC}  %s  ${DIM}%s${NC}\n" \
+    "$date" "$size_human" "$display_label" "${session_id:0:8}..."
+done < <(sort -t$'\t' -k3,3 -k6,6 "$SCAN_RESULTS")
+
+echo ""
+echo -e "${BOLD}${CYAN}=======================================${NC}"
+echo -e "${BOLD}${CYAN}          SESSIONS TO REMOVE           ${NC}"
+echo -e "${BOLD}${CYAN}=======================================${NC}"
+echo ""
+echo -e "  Sessions: ${BOLD}$total_count${NC}"
+echo -e "  Projects: ${BOLD}$projects_count${NC}"
+echo -e "  Age:      older than $DAYS days"
+echo -e "  Scope:    $SCOPE_LABEL"
+echo ""
+echo -e "  ${BOLD}${CYAN}---------------------------------------${NC}"
+printf "  ${BOLD}${YELLOW}%-20s %10s${NC}\n" "TOTAL (would free)" "$freed"
+echo -e "  ${BOLD}${CYAN}---------------------------------------${NC}"
+echo ""
+
+# ---------------------------------------------------------------------------
+# Phase 3: Confirm and delete
+# ---------------------------------------------------------------------------
+
+if $DRY_RUN; then
+  _ok "dry-run complete, no files removed"
+  exit 0
+fi
+
+if ! $SKIP_CONFIRM; then
+  echo -en "  ${BOLD}${RED}Delete these $total_count sessions? [y/N]${NC} "
+  read -r confirm
+  if [[ "$confirm" != "y" && "$confirm" != "Y" && "$confirm" != "yes" ]]; then
+    _warn "cancelled by user"
+    exit 0
+  fi
+  echo ""
+fi
+
+# Perform deletion
+removed_count=0
+declare -A project_removed_ids
+
+while IFS=$'\t' read -r filepath project_dir proj_name session_id _ _ _; do
+  # Remove session file
+  rm -f "$filepath"
+
+  # Remove subagent directory
+  subagent_dir="$project_dir/$session_id"
+  if [[ -d "$subagent_dir" ]]; then
+    rm -rf "$subagent_dir"
+  fi
+
+  echo -e "  ${RED}[removed]${NC} ${proj_name}/${session_id:0:8}..."
+
+  # Track removed IDs per project for index cleanup
+  project_removed_ids["$project_dir"]+="$session_id"$'\n'
+  removed_count=$((removed_count + 1))
+done < "$SCAN_RESULTS"
+
+# Update sessions-index.json for each affected project
+for project_dir in "${!project_removed_ids[@]}"; do
+  index_file="$project_dir/sessions-index.json"
+  [[ -f "$index_file" ]] || continue
+
+  removed_json=$(echo "${project_removed_ids[$project_dir]}" | python3 -c "
+import sys, json
+ids = set(line.strip() for line in sys.stdin if line.strip())
+with open('$index_file') as f:
+    data = json.load(f)
+before = len(data.get('entries', []))
+data['entries'] = [e for e in data.get('entries', []) if e.get('sessionId') not in ids]
+after = len(data['entries'])
+if before != after:
+    print(json.dumps(data, indent=2, ensure_ascii=False))
+" 2>/dev/null || true)
+
+  if [[ -n "$removed_json" ]]; then
+    echo "$removed_json" > "$index_file"
+    proj_name=$(basename "$project_dir")
+    echo -e "  ${CYAN}[index]${NC} updated ${proj_name}/sessions-index.json"
+  fi
+done
+
+echo ""
+echo -e "${BOLD}${GREEN}=======================================${NC}"
+echo -e "${BOLD}${GREEN}          CLEANUP COMPLETE             ${NC}"
+echo -e "${BOLD}${GREEN}=======================================${NC}"
+echo ""
+echo -e "  Removed:  ${BOLD}$removed_count${NC} sessions"
+echo -e "  Freed:    ${BOLD}$freed${NC}"
+echo ""
+_ok "done!"
