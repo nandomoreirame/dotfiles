@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Connect or disconnect the DroidCam phone camera without opening its window.
+#
+# start: runs droidcam-cli against the ip/port the GUI client saved in
+#        ~/.config/droidcam, feeding the v4l2loopback device (/dev/video0). A
+#        running GUI client or an earlier session is closed first, since only
+#        one of them can own the device.
+# stop : ends the session (the GUI "Stop" button, headless).
+#
+# Open Mini Video Me after `start`: it picks the DroidCam when it launches.
+#
+# Bound in niri via spawn-sh: Mod+Alt+C (start), Mod+Alt+X (stop).
+# Usage: droidcam-ctl start|stop
+set -euo pipefail
+
+readonly conf="${HOME}/.config/droidcam"
+readonly pid_file="${XDG_RUNTIME_DIR:-/tmp}/droidcam-ctl.pid"
+readonly log_file="${HOME}/.cache/droidcam-ctl.log"
+
+dc_notify() {
+  notify-send -a "DroidCam" "$1" "${2:-}" 2>/dev/null || true
+}
+
+conf_value() {
+  sed -n "s/^$1=//p" "$conf" 2>/dev/null | head -n1
+}
+
+stop_session() {
+  if [[ -f "$pid_file" ]]; then
+    pid="$(cat "$pid_file")"
+    if kill -0 "$pid" 2>/dev/null; then
+      kill "$pid" 2>/dev/null || true
+      for _ in $(seq 1 30); do
+        kill -0 "$pid" 2>/dev/null || break
+        sleep 0.1
+      done
+    fi
+    rm -f "$pid_file"
+  fi
+  if pkill -x droidcam 2>/dev/null; then
+    # The GUI releases /dev/video0 only on exit; opening it earlier fails with
+    # "Unable to determine video device fmt".
+    for _ in $(seq 1 30); do
+      pgrep -x droidcam >/dev/null || break
+      sleep 0.1
+    done
+    sleep 0.5
+  fi
+}
+
+start_session() {
+  local ip port size
+  ip="$(conf_value ip)"
+  port="$(conf_value port)"
+  size="$(conf_value size)"
+  if [[ -z "$ip" || -z "$port" ]]; then
+    dc_notify "DroidCam" "No IP/port saved in $conf. Connect once through the app."
+    exit 1
+  fi
+
+  stop_session
+
+  setsid droidcam-cli -v -nocontrols "-size=${size:-640x480}" "$ip" "$port" >>"$log_file" 2>&1 &
+  echo $! >"$pid_file"
+
+  # Give the client time to fail on an unreachable phone or a busy device.
+  sleep "${DROIDCAM_START_WAIT:-2}"
+  if ! kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+    rm -f "$pid_file"
+    dc_notify "DroidCam: failed to connect" "$ip:$port. See $log_file"
+    exit 1
+  fi
+  dc_notify "DroidCam connected" "$ip:$port"
+}
+
+case "${1:-}" in
+  start) start_session ;;
+  stop)
+    stop_session
+    dc_notify "DroidCam disconnected"
+    ;;
+  *)
+    echo "Usage: droidcam-ctl start|stop" >&2
+    exit 2
+    ;;
+esac

@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# Send the clipboard text to a LocalSend favorite (e.g. the phone) as a text
+# message, without opening the LocalSend window. Bound in niri (Mod+Alt+L).
+#
+# Speaks LocalSend protocol v2 directly: POST prepare-upload with one text/plain
+# file whose `preview` carries the text. The receiver shows it as a message and
+# answers 204; if it asks for the file (200), the text is uploaded too.
+#
+# Device and sender identity come from the desktop app's own preferences:
+# favorites give ip/port/fingerprint; ls_alias, certificateHash and the app's
+# certificate/key (mTLS client cert) identify us.
+# The device is trusted only if its TLS certificate hash matches the favorite's
+# fingerprint (same check LocalSend does). A stale IP triggers a /24 scan.
+#
+# iOS suspends LocalSend in the background: the app must be open on the phone.
+#
+# Usage: localsend-clip <favorite-alias>      (e.g. "iPhone 12")
+# Env:   LOCALSEND_PREFS  override the shared_preferences.json path
+set -eo pipefail
+
+PREFS="${LOCALSEND_PREFS:-$HOME/.local/share/org.localsend.localsend_app/shared_preferences.json}"
+API="api/localsend/v2"
+
+notify() {
+  notify-send -a LocalSend "$@" 2>/dev/null || true
+}
+
+fail() {
+  echo "localsend-clip: $1" >&2
+  notify "LocalSend" "$1"
+  exit 1
+}
+
+cert_fp() {
+  # SHA-256 (uppercase hex) of the DER certificate served at $1:$2, or empty.
+  local der
+  der="$(timeout 2 openssl s_client -connect "$1:$2" < /dev/null 2> /dev/null \
+    | openssl x509 -outform DER 2> /dev/null | base64 -w0)" || true
+  [[ -n "$der" ]] || return 0
+  base64 -d <<< "$der" | sha256sum | cut -d' ' -f1 | tr 'a-f' 'A-F'
+}
+
+scan_subnet() {
+  # Prints the first host in the /24 of $1 whose certificate matches $3.
+  export -f cert_fp
+  # shellcheck disable=SC2016 # expanded by the child bash, not here
+  seq 1 254 \
+    | xargs -P 64 -I{} bash -c \
+      '[[ "$(cert_fp "$0.{}" "$1")" == "$2" ]] && echo "$0.{}"; true' \
+      "${1%.*}" "$2" "$3" \
+    | head -n1
+}
+
+target="${1:-}"
+[[ -n "$target" ]] || { echo "Usage: localsend-clip <favorite-alias>" >&2; exit 2; }
+[[ -r "$PREFS" ]] || fail "LocalSend preferences not found: $PREFS"
+
+device="$(jq -c --arg a "$target" \
+  '.["flutter.ls_favorites"] // [] | map(fromjson) | map(select(.alias == $a)) | .[0] // empty' "$PREFS")"
+[[ -n "$device" ]] || fail "'$target' is not in LocalSend favorites"
+
+ip="$(jq -r .ip <<< "$device")"
+port="$(jq -r .port <<< "$device")"
+want_fp="$(jq -r .fingerprint <<< "$device")"
+
+text="$(wl-paste --no-newline --type text/plain 2> /dev/null)" || true
+[[ -n "$text" ]] || fail "the clipboard has no text"
+
+if [[ "$(cert_fp "$ip" "$port")" != "$want_fp" ]]; then
+  ip="$(scan_subnet "$ip" "$port" "$want_fp")"
+  [[ -n "$ip" ]] || fail "$target did not answer. Open LocalSend on the device."
+fi
+
+file_id="$(cat /proc/sys/kernel/random/uuid)"
+body="$(jq -nc \
+  --arg alias "$(jq -r '.["flutter.ls_alias"]' "$PREFS")" \
+  --arg fp "$(jq -r '.["flutter.ls_security_context"] | fromjson | .certificateHash' "$PREFS")" \
+  --argjson port "$(jq '.["flutter.ls_port"] // 53317' "$PREFS")" \
+  --arg id "$file_id" \
+  --arg text "$text" \
+  --argjson size "$(printf '%s' "$text" | wc -c)" \
+  '{
+    info: {alias: $alias, version: "2.1", deviceModel: "Linux", deviceType: "desktop",
+           fingerprint: $fp, port: $port, protocol: "https", download: false},
+    files: {($id): {id: $id, fileName: ($id + ".txt"), size: $size,
+                    fileType: "text/plain", preview: $text}}
+  }')"
+
+# Receivers require mutual TLS: present the desktop app's own certificate. The
+# key lives only in a private tmpfs dir for the length of the request.
+work="$(umask 077 && mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/localsend-clip.XXXXXX")"
+trap 'rm -rf "$work"' EXIT
+resp="$work/resp.json"
+(
+  umask 077
+  jq -r '.["flutter.ls_security_context"] | fromjson | .certificate' "$PREFS" > "$work/cert.pem"
+  jq -r '.["flutter.ls_security_context"] | fromjson | .privateKey' "$PREFS" > "$work/key.pem"
+)
+tls=(--cert "$work/cert.pem" --key "$work/key.pem")
+
+# The receiver may hold the request open until the user accepts it.
+code="$(curl -sk "${tls[@]}" --max-time 60 -o "$resp" -w '%{http_code}' \
+  -H 'Content-Type: application/json' --data-binary @- \
+  "https://$ip:$port/$API/prepare-upload" <<< "$body")" || true
+
+case "$code" in
+  204) ;;
+  200)
+    session="$(jq -r .sessionId "$resp")"
+    up_id="$(jq -r '.files | keys[0]' "$resp")"
+    token="$(jq -r --arg k "$up_id" '.files[$k]' "$resp")"
+    code="$(printf '%s' "$text" | curl -sk "${tls[@]}" --max-time 30 -o /dev/null -w '%{http_code}' \
+      --data-binary @- \
+      "https://$ip:$port/$API/upload?sessionId=$session&fileId=$up_id&token=$token")" || true
+    [[ "$code" == 200 ]] || fail "failed to send the text to $target (HTTP $code)"
+    ;;
+  403) fail "$target rejected the transfer" ;;
+  401) fail "$target requires a PIN; send from the app" ;;
+  409) fail "$target is busy with another transfer" ;;
+  *) fail "failed to send to $target (HTTP ${code:-no response})" ;;
+esac
+
+notify "Text sent to $target" "${text:0:120}"
