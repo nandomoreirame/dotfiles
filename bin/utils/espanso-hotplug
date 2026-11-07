@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# espanso-hotplug - Restart espanso after a keyboard is plugged in
+#
+# Why: espanso's Wayland backend (EVDEVSource) opens the /dev/input/event*
+# nodes only at startup. When a keyboard is re-enumerated (unplug, USB reset
+# "disabled by hub (EMI?)", receiver swap) its new nodes are never opened and
+# espanso keeps running blind while `espanso status` still says "running".
+#
+# Trigger: configs/udev/90-espanso-keyboard-hotplug.rules tags every keyboard
+# event node with SYSTEMD_USER_WANTS=espanso-hotplug.service, and that user
+# unit (configs/systemd/user/) runs this helper.
+#
+# Behavior:
+#   - espanso.service inactive -> no-op (hotplug never starts it on its own)
+#   - started less than ESPANSO_HOTPLUG_GRACE seconds ago -> no-op; this
+#     absorbs the several event nodes a single keyboard creates and the
+#     enumeration the user manager does at login
+#   - otherwise -> systemctl --user restart espanso.service
+#
+# Usage: espanso-hotplug
+set -eo pipefail
+
+readonly ESPANSO_UNIT="espanso.service"
+readonly ESPANSO_HOTPLUG_GRACE="${ESPANSO_HOTPLUG_GRACE:-10}"
+
+espanso_hotplug_main() {
+    if ! systemctl --user is-active --quiet "$ESPANSO_UNIT"; then
+        echo "$ESPANSO_UNIT inactive, nothing to do"
+        return 0
+    fi
+
+    local now since
+    now="${ESPANSO_HOTPLUG_NOW:-$(date +%s)}"
+    since="$(systemctl --user show -P ActiveEnterTimestamp --timestamp=unix "$ESPANSO_UNIT")"
+    since="${since#@}"
+
+    if [ -n "$since" ] && [ $((now - since)) -lt "$ESPANSO_HOTPLUG_GRACE" ]; then
+        echo "$ESPANSO_UNIT started $((now - since))s ago, skipping restart"
+        return 0
+    fi
+
+    echo "keyboard connected, restarting $ESPANSO_UNIT"
+    systemctl --user restart "$ESPANSO_UNIT"
+}
+
+espanso_hotplug_main "$@"

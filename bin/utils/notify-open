@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# notify-open -- send a notification for a file that opens it when clicked.
+#
+# Clicking the notification (its default action) opens the file with the
+# default app; the "Show in folder" button opens Nautilus with the file
+# selected; "Delete" moves it to the trash (recoverable, never rm). Blocks
+# until the notification is clicked, dismissed or expires (notify-send --wait),
+# so callers run it in the background.
+#
+# Used by screenshot helpers, screen-recording helpers and video-to-gif (GIFs).
+#
+# Usage: notify-open [-a app-name] <summary> <file> [body]
+#   body defaults to the file name.
+set -uo pipefail
+
+app="Screenshot"
+if [[ "${1:-}" == -a ]]; then
+  app="${2:-}"
+  shift 2
+fi
+
+if [[ $# -lt 2 ]]; then
+  echo "Usage: notify-open [-a app-name] <summary> <file> [body]" >&2
+  exit 2
+fi
+
+summary="$1"
+file="$2"
+body="${3:-$(basename "$file")}"
+
+case "${file,,}" in
+  *.png | *.jpg | *.jpeg | *.gif | *.webp) icon="$file" ;;
+  *) icon="video-x-generic" ;;
+esac
+
+action=$(notify-send -a "$app" -i "$icon" \
+  --action=default=Open \
+  --action=folder="Show in folder" \
+  --action=delete=Delete \
+  --wait "$summary" "$body" 2>/dev/null)
+
+case "$action" in
+  default) xdg-open "$file" >/dev/null 2>&1 ;;
+  folder)
+    if command -v nautilus >/dev/null; then
+      nautilus --select "$file" >/dev/null 2>&1
+    else
+      xdg-open "$(dirname "$file")" >/dev/null 2>&1
+    fi
+    ;;
+  delete) gio trash -- "$file" >/dev/null 2>&1 ;;
+esac
+exit 0

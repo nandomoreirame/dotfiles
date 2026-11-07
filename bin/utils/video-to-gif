@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Convert a screen recording to GIF with ffmpeg.
+#
+# With no argument it picks the newest recording_*.mp4 under the XDG Videos
+# Recordings directory. The GIF lands next to the video and its path goes to
+# the clipboard. palettegen/paletteuse builds a per-video palette, which avoids
+# the washed-out colors of a plain `ffmpeg -i in.mp4 out.gif`.
+#
+# Usage: video-to-gif [input.mp4] [output.gif]
+# Tuning: GIF_FPS (default 15), GIF_WIDTH in px (default 960).
+set -euo pipefail
+
+readonly fps="${GIF_FPS:-15}"
+readonly width="${GIF_WIDTH:-960}"
+
+gif_notify() {
+  notify-send -a "Screen Recorder" "$1" "${2:-}" 2>/dev/null || true
+}
+
+if [[ $# -ge 1 ]]; then
+  input="$1"
+else
+  videos_dir="$(xdg-user-dir VIDEOS 2>/dev/null || echo "${HOME}/Videos")"
+  # Names are recording_<timestamp>.mp4, so glob order == chronological order.
+  shopt -s nullglob
+  files=("${videos_dir}/Recordings"/recording_*.mp4)
+  input=""
+  ((${#files[@]})) && input="${files[-1]}"
+fi
+
+if [[ -z "$input" || ! -f "$input" ]]; then
+  gif_notify "Failed to create GIF" "No video found${input:+: $input}"
+  echo "video-to-gif: no input video${input:+: $input}" >&2
+  exit 1
+fi
+
+output="${2:-${input%.*}.gif}"
+
+ffmpeg -hide_banner -loglevel error -y -i "$input" \
+  -vf "fps=${fps},scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5" \
+  "$output"
+
+wl-copy "$output" 2>/dev/null || true
+# Detached: notify-open waits for the click on the notification.
+"$(dirname "$0")/notify-open" -a "Screen Recorder" "GIF saved" "$output" \
+  "$(basename "$output") (path copied)" &
