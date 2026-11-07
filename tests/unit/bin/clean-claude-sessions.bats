@@ -146,11 +146,11 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
     local cwd_name
     cwd_name=$(pwd -P | sed 's|/$||; s|/|-|g')
 
-    local id_current="aaaaaaaa-0001-0001-0001-000000000001"
-    local id_other="bbbbbbbb-0002-0002-0002-000000000002"
+    local id_current="aaaaaaaa-a001-a001-a001-000000000001"
+    local id_other="bbbbbbbb-a002-a002-a002-000000000002"
 
     _make_project "$cwd_name" "$id_current" "$(_days_ago 45)"
-    _make_project "-home-someone-else" "$id_other" "$(_days_ago 45)"
+    _make_project "-srv-example-otherproj" "$id_other" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --dry-run
     assert_success
@@ -170,8 +170,8 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "--all: processes all projects" {
-    local id1="cccccccc-0003-0003-0003-000000000003"
-    local id2="dddddddd-0004-0004-0004-000000000004"
+    local id1="cccccccc-a003-a003-a003-000000000003"
+    local id2="dddddddd-a004-a004-a004-000000000004"
 
     _make_project "-srv-example-projA" "$id1" "$(_days_ago 45)"
     _make_project "-srv-example-projB" "$id2" "$(_days_ago 45)"
@@ -187,7 +187,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "no old sessions: shows 'no sessions' message" {
-    local session_id="eeeeeeee-0005-0005-0005-000000000005"
+    local session_id="eeeeeeee-a005-a005-a005-000000000005"
     _make_project "-srv-example-recent" "$session_id" "$(_days_ago 1)"
 
     run bash "$SCRIPT" --all
@@ -200,7 +200,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "session 31 days old: detected as old" {
-    local session_id="ffffffff-0006-0006-0006-000000000006"
+    local session_id="ffffffff-a006-a006-a006-000000000006"
     _make_project "-srv-example-old" "$session_id" "$(_days_ago 31)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -209,7 +209,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "session 29 days 23 hours: not detected (within threshold)" {
-    local session_id="11111111-0007-0007-0007-000000000007"
+    local session_id="11111111-a007-a007-a007-000000000007"
     local ts
     ts=$(python3 -c "
 from datetime import datetime, timedelta, timezone
@@ -226,7 +226,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "session 29 days old with threshold 30: not detected" {
-    local session_id="22222222-0008-0008-0008-000000000008"
+    local session_id="22222222-a008-a008-a008-000000000008"
     _make_project "-srv-example-recent2" "$session_id" "$(_days_ago 29)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -239,7 +239,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "positional 7: session 8 days old is detected" {
-    local session_id="33333333-0009-0009-0009-000000000009"
+    local session_id="33333333-a009-a009-a009-000000000009"
     _make_project "-srv-example-days7" "$session_id" "$(_days_ago 8)"
 
     run bash "$SCRIPT" --all --dry-run 7
@@ -248,7 +248,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "positional 7: session 6 days old is not detected" {
-    local session_id="44444444-0010-0010-0010-000000000010"
+    local session_id="44444444-a010-a010-a010-000000000010"
     _make_project "-srv-example-days7r" "$session_id" "$(_days_ago 6)"
 
     run bash "$SCRIPT" --all --dry-run 7
@@ -257,7 +257,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "positional 60: session 31 days old is not detected" {
-    local session_id="55555555-0011-0011-0011-000000000011"
+    local session_id="55555555-a011-a011-a011-000000000011"
     _make_project "-srv-example-days60" "$session_id" "$(_days_ago 31)"
 
     run bash "$SCRIPT" --all --dry-run 60
@@ -270,7 +270,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "listing: shows project path as readable path" {
-    local session_id="66666666-0012-0012-0012-000000000012"
+    local session_id="66666666-a012-a012-a012-000000000012"
     _make_project "-srv-example-myproject" "$session_id" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -279,7 +279,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "listing: shows session slug when available" {
-    local session_id="77777777-0013-0013-0013-000000000013"
+    local session_id="77777777-a013-a013-a013-000000000013"
     _make_project "-srv-example-slugtest" "$session_id" "$(_days_ago 45)" "golden-waddling-brooks"
 
     run bash "$SCRIPT" --all --dry-run
@@ -288,7 +288,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "listing: shows truncated session ID" {
-    local session_id="88888888-0014-0014-0014-000000000014"
+    local session_id="88888888-a014-a014-a014-000000000014"
     _make_project "-srv-example-idtest" "$session_id" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -297,7 +297,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "listing: shows date in YYYY-MM-DD HH:MM format" {
-    local session_id="99999999-0015-0015-0015-000000000015"
+    local session_id="99999999-a015-a015-a015-000000000015"
     _make_project "-srv-example-datetest" "$session_id" "2026-01-15T10:30:00.000Z"
 
     run bash "$SCRIPT" --all --dry-run
@@ -310,7 +310,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "--dry-run: .jsonl file preserved after execution" {
-    local session_id="aaaaaaaa-0016-0016-0016-000000000016"
+    local session_id="aaaaaaaa-a016-a016-a016-000000000016"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-dryrun" "$session_id" "$(_days_ago 45)")"
 
@@ -320,7 +320,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "--dry-run: shows 'dry-run complete' message" {
-    local session_id="bbbbbbbb-0017-0017-0017-000000000017"
+    local session_id="bbbbbbbb-a017-a017-a017-000000000017"
     _make_project "-srv-example-dryrun2" "$session_id" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -333,7 +333,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "confirmation: 'n' cancels deletion" {
-    local session_id="cccccccc-0018-0018-0018-000000000018"
+    local session_id="cccccccc-a018-a018-a018-000000000018"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-confirm" "$session_id" "$(_days_ago 45)")"
 
@@ -344,7 +344,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "confirmation: empty input cancels deletion" {
-    local session_id="dddddddd-0019-0019-0019-000000000019"
+    local session_id="dddddddd-a019-a019-a019-000000000019"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-confirm2" "$session_id" "$(_days_ago 45)")"
 
@@ -355,7 +355,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "--yes: skips confirmation and deletes" {
-    local session_id="eeeeeeee-0020-0020-0020-000000000020"
+    local session_id="eeeeeeee-a020-a020-a020-000000000020"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-yesmode" "$session_id" "$(_days_ago 45)")"
 
@@ -366,7 +366,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "-y: alias for --yes works" {
-    local session_id="ffffffff-0021-0021-0021-000000000021"
+    local session_id="ffffffff-a021-a021-a021-000000000021"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-yalias" "$session_id" "$(_days_ago 45)")"
 
@@ -380,7 +380,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "removal: .jsonl file is deleted" {
-    local session_id="11111111-0022-0022-0022-000000000022"
+    local session_id="11111111-a022-a022-a022-000000000022"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-remove" "$session_id" "$(_days_ago 45)")"
 
@@ -390,7 +390,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "removal: subagent directory is deleted" {
-    local session_id="22222222-0023-0023-0023-000000000023"
+    local session_id="22222222-a023-a023-a023-000000000023"
     local project_dir="$PROJECTS_DIR/-srv-example-subagent"
     mkdir -p "$project_dir"
 
@@ -407,8 +407,8 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 }
 
 @test "removal: recent session is not touched" {
-    local old_id="33333333-0024-0024-0024-000000000024"
-    local new_id="44444444-0025-0025-0025-000000000025"
+    local old_id="33333333-a024-a024-a024-000000000024"
+    local new_id="44444444-a025-a025-a025-000000000025"
     local project_dir="$PROJECTS_DIR/-srv-example-mixed"
     mkdir -p "$project_dir"
 
@@ -426,7 +426,7 @@ print(dt.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 # ============================================
 
 @test "sessions-index.json: entry removed after cleanup" {
-    local session_id="55555555-0026-0026-0026-000000000026"
+    local session_id="55555555-a026-a026-a026-000000000026"
     local project_dir="$PROJECTS_DIR/-srv-example-index"
     mkdir -p "$project_dir"
 
@@ -458,7 +458,7 @@ print('ok')
 }
 
 @test "--dry-run: sessions-index.json is not modified" {
-    local session_id="66666666-0027-0027-0027-000000000027"
+    local session_id="66666666-a027-a027-a027-000000000027"
     local project_dir="$PROJECTS_DIR/-srv-example-index-dry"
     mkdir -p "$project_dir"
 
@@ -484,7 +484,7 @@ print('ok')
 }
 
 @test "sessions-index.json absent: no error" {
-    local session_id="77777777-0028-0028-0028-000000000028"
+    local session_id="77777777-a028-a028-a028-000000000028"
     local project_dir="$PROJECTS_DIR/-srv-example-noindex"
     mkdir -p "$project_dir"
 
@@ -500,8 +500,8 @@ print('ok')
 # ============================================
 
 @test "summary: shows session count" {
-    local id1="88888888-0029-0029-0029-000000000029"
-    local id2="99999999-0030-0030-0030-000000000030"
+    local id1="88888888-a029-a029-a029-000000000029"
+    local id2="99999999-a030-a030-a030-000000000030"
     _make_project "-srv-example-sum1" "$id1" "$(_days_ago 45)"
     _make_project "-srv-example-sum2" "$id2" "$(_days_ago 45)"
 
@@ -512,8 +512,8 @@ print('ok')
 }
 
 @test "summary: shows project count" {
-    local id1="aaaaaaaa-0031-0031-0031-000000000031"
-    local id2="bbbbbbbb-0032-0032-0032-000000000032"
+    local id1="aaaaaaaa-a031-a031-a031-000000000031"
+    local id2="bbbbbbbb-a032-a032-a032-000000000032"
 
     _make_project "-srv-example-projA" "$id1" "$(_days_ago 45)"
     _make_project "-srv-example-projB" "$id2" "$(_days_ago 45)"
@@ -525,7 +525,7 @@ print('ok')
 }
 
 @test "summary: shows day threshold" {
-    local session_id="cccccccc-0033-0033-0033-000000000033"
+    local session_id="cccccccc-a033-a033-a033-000000000033"
     _make_project "-srv-example-age" "$session_id" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --all --dry-run 15
@@ -534,7 +534,7 @@ print('ok')
 }
 
 @test "summary: shows scope label" {
-    local session_id="dddddddd-0034-0034-0034-000000000034"
+    local session_id="dddddddd-a034-a034-a034-000000000034"
     _make_project "-srv-example-scope" "$session_id" "$(_days_ago 45)"
 
     run bash "$SCRIPT" --all --dry-run
@@ -547,7 +547,7 @@ print('ok')
 # ============================================
 
 @test "--dry-run with positional days: works correctly" {
-    local session_id="eeeeeeee-0035-0035-0035-000000000035"
+    local session_id="eeeeeeee-a035-a035-a035-000000000035"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-combo" "$session_id" "$(_days_ago 10)")"
 
@@ -558,8 +558,8 @@ print('ok')
 }
 
 @test "--all --yes with positional days: deletes correctly" {
-    local id_old="ffffffff-0036-0036-0036-000000000036"
-    local id_recent="11111111-0037-0037-0037-000000000037"
+    local id_old="ffffffff-a036-a036-a036-000000000036"
+    local id_recent="11111111-a037-a037-a037-000000000037"
 
     local file_old file_recent
     file_old="$(_make_project "-srv-example-allyesdays" "$id_old" "$(_days_ago 20)")"
@@ -573,7 +573,7 @@ print('ok')
 }
 
 @test "confirmation 'y': proceeds with deletion" {
-    local session_id="22222222-0038-0038-0038-000000000038"
+    local session_id="22222222-a038-a038-a038-000000000038"
     local jsonl_file
     jsonl_file="$(_make_project "-srv-example-yesconfirm" "$session_id" "$(_days_ago 45)")"
 
