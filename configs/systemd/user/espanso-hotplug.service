@@ -5,6 +5,7 @@ Documentation=man:espanso(1)
 [Service]
 Type=oneshot
 # Let every event node of the new keyboard show up before restarting.
-# Resolve the helper through PATH (see bin/README.md PATH snippet).
+# The user manager does not inherit the shell PATH, so the helper is called
+# by absolute path: link it into ~/.local/bin (see bin/README.md).
 ExecStartPre=/usr/bin/sleep 2
-ExecStart=/usr/bin/env espanso-hotplug
+ExecStart=%h/.local/bin/espanso-hotplug

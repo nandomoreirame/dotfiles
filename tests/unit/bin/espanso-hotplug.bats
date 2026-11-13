@@ -96,6 +96,16 @@ _run_script() {
 @test "user unit is oneshot and runs the helper" {
     run grep -E '^Type=oneshot$' "$USER_UNIT"
     assert_success
-    run grep -E '^ExecStart=/usr/bin/env espanso-hotplug$' "$USER_UNIT"
+    run grep -E '^ExecStart=%h/\.local/bin/espanso-hotplug$' "$USER_UNIT"
+    assert_success
+}
+
+@test "user unit does not rely on the shell PATH" {
+    run grep -E '^ExecStart=/usr/bin/env' "$USER_UNIT"
+    assert_failure
+}
+
+@test "bin readme tells how to expose the helper to the user manager" {
+    run grep -F '~/.local/bin' "$PROJECT_ROOT/bin/README.md"
     assert_success
 }
