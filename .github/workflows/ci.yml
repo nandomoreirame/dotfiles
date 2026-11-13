@@ -40,7 +40,8 @@ jobs:
           set -eo pipefail
           shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests
           shopt -s nullglob
-          bins=(bin/*/*)
+          bins=(bin/*/* lib/*/*.sh)
+          [ ! -f bin/dotfiles ] || bins+=(bin/dotfiles)
           if [ "${#bins[@]}" -gt 0 ]; then
             shellcheck -x "${bins[@]}"
           fi

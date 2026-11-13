@@ -43,3 +43,14 @@ README, docs, comments and runtime messages are **English**. Identifiers stay En
 ## Pull requests
 
 Use the pull request template. Keep the change small, add tests with the feature, and leave `docs/` (specs, plans, reviews) untracked: that directory is local-only and fully gitignored. The only tracked files under `private/` are its two documents.
+
+## Conventions
+
+Bash modules resolve the clone when `DOTFILES` is unset:
+
+```bash
+: "${DOTFILES:=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+```
+
+Source code siblings relative to the module location; `DOTFILES` may point to a
+separate config tree. zsh has no `BASH_SOURCE`; shell configs set `DOTFILES` themselves.
