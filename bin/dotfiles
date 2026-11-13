@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Resolve code from the executable, even when DOTFILES selects a fixture config tree.
+_DOTFILES_EXECUTABLE=$(readlink -f -- "${BASH_SOURCE[0]}") || exit 1
+_DOTFILES_CODE_ROOT=$(cd "$(dirname "$_DOTFILES_EXECUTABLE")/.." && pwd) || exit 1
+export DOTFILES="${DOTFILES:-$_DOTFILES_CODE_ROOT}"
+# shellcheck source=lib/cli-parser.sh
+source "$_DOTFILES_CODE_ROOT/lib/cli-parser.sh" || exit 1
+_parse_command "$@"
