@@ -389,6 +389,8 @@ if before != after:
   if [[ -n "$removed_json" ]]; then
     # Atomic replace: write beside the index, then mv over it.
     tmp_index="$(mktemp "${index_file}.XXXXXX")"
+    # mktemp creates the file as 600; keep the original mode.
+    chmod --reference="$index_file" "$tmp_index"
     printf '%s\n' "$removed_json" > "$tmp_index"
     mv -f "$tmp_index" "$index_file"
     proj_name=$(basename "$project_dir")

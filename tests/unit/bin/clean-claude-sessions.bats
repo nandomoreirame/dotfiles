@@ -483,6 +483,23 @@ print('ok')
     assert_output --partial "ok"
 }
 
+@test "sessions-index.json: file mode is preserved" {
+    local session_id="55555555-a026-a026-a026-000000000027"
+    local project_dir="$PROJECTS_DIR/-srv-example-mode"
+    mkdir -p "$project_dir"
+    _make_session_file "$project_dir/${session_id}.jsonl" "$(_days_ago 45)"
+    cat > "$project_dir/sessions-index.json" << EOF
+{"entries": [{"sessionId": "${session_id}"}, {"sessionId": "keep-this-one"}]}
+EOF
+    chmod 644 "$project_dir/sessions-index.json"
+
+    run bash "$SCRIPT" --all --yes
+    assert_success
+
+    run stat -c '%a' "$project_dir/sessions-index.json"
+    assert_output "644"
+}
+
 @test "sessions-index.json absent: no error" {
     local session_id="77777777-a028-a028-a028-000000000028"
     local project_dir="$PROJECTS_DIR/-srv-example-noindex"
