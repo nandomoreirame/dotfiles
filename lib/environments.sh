@@ -10,7 +10,6 @@ export ZSH_CUSTOM="$ZSH/custom"
 export ZSH_PLUGINS="$ZSH_CUSTOM/plugins"
 export ZSH_THEMES="$ZSH_CUSTOM/themes"
 export TMP_DIR="$DOTFILES/.tmp"
-mkdir -p "$TMP_DIR"
 
 # ============================================
 # Set Colors
@@ -25,16 +24,17 @@ export green
 export tan
 export blue
 
-bold=$(tput bold)
-underline=$(tput sgr 0 1)
-reset=$(tput sgr0)
-
-purple=$(tput setaf 171)
-red=$(tput setaf 1)
-green=$(tput setaf 76)
-tan=$(tput setaf 3)
-blue=$(tput setaf 38)
-
+bold='' underline='' reset='' purple='' red='' green='' tan='' blue=''
+if [ -n "${TERM:-}" ] && [ "$TERM" != dumb ] && command -v tput >/dev/null 2>&1; then
+    bold=$(tput bold 2>/dev/null) || bold=''
+    underline=$(tput smul 2>/dev/null) || underline=''
+    reset=$(tput sgr0 2>/dev/null) || reset=''
+    purple=$(tput setaf 171 2>/dev/null) || purple=''
+    red=$(tput setaf 1 2>/dev/null) || red=''
+    green=$(tput setaf 76 2>/dev/null) || green=''
+    tan=$(tput setaf 3 2>/dev/null) || tan=''
+    blue=$(tput setaf 38 2>/dev/null) || blue=''
+fi
 
 # ============================================
 # Operating system detection
