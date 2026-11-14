@@ -29,7 +29,6 @@ teardown() {
 # ============================================
 
 @test "profiles loader defines every profile function" {
-    skip "needs tasks 2 and 3"
     export DOTFILES="$ROOT"
     run bash -c "source '$ROOT/lib/profiles.sh'; for f in profile_list profile_show profile_switch profile_create profile_edit profile_delete profile_export profile_import profile_validate profile_load profile_switch_git profile_switch_gcloud; do declare -F \$f >/dev/null || { echo missing \$f; exit 1; }; done"
     [ "$status" -eq 0 ]
