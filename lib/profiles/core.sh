@@ -352,7 +352,7 @@ profile_create() {
         echo "# Optional GPG settings"
         echo "# GIT_GPG_PROGRAM=\"/usr/bin/gpg\""
         echo "# GIT_GPG_FORMAT=\"ssh\"  # or \"openpgp\""
-        echo "# GIT_GPG_SSH_PROGRAM=\"/opt/1Password/op-ssh-sign\""
+        echo "# GIT_GPG_SSH_PROGRAM=\"/usr/local/bin/op-ssh-sign\""
         echo "# GIT_GPG_ALLOWED_SIGNERS=\"~/.config/git/allowed_signers\""
     } > "$PROFILES_DIR/$profile_name/git.conf"
 
