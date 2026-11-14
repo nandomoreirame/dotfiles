@@ -5,7 +5,7 @@
 bat curl git ncdu zsh vim bind-tools gnupg wget aria2 shellcheck wl-clipboard fzf ripgrep unzip fontconfig git-delta base-devel github-cli pacman-contrib bash-completion duf plocate pkgfile zoxide eza mise reflector rebuild-detector
 
 ## shell
-ghostty btop glances fastfetch
+ghostty btop glances fastfetch zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k
 
 ## containers
 podman podman-docker podman-compose fuse-overlayfs flatpak

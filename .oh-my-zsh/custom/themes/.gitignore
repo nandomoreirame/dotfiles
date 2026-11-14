@@ -1,0 +1,3 @@
+# Keep this directory empty; powerlevel10k comes from the Arch package.
+*
+!.gitignore
