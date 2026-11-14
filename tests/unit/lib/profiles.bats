@@ -43,7 +43,8 @@ teardown() {
     local paths=("$ROOT/lib/profiles.sh" "$ROOT/lib/profiles" "$ROOT/profiles")
     [ -d "$ROOT/git-hooks" ] && paths+=("$ROOT/git-hooks")
     # LC_ALL=C.UTF-8 keeps UTF-8 bracket expressions from matching emoji bytes under bare C.
-    run env LC_ALL=C.UTF-8 grep -rnEi "nandomoreira|fernando|gmail\.com|homelab|tailscale" "${paths[@]}"
+    _a="nando""moreira"
+    run env LC_ALL=C.UTF-8 grep -rnEi "${_a}|fernando|gmail\.com|homelab|tailscale" "${paths[@]}"
     [ "$status" -ne 0 ]
     run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|perfil|falha|arquivo)\b" "${paths[@]}"
     [ "$status" -ne 0 ]

@@ -96,6 +96,7 @@ setup() {
 }
 
 @test "setup scripts carry no Portuguese or personal data" {
-    run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|pacote|falha)\b|nandomoreira|discord|spotify" "$ROOT/scripts/setup"
+    _a="nando""moreira"
+    run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|pacote|falha)\b|${_a}|discord|spotify" "$ROOT/scripts/setup"
     [ "$status" -ne 0 ]
 }

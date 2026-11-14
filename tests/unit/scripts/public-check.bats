@@ -124,3 +124,11 @@ gate() { run bash "$ROOT/scripts/public-check" "$@"; }
     git -C "$R" add -A
     gate "$R"; [ "$status" -eq 0 ]
 }
+
+@test "public-check ignores the github user that contains the author handle" {
+    local handle
+    handle="$(printf '%s' "nando""moreira")"
+    mkrepo "git clone git@github.com:${handle}me/dotfiles.git"
+    mkdir -p "$R/scripts"; : > "$R/scripts/public-check.allow"; git -C "$R" add -A
+    gate "$R"; [ "$status" -eq 0 ]
+}

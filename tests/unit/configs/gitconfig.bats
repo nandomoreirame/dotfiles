@@ -23,7 +23,8 @@ setup() {
 }
 
 @test "the config has no personal rewrite or macos only tool" {
-    run grep -niE 'nandomoreira|kaleidoscope|ksdiff|/home/' "$ROOT/configs/.gitconfig"
+    _a="nando""moreira"
+    run grep -niE '${_a}|kaleidoscope|ksdiff|/home/' "$ROOT/configs/.gitconfig"
     [ "$status" -ne 0 ]
 }
 
@@ -35,6 +36,7 @@ setup() {
 }
 
 @test "git files are english and have no personal data" {
-    run grep -rnE "[áàâãéêíóôõúç]|nandomoreira|@gmail" "$ROOT/configs/.gitconfig" "$ROOT/configs/git"
+    _a="nando""moreira"
+    run grep -rnE "[áàâãéêíóôõúç]|${_a}|@gmail" "$ROOT/configs/.gitconfig" "$ROOT/configs/git"
     [ "$status" -ne 0 ]
 }

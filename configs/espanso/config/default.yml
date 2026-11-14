@@ -1,0 +1,20 @@
+# espanso global config (linked to ~/.config/espanso by `dotfiles links`)
+# Docs: https://espanso.org/docs/configuration/options/
+
+# Outside GNOME/KDE espanso cannot detect the keyboard layout on Wayland.
+# Mirror the xkb block in configs/niri/config.kdl; keep both in sync.
+keyboard_layout:
+  layout: "us,br"
+  variant: "intl,"
+
+# Paste through the clipboard instead of injecting keystrokes: with the
+# us-intl dead keys, an injected ' or " followed by a letter composes an
+# accented character (e.g. 'c becomes ç). The clipboard is restored afterwards.
+backend: Clipboard
+preserve_clipboard: true
+
+# Alt+Space is the Niri layout toggle (grp:alt_space_toggle); the default
+# search shortcut would collide with it.
+search_shortcut: off
+
+show_notifications: false

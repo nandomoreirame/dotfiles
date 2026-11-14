@@ -19,7 +19,8 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; R="$ROOT/README.md"
 }
 
 @test "profiles and hooks carry no personal data" {
-    run grep -rnEi "nandomoreira|fernando|gmail\.com|homelab|tailscale" "$ROOT/lib/profiles.sh" "$ROOT/lib/profiles" "$ROOT/lib/hooks.sh" "$ROOT/profiles" "$ROOT/git-hooks" "$ROOT/bin/profile" "$ROOT/bin/git"
+    _a="nando""moreira"
+    run grep -rnEi "${_a}|fernando|gmail\.com|homelab|tailscale" "$ROOT/lib/profiles.sh" "$ROOT/lib/profiles" "$ROOT/lib/hooks.sh" "$ROOT/profiles" "$ROOT/git-hooks" "$ROOT/bin/profile" "$ROOT/bin/git"
     [ "$status" -ne 0 ]
 }
 

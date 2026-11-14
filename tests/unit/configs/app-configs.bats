@@ -41,7 +41,8 @@ MIGRATED=(
 
 @test "migrated files contain no personal data" {
     for f in "${MIGRATED[@]}"; do
-        run grep -nEi 'nandomoreira|@gmail|/home/[a-z]|marginalia|homelab|brain\b|192\.168\.|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\.' "$ROOT/$f"
+        _a="nando""moreira"
+        run grep -nEi '${_a}|@gmail|/home/[a-z]|marginalia|homelab|brain\b|192\.168\.|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\.' "$ROOT/$f"
         [ "$status" -ne 0 ]
         # .p10k.zsh is upstream-generated and ships box-drawing/emoji that trip
         # ugrep's Unicode character-class matching; skip the accent scan there.

@@ -1,0 +1,70 @@
+# Expressions and jokes (iPhone text replacements).
+
+matches:
+  - trigger: ".kk"
+    left_word: true
+    replace: "kkkkkkkkkkkkkkkkkkkkkkkkk"
+
+  - trigger: ".hua"
+    left_word: true
+    replace: "HUAHUAHUAHUAHUAHUAHUAHUAHUAHUA"
+
+  - trigger: ".hue"
+    left_word: true
+    replace: "HUEHUEHUEHUEHUEHUEHUEHUEHUEHUE"
+
+  - trigger: ".huea"
+    left_word: true
+    replace: "huaehuaehuaehuaehuaehueahuaehuaehuae"
+
+  - trigger: ".flip"
+    left_word: true
+    replace: "(╯°□°)╯︵ ┻━┻"
+
+  - trigger: ".ue"
+    left_word: true
+    replace: '¯\_(ツ)_/¯'
+
+  - trigger: ".tdb"
+    left_word: true
+    replace: "tudo bom"
+
+  - trigger: ".tmj"
+    left_word: true
+    replace: "tamo junto"
+
+  - trigger: ".pz"
+    left_word: true
+    replace: "poizé"
+
+  - trigger: ".turu"
+    left_word: true
+    replace: "turupom"
+
+  - trigger: ".mds"
+    left_word: true
+    replace: "MELDELS"
+
+  - trigger: ".wtf"
+    left_word: true
+    replace: "what the fuck"
+
+  - trigger: ".mon"
+    left_word: true
+    replace: "mon amour"
+
+  - trigger: ".dolce"
+    left_word: true
+    replace: "Dolce far niente"
+
+  - trigger: ".gato"
+    left_word: true
+    replace: "gato de schrodinger"
+
+  - trigger: ".chap"
+    left_word: true
+    replace: "CHAPARADALHAÇO"
+
+  - triggers: [".lb", ".luba"]
+    left_word: true
+    replace: "luba luba dub dub"

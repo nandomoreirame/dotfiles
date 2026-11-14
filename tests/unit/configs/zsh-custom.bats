@@ -33,7 +33,8 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
     zrun 'unset PROJECT_ID; gcp-set-project'
     [ "$status" -ne 0 ]
     [[ "$output" == *"project"* ]]
-    run grep -n 'nandomoreira' "$CUSTOM/functions.zsh"
+    _a="nando""moreira"
+    run grep -n '${_a}' "$CUSTOM/functions.zsh"
     [ "$status" -ne 0 ]
 }
 

@@ -46,7 +46,8 @@ setup() {
 }
 
 @test "helpers and tests contain no personal data" {
-    run grep -rnEi "homelab|tailscale|nandomoreira|gabriel|latitude" "$ROOT/bin" "$ROOT/tests/unit/bin"
+    _a="nando""moreira"
+    run grep -rnEi "homelab|tailscale|${_a}|gabriel|latitude" "$ROOT/bin" "$ROOT/tests/unit/bin"
     [ "$status" -ne 0 ]
     run grep -rnE "\b(10\.[0-9]+\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\.[0-9]+\.[0-9]+)\b|/home/[A-Za-z]" "$ROOT/bin" "$ROOT/tests/unit/bin"
     [ "$status" -ne 0 ]

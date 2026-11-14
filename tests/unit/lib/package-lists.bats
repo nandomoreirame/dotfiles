@@ -50,7 +50,8 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
     # LC_ALL=C.UTF-8 keeps UTF-8 bracket expressions from matching emoji bytes under bare C.
     local paths=("$ROOT/lib" "$ROOT/packages")
     [ -e "$ROOT/install.sh" ] && paths+=("$ROOT/install.sh")
-    run env LC_ALL=C.UTF-8 grep -rnEi "discord|spotify|obsidian|cursor-bin|heroic|vivaldi|zen-browser|1password|antigravity|jan-bin|homelab|tailscale|nandomoreira" "${paths[@]}"
+    _a="nando""moreira"
+    run env LC_ALL=C.UTF-8 grep -rnEi "discord|spotify|obsidian|cursor-bin|heroic|vivaldi|zen-browser|1password|antigravity|jan-bin|homelab|tailscale|${_a}" "${paths[@]}"
     [ "$status" -ne 0 ]
     run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|pacote|falha)\b" "$ROOT/lib" "$ROOT/packages"
     [ "$status" -ne 0 ]

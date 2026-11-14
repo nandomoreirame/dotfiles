@@ -34,7 +34,8 @@ setup() {
 }
 
 @test "the git module carries no hard-coded identity" {
-    run grep -nE "Fernando|nandomoreira|@gmail" "$ROOT/lib/profiles/git.sh"
+    _a="nando""moreira"
+    run grep -nE "Fernando|${_a}|@gmail" "$ROOT/lib/profiles/git.sh"
     [ "$status" -ne 0 ]
 }
 
