@@ -70,8 +70,8 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
     run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" PATH="/usr/bin:/bin" TERM=xterm-256color \
         bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh'; _create_links all >/dev/null; _status"
     [ "$status" -ne 0 ]
-    [[ "$output" == *"Missing PATH entry: $DOTFILES/bin"* ]]
-    [[ "$output" == *"Missing PATH entry: $DOTFILES/bin/sys"* ]]
+    grep -Fxq "Missing PATH entry: $DOTFILES/bin" <<< "$output"
+    grep -Fxq "Missing PATH entry: $DOTFILES/bin/sys" <<< "$output"
 }
 
 @test "status passes when the bin directories are on PATH" {
@@ -79,5 +79,6 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
     run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" PATH="$DOTFILES/bin:$DOTFILES/bin/sys:/usr/bin:/bin" TERM=xterm-256color \
         bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh'; _create_links all >/dev/null; _status"
     [ "$status" -eq 0 ]
-    [[ "$output" == *"ok: PATH contains $DOTFILES/bin/sys"* ]]
+    grep -Fxq "ok: PATH contains $DOTFILES/bin" <<< "$output"
+    grep -Fxq "ok: PATH contains $DOTFILES/bin/sys" <<< "$output"
 }
