@@ -28,6 +28,7 @@ _help() {
         '  setup:run          Run one setup script by name' \
         '  init               Write local git identity to ~/.gitconfig.local' \
         '  doctor             Check prerequisites, links, packages and identity' \
+        '  install            Run the new-machine install flow' \
         '  --status           Check links, PATH and environment variables' \
         '  --verify           Verify every configured link' \
         '  --help, -h         Show this help' \

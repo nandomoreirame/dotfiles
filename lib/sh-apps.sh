@@ -69,7 +69,7 @@ _install_ohmyzsh() {
     e_header "Installing oh-my-zsh"
 
     if [ "${DOTFILES_NO_REMOTE:-0}" = 1 ]; then
-        e_warning "Skipping oh-my-zsh download (--no-remote / DOTFILES_NO_REMOTE=1)"
+        e_warning "Skipping oh-my-zsh (--no-remote / DOTFILES_NO_REMOTE=1)"
         return 0
     fi
 

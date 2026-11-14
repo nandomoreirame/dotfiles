@@ -174,7 +174,18 @@ declare -gA _DOTFILES_MODULES=(
     [setup]=_setup_module
     [init]=_init_module
     [doctor]=_doctor_module
+    [install]=_install_module
 )
+
+_install_module() {
+    # shellcheck source=lib/install.sh
+    source "${BASH_SOURCE[0]%/*}/install.sh"
+    _cli_parse_pkg_flags "$@" || return $?
+    if [ -n "${_CLI_GROUP:-}" ]; then
+        export DOTFILES_INSTALL_GROUP="$_CLI_GROUP"
+    fi
+    _dotfiles_install
+}
 
 _init_module() {
     # shellcheck source=lib/init.sh

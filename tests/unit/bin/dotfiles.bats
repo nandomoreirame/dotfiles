@@ -32,7 +32,7 @@ setup() {
     for c in profile; do
         [[ "$output" != *"$c"* ]]
     done
-    for c in pacman:install apps:install fonts:install setup init doctor; do
+    for c in pacman:install apps:install fonts:install setup init doctor install; do
         [[ "$output" == *"$c"* ]]
     done
 }
