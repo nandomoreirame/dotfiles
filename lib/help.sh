@@ -26,6 +26,8 @@ _help() {
         '  apps:install       Run pacman, AUR, Flatpak, Node, sh and langs' \
         '  setup              Run auto setup scripts from the registry' \
         '  setup:run          Run one setup script by name' \
+        '  init               Write local git identity to ~/.gitconfig.local' \
+        '  doctor             Check prerequisites, links, packages and identity' \
         '  --status           Check links, PATH and environment variables' \
         '  --verify           Verify every configured link' \
         '  --help, -h         Show this help' \

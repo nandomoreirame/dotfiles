@@ -28,11 +28,11 @@ setup() {
 
 @test "help lists only implemented commands" {
     CLI --help
-    # Install and setup are registered; later commands stay hidden.
-    for c in profile init doctor; do
+    # Install, setup, init and doctor are registered; profile arrives in 2c.
+    for c in profile; do
         [[ "$output" != *"$c"* ]]
     done
-    for c in pacman:install apps:install fonts:install setup; do
+    for c in pacman:install apps:install fonts:install setup init doctor; do
         [[ "$output" == *"$c"* ]]
     done
 }

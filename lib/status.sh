@@ -58,6 +58,24 @@ _check_environment() {
     return "$failed"
 }
 
+_check_installed_packages() {
+    # shellcheck source=lib/package-lists.sh
+    source "${BASH_SOURCE[0]%/*}/package-lists.sh"
+    local pack missing=0 total=0
+    while IFS= read -r pack || [ -n "$pack" ]; do
+        [ -n "$pack" ] || continue
+        total=$((total + 1))
+        if pacman -Q "$pack" &>/dev/null; then
+            printf 'ok: package %s\n' "$pack"
+        else
+            printf 'Missing package: %s\n' "$pack"
+            missing=$((missing + 1))
+        fi
+    done < <(_package_list pacman)
+    printf 'Packages: %d checked, %d missing\n' "$total" "$missing"
+    [ "$missing" -eq 0 ]
+}
+
 _status() {
     local failed=0
     printf '%s\n' 'Dotfiles Status' 'Links'
@@ -66,6 +84,8 @@ _status() {
     _check_scripts || failed=1
     printf '%s\n' 'Environment'
     _check_environment || failed=1
+    printf '%s\n' 'Packages'
+    _check_installed_packages || failed=1
     printf 'Status: %s\n' "$([ "$failed" -eq 0 ] && printf ok || printf failed)"
     return "$failed"
 }

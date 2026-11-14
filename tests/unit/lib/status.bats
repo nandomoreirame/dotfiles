@@ -60,8 +60,21 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
     [[ "$output" == *"Status"* ]]
 }
 
-@test "status does not mention packages or profiles yet" {
-    run grep -nE '_check_installed_packages|_check_profile' "$ROOT/lib/status.sh"
+@test "status reports packages from the lists" {
+    mkdir -p "$DOTFILES/packages"
+    printf '## core\nbat\n' > "$DOTFILES/packages/pacman.list"
+    STUBS="$BATS_TEST_TMPDIR/stubs"; mkdir -p "$STUBS"
+    printf '#!/bin/sh\n[ "$1" = "-Q" ] && [ "$2" = "bat" ] && exit 0\nexit 1\n' > "$STUBS/pacman"
+    chmod +x "$STUBS/pacman"
+    bash -c "source '$ROOT/lib/links.sh'; _link_files; _link_paths" >/dev/null
+    run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" PATH="$STUBS:/usr/bin:/bin" TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/status.sh'; _check_installed_packages"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok: package bat"* ]]
+}
+
+@test "status does not mention profiles yet" {
+    run grep -nE '_check_profile' "$ROOT/lib/status.sh"
     [ "$status" -ne 0 ]
 }
 

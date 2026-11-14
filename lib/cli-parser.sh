@@ -172,7 +172,23 @@ declare -gA _DOTFILES_MODULES=(
     [fonts]=_fonts_module
     [apps]=_apps_module
     [setup]=_setup_module
+    [init]=_init_module
+    [doctor]=_doctor_module
 )
+
+_init_module() {
+    # shellcheck source=lib/init.sh
+    source "${BASH_SOURCE[0]%/*}/init.sh"
+    _cli_parse_pkg_flags "$@" || return $?
+    _dotfiles_init
+}
+
+_doctor_module() {
+    # shellcheck source=lib/doctor.sh
+    source "${BASH_SOURCE[0]%/*}/doctor.sh"
+    _cli_parse_pkg_flags "$@" || return $?
+    _doctor
+}
 
 _pacman_module() {
     case "${1:-}" in
