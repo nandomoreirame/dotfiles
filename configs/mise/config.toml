@@ -1,0 +1,13 @@
+[tools]
+bun = "latest"
+go = "latest"
+java = "latest"
+node = "lts"
+npm = "latest"
+"npm:firebase-tools" = "15.19.0"
+pnpm = "latest"
+poetry = "latest"
+python = "3.12"
+rust = "latest"
+uv = "latest"
+yarn = "1"
