@@ -1,4 +1,4 @@
-# ~/.bashrc — interactive bash settings for this clone.
+# ~/.bashrc: interactive bash settings for this clone.
 
 if [[ -n "$BASH_VERSION" ]]; then
   # Prefer an exported DOTFILES; otherwise derive it from this file (follows symlinks).

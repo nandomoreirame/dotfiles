@@ -11,10 +11,18 @@ MIGRATED=(
 )
 
 @test "every migrated config is listed in links.conf" {
-    for f in configs/.zshenv configs/.zshrc configs/.bashrc configs/.profile configs/.p10k.zsh configs/.gitconfig \
-             configs/btop/btop.conf configs/glow/glow.yml configs/lazygit configs/starship.toml configs/mise/config.toml \
-             configs/git/ignore configs/git/attributes configs/git/message; do
-        grep -qE "^(\.[A-Za-z0-9_.]+$|${f//./\\.})" "$ROOT/configs/links.conf" || grep -q "$(basename "$f")" "$ROOT/configs/links.conf"
+    local entry
+    for f in "${MIGRATED[@]}"; do
+        case "$f" in
+            configs/lazygit/config.yml) entry="configs/lazygit" ;;
+            configs/.*) entry="${f#configs/}" ;;
+            *) entry="$f" ;;
+        esac
+        if [[ "$entry" == .* ]]; then
+            grep -qxF "$entry" "$ROOT/configs/links.conf"
+        else
+            grep -qE "^${entry//./\\.}[[:space:]]*\\|" "$ROOT/configs/links.conf" || grep -qxF "$entry" "$ROOT/configs/links.conf"
+        fi
     done
 }
 
