@@ -1,19 +1,19 @@
 # Helper scripts
 
 `bin/dotfiles` is the CLI core: `links`, `--status`, `--verify`, `--help` and
-`--version`. Add `<clone>/bin` to PATH to use it; no elevated privileges are needed.
+`--version`. Add the three directories below to PATH to use it (`dotfiles --status` checks them); no elevated privileges are needed.
 
 
 Optional helpers under `bin/sys/` and `bin/utils/`. Nothing here is required by the rest of the repository; each script is standalone and covered by its own BATS file.
 
 ## PATH
 
-Add the helper directories to your PATH (replace the clone path as needed):
+Add `bin` and the helper directories to your PATH (replace the clone path as needed):
 
 ```bash
-export PATH="$PATH:/path/to/dotfiles/bin/sys:/path/to/dotfiles/bin/utils"
+export PATH="$PATH:/path/to/dotfiles/bin:/path/to/dotfiles/bin/sys:/path/to/dotfiles/bin/utils"
 # or, when DOTFILES points at the clone:
-export PATH="$PATH:$DOTFILES/bin/sys:$DOTFILES/bin/utils"
+export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils"
 ```
 
 ## Helpers

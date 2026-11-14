@@ -6,7 +6,7 @@ _prompt_available() {
     if [ -t 0 ] || [ "${DOTFILES_PROMPT_STDIN:-0}" = 1 ]; then
         return 0
     fi
-    printf '%s\n' 'No terminal input; use --yes for automatic answers.' >&2
+    printf '%s\n' 'No terminal input; set DOTFILES_YES=1 for automatic answers.' >&2
     return 1
 }
 

@@ -30,7 +30,7 @@ _parse_config_section() {
 }
 
 _link_relative_path() {
-    case "$1" in ''|/*|.|..|../*|*/../*|*/..|*$'\n'*|*$'\r'*) return 1 ;; esac
+    case "$1" in ''|/*|.|..|../*|*/../*|*/..|./*|*/./*|*/.|*$'\n'*|*$'\r'*) return 1 ;; esac
 }
 
 # Both creation and verification consume this ordered, deduplicated mapping.

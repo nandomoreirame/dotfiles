@@ -336,3 +336,28 @@ EOF
     [ "$status" -eq 0 ]
     [ "$(readlink "$HOME/.external")" = "$DOTFILES_PRIVATE/source" ]
 }
+
+@test "[paths:arch] entries link only on Arch" {
+    echo data > "$DOTFILES/configs/arch-only"
+    printf '[paths]\n[paths:arch]\nconfigs/arch-only | .config/arch-only |\n' > "$LINKS_CONFIG"
+    DOTFILES_IS_ARCH=false run _link_paths
+    [ "$status" -eq 0 ]
+    [ ! -e "$HOME/.config/arch-only" ]
+    DOTFILES_IS_ARCH=true run _link_paths
+    [ "$status" -eq 0 ]
+    [ -L "$HOME/.config/arch-only" ]
+}
+
+@test "a dot segment in a source or target is rejected" {
+    echo data > "$DOTFILES/configs/source"
+    printf '[paths]\nconfigs/./source | .config/x |\n' > "$LINKS_CONFIG"
+    run _link_paths
+    [ "$status" -ne 0 ]
+    printf '[paths]\nconfigs/source | ./x |\n' > "$LINKS_CONFIG"
+    run _link_paths
+    [ "$status" -ne 0 ]
+    printf '[paths]\nconfigs/source | .config/./x |\n' > "$LINKS_CONFIG"
+    run _link_paths
+    [ "$status" -ne 0 ]
+    [ ! -e "$HOME/x" ]
+}

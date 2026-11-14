@@ -64,3 +64,20 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
     run grep -nE '_check_installed_packages|_check_profile' "$ROOT/lib/status.sh"
     [ "$status" -ne 0 ]
 }
+
+@test "status fails and names a bin directory missing from PATH" {
+    mkdir -p "$DOTFILES/bin/sys"
+    run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" PATH="/usr/bin:/bin" TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh'; _create_links all >/dev/null; _status"
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Missing PATH entry: $DOTFILES/bin"* ]]
+    [[ "$output" == *"Missing PATH entry: $DOTFILES/bin/sys"* ]]
+}
+
+@test "status passes when the bin directories are on PATH" {
+    mkdir -p "$DOTFILES/bin/sys"
+    run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" PATH="$DOTFILES/bin:$DOTFILES/bin/sys:/usr/bin:/bin" TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh'; _create_links all >/dev/null; _status"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok: PATH contains $DOTFILES/bin/sys"* ]]
+}

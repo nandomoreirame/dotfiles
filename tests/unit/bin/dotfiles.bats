@@ -63,3 +63,7 @@ setup() {
     CLI links --all unexpected
     [ "$status" -ne 0 ]
 }
+
+@test "the bin README names every directory that status expects on PATH" {
+    grep -Fq '$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils' "$ROOT/bin/README.md"
+}

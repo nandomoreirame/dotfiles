@@ -45,3 +45,15 @@ p() { env -i HOME="$HOME" PATH="/usr/bin:/bin" "$@" bash -c "source '$ROOT/lib/p
     [ "$status" -eq 0 ]
     [[ "$output" == *"alpha"* ]]
 }
+
+@test "_confirm names DOTFILES_YES, not a missing flag, when there is no terminal" {
+    run timeout 5 env -i HOME="$HOME" PATH="/usr/bin:/bin" bash -c "source '$ROOT/lib/prompt.sh'; _confirm 'Proceed?' </dev/null"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"DOTFILES_YES=1"* ]]
+    [[ "$output" != *"--yes"* ]]
+}
+
+@test "_choose fails without hanging when stdin is not a terminal" {
+    run timeout 5 env -i HOME="$HOME" PATH="/usr/bin:/bin" bash -c "source '$ROOT/lib/prompt.sh'; _choose 'Pick one' alpha beta </dev/null"
+    [ "$status" -eq 1 ]
+}
