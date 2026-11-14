@@ -38,3 +38,12 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
     run git -C "$ROOT" ls-files docs
     [ -z "$output" ]
 }
+
+@test "real profile files are ignored and examples are not" {
+    for p in profiles/linux-arch/git-personal.conf profiles/linux-arch/git-work.conf profiles/linux-arch/gcloud-personal.conf profiles/.current profiles/.current-git; do
+        run git -C "$ROOT" check-ignore -q "$p"; [ "$status" -eq 0 ]
+    done
+    for p in profiles/linux-arch/git-personal.conf.example profiles/linux-arch/gcloud-work.conf.example profiles/linux-arch/env.conf profiles/linux-arch/shell.conf; do
+        run git -C "$ROOT" check-ignore -q "$p"; [ "$status" -ne 0 ]
+    done
+}

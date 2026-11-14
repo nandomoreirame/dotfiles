@@ -1,0 +1,11 @@
+# GCloud/Firebase configuration for the work account.
+# Copy this file to gcloud-work.conf and fill in your values.
+# The .conf file is NOT tracked in git.
+
+GCLOUD_ACCOUNT_NAME="Jane Dev"
+GCLOUD_ACCOUNT="jane@example.com"
+
+# Available projects (format: "project-id|Project Name")
+GCLOUD_PROJECTS=(
+    "your-project-id|Work Project"
+)

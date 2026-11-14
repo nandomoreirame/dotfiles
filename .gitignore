@@ -12,3 +12,11 @@
 *.local
 *.bak
 tests/.tmp/
+
+# Real profile identity files stay local; examples remain tracked.
+profiles/**/git-*.conf
+!profiles/**/git-*.conf.example
+profiles/**/gcloud-*.conf
+!profiles/**/gcloud-*.conf.example
+profiles/.current
+profiles/.current-*

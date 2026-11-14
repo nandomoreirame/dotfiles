@@ -1,0 +1,18 @@
+# Git identity for the work profile.
+# Copy this file to git-work.conf and fill in your values.
+# The .conf file is NOT tracked in git.
+
+GIT_NAME="Jane Dev"
+GIT_EMAIL="jane@example.com"
+
+# SSH signing (preferred)
+GIT_GPG_FORMAT="ssh"
+GIT_SIGNING_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExamplePublicKeyDataHere jane@example.com"
+
+# Optional: 1Password SSH agent for signing
+# GIT_GPG_SSH_PROGRAM="/opt/1Password/op-ssh-sign"
+
+# Traditional GPG signing (alternative)
+# GIT_GPG_KEY="YOUR_GPG_KEY_ID"
+# GIT_GPG_PROGRAM="/usr/bin/gpg"
+# GIT_GPG_FORMAT="openpgp"
