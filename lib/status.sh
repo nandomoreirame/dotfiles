@@ -76,6 +76,22 @@ _check_installed_packages() {
     [ "$missing" -eq 0 ]
 }
 
+_check_profile() {
+    local marker="${DOTFILES}/profiles/.current-git" current="" name=""
+    printf 'Profile\n'
+    if [ -f "$marker" ]; then
+        current=$(tr -d '\n' < "$marker")
+        name="${current#git-}"
+        name="${name%.conf}"
+    fi
+    if [ -n "$name" ]; then
+        printf 'ok: active identity %s\n' "$name"
+        return 0
+    fi
+    printf 'No active identity profile\n'
+    return 0
+}
+
 _status() {
     local fail_count=0
     printf '%s\n' 'Dotfiles Status' 'Links'
@@ -86,6 +102,7 @@ _status() {
     _check_environment || fail_count=1
     printf '%s\n' 'Packages'
     _check_installed_packages || fail_count=1
+    _check_profile || fail_count=1
     printf 'Status: %s\n' "$([ "$fail_count" -eq 0 ] && printf ok || printf failed)"
     return "$fail_count"
 }

@@ -11,15 +11,16 @@ Optional helpers under `bin/sys/` and `bin/utils/`. Nothing here is required by 
 Add `bin` and the helper directories to your PATH (replace the clone path as needed):
 
 ```bash
-export PATH="$PATH:/path/to/dotfiles/bin:/path/to/dotfiles/bin/sys:/path/to/dotfiles/bin/utils"
+export PATH="$PATH:/path/to/dotfiles/bin:/path/to/dotfiles/bin/sys:/path/to/dotfiles/bin/utils:/path/to/dotfiles/bin/git"
 # or, when DOTFILES points at the clone:
-export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils"
+export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES/bin/git"
 ```
 
 ## Helpers
 
 | Helper | Purpose | Usage | Needs | Privileges |
 |---|---|---|---|---|
+| `git-profile` | Thin wrapper around `dotfiles profile` for Git identity switching | `git-profile [--help]` / `git-profile <name>` | `dotfiles` | none |
 | `notify-open` | Notify about a file and open, reveal or trash it on click | `notify-open [-a app] <summary> <file> [body]` | `notify-send`, `xdg-open`, `gio` (optional `nautilus`) | none |
 | `video-to-gif` | Convert a screen recording to GIF and copy its path | `video-to-gif [input.mp4] [output.gif]`; with no args, uses the newest `recording_*.mp4` under `$XDG_VIDEOS/Recordings` (or `~/Videos/Recordings`) | `ffmpeg`, `notify-send`, `wl-copy` | none |
 | `espanso-hotplug` | Restart espanso after a keyboard is plugged in | `espanso-hotplug` (via udev + user unit) | `espanso`, `systemctl` | none (user systemd). Install the udev rule under `/etc/udev/rules.d/`, the unit under `~/.config/systemd/user/`, and link the helper where the user manager finds it: `ln -s "$DOTFILES/bin/utils/espanso-hotplug" ~/.local/bin/espanso-hotplug` (the unit calls `%h/.local/bin/espanso-hotplug`; it does not see your shell PATH). |

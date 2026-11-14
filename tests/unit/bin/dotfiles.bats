@@ -28,11 +28,7 @@ setup() {
 
 @test "help lists only implemented commands" {
     CLI --help
-    # Install, setup, init and doctor are registered; profile arrives in 2c.
-    for c in profile; do
-        [[ "$output" != *"$c"* ]]
-    done
-    for c in pacman:install apps:install fonts:install setup init doctor install; do
+    for c in pacman:install apps:install fonts:install setup init doctor install profile; do
         [[ "$output" == *"$c"* ]]
     done
 }
@@ -69,5 +65,5 @@ setup() {
 }
 
 @test "the bin README names every directory that status expects on PATH" {
-    grep -Fq '$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils' "$ROOT/bin/README.md"
+    grep -Fq '$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES/bin/git' "$ROOT/bin/README.md"
 }

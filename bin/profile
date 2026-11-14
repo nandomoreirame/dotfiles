@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOTFILES="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+
+_profile_usage() {
+    cat <<'EOF'
+Usage: profile [list|show|switch <name>|create|edit|delete|export|import|validate] ...
+       profile <name>   # convenience: switch to <name>
+
+Delegates to: dotfiles profile ...
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    _profile_usage
+    exit 0
+fi
+
+# Convenience: `profile <name>` with no subcommand means switch.
+if [[ $# -eq 1 && "$1" != -* ]]; then
+    case "$1" in
+        list|show|switch|create|edit|delete|export|import|validate) ;;
+        *)
+            exec "$DOTFILES/bin/dotfiles" profile switch "$1"
+            ;;
+    esac
+fi
+
+exec "$DOTFILES/bin/dotfiles" profile "$@"

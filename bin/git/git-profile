@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+DOTFILES="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+_git_profile_usage() {
+    cat <<'EOF'
+Usage: git-profile [list|show|switch <name>|...]
+       git-profile <name>   # convenience: switch to <name>
+
+Delegates to: dotfiles profile ...
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    _git_profile_usage
+    exit 0
+fi
+
+exec "$DOTFILES/bin/profile" "$@"

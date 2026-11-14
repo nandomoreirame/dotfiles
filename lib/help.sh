@@ -29,6 +29,16 @@ _help() {
         '  init               Write local git identity to ~/.gitconfig.local' \
         '  doctor             Check prerequisites, links, packages and identity' \
         '  install            Run the new-machine install flow' \
+        '  profile list       List Git identity short names' \
+        '  profile switch     Switch Git identity (and gcloud when configured)' \
+        '  profile show       Show the active identity profile' \
+        '  profile create     Create a directory-based profile' \
+        '  profile edit       Edit a directory-based profile' \
+        '  profile delete     Delete a directory-based profile' \
+        '  profile export     Export a directory-based profile' \
+        '  profile import     Import a directory-based profile' \
+        '  profile validate   Validate an identity profile file' \
+        '  hooks              Opt-in Git hooks (not yet enabled)' \
         '  --status           Check links, PATH and environment variables' \
         '  --verify           Verify every configured link' \
         '  --help, -h         Show this help' \

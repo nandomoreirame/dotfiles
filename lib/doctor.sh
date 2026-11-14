@@ -78,6 +78,24 @@ _doctor_identity() {
     return 1
 }
 
+_doctor_profile() {
+    local marker="${DOTFILES}/profiles/.current-git" current="" name="" conf=""
+    if [ ! -f "$marker" ]; then
+        printf 'profile: no active identity\n'
+        return 0
+    fi
+    current=$(tr -d '\n' < "$marker")
+    name="${current#git-}"
+    name="${name%.conf}"
+    conf="${DOTFILES}/profiles/linux-arch/${current}"
+    if [ -z "$name" ] || [ ! -f "$conf" ]; then
+        printf 'profile: active identity %s is missing (%s)\n' "${name:-unknown}" "$conf"
+        return 1
+    fi
+    printf 'profile: ok (active identity %s)\n' "$name"
+    return 0
+}
+
 _doctor() {
     local fail_count=0
     e_header "dotfiles doctor"
@@ -85,6 +103,7 @@ _doctor() {
     _doctor_links || fail_count=1
     _doctor_packages || fail_count=1
     _doctor_identity || fail_count=1
+    _doctor_profile || fail_count=1
     if [ "$fail_count" -eq 0 ]; then
         e_success "doctor: all checks passed"
     else

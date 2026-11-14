@@ -63,3 +63,23 @@ run_doc() {
     [ "$status" -ne 0 ]
     [[ "$output" == *"missing-pkg"* ]]
 }
+
+@test "doctor reports the active identity profile" {
+    mkdir -p "$DOTFILES/profiles/linux-arch" "$DOTFILES/lib"
+    cp -r "$ROOT/lib/." "$DOTFILES/lib/"
+    printf 'GIT_NAME="Jane Dev"\nGIT_EMAIL="jane@example.com"\n' \
+        > "$DOTFILES/profiles/linux-arch/git-personal.conf"
+    printf 'git-personal.conf\n' > "$DOTFILES/profiles/.current-git"
+    run_doc
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"personal"* ]]
+}
+
+@test "doctor fails when the active profile config is gone" {
+    mkdir -p "$DOTFILES/profiles/linux-arch" "$DOTFILES/lib"
+    cp -r "$ROOT/lib/." "$DOTFILES/lib/"
+    printf 'git-personal.conf\n' > "$DOTFILES/profiles/.current-git"
+    run_doc
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"personal"* ]] || [[ "$output" == *"profile"* ]]
+}

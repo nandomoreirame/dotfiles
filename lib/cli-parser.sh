@@ -161,6 +161,160 @@ _setup_module() {
     esac
 }
 
+_profile_cli_load() {
+    # shellcheck source=lib/output.sh
+    source "${BASH_SOURCE[0]%/*}/output.sh"
+    # shellcheck source=lib/profiles.sh
+    source "${BASH_SOURCE[0]%/*}/profiles.sh"
+}
+
+_profile_cli_list_identities() {
+    local dir file base name
+    dir="${PROFILES_DIR:?}/linux-arch"
+    if [ ! -d "$dir" ]; then
+        _cli_error "No identity profiles under $dir"
+        return 1
+    fi
+    printf 'Identity profiles:\n'
+    while IFS= read -r -d '' file; do
+        base=$(basename "$file")
+        name="${base#git-}"
+        name="${name%.conf}"
+        printf '  %s\n' "$name"
+    done < <(find "$dir" -maxdepth 1 -name 'git-*.conf' -type f -print0 2>/dev/null | sort -z)
+}
+
+_profile_cli_active_identity() {
+    local current=""
+    if [ -f "${CURRENT_GIT_CONFIG_FILE:-}" ]; then
+        current=$(tr -d '\n' < "$CURRENT_GIT_CONFIG_FILE")
+    fi
+    current="${current#git-}"
+    current="${current%.conf}"
+    printf '%s\n' "$current"
+}
+
+_profile_cli_show_identity() {
+    local name="${1:-}" conf
+    if [ -z "$name" ]; then
+        name="$(_profile_cli_active_identity)"
+        if [ -z "$name" ]; then
+            _cli_error "No active identity profile"
+            return 1
+        fi
+    fi
+    conf="${PROFILES_DIR:?}/linux-arch/git-${name}.conf"
+    if [ ! -f "$conf" ]; then
+        _cli_error "Identity profile '$name' not found"
+        return 1
+    fi
+    printf 'Active identity: %s\n' "$name"
+    if _profile_validate_config_file "$conf"; then
+        # shellcheck source=/dev/null
+        source "$conf" 2>/dev/null || true
+        printf '  name:  %s\n' "${GIT_NAME:-not configured}"
+        printf '  email: %s\n' "${GIT_EMAIL:-not configured}"
+    fi
+    return 0
+}
+
+_profile_cli_validate_identity() {
+    local name="${1:-}" conf
+    if [ -z "$name" ]; then
+        name="$(_profile_cli_active_identity)"
+        if [ -z "$name" ]; then
+            _cli_error "Usage: dotfiles profile validate <name>"
+            return 1
+        fi
+    fi
+    conf="${PROFILES_DIR:?}/linux-arch/git-${name}.conf"
+    if [ ! -f "$conf" ]; then
+        _cli_error "Identity profile '$name' not found"
+        return 1
+    fi
+    if ! _profile_validate_config_file "$conf"; then
+        _cli_error "Identity profile '$name' failed validation"
+        return 1
+    fi
+    # shellcheck source=/dev/null
+    source "$conf"
+    if [ -z "${GIT_NAME:-}" ] || [ -z "${GIT_EMAIL:-}" ]; then
+        _cli_error "Identity profile '$name': GIT_NAME and GIT_EMAIL must be non-empty"
+        return 1
+    fi
+    printf 'Identity profile %s is valid\n' "$name"
+    return 0
+}
+
+_profile_cli_switch_identity() {
+    local name="${1:-}"
+    if [ -z "$name" ]; then
+        _cli_error "Usage: dotfiles profile switch <name>"
+        _profile_cli_list_identities || true
+        return 1
+    fi
+    profile_switch_git "$name" || return $?
+    profile_switch_gcloud "$name" || true
+    return 0
+}
+
+_profile_module() {
+    _profile_cli_load
+    local action="${1:-}"
+    shift || true
+    case "$action" in
+        ""|list)
+            _profile_cli_list_identities
+            ;;
+        show)
+            _profile_cli_show_identity "${1:-}"
+            ;;
+        switch)
+            _profile_cli_switch_identity "${1:-}"
+            ;;
+        validate)
+            _profile_cli_validate_identity "${1:-}"
+            ;;
+        create)
+            profile_create "${1:-}"
+            ;;
+        edit)
+            profile_edit "${1:-}"
+            ;;
+        delete)
+            profile_delete "${1:-}"
+            ;;
+        export)
+            profile_export "${1:-}" "${2:-}"
+            ;;
+        import)
+            profile_import "${1:-}"
+            ;;
+        --help|-h)
+            _help
+            ;;
+        *)
+            _cli_error "Usage: dotfiles profile list|show|switch|create|edit|delete|export|import|validate"
+            return 1
+            ;;
+    esac
+}
+
+_hooks_module() {
+    case "${1:-}" in
+        ""|status)
+            printf 'hooks: not yet enabled\n'
+            ;;
+        --help|-h)
+            _help
+            ;;
+        *)
+            _cli_error "hooks: not yet enabled (enable/disable arrive in a later task)"
+            return 1
+            ;;
+    esac
+}
+
 declare -gA _DOTFILES_MODULES=(
     [links]=_links_handler
     [pacman]=_pacman_module
@@ -175,6 +329,8 @@ declare -gA _DOTFILES_MODULES=(
     [init]=_init_module
     [doctor]=_doctor_module
     [install]=_install_module
+    [profile]=_profile_module
+    [hooks]=_hooks_module
 )
 
 _install_module() {

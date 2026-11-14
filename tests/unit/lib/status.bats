@@ -73,9 +73,18 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
     [[ "$output" == *"ok: package bat"* ]]
 }
 
-@test "status does not mention profiles yet" {
-    run grep -nE '_check_profile' "$ROOT/lib/status.sh"
-    [ "$status" -ne 0 ]
+@test "status reports the active identity profile" {
+    mkdir -p "$DOTFILES/profiles/linux-arch" "$DOTFILES/lib" "$DOTFILES/bin"
+    cp -r "$ROOT/lib/." "$DOTFILES/lib/"
+    printf 'GIT_NAME="Jane Dev"\nGIT_EMAIL="jane@example.com"\n' \
+        > "$DOTFILES/profiles/linux-arch/git-personal.conf"
+    printf 'git-personal.conf\n' > "$DOTFILES/profiles/.current-git"
+    bash -c "source '$ROOT/lib/links.sh'; _link_files; _link_paths" >/dev/null
+    run env -i HOME="$HOME" DOTFILES="$DOTFILES" DOTFILES_PRIVATE="$DOTFILES/private" \
+        PATH="$DOTFILES/bin:/usr/bin:/bin" TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/status.sh'; _check_profile"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"personal"* ]]
 }
 
 @test "status fails and names a bin directory missing from PATH" {
