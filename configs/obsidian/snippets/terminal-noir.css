@@ -1,0 +1,55 @@
+/* Terminal Noir (nandomoreira.dev) for Obsidian, dark mode only.
+ * Colors: configs/noctalia/palettes/Terminal Noir.json (dark side) and the
+ * syntax colors in configs/themes/terminal-noir/syntax.json.
+ * Install: copy to <vault>/.obsidian/snippets/ and enable it under
+ * Settings > Appearance > CSS snippets. */
+
+.theme-dark {
+  --accent-h: 37;
+  --accent-s: 91%;
+  --accent-l: 55%;
+
+  --background-primary: #0B0B0C;
+  --background-primary-alt: #121214;
+  --background-secondary: #121214;
+  --background-secondary-alt: #18181B;
+  --background-modifier-border: #222226;
+  --background-modifier-border-hover: #3F3F46;
+  --background-modifier-border-focus: #3F3F46;
+  --background-modifier-hover: #18181B;
+  --background-modifier-active-hover: #18181B;
+  --background-modifier-form-field: #121214;
+
+  --text-normal: #F4F4F5;
+  --text-muted: #A1A1AA;
+  --text-faint: #6B6B74;
+  --text-accent: #F5A623;
+  --text-accent-hover: #FACF9E;
+  --text-on-accent: #0B0B0C;
+  --text-selection: rgba(82, 82, 91, 0.6);
+  --text-highlight-bg: rgba(245, 166, 35, 0.25);
+
+  --interactive-accent: #F5A623;
+  --interactive-accent-hover: #FACF9E;
+  --link-color: #F5A623;
+  --link-color-hover: #FACF9E;
+  --link-external-color: #F5A623;
+  --link-external-color-hover: #FACF9E;
+
+  --text-success: #34D399;
+  --text-warning: #FACF9E;
+  --text-error: #FFB7B0;
+
+  --code-background: #121214;
+  --code-normal: #F4F4F5;
+  --code-comment: #A1A1AA;
+  --code-keyword: #F5A623;
+  --code-string: #34D399;
+  --code-function: #79C0FF;
+  --code-value: #FACF9E;
+  --code-property: #56D4DD;
+  --code-tag: #FF7B72;
+  --code-punctuation: #F4F4F5;
+  --code-operator: #F4F4F5;
+  --code-important: #FFB7B0;
+}

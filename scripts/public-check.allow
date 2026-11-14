@@ -21,3 +21,6 @@ credit:scripts/themes/build-terminal-noir:        description: "Terminal Noir pa
 credit:scripts/themes/build-terminal-noir:        publisher: "nandomoreira",
 credit:scripts/themes/build-terminal-noir:            printf '# Terminal Noir (%s), from nandomoreira.dev.\n' "$mode"
 credit:scripts/themes/build-terminal-noir:            "# Terminal Noir, from nandomoreira.dev.",
+credit:configs/gtk-4.0/gtk.css:/* Terminal Noir accent (nandomoreira.dev). libadwaita 1.6+ reads the accent
+credit:configs/obsidian/snippets/terminal-noir.css:/* Terminal Noir (nandomoreira.dev) for Obsidian, dark mode only.
+credit:configs/chrome/terminal-noir-theme/manifest.json:  "description": "Terminal Noir palette from nandomoreira.dev (configs/noctalia/palettes/Terminal Noir.json, dark side).",

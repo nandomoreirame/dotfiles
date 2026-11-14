@@ -1,0 +1,6 @@
+[Hotkey/EnumerateForwardKeys]
+0=Alt+space
+
+[Behavior]
+# One layout for every window, so the Noctalia bar widget stays truthful
+ShareInputState=All

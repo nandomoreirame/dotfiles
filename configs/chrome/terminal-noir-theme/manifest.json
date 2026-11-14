@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Terminal Noir",
+  "version": "1.0.0",
+  "description": "Terminal Noir palette from nandomoreira.dev (configs/noctalia/palettes/Terminal Noir.json, dark side).",
+  "theme": {
+    "colors": {
+      "frame": [11, 11, 12],
+      "frame_inactive": [11, 11, 12],
+      "frame_incognito": [18, 18, 20],
+      "frame_incognito_inactive": [18, 18, 20],
+      "toolbar": [24, 24, 27],
+      "toolbar_text": [244, 244, 245],
+      "toolbar_button_icon": [245, 166, 35],
+      "tab_text": [244, 244, 245],
+      "tab_background_text": [161, 161, 170],
+      "tab_background_text_inactive": [161, 161, 170],
+      "bookmark_text": [244, 244, 245],
+      "omnibox_background": [11, 11, 12],
+      "omnibox_text": [244, 244, 245],
+      "ntp_background": [11, 11, 12],
+      "ntp_text": [244, 244, 245],
+      "ntp_link": [245, 166, 35]
+    }
+  }
+}

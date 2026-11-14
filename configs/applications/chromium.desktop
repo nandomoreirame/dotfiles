@@ -1,0 +1,29 @@
+[Desktop Entry]
+Version=1.0
+Name=Chromium
+GenericName=Web Browser
+GenericName[pt_BR]=Navegador da Internet
+Comment=Access the Internet
+Comment[pt_BR]=Acessar a internet
+# Override of /usr/share/applications/chromium.desktop to force dark UI.
+# Chromium is a plain ELF binary and does not read a *-flags.conf file, so the
+# --force-dark-mode flag is injected here. Files in ~/.local/share/applications
+# take precedence over /usr/share/applications.
+Exec=/usr/bin/chromium --force-dark-mode %U
+StartupNotify=true
+Terminal=false
+Icon=chromium
+Type=Application
+Categories=Network;WebBrowser;
+MimeType=application/pdf;application/rdf+xml;application/rss+xml;application/xhtml+xml;application/xhtml_xml;application/xml;image/gif;image/jpeg;image/png;image/webp;text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/chromium;
+Actions=new-window;new-private-window;
+
+[Desktop Action new-window]
+Name=New Window
+Name[pt_BR]=Nova janela
+Exec=/usr/bin/chromium --force-dark-mode
+
+[Desktop Action new-private-window]
+Name=New Incognito Window
+Name[pt_BR]=Nova janela anônima
+Exec=/usr/bin/chromium --force-dark-mode --incognito
