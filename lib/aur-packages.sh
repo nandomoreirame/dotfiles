@@ -45,26 +45,32 @@ _aur_packages() {
     fi
 
     if [ -z "$packages_to_install" ]; then
-        packages_to_install="$(_package_list aur | tr '\n' ' ')"
+        packages_to_install="$(_package_list aur | tr '\n' ' ')" || return 1
     fi
-    # shellcheck disable=SC2206
-    _packages=($packages_to_install)
+    read -ra _packages <<< "$packages_to_install"
 
     if [ "${#_packages[@]}" -eq 0 ]; then
         e_warning "No AUR packages selected"
         return 0
     fi
 
+    for pack in "${_packages[@]}"; do
+        if ! _package_name_valid "$pack"; then
+            e_error "Invalid package name: $pack"
+            return 1
+        fi
+    done
+
     e_info "Selected AUR packages: ${_packages[*]}"
     e_info "Using AUR helper: $aur_helper"
 
     for pack in "${_packages[@]}"; do
-        if pacman -Q "$pack" &>/dev/null; then
+        if pacman -Q -- "$pack" &>/dev/null; then
             e_arrow "Skipping installed package: $pack"
             continue
         fi
         e_info "Installing AUR: $pack"
-        if ! _aur_run "$aur_helper" -S --noconfirm --needed "$pack"; then
+        if ! _aur_run "$aur_helper" -S --noconfirm --needed -- "$pack"; then
             e_error "Failed to install $pack"
             failed_pkgs+=("$pack")
             continue
@@ -86,6 +92,12 @@ _aur_remove() {
         e_error "aur:remove needs at least one package name"
         return 1
     fi
+    for pack in "${_packages[@]}"; do
+        if ! _package_name_valid "$pack"; then
+            e_error "Invalid package name: $pack"
+            return 1
+        fi
+    done
     aur_helper="$(_get_aur_helper)"
     if [ -z "$aur_helper" ]; then
         e_error "No AUR helper found (yay or paru)"
@@ -94,7 +106,7 @@ _aur_remove() {
     _confirm "Remove AUR packages: ${_packages[*]}?" || return 1
     for pack in "${_packages[@]}"; do
         e_info "Removing $pack"
-        if ! _aur_run "$aur_helper" -R --noconfirm "$pack"; then
+        if ! _aur_run "$aur_helper" -R --noconfirm -- "$pack"; then
             e_error "Failed to remove $pack"
             return 1
         fi

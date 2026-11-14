@@ -36,15 +36,21 @@ _node_packages() {
     fi
 
     if [ -z "$packages_to_install" ]; then
-        packages_to_install="$(_package_list node | tr '\n' ' ')"
+        packages_to_install="$(_package_list node | tr '\n' ' ')" || return 1
     fi
-    # shellcheck disable=SC2206
-    _packages=($packages_to_install)
+    read -ra _packages <<< "$packages_to_install"
 
     if [ "${#_packages[@]}" -eq 0 ]; then
         e_warning "No npm packages selected"
         return 0
     fi
+
+    for package in "${_packages[@]}"; do
+        if ! _package_name_valid "$package"; then
+            e_error "Invalid package name: $package"
+            return 1
+        fi
+    done
 
     e_info "Selected npm packages: ${_packages[*]}"
 
@@ -54,7 +60,7 @@ _node_packages() {
             continue
         fi
         e_info "Installing $package"
-        if ! _node_run npm install -g "$package"; then
+        if ! _node_run npm install -g -- "$package"; then
             e_error "Failed to install $package"
             failed_pkgs+=("$package")
             continue
@@ -80,10 +86,16 @@ _node_remove() {
         e_error "npm not found"
         return 1
     fi
+    for package in "${_packages[@]}"; do
+        if ! _package_name_valid "$package"; then
+            e_error "Invalid package name: $package"
+            return 1
+        fi
+    done
     _confirm "Remove npm packages: ${_packages[*]}?" || return 1
     for package in "${_packages[@]}"; do
         e_info "Removing $package"
-        if ! _node_run npm uninstall -g "$package"; then
+        if ! _node_run npm uninstall -g -- "$package"; then
             e_error "Failed to remove $package"
             return 1
         fi

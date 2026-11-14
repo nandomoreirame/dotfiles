@@ -102,3 +102,25 @@ run_install() {
     [[ "$output" == *"dotfiles init"* ]]
     [[ "$output" == *"dotfiles doctor"* ]]
 }
+
+@test "remote table pins yay to a commit" {
+    grep -E '^yay\|https://aur\.archlinux\.org/yay\.git\|[0-9a-f]{40}$' "$ROOT/scripts/remote-installers.conf"
+}
+
+@test "aur helper dry-run mentions pinned yay commit and does not clone" {
+    rm -f "$FAKE/yay" "$FAKE/paru"
+    pin="$(awk -F'|' '/^yay\|/ { print $3; exit }' "$ROOT/scripts/remote-installers.conf")"
+    [ -n "$pin" ]
+    # PATH is FAKE only so a system yay/paru cannot satisfy the helper check.
+    run env -i HOME="$HOME" PATH="$FAKE" DOTFILES="$ROOT" DOTFILES_PRIVATE="$DOTFILES_PRIVATE" \
+        DOTFILES_DRY_RUN=1 DOTFILES_YES=1 DOTFILES_IS_ARCH=true TERM=xterm-256color \
+        /usr/bin/bash -c "source '$ROOT/lib/install.sh'; _install_step_aur_helper"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"$pin"* ]]
+    ! grep -q "git clone" "$LOG"
+}
+
+@test "install and sh-apps do not leave RETURN traps" {
+    run grep -nE 'trap .* RETURN' "$ROOT/lib/install.sh" "$ROOT/lib/sh-apps.sh"
+    [ "$status" -ne 0 ]
+}

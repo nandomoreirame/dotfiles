@@ -21,8 +21,8 @@ run_node() {
     PCMD='_node_packages "installed-pkg new-pkg"'
     run_node DOTFILES_YES=1
     [ "$status" -eq 0 ]
-    grep -q "npm install -g new-pkg" "$LOG"
-    ! grep -q "npm install -g installed-pkg" "$LOG"
+    grep -q "npm install -g -- new-pkg" "$LOG"
+    ! grep -q "npm install -g -- installed-pkg" "$LOG"
 }
 
 @test "node dry-run prints the commands and installs nothing" {
@@ -63,4 +63,19 @@ run_node() {
     run_node
     [ "$status" -ne 0 ]
     ! grep -q "npm uninstall" "$LOG"
+}
+
+@test "hostile node package name is rejected" {
+    PCMD='_node_packages "--overwrite=*"'
+    run_node DOTFILES_DRY_RUN=1 DOTFILES_YES=1
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Invalid package name"* ]]
+    ! grep -q "npm install" "$LOG"
+}
+
+@test "node install passes -- before the package name" {
+    PCMD='_node_packages "new-pkg"'
+    run_node DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    grep -q "npm install -g -- new-pkg" "$LOG"
 }

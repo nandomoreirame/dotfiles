@@ -8,12 +8,20 @@ source "${BASH_SOURCE[0]%/*}/private.sh"
 
 _package_list_kinds='pacman|aur|flatpak|node'
 
+# True when name is safe to pass after `--` to pacman/flatpak/npm/yay.
+_package_name_valid() {
+    local name="${1:-}"
+    [[ "$name" =~ ^[A-Za-z0-9@][A-Za-z0-9@._+/:-]*$ ]]
+}
+
 # Read one list file. Names before any ## heading belong to group "default".
 # Private files without headings use group "private".
 # Prints "group|name" lines; missing file prints nothing.
+# Rejects invalid package names (returns 1).
 _package_list_read_file() {
     local file="$1" default_group="$2"
     local group="$default_group" line name
+    local -a names=()
     [ -f "$file" ] || return 0
     while IFS= read -r line || [ -n "$line" ]; do
         line="${line#"${line%%[![:space:]]*}"}"
@@ -28,7 +36,13 @@ _package_list_read_file() {
                 ;;
             \#*) ;;
             *)
-                for name in $line; do
+                names=()
+                read -ra names <<< "$line"
+                for name in "${names[@]}"; do
+                    if ! _package_name_valid "$name"; then
+                        printf 'Invalid package name in %s: %s\n' "$file" "$name" >&2
+                        return 1
+                    fi
                     printf '%s|%s\n' "$group" "$name"
                 done
                 ;;
@@ -40,7 +54,7 @@ _package_list_read_file() {
 # Prints one package name per line (deduplicated, public then private).
 _package_list() {
     local kind="${1:-}" group_filter="${2:-}"
-    local public_file private_file entry name group
+    local public_file private_file entry name group entries
     local -A seen=()
 
     case "$kind" in
@@ -53,6 +67,13 @@ _package_list() {
 
     public_file="$DOTFILES/packages/${kind}.list"
     private_file="$(_private_path "packages/${kind}.list")"
+
+    if ! entries="$(
+        _package_list_read_file "$public_file" default || exit 1
+        _package_list_read_file "$private_file" private || exit 1
+    )"; then
+        return 1
+    fi
 
     while IFS= read -r entry || [ -n "$entry" ]; do
         [ -n "$entry" ] || continue
@@ -67,8 +88,5 @@ _package_list() {
         fi
         seen["$name"]=1
         printf '%s\n' "$name"
-    done < <(
-        _package_list_read_file "$public_file" default
-        _package_list_read_file "$private_file" private
-    )
+    done <<< "$entries"
 }

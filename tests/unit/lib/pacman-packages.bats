@@ -6,7 +6,7 @@ setup() {
     STUBS="$BATS_TEST_TMPDIR/stubs"
     LOG="$BATS_TEST_TMPDIR/calls"
     mkdir -p "$STUBS" "$HOME"
-    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] && [ "$2" = "installed-pkg" ] && exit 0\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] || exit 0\nshift\n[ "$1" = "--" ] && shift\n[ "$1" = "installed-pkg" ] && exit 0\nexit 1\n' "$LOG" > "$STUBS/pacman"
     printf '#!/bin/sh\necho "sudo $*" >> "%s"\nexec "$@"\n' "$LOG" > "$STUBS/sudo"
     chmod +x "$STUBS/pacman" "$STUBS/sudo"
     export DOTFILES_PRIVATE="$BATS_TEST_TMPDIR/private"
@@ -36,6 +36,7 @@ run_pm() {
 
 @test "pacman reports a failing package and continues" {
     printf '#!/bin/sh\necho "pacman $*" >> "%s"\ncase "$*" in *bad-pkg*) exit 1;; esac\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    # -Q still fails for every package so both attempt install
     PCMD='_pacman_packages "bad-pkg good-pkg"'
     run_pm DOTFILES_YES=1
     [ "$status" -ne 0 ]
@@ -69,4 +70,19 @@ run_pm() {
     run_pm DOTFILES_DRY_RUN=1 DOTFILES_YES=1
     [[ "$output" != *"discord"* ]]
     [[ "$output" != *"obsidian"* ]]
+}
+
+@test "hostile package name is rejected" {
+    PCMD='_pacman_packages "--overwrite=*"'
+    run_pm DOTFILES_DRY_RUN=1 DOTFILES_YES=1
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Invalid package name"* ]]
+    ! grep -q "pacman -S" "$LOG"
+}
+
+@test "pacman install passes -- before the package name" {
+    PCMD='_pacman_packages "new-pkg"'
+    run_pm DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    grep -q "pacman -S --noconfirm --needed -- new-pkg" "$LOG"
 }

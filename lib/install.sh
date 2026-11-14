@@ -73,16 +73,46 @@ _install_step_aur_helper() {
         e_arrow "AUR helper already present"
         return 0
     fi
+
+    local row url pin tmp
+    local -a mkpkg_args=(-si)
+    row="$(_remote_row yay)" || {
+        e_error "No yay row in $(_remote_table_path)"
+        return 1
+    }
+    url="${row#*|}"
+    url="${url%%|*}"
+    pin="${row##*|}"
+    if [ -z "$url" ] || [ -z "$pin" ]; then
+        e_error "Invalid yay remote row"
+        return 1
+    fi
+
     if [ "${DOTFILES_DRY_RUN:-0}" = 1 ]; then
-        printf '[dry-run] build yay from the AUR\n'
+        printf '[dry-run] git clone %s && git checkout %s && makepkg -si\n' "$url" "$pin"
         return 0
     fi
-    local tmp
+
+    if [ "${DOTFILES_YES:-0}" = 1 ]; then
+        mkpkg_args+=(--noconfirm)
+    fi
+
     tmp="$(mktemp -d)"
-    # shellcheck disable=SC2064
-    trap 'rm -rf "$tmp"' RETURN
-    git clone https://aur.archlinux.org/yay.git "$tmp/yay" || return 1
-    (cd "$tmp/yay" && makepkg -si --noconfirm) || return 1
+    if ! git clone "$url" "$tmp/yay"; then
+        rm -rf "$tmp"
+        return 1
+    fi
+    if ! git -C "$tmp/yay" checkout --quiet "$pin"; then
+        e_error "Failed to checkout pinned yay commit $pin"
+        rm -rf "$tmp"
+        return 1
+    fi
+    if ! (cd "$tmp/yay" && makepkg "${mkpkg_args[@]}"); then
+        rm -rf "$tmp"
+        return 1
+    fi
+    rm -rf "$tmp"
+    return 0
 }
 
 _install_step_packages() {

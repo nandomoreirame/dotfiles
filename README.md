@@ -140,12 +140,13 @@ dotfiles hooks disable
 | Source | How | Verification |
 |---|---|---|
 | pacman packages | `sudo pacman -S` | Arch package signatures |
-| AUR packages | `yay` / `paru` (or building `yay` once) | PKGBUILD reviewed by the helper; you choose the packages |
+| AUR packages | `yay` / `paru` | PKGBUILD reviewed by the helper; you choose the packages |
+| yay bootstrap (once, if no helper) | `git clone` of the AUR `yay` repo, `git checkout` of a pinned commit, then `makepkg -si` | Commit pinned in [`scripts/remote-installers.conf`](scripts/remote-installers.conf); `--noconfirm` only when `DOTFILES_YES=1` so the PKGBUILD can be inspected otherwise |
 | Flatpak apps | `flatpak install flathub ...` | Flathub remote |
 | npm globals | `npm install -g` | npm registry |
 | oh-my-zsh installer | download to a temp file, then `sh <file> --unattended` | URL pinned to a commit in [`scripts/remote-installers.conf`](scripts/remote-installers.conf); SHA-256 checked before run |
 
-`--no-remote` skips the oh-my-zsh download. Fonts come from Arch packages (`packages/pacman.list` fonts group); the installer does not download font archives and does not delete `~/.fonts`.
+`--no-remote` skips the oh-my-zsh download (not the pinned yay bootstrap). Fonts come from Arch packages (`packages/pacman.list` fonts group); the installer does not download font archives and does not delete `~/.fonts`.
 
 ### Privileges
 

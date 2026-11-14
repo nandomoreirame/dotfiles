@@ -95,24 +95,26 @@ _install_ohmyzsh() {
     local tmp_root="${TMP_DIR:-/tmp}"
     mkdir -p "$tmp_root"
     tmp="$(mktemp "$tmp_root/ohmyzsh-install.XXXXXX")"
-    # shellcheck disable=SC2064
-    trap 'rm -f "$tmp"' RETURN
 
     if ! curl -fsSL "$url" -o "$tmp"; then
         e_error "Failed to download oh-my-zsh installer"
+        rm -f "$tmp"
         return 1
     fi
 
     actual="$(sha256sum "$tmp" | cut -d' ' -f1)"
     if [ "$actual" != "$sum" ]; then
         e_error "oh-my-zsh installer checksum mismatch (expected $sum, got $actual)"
+        rm -f "$tmp"
         return 1
     fi
 
     if ! sh "$tmp" --unattended; then
         e_error "oh-my-zsh installer failed"
+        rm -f "$tmp"
         return 1
     fi
+    rm -f "$tmp"
     e_success "oh-my-zsh installed"
 }
 

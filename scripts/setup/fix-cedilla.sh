@@ -4,7 +4,7 @@
 set -eo pipefail
 
 LANG="${LANG:=en_US.UTF-8}"
-COMPOSE_DIR="/usr/share/X11/locale"
+COMPOSE_DIR="${DOTFILES_COMPOSE_DIR:-/usr/share/X11/locale}"
 USER_COMPOSE="$HOME/.XCompose"
 
 if [ ! -d "$COMPOSE_DIR" ]; then
@@ -28,7 +28,7 @@ if [ -s "${USER_COMPOSE}" ] && cmp -s "$tmp" "${USER_COMPOSE}"; then
   exit 0
 fi
 
-if [ -s "${USER_COMPOSE}" ]; then
+if [ -s "${USER_COMPOSE}" ] && [ ! -e "${USER_COMPOSE}.ORIGINAL" ]; then
   cp -f "${USER_COMPOSE}" "${USER_COMPOSE}.ORIGINAL"
 fi
 cp -f "$tmp" "${USER_COMPOSE}"

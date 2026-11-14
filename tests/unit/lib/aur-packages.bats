@@ -6,7 +6,7 @@ setup() {
     STUBS="$BATS_TEST_TMPDIR/stubs"
     LOG="$BATS_TEST_TMPDIR/calls"
     mkdir -p "$STUBS" "$HOME"
-    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] && [ "$2" = "installed-pkg" ] && exit 0\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] || exit 0\nshift\n[ "$1" = "--" ] && shift\n[ "$1" = "installed-pkg" ] && exit 0\nexit 1\n' "$LOG" > "$STUBS/pacman"
     printf '#!/bin/sh\necho "yay $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/yay"
     chmod +x "$STUBS/pacman" "$STUBS/yay"
     export DOTFILES_PRIVATE="$BATS_TEST_TMPDIR/private"
@@ -49,8 +49,8 @@ run_aur() {
     PCMD='_aur_packages "installed-pkg new-pkg"'
     run_aur DOTFILES_YES=1
     [ "$status" -eq 0 ]
-    grep -q "yay -S.* new-pkg" "$LOG"
-    ! grep -q "yay -S.* installed-pkg" "$LOG"
+    grep -q "yay -S --noconfirm --needed -- new-pkg" "$LOG"
+    ! grep -q "yay -S --noconfirm --needed -- installed-pkg" "$LOG"
 }
 
 @test "aur dry-run prints the commands and calls no helper install" {
@@ -83,4 +83,12 @@ run_aur() {
     run_aur
     [ "$status" -ne 0 ]
     ! grep -q "yay -R" "$LOG"
+}
+
+@test "hostile aur package name is rejected" {
+    PCMD='_aur_packages "--overwrite=*"'
+    run_aur DOTFILES_DRY_RUN=1 DOTFILES_YES=1
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Invalid package name"* ]]
+    ! grep -q "yay -S" "$LOG"
 }

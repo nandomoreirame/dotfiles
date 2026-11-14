@@ -65,3 +65,22 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
         [ "$want" = "$got" ]
     done
 }
+
+@test "package name validation accepts scoped npm and flatpak ids" {
+    pl '_package_name_valid bat && _package_name_valid "@scope/pkg" && _package_name_valid com.github.tchx84.Flatseal'
+    [ "$status" -eq 0 ]
+}
+
+@test "package name validation rejects option-like names" {
+    pl '_package_name_valid "--overwrite=*"'
+    [ "$status" -ne 0 ]
+    pl '_package_name_valid "-h"'
+    [ "$status" -ne 0 ]
+}
+
+@test "invalid package names are rejected when reading lists" {
+    printf -- '--overwrite=*\n' > "$DOTFILES/packages/pacman.list"
+    pl '_package_list pacman'
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Invalid package name"* ]]
+}

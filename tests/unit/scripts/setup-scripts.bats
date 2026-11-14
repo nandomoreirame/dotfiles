@@ -20,6 +20,29 @@ setup() {
     fi
 }
 
+@test "fix-cedilla keeps the first ORIGINAL across reruns" {
+    compose_root="$BATS_TEST_TMPDIR/compose"
+    mkdir -p "$compose_root/en_US.UTF-8"
+    printf 'en_US.UTF-8/Compose: en_US.UTF-8\n' > "$compose_root/compose.dir"
+    # U+0107 (ć) in UTF-8 so the sed rewrite produces a distinct file.
+    printf 'key <c> : "\xc4\x87" marker-v1\n' > "$compose_root/en_US.UTF-8/Compose"
+    printf 'user-original\n' > "$HOME/.XCompose"
+
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" LANG=en_US.UTF-8 \
+        DOTFILES_COMPOSE_DIR="$compose_root" bash "$ROOT/scripts/setup/fix-cedilla.sh"
+    [ "$status" -eq 0 ]
+    [ -f "$HOME/.XCompose.ORIGINAL" ]
+    [ "$(cat "$HOME/.XCompose.ORIGINAL")" = "user-original" ]
+    grep -q 'marker-v1' "$HOME/.XCompose"
+
+    printf 'key <c> : "\xc4\x87" marker-v2\n' > "$compose_root/en_US.UTF-8/Compose"
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" LANG=en_US.UTF-8 \
+        DOTFILES_COMPOSE_DIR="$compose_root" bash "$ROOT/scripts/setup/fix-cedilla.sh"
+    [ "$status" -eq 0 ]
+    [ "$(cat "$HOME/.XCompose.ORIGINAL")" = "user-original" ]
+    grep -q 'marker-v2' "$HOME/.XCompose"
+}
+
 @test "gtk-dark calls gsettings with dark values" {
     printf '#!/bin/sh\necho "gsettings $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/gsettings"
     chmod +x "$STUBS/gsettings"

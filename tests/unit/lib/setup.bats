@@ -19,8 +19,17 @@ setup() {
     printf '#!/usr/bin/env bash\necho second-ran\n' > "$DOTFILES/scripts/setup/good.sh"
     printf 'bad.sh|auto|Bad\ngood.sh|auto|Good\n' > "$DOTFILES/scripts/setup/registry.conf"
     run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/setup.sh'; _run_setup"
+    [ "$status" -ne 0 ]
     [[ "$output" == *"second-ran"* ]]
     [[ "$output" == *"bad.sh"* ]]
+}
+
+@test "all auto setup scripts succeeding returns zero" {
+    printf '#!/usr/bin/env bash\necho ok\n' > "$DOTFILES/scripts/setup/good.sh"
+    printf 'good.sh|auto|Good\n' > "$DOTFILES/scripts/setup/registry.conf"
+    run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/setup.sh'; _run_setup"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ok"* ]]
 }
 
 @test "only auto scripts run by default and manual ones run by name" {

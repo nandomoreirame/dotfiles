@@ -28,20 +28,26 @@ _pacman_packages() {
     local pack
 
     if [ -z "$packages_to_install" ]; then
-        packages_to_install="$(_package_list pacman | tr '\n' ' ')"
+        packages_to_install="$(_package_list pacman | tr '\n' ' ')" || return 1
     fi
-    # shellcheck disable=SC2206
-    _packages=($packages_to_install)
+    read -ra _packages <<< "$packages_to_install"
 
     if [ "${#_packages[@]}" -eq 0 ]; then
         e_warning "No pacman packages selected"
         return 0
     fi
 
+    for pack in "${_packages[@]}"; do
+        if ! _package_name_valid "$pack"; then
+            e_error "Invalid package name: $pack"
+            return 1
+        fi
+    done
+
     e_info "Selected pacman packages: ${_packages[*]}"
 
     for pack in "${_packages[@]}"; do
-        if pacman -Q "$pack" &>/dev/null; then
+        if pacman -Q -- "$pack" &>/dev/null; then
             e_arrow "Skipping installed package: $pack"
             continue
         fi
@@ -55,7 +61,7 @@ _pacman_packages() {
 
     for pack in "${to_install[@]}"; do
         e_info "Installing $pack"
-        if ! _pacman_run pacman -S --noconfirm --needed "$pack"; then
+        if ! _pacman_run pacman -S --noconfirm --needed -- "$pack"; then
             e_error "Failed to install $pack"
             failed_pkgs+=("$pack")
             continue
@@ -77,10 +83,16 @@ _pacman_remove() {
         e_error "pacman:remove needs at least one package name"
         return 1
     fi
+    for pack in "${_packages[@]}"; do
+        if ! _package_name_valid "$pack"; then
+            e_error "Invalid package name: $pack"
+            return 1
+        fi
+    done
     _confirm "Remove pacman packages: ${_packages[*]}?" || return 1
     for pack in "${_packages[@]}"; do
         e_info "Removing $pack"
-        if ! _pacman_run pacman -R --noconfirm "$pack"; then
+        if ! _pacman_run pacman -R --noconfirm -- "$pack"; then
             e_error "Failed to remove $pack"
             return 1
         fi

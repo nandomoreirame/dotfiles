@@ -6,7 +6,7 @@ setup() {
     STUBS="$BATS_TEST_TMPDIR/stubs"
     LOG="$BATS_TEST_TMPDIR/calls"
     mkdir -p "$STUBS" "$HOME"
-    printf '#!/bin/sh\necho "flatpak $*" >> "%s"\n[ "$1" = "info" ] && [ "$2" = "installed.app" ] && exit 0\n[ "$1" = "info" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/flatpak"
+    printf '#!/bin/sh\necho "flatpak $*" >> "%s"\n[ "$1" = "info" ] || exit 0\nshift\n[ "$1" = "--" ] && shift\n[ "$1" = "installed.app" ] && exit 0\nexit 1\n' "$LOG" > "$STUBS/flatpak"
     chmod +x "$STUBS/flatpak"
     export DOTFILES_PRIVATE="$BATS_TEST_TMPDIR/private"
     mkdir -p "$DOTFILES_PRIVATE"
@@ -55,4 +55,19 @@ run_fp() {
     run_fp
     [ "$status" -ne 0 ]
     ! grep -q "flatpak uninstall" "$LOG"
+}
+
+@test "hostile flatpak name is rejected" {
+    PCMD='_flatpak_packages "--overwrite=*"'
+    run_fp DOTFILES_DRY_RUN=1 DOTFILES_YES=1
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"Invalid package name"* ]]
+    ! grep -q "flatpak install" "$LOG"
+}
+
+@test "flatpak install passes -- before the package name" {
+    PCMD='_flatpak_packages "new.app"'
+    run_fp DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    grep -q "flatpak install -y flathub -- new.app" "$LOG"
 }
