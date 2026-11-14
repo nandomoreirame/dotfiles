@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Generic zsh/bash environment (`.zshenv`, `.zshrc`, `.bashrc`, `.profile`, `.p10k.zsh`, `.oh-my-zsh/custom/`) that resolves `$DOTFILES` from the clone symlink and loads `private/shell/*.zsh` when present
+- Arch packages for powerlevel10k, zsh-autosuggestions and zsh-syntax-highlighting (loaded from `/usr/share`, skipped when absent)
+- Generic `.gitconfig` and `configs/git/*` without identity, signing or hooks (those stay in `~/.gitconfig.local`)
+- Theme-free app configs: btop, fastfetch, glow, lazygit, starship, mise, plus curl/wget/prettier rc files
 - Profile switching (`dotfiles profile list|show|switch`) for Git identity and gcloud configs; thin wrappers `bin/profile` and `bin/git/git-profile`
 - Opt-in Git hooks (`dotfiles hooks enable|disable|status`): guard blocks home paths and secrets; strip removes Co-Authored-By / Generated-with lines (off until enabled)
 - New-machine install flow (`./install.sh` and `dotfiles install`) with `--dry-run`, `--yes`, `--no-remote` and `--group`

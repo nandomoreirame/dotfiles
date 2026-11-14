@@ -15,8 +15,9 @@ A public clone of this repository must stay free of personal data. Anything that
 
 | Path | Role |
 |---|---|
-| `bin/` | Executables prepended to `PATH` |
-| `shell/` | `*.zsh` files sourced in name order |
+| `bin/` | Executables prepended to `PATH` by `.zshenv` when the directory exists |
+| `shell/` | `*.zsh` files sourced by `.zshrc` in name order |
+| `shell/10-personal.zsh` | Suggested home for AI wrappers (`claude`/`codex`/`commit` with permissions disabled), `chrome-insecure`, token env files and folder aliases |
 | `links.conf` | Symlink map merged after the public one |
 | `packages/` | `*.list` package picks for the installer |
 | `setup/` | `registry.conf` and one-shot setup steps |
@@ -26,13 +27,12 @@ A public clone of this repository must stay free of personal data. Anything that
 
 Use [README.md](README.md) in this directory as the starting point: put your files here, or clone your real overlay elsewhere and set `DOTFILES_PRIVATE`. Because git ignores everything in `private/` except these two documents, never track overlay content from this repository.
 
-## Wiring (later milestones)
+## Wiring already in place
 
-This foundation only ships the helpers and the docs. Later milestones will:
+- `.zshenv` prepends `$DOTFILES/private/bin` to `PATH` when that directory exists
+- `.zshrc` sources `lib/private.sh`, then each `private/shell/*.zsh` in name order
+- `dotfiles links` merges `private/links.conf` after the public map
+- package lists and the setup registry merge `private/packages/*.list` and `private/setup/registry.conf`
+- a missing overlay is a silent no-op everywhere
 
-- source `lib/private.sh` from `.zshenv` and prepend `_private_path bin` to `PATH` when present
-- merge `links.conf` after the public map
-- feed `packages/*.list` and `setup/registry.conf` into the installer
-- leave a missing overlay as a silent no-op everywhere
-
-Until those hooks land, keep the overlay offline and do not commit anything under `/private/` in this repository (`.gitignore` already ignores it).
+Do not commit anything under `/private/` in this repository except the two tracked documents (`.gitignore` already ignores the rest).

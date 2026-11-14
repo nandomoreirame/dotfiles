@@ -6,7 +6,7 @@ This repository separates shareable configuration from a private overlay, provid
 
 ## Status
 
-The CLI and the new-machine install flow work on Arch Linux / CachyOS. Profiles and global git hooks arrive next; public application configs and the desktop shell migrate in later milestones.
+The CLI, new-machine install flow, profiles, opt-in Git hooks and the generic shell/Git configs work on Arch Linux / CachyOS. Theme-coupled app configs and the Niri/Noctalia desktop migrate in later milestones.
 
 ## Why
 
@@ -78,9 +78,24 @@ dotfiles doctor
 dotfiles --verify
 ```
 
-The public `configs/links.conf` is documented but empty until the config migrations land. Add `[files]` names relative to `configs/`, or `[paths]` rows in the form `configs/tool.conf | .config/tool.conf |`. `[paths:arch]` adds Arch-specific rows. Targets are relative to HOME; paths containing parent traversal are rejected.
+`configs/links.conf` maps the shell, Git and theme-free app configs shipped below. Add `[files]` names relative to `configs/`, or `[paths]` rows in the form `configs/tool.conf | .config/tool.conf`. `[paths:arch]` adds Arch-specific rows. Targets are relative to HOME; paths containing parent traversal are rejected.
 
-`DOTFILES` defaults to the clone containing the executable. `DOTFILES_PRIVATE` defaults to its `private/` directory and can point to an external overlay. Private entries are loaded after public entries and replace the same target. See [private/README.md](private/README.md) and [private/private-overlay.md](private/private-overlay.md).
+`DOTFILES` defaults to the clone containing the executable (`.zshenv` derives it from its own symlink). `DOTFILES_PRIVATE` defaults to its `private/` directory and can point to an external overlay. Private entries are loaded after public entries and replace the same target. See [private/README.md](private/README.md) and [private/private-overlay.md](private/private-overlay.md).
+
+## Shell and Git configs
+
+| Path | Role |
+|---|---|
+| `.zshenv` | Resolves `$DOTFILES`, builds `PATH` once, prepends `private/bin` when present |
+| `.zshrc` / `.bashrc` / `.profile` | Interactive shell; sources `private/shell/*.zsh` in name order |
+| `.p10k.zsh` | Powerlevel10k config (theme package from Arch) |
+| `.oh-my-zsh/custom/` | Generic aliases and helpers (no unsafe defaults) |
+| `.gitconfig` + `configs/git/*` | Generic Git defaults; identity/signing/hooks stay in `~/.gitconfig.local` |
+| `btop`, `fastfetch`, `glow`, `lazygit`, `starship.toml`, `mise` | Theme-free app configs |
+
+`powerlevel10k`, `zsh-autosuggestions` and `zsh-syntax-highlighting` come from Arch packages under `/usr/share` and are skipped when absent. They are listed in `packages/pacman.list`.
+
+**Intentionally absent from the public tree:** `rm`/`cp`/`mv` keep their normal defaults (no recursive force aliases). The AI wrappers that disable permission prompts (`claude`, `codex`, `commit`) and `chrome-insecure` are not shipped; put them in `private/shell/` if you want them. Git identity and signing come from `dotfiles init` / `dotfiles profile`, never from the tracked `.gitconfig`.
 
 | Command | Purpose |
 |---|---|
@@ -155,6 +170,10 @@ dotfiles hooks disable
 ### Local changes
 
 The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak.*` siblings. Overlay entries can select different sources; review both manifests before linking. The CLI opens no network listener. Optional helpers under [`bin/`](bin/README.md) include privileged and network-talking scripts; none run unless you invoke them.
+
+### Shell startup
+
+`.zshenv`, `.zshrc`, `.bashrc` and `.profile` run on every terminal start. They only read local files from the clone and from `private/shell/` when present; they download nothing and open no network listener. Keep tokens and API keys out of the public tree and load them from the overlay.
 
 ### Profiles and hooks
 
