@@ -112,3 +112,23 @@ teardown() {
     run grep -nEi 'macos|darwin|debian|homebrew|brew ' "$PROJECT_ROOT/lib/validation.sh"
     [ "$status" -eq 1 ]
 }
+
+@test "dirty Git validation uses the shared automatic confirmation" {
+    git() {
+        case "$1" in
+            rev-parse) return 0 ;;
+            diff-index) return 1 ;;
+            status) printf ' M example.txt\n' ;;
+        esac
+    }
+    export DOTFILES_YES=1
+    run validate_git_clean </dev/null
+    [ "$status" -eq 0 ]
+}
+
+@test "environment validation rejects invalid variable names cleanly" {
+    run validate_env_var 'invalid-name'
+    [ "$status" -eq 1 ]
+    [[ "$output" != *'invalid variable name'* ]]
+    [[ "$output" != *'bad substitution'* ]]
+}

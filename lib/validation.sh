@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 : "${DOTFILES:=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# shellcheck source=lib/prompt.sh
+source "${BASH_SOURCE[0]%/*}/prompt.sh"
 
 
 
@@ -244,11 +246,8 @@ validate_git_clean() {
         echo ""
         git status --short | sed 's/^/   /'
         echo ""
-        read -r -p "Continue anyway? (y/n): " answer
-        case ${answer:0:1} in
-            y|Y) return 0 ;;
-            *) return 1 ;;
-        esac
+        _confirm 'Continue anyway?'
+        return $?
     fi
     return 0
 }
@@ -257,7 +256,11 @@ validate_git_clean() {
 validate_env_var() {
     local var_name="$1"
 
-    if [ -z "${!var_name}" ]; then
+    if ! [[ "$var_name" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
+        printf 'Error: invalid environment identifier: %s\n' "$var_name" >&2
+        return 1
+    fi
+    if [ -z "${!var_name:-}" ]; then
         echo "❌ Error: environment variable '$var_name' is not set"
         return 1
     fi

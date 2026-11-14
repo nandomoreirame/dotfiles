@@ -40,8 +40,17 @@ sh_run() { run bash -c "source '$ROOT/lib/links.sh'; source '$ROOT/lib/status.sh
 }
 
 @test "expected links come from links.conf" {
-    run grep -nE '^(EXPECTED_FILES|EXPECTED_PATHS)=\(' "$ROOT/lib/status.sh"
-    [ "$status" -ne 0 ]
+    bash -c "source '$ROOT/lib/links.sh'; _create_links all" >/dev/null
+    sh_run "_verify"
+    [ "$status" -eq 0 ]
+    echo new > "$DOTFILES/configs/added"
+    printf 'configs/added | .config/added |\n' >> "$DOTFILES/configs/links.conf"
+    sh_run "_verify"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *'.config/added'* ]]
+    bash -c "source '$ROOT/lib/links.sh'; _create_links all" >/dev/null
+    sh_run "_verify"
+    [ "$status" -eq 0 ]
 }
 
 @test "status prints sections for links and PATH and does not fail on a healthy tree" {

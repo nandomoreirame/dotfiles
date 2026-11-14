@@ -10,10 +10,14 @@ setup() {
 }
 
 @test "modules ignore a decoy home dotfiles" {
-    run env -i HOME="$DECOY" PATH="/usr/bin:/bin" TERM=xterm-256color bash -ec "source '$ROOT/lib/environments.sh'; declare -F e_success >/dev/null || source '$ROOT/lib/output.sh'; echo \"\$DOTFILES\""
-    [ "$status" -eq 0 ]
-    [[ "$output" != *DECOY-LOADED* ]]
-    [[ "$output" == *"$ROOT"* ]]
+    local module
+    for module in output environments validation functions prompt links status help cli-parser private; do
+        run env -i HOME="$DECOY" PATH=/usr/bin:/bin TERM=xterm-256color bash -ec \
+            "source '$ROOT/lib/$module.sh'; printf '%s\\n' \"\$DOTFILES\""
+        [ "$status" -eq 0 ]
+        [[ "$output" != *DECOY-LOADED* ]]
+        [ "$output" = "$ROOT" ]
+    done
 }
 
 @test "DOTFILES defaults to the clone and can be overridden" {
@@ -29,7 +33,11 @@ setup() {
 }
 
 @test "ci lints bin and lib" {
-    grep -q "lib/" "$ROOT/.github/workflows/ci.yml"
-    grep -q "bin/" "$ROOT/.github/workflows/ci.yml"
-    grep -q "lib/" "$ROOT/scripts/simulate-clean-clone"
+    local config
+    for config in "$ROOT/.github/workflows/ci.yml" "$ROOT/scripts/simulate-clean-clone"; do
+        grep -Fq 'shellcheck -x scripts/public-check scripts/simulate-clean-clone lib/*.sh tests/run-tests' "$config"
+        grep -Fq 'bins=(bin/*/* lib/*/*.sh)' "$config"
+        grep -Fq 'bins+=(bin/dotfiles)' "$config"
+        grep -Fq 'shellcheck -x "${bins[@]}"' "$config"
+    done
 }
