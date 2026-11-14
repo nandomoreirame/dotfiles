@@ -66,3 +66,21 @@ setup() {
     [[ "$output" == *"personal"* ]]
     [[ "$output" == *"work"* ]]
 }
+
+@test "switching git clears the previous identity signing settings" {
+    printf 'GIT_NAME="Alice A"\nGIT_EMAIL="a@example.com"\nGIT_SIGNING_KEY="ssh-ed25519 KEYA"\nGIT_GPG_FORMAT="ssh"\n' \
+        > "$DOTFILES/profiles/linux-arch/git-a.conf"
+    printf 'GIT_NAME="Bob B"\nGIT_EMAIL="b@example.com"\n' \
+        > "$DOTFILES/profiles/linux-arch/git-b.conf"
+    env -i HOME="$HOME" PATH="/usr/bin:/bin" DOTFILES="$DOTFILES" DOTFILES_YES=1 bash -c \
+        "source '$DOTFILES/lib/profiles.sh'; profile_switch_git a" >/dev/null
+    grep -q "signingkey = ssh-ed25519 KEYA" "$HOME/.gitconfig.local"
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" DOTFILES="$DOTFILES" DOTFILES_YES=1 bash -c \
+        "source '$DOTFILES/lib/profiles.sh'; profile_switch_git b"
+    [ "$status" -eq 0 ]
+    grep -q "name = Bob B" "$HOME/.gitconfig.local"
+    grep -q "email = b@example.com" "$HOME/.gitconfig.local"
+    ! grep -q "signingkey" "$HOME/.gitconfig.local"
+    ! grep -q "format = ssh" "$HOME/.gitconfig.local"
+    ! grep -qi "gpgsign" "$HOME/.gitconfig.local"
+}

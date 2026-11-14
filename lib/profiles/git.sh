@@ -120,12 +120,23 @@ profile_switch_git() {
         fi
     fi
 
+    unset GIT_NAME GIT_EMAIL GIT_SIGNING_KEY GIT_GPG_KEY \
+        GIT_GPG_FORMAT GIT_GPG_PROGRAM GIT_GPG_SSH_PROGRAM GIT_GPG_ALLOWED_SIGNERS
     # shellcheck source=/dev/null
     source "$conf"
 
     local git_local="$HOME/.gitconfig.local"
     touch "$git_local"
     chmod 600 "$git_local" 2>/dev/null || true
+
+    # Drop the previous identity's signing settings so a switch to a profile
+    # without a key cannot keep signing with the earlier key.
+    git config --file "$git_local" --unset-all user.signingkey 2>/dev/null || true
+    git config --file "$git_local" --unset-all gpg.format 2>/dev/null || true
+    git config --file "$git_local" --unset-all gpg.program 2>/dev/null || true
+    git config --file "$git_local" --unset-all gpg.ssh.program 2>/dev/null || true
+    git config --file "$git_local" --unset-all gpg.ssh.allowedSignersFile 2>/dev/null || true
+    git config --file "$git_local" --unset-all commit.gpgsign 2>/dev/null || true
 
     if [ -n "${GIT_NAME:-}" ]; then
         git config --file "$git_local" user.name "$GIT_NAME"
