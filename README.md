@@ -6,7 +6,7 @@ This repository separates shareable configuration from a private overlay, provid
 
 ## Status
 
-The CLI, new-machine install flow, profiles, opt-in Git hooks and the generic shell/Git configs work on Arch Linux / CachyOS. Theme-coupled app configs and the Niri/Noctalia desktop migrate in later milestones.
+The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs and the Terminal Noir app configs work on Arch Linux / CachyOS. The Niri/Noctalia desktop migrates in a later milestone.
 
 ## Why
 
@@ -78,7 +78,7 @@ dotfiles doctor
 dotfiles --verify
 ```
 
-`configs/links.conf` maps the shell, Git and theme-free app configs shipped below. Add `[files]` names relative to `configs/`, or `[paths]` rows in the form `configs/tool.conf | .config/tool.conf`. `[paths:arch]` adds Arch-specific rows. Targets are relative to HOME; paths containing parent traversal are rejected.
+`configs/links.conf` maps the shell, Git, theme-free and Terminal Noir app configs shipped below. Add `[files]` names relative to `configs/`, or `[paths]` rows in the form `configs/tool.conf | .config/tool.conf`. `[paths:arch]` adds Arch-specific rows. Targets are relative to HOME; paths containing parent traversal are rejected.
 
 `DOTFILES` defaults to the clone containing the executable (`.zshenv` derives it from its own symlink). `DOTFILES_PRIVATE` defaults to its `private/` directory and can point to an external overlay. Private entries are loaded after public entries and replace the same target. See [private/README.md](private/README.md) and [private/private-overlay.md](private/private-overlay.md).
 
@@ -96,6 +96,35 @@ dotfiles --verify
 `powerlevel10k`, `zsh-autosuggestions` and `zsh-syntax-highlighting` come from Arch packages under `/usr/share` and are skipped when absent. They are listed in `packages/pacman.list`.
 
 **Intentionally absent from the public tree:** `rm`/`cp`/`mv` keep their normal defaults (no recursive force aliases). The AI wrappers that disable permission prompts (`claude`, `codex`, `commit`) and `chrome-insecure` are not shipped; put them in `private/shell/` if you want them. Git identity and signing come from `dotfiles init` / `dotfiles profile`, never from the tracked `.gitconfig`.
+
+## Apps and Terminal Noir
+
+Each themed app keeps its Terminal Noir files next to its own config (no shared theme package in this repo). The two sources are `configs/noctalia/palettes/Terminal Noir.json` and `configs/themes/terminal-noir/syntax.json`. Rebuild the generated outputs with:
+
+```bash
+scripts/themes/build-terminal-noir
+```
+
+`scripts/themes/build-terminal-noir-icons` and `scripts/themes/install-terminal-noir-editors` write under the user's home (icon theme and editor extension install). The generator itself reads the two JSON sources and, without `--out`, writes only inside this clone.
+
+| App | Config | Theme files |
+|---|---|---|
+| ghostty | `configs/ghostty/config`, `overrides.conf` | `configs/ghostty/themes/terminal-noir-{dark,light}` |
+| tmux | `configs/tmux/tmux.conf` | hand-written palette colors |
+| bat | `configs/bat/config` | `configs/bat/themes/Terminal Noir.tmTheme` |
+| micro | `configs/micro/{settings,bindings}.json` | `configs/micro/colorschemes/terminal-noir.micro` (+ Catppuccin schemes) |
+| Neovim | `configs/nvim/` (LazyVim) | `configs/nvim/colors/terminal-noir.lua` |
+| VS Code | `.vscode/settings.json`, keybindings, snippets | `configs/vscode/terminal-noir/` |
+| GTK | `configs/gtk-3.0/`, `configs/gtk-4.0/` | accent CSS in `gtk-4.0/gtk.css` |
+| Chrome / Chromium | `configs/chrome-flags.conf`, `.desktop` overrides | `configs/chrome/terminal-noir-theme/` |
+| Electron | `configs/electron-flags.conf`, `electron40-flags.conf` | (flags only) |
+| Obsidian | (manual vault snippet) | `configs/obsidian/snippets/terminal-noir.css` |
+| fcitx5 | `configs/fcitx5/config` | (layout switch; Arch `[paths:arch]`) |
+| espanso | `configs/espanso/` | generic `abbrev.yml` / `fun.yml` (Arch `[paths:arch]`) |
+
+Neovim `spelllang` defaults to English. Set `DOTFILES_SPELLLANG` (comma-separated) in a private shell snippet for extra locales. VS Code settings ship without MCP server blocks.
+
+**Kept private (overlay):** `opencode/opencode.json`, `solaar/rules.yaml`, `applications/input-remapper-gtk.desktop`, `espanso/match/base.yml` and `personal.yml`, `themes/terminal-noir/devnull-tui.json`, wallpapers. See [private/private-overlay.md](private/private-overlay.md) for where an overlay puts them.
 
 | Command | Purpose |
 |---|---|
@@ -174,6 +203,10 @@ The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak
 ### Shell startup
 
 `.zshenv`, `.zshrc`, `.bashrc` and `.profile` run on every terminal start. They only read local files from the clone and from `private/shell/` when present; they download nothing and open no network listener. Keep tokens and API keys out of the public tree and load them from the overlay.
+
+### Theme tools
+
+`scripts/themes/build-terminal-noir` reads two JSON files in the clone and writes theme outputs under `configs/` (or under `--out <dir>`). `build-terminal-noir-icons` and `install-terminal-noir-editors` install into the user's home directory (icon theme and editor extensions); review them before running on a shared machine.
 
 ### Profiles and hooks
 

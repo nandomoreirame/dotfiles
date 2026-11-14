@@ -312,10 +312,12 @@ EOF
     [ -z "$(ls "$HOME"/.config/x/ | grep -v '^c$')" ]
 }
 
-@test "the public links.conf ships documented and empty" {
-    run grep -vE '^\s*(#|$|\[)' "$ROOT/configs/links.conf"
-    [ -z "$output" ]
-    grep -q "\[paths:arch\]" "$ROOT/configs/links.conf"
+@test "the public links.conf ships sections and no private-only paths" {
+    grep -q "^\[files\]" "$ROOT/configs/links.conf"
+    grep -q "^\[paths\]" "$ROOT/configs/links.conf"
+    grep -q "^\[paths:arch\]" "$ROOT/configs/links.conf"
+    run grep -E 'opencode|solaar|input-remapper|wallpapers|devnull-tui' "$ROOT/configs/links.conf"
+    [ "$status" -ne 0 ]
 }
 
 @test "invalid target traversal leaves HOME untouched" {

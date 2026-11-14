@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Terminal Noir theme sources, generator (`scripts/themes/build-terminal-noir`) and per-app theme files for ghostty, tmux, bat, micro, Neovim, VS Code, GTK, Chrome and Obsidian
+- Terminal configs (ghostty, tmux, bat, micro) with palette-only colors and English comments
+- Neovim LazyVim config with `DOTFILES_SPELLLANG` (default English) and no personal paths
+- VS Code settings/keybindings/snippets without MCP servers; linked theme package under `configs/vscode/terminal-noir/`
+- Desktop flags and overrides: GTK, chrome/electron flags, Chromium/Chrome `.desktop` files, fcitx5, generic espanso matches
 - Generic zsh/bash environment (`.zshenv`, `.zshrc`, `.bashrc`, `.profile`, `.p10k.zsh`, `.oh-my-zsh/custom/`) that resolves `$DOTFILES` from the clone symlink and loads `private/shell/*.zsh` when present
 - Arch packages for powerlevel10k, zsh-autosuggestions and zsh-syntax-highlighting (loaded from `/usr/share`, skipped when absent)
 - Generic `.gitconfig` and `configs/git/*` without identity, signing or hooks (those stay in `~/.gitconfig.local`)
