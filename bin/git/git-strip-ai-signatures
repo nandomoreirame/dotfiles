@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# git-strip-ai-signatures - commit-msg helper
+# Strips automatic AI signatures from commit messages.
+# Used as: opt-in git commit-msg hook (dotfiles.hookStrip=true).
+#
+# Usage:
+#   As git hook:    called from commit-msg with $1 = message file
+#   As standalone:  git-strip-ai-signatures <message-file>
+
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+
+if [[ -z "$MSG_FILE" || ! -f "$MSG_FILE" ]]; then
+  exit 0
+fi
+
+# Remove Co-Authored-By, Generated-with, and robot emoji signature lines
+sed -i -E '/^[[:space:]]*(Co-Authored-By|Generated[ -]with|🤖 Generated)/Id' "$MSG_FILE"
+
+# Remove trailing blank lines left behind
+sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$MSG_FILE"

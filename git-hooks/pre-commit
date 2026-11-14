@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Global pre-commit hook (core.hooksPath -> $DOTFILES/git-hooks).
+#
+# Blocks two classes of content in ADDED lines of the staged diff:
+#   1. username-bearing absolute home paths  (/home/<user>/...)  -> use ~, $HOME or %h
+#   2. obvious hardcoded secrets (AWS keys, Slack/GitHub tokens, private keys)
+#
+# Then chains the repo-local .git/hooks/pre-commit, which a global hooksPath
+# would otherwise silently disable.
+#
+# Bypass on purpose:  git commit --no-verify
+set -o pipefail
+
+PAT_HOME='/home/[a-z_][a-z0-9_-]*/'
+PAT_SECRET='AKIA[0-9A-Z]{16}|xox[baprs]-[0-9A-Za-z-]{10,}|gh[pousr]_[0-9A-Za-z]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+
+files=$(git diff --cached --name-only --diff-filter=ACM)
+
+fail=0
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  # never scan a hook file that defines these patterns (literals, not leaks)
+  case "$f" in git-hooks/pre-commit | */git-hooks/pre-commit | .githooks/pre-commit) continue ;; esac
+
+  added=$(git diff --cached --no-color -U0 -- "$f" | grep -E -e '^\+[^+]' || true)
+  [ -z "$added" ] && continue
+
+  home_hits=$(printf '%s\n' "$added" | grep -nE -e "$PAT_HOME" || true)
+  if [ -n "$home_hits" ]; then
+    echo "x $f: absolute home path (use ~, \$HOME or %h):"
+    printf '%s\n' "$home_hits" | head -5
+    fail=1
+  fi
+
+  sec_hits=$(printf '%s\n' "$added" | grep -nE -e "$PAT_SECRET" || true)
+  if [ -n "$sec_hits" ]; then
+    echo "x $f: possible hard-coded secret:"
+    printf '%s\n' "$sec_hits" | sed -E "s/($PAT_SECRET)/[REDACTED]/g" | head -5
+    fail=1
+  fi
+done <<< "$files"
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "Commit blocked (global pre-commit)."
+  echo "Fix the items above or use 'git commit --no-verify' if intentional."
+  exit 1
+fi
+
+# Chain the repo-local hook (skipped when it is this very file).
+local_hook="$(git rev-parse --git-common-dir 2>/dev/null)/hooks/pre-commit"
+if [ -x "$local_hook" ] && [ "$(realpath "$local_hook")" != "$(realpath "$0")" ]; then
+  exec "$local_hook" "$@"
+fi
+
+exit 0

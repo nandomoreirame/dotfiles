@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Only strip when dotfiles.hookStrip is true (default off).
+strip=$(git config --get dotfiles.hookStrip 2>/dev/null || true)
+[ "$strip" = "true" ] || [ "${DOTFILES_HOOK_STRIP:-}" = "1" ] || exit 0
+HOOKS_DIR=$(cd "$(dirname "$0")" && pwd)
+exec "$HOOKS_DIR/../bin/git/git-strip-ai-signatures" "$1"

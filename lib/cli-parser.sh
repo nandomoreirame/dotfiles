@@ -301,15 +301,25 @@ _profile_module() {
 }
 
 _hooks_module() {
-    case "${1:-}" in
+    # shellcheck source=lib/hooks.sh
+    source "${BASH_SOURCE[0]%/*}/hooks.sh"
+    local action="${1:-status}"
+    shift || true
+    case "$action" in
         ""|status)
-            printf 'hooks: not yet enabled\n'
+            _hooks_status
+            ;;
+        enable)
+            _hooks_enable "$@"
+            ;;
+        disable)
+            _hooks_disable
             ;;
         --help|-h)
             _help
             ;;
         *)
-            _cli_error "hooks: not yet enabled (enable/disable arrive in a later task)"
+            _cli_error "Usage: dotfiles hooks enable|disable|status"
             return 1
             ;;
     esac

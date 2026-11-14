@@ -38,7 +38,9 @@ _help() {
         '  profile export     Export a directory-based profile' \
         '  profile import     Import a directory-based profile' \
         '  profile validate   Validate an identity profile file' \
-        '  hooks              Opt-in Git hooks (not yet enabled)' \
+        '  hooks enable        Opt-in Git hooks (guard; optional strip)' \
+        '  hooks disable       Turn off opt-in Git hooks' \
+        '  hooks status        Show guard/strip hook state' \
         '  --status           Check links, PATH and environment variables' \
         '  --verify           Verify every configured link' \
         '  --help, -h         Show this help' \
