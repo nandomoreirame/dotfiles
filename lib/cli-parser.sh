@@ -133,6 +133,34 @@ _pkg_remove_handler() {
 }
 
 # Later milestones register modules here without extending the parser.
+_setup_module() {
+    case "${1:-}" in
+        ""|run)
+            # bare `setup` runs auto scripts; `setup:run <name>` runs one
+            if [ "${1:-}" = "run" ]; then
+                shift
+                # shellcheck source=lib/setup.sh
+                source "${BASH_SOURCE[0]%/*}/setup.sh"
+                _cli_parse_pkg_flags "$@" || return $?
+                if [ "${#_CLI_NAMES[@]}" -eq 0 ]; then
+                    _cli_error "Usage: dotfiles setup:run <name>"
+                    return 1
+                fi
+                _setup_run_one "${_CLI_NAMES[@]}"
+            else
+                # shellcheck source=lib/setup.sh
+                source "${BASH_SOURCE[0]%/*}/setup.sh"
+                _cli_parse_pkg_flags "$@" || return $?
+                _run_setup
+            fi
+            ;;
+        *)
+            _cli_error "Usage: dotfiles setup | setup:run <name>"
+            return 1
+            ;;
+    esac
+}
+
 declare -gA _DOTFILES_MODULES=(
     [links]=_links_handler
     [pacman]=_pacman_module
@@ -143,6 +171,7 @@ declare -gA _DOTFILES_MODULES=(
     [langs]=_langs_module
     [fonts]=_fonts_module
     [apps]=_apps_module
+    [setup]=_setup_module
 )
 
 _pacman_module() {

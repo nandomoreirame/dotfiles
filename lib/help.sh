@@ -24,6 +24,8 @@ _help() {
         '  langs:install      Install languages from configs/mise/config.toml' \
         '  fonts:install      Install the pacman fonts group' \
         '  apps:install       Run pacman, AUR, Flatpak, Node, sh and langs' \
+        '  setup              Run auto setup scripts from the registry' \
+        '  setup:run          Run one setup script by name' \
         '  --status           Check links, PATH and environment variables' \
         '  --verify           Verify every configured link' \
         '  --help, -h         Show this help' \
