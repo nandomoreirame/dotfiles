@@ -1,0 +1,5 @@
+{
+    "Ctrl-w": "Quit",
+    "Alt-q": "Quit",
+    "Alt-w": "NextSplit"
+}

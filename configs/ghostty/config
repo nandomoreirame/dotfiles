@@ -1,0 +1,74 @@
+# Ghostty terminal configuration.
+
+# Local overrides loaded so they win (in ghostty a config-file
+
+# is parsed after its parent, and later files take precedence). Path is relative
+
+# to this file's directory. Keeps the terminal opaque over the theme's 0.45
+
+config-file = "overrides.conf"
+
+# Font
+
+font-family = "JetBrainsMono Nerd Font"
+font-style = Regular
+font-size = 12
+adjust-cell-height=40%
+
+# Crisp/sharp glyphs like kitty: drop the default `light` hinting (vertical-only
+
+# softer) for full hinting. Default would be `hinting, autohint, light`
+
+freetype-load-flags = hinting
+
+# Colors: Terminal Noir, following the system light/dark preference that
+# Noctalia sets. Themes live in themes/ next to this file.
+
+theme = light:terminal-noir-light,dark:terminal-noir-dark
+
+# Window
+
+window-theme = ghostty
+window-decoration = none
+window-padding-x = 14
+window-padding-y = 14,0
+confirm-close-surface = false
+resize-overlay = never
+gtk-toolbar-style = flat
+gtk-tabs-location = bottom
+
+# Cursor styling
+
+cursor-style = "block"
+cursor-style-blink = true
+
+# Cursor styling + SSH session terminfo
+
+# (all shell integration options must be passed together)
+
+shell-integration-features = no-cursor,ssh-env
+
+# Clipboard / selection
+
+# Copy-on-select is DISABLED: selecting text does not auto-copy it anywhere.
+# Copy explicitly with Ctrl+Insert (or Ctrl+Shift+C); paste from the system
+# clipboard with Shift+Insert (or Ctrl+Shift+V).
+
+copy-on-select = false
+
+# Keyboard bindings
+
+keybind = shift+insert=paste_from_clipboard
+keybind = control+insert=copy_to_clipboard
+keybind = super+control+shift+alt+arrow_down=resize_split:down,100
+keybind = super+control+shift+alt+arrow_up=resize_split:up,100
+keybind = super+control+shift+alt+arrow_left=resize_split:left,100
+keybind = super+control+shift+alt+arrow_right=resize_split:right,100
+
+# Slowdown mouse scrolling
+
+mouse-scroll-multiplier = 0.95
+
+# Fix general slowness on some Wayland compositors (https://github.com/ghostty-org/ghostty/discussions/3224)
+
+async-backend = epoll

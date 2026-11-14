@@ -1,0 +1,5 @@
+--paging=never
+--pager="less --RAW-CONTROL-CHARS --quit-if-one-screen --mouse"
+--theme="Terminal Noir"
+--italic-text=always
+--tabs=2
