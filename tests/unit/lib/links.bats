@@ -361,3 +361,26 @@ EOF
     [ "$status" -ne 0 ]
     [ ! -e "$HOME/x" ]
 }
+
+@test "a private [files] entry replaces the public one and points at the overlay" {
+    export DOTFILES="$BATS_TEST_TMPDIR/dot" HOME="$BATS_TEST_TMPDIR/home"
+    export DOTFILES_PRIVATE="$DOTFILES/private" LINKS_CONFIG="$DOTFILES/configs/links.conf"
+    mkdir -p "$DOTFILES/configs" "$DOTFILES/private/configs" "$HOME"
+    echo pub > "$DOTFILES/configs/.rc"; echo priv > "$DOTFILES/private/configs/.rc"
+    printf '[files]\n.rc\n' > "$DOTFILES/configs/links.conf"
+    printf '[files]\n.rc\n' > "$DOTFILES/private/links.conf"
+    run bash -c "source '$ROOT/lib/links.sh'; _link_files"
+    [ "$status" -eq 0 ]
+    [ "$(readlink "$HOME/.rc")" = "$DOTFILES/private/configs/.rc" ]
+}
+
+@test "links handle spaces in the source and the target" {
+    export DOTFILES="$BATS_TEST_TMPDIR/dot clone" HOME="$BATS_TEST_TMPDIR/my home"
+    export DOTFILES_PRIVATE="$DOTFILES/private" LINKS_CONFIG="$DOTFILES/configs/links.conf"
+    mkdir -p "$DOTFILES/configs/my app" "$HOME"
+    echo x > "$DOTFILES/configs/my app/a file"
+    printf '[paths]\nconfigs/my app/a file | .config/my app/a file |\n' > "$DOTFILES/configs/links.conf"
+    run bash -c "source '$ROOT/lib/links.sh'; _link_paths && _link_paths"
+    [ "$status" -eq 0 ]
+    [ "$(readlink "$HOME/.config/my app/a file")" = "$DOTFILES/configs/my app/a file" ]
+}
