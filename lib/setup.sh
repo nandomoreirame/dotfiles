@@ -64,12 +64,12 @@ _setup_exec() {
 }
 
 _run_setup() {
-    local file policy desc failed=0
+    local file policy desc
     e_header "Setup scripts (policy: auto)"
     while IFS='|' read -r file policy desc || [ -n "$file" ]; do
         [ -n "$file" ] || continue
         [ "$policy" = "auto" ] || continue
-        _setup_exec "$file" "$desc" || failed=1
+        _setup_exec "$file" "$desc" || true
     done < <(_get_setup_scripts)
     return 0
 }

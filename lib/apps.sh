@@ -83,12 +83,12 @@ _apps_install_fonts() {
 # apps:install runs pacman, AUR, Flatpak, Node, sh and langs in that order.
 _apps_install_all() {
     local group="${1:-}" only="${2:-}"
-    local failed=0
-    _apps_install_pacman "$group" "$only" || failed=1
-    _apps_install_aur "$group" "$only" || failed=1
-    _apps_install_flatpak "$group" "$only" || failed=1
-    _apps_install_node "$group" "$only" || failed=1
-    _apps_install_sh "$group" "$only" || failed=1
-    _apps_install_langs || failed=1
-    return "$failed"
+    local fail_count=0
+    _apps_install_pacman "$group" "$only" || fail_count=1
+    _apps_install_aur "$group" "$only" || fail_count=1
+    _apps_install_flatpak "$group" "$only" || fail_count=1
+    _apps_install_node "$group" "$only" || fail_count=1
+    _apps_install_sh "$group" "$only" || fail_count=1
+    _apps_install_langs || fail_count=1
+    return "$fail_count"
 }

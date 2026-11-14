@@ -143,7 +143,7 @@ _install_docker() {
 # _sh_apps [names...]
 _sh_apps() {
     local apps_to_install="$1"
-    local -a _apps=() failed=()
+    local -a _apps=() failed_pkgs=()
     local app func
 
     if [ -z "$apps_to_install" ]; then
@@ -167,12 +167,12 @@ _sh_apps() {
         fi
         if ! "$func"; then
             e_warning "Failed to install $app (continuing)"
-            failed+=("$app")
+            failed_pkgs+=("$app")
         fi
     done
 
-    if [ "${#failed[@]}" -gt 0 ]; then
-        e_error "Failed shell apps: ${failed[*]}"
+    if [ "${#failed_pkgs[@]}" -gt 0 ]; then
+        e_error "Failed shell apps: ${failed_pkgs[*]}"
         return 1
     fi
     return 0

@@ -24,7 +24,7 @@ _pacman_run() {
 # When no names are given, installs every name from the pacman list.
 _pacman_packages() {
     local packages_to_install="$1"
-    local -a _packages=() to_install=() failed=()
+    local -a _packages=() to_install=() failed_pkgs=()
     local pack
 
     if [ -z "$packages_to_install" ]; then
@@ -57,13 +57,13 @@ _pacman_packages() {
         e_info "Installing $pack"
         if ! _pacman_run pacman -S --noconfirm --needed "$pack"; then
             e_error "Failed to install $pack"
-            failed+=("$pack")
+            failed_pkgs+=("$pack")
             continue
         fi
     done
 
-    if [ "${#failed[@]}" -gt 0 ]; then
-        e_error "Failed pacman packages: ${failed[*]}"
+    if [ "${#failed_pkgs[@]}" -gt 0 ]; then
+        e_error "Failed pacman packages: ${failed_pkgs[*]}"
         return 1
     fi
     return 0

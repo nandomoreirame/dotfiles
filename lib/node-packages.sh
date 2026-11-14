@@ -28,7 +28,7 @@ _node_is_installed() {
 _node_packages() {
     local packages_to_install="$1"
     local package
-    local -a _packages=() failed=()
+    local -a _packages=() failed_pkgs=()
 
     if ! command -v npm >/dev/null 2>&1; then
         e_error "npm not found; install Node.js first (mise or pacman)"
@@ -56,13 +56,13 @@ _node_packages() {
         e_info "Installing $package"
         if ! _node_run npm install -g "$package"; then
             e_error "Failed to install $package"
-            failed+=("$package")
+            failed_pkgs+=("$package")
             continue
         fi
     done
 
-    if [ "${#failed[@]}" -gt 0 ]; then
-        e_error "Failed npm packages: ${failed[*]}"
+    if [ "${#failed_pkgs[@]}" -gt 0 ]; then
+        e_error "Failed npm packages: ${failed_pkgs[*]}"
         return 1
     fi
     return 0

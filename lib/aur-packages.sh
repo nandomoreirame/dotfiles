@@ -33,7 +33,7 @@ _aur_run() {
 _aur_packages() {
     local packages_to_install="$1"
     local aur_helper pack
-    local -a _packages=() failed=()
+    local -a _packages=() failed_pkgs=()
 
     aur_helper="$(_get_aur_helper)"
     if [ -z "$aur_helper" ]; then
@@ -66,13 +66,13 @@ _aur_packages() {
         e_info "Installing AUR: $pack"
         if ! _aur_run "$aur_helper" -S --noconfirm --needed "$pack"; then
             e_error "Failed to install $pack"
-            failed+=("$pack")
+            failed_pkgs+=("$pack")
             continue
         fi
     done
 
-    if [ "${#failed[@]}" -gt 0 ]; then
-        e_error "Failed AUR packages: ${failed[*]}"
+    if [ "${#failed_pkgs[@]}" -gt 0 ]; then
+        e_error "Failed AUR packages: ${failed_pkgs[*]}"
         return 1
     fi
     return 0

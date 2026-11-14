@@ -44,6 +44,21 @@ README, docs, comments and runtime messages are **English**. Identifiers stay En
 
 Use the pull request template. Keep the change small, add tests with the feature, and leave `docs/` (specs, plans, reviews) untracked: that directory is local-only and fully gitignored. The only tracked files under `private/` are its two documents.
 
+## VM smoke test
+
+On a fresh Arch VM (or a throwaway user):
+
+```bash
+git clone --recurse-submodules git@github.com:nandomoreirame/dotfiles.git
+cd dotfiles
+./install.sh --dry-run
+./install.sh
+dotfiles init
+dotfiles doctor
+```
+
+Automated tests stub pacman/AUR/Flatpak/npm and never install real packages. The VM run is the proof that the live flow works.
+
 ## Conventions
 
 Bash modules resolve the clone when `DOTFILES` is unset:

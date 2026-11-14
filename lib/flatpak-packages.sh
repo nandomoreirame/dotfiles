@@ -23,7 +23,7 @@ _flatpak_run() {
 _flatpak_packages() {
     local packages_to_install="$1"
     local pack
-    local -a _packages=() failed=()
+    local -a _packages=() failed_pkgs=()
 
     if [ -z "$packages_to_install" ]; then
         packages_to_install="$(_package_list flatpak | tr '\n' ' ')"
@@ -46,13 +46,13 @@ _flatpak_packages() {
         e_info "Installing $pack"
         if ! _flatpak_run flatpak install -y flathub "$pack"; then
             e_error "Failed to install $pack"
-            failed+=("$pack")
+            failed_pkgs+=("$pack")
             continue
         fi
     done
 
-    if [ "${#failed[@]}" -gt 0 ]; then
-        e_error "Failed Flatpak packages: ${failed[*]}"
+    if [ "${#failed_pkgs[@]}" -gt 0 ]; then
+        e_error "Failed Flatpak packages: ${failed_pkgs[*]}"
         return 1
     fi
     return 0

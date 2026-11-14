@@ -33,18 +33,18 @@ _doctor_prerequisites() {
 }
 
 _doctor_links() {
-    local target failed=0
+    local target fail_count=0
     _load_link_entries all || return 1
     for target in "${_link_targets[@]}"; do
         if ! _check_link "$HOME/$target" "${_link_sources[$target]}" >/dev/null; then
             printf 'links: broken %s\n' "$target"
-            failed=1
+            fail_count=1
         fi
     done
-    if [ "$failed" -eq 0 ]; then
+    if [ "$fail_count" -eq 0 ]; then
         printf 'links: ok\n'
     fi
-    return "$failed"
+    return "$fail_count"
 }
 
 _doctor_packages() {
@@ -79,16 +79,16 @@ _doctor_identity() {
 }
 
 _doctor() {
-    local failed=0
+    local fail_count=0
     e_header "dotfiles doctor"
-    _doctor_prerequisites || failed=1
-    _doctor_links || failed=1
-    _doctor_packages || failed=1
-    _doctor_identity || failed=1
-    if [ "$failed" -eq 0 ]; then
+    _doctor_prerequisites || fail_count=1
+    _doctor_links || fail_count=1
+    _doctor_packages || fail_count=1
+    _doctor_identity || fail_count=1
+    if [ "$fail_count" -eq 0 ]; then
         e_success "doctor: all checks passed"
     else
         e_error "doctor: one or more checks failed"
     fi
-    return "$failed"
+    return "$fail_count"
 }
