@@ -72,6 +72,8 @@ dotfiles pacman:install --group fonts --dry-run --yes
 dotfiles apps:install --dry-run --yes
 dotfiles setup
 dotfiles init
+dotfiles profile switch personal
+dotfiles hooks enable
 dotfiles doctor
 dotfiles --verify
 ```
@@ -89,13 +91,47 @@ The public `configs/links.conf` is documented but empty until the config migrati
 | `dotfiles fonts:install` | Install the pacman fonts group |
 | `dotfiles setup` / `setup:run <name>` | Run auto setup scripts, or one by name |
 | `dotfiles init` | Write `~/.gitconfig.local` identity |
-| `dotfiles doctor` | Check prerequisites, links, packages and identity |
+| `dotfiles profile list\|show\|switch <name>` | List or switch Git/gcloud identity profiles |
+| `dotfiles hooks enable\|disable\|status` | Opt-in global Git hooks (off by default) |
+| `dotfiles doctor` | Check prerequisites, links, packages, identity and profile |
 | `dotfiles --verify` | Report missing, broken and foreign links |
-| `dotfiles --status` | Check links, PATH, environment and packages |
+| `dotfiles --status` | Check links, PATH, environment, packages and active profile |
 | `bash tests/run-tests [path]` | Run unit and integration tests |
 | `bash scripts/public-check [--staged] [path]` | Personal-data gate |
 
-Shared install flags: `--dry-run`, `--yes`, `--no-remote`, `--group <name>`, `--only <names>`. For automation, set `DOTFILES_YES=1`; `DOTFILES_PROMPT_STDIN=1` permits scripted stdin answers. Optional helpers are listed in [bin/README.md](bin/README.md).
+Shared install flags: `--dry-run`, `--yes`, `--no-remote`, `--group <name>`, `--only <names>`. For automation, set `DOTFILES_YES=1`; `DOTFILES_PROMPT_STDIN=1` permits scripted stdin answers. Optional helpers are listed in [bin/README.md](bin/README.md). Thin wrappers: `bin/profile` and `bin/git/git-profile` exec into `dotfiles profile`.
+
+## Profiles
+
+A profile holds a Git identity (name, email, signing key), an optional gcloud/Firebase account and project list, plus shell and environment snippets. Tracked templates live under `profiles/linux-arch/`:
+
+- `env.conf`, `shell.conf` (tracked)
+- `git-personal.conf.example`, `git-work.conf.example`
+- `gcloud-personal.conf.example`, `gcloud-work.conf.example`
+
+Copy an `.example` to the matching real file (for example `git-personal.conf`). Real `git-*.conf` and `gcloud-*.conf` files are gitignored. Then switch:
+
+```bash
+dotfiles profile list
+dotfiles profile switch personal
+dotfiles profile show
+```
+
+`dotfiles profile switch` writes the Git identity into `~/.gitconfig.local` (never into the repository) and activates a matching gcloud configuration when `gcloud` is installed. Missing cloud credentials print the `gcloud auth` command to run; the switch never opens a browser on its own.
+
+## Git hooks
+
+Git hooks ship **off by default** (opt-in). Enabling them sets `core.hooksPath` in `~/.gitconfig.local` to this clone's `git-hooks/` directory, so they run in **every repository** on the machine.
+
+```bash
+dotfiles hooks enable          # guard only
+dotfiles hooks enable guard strip
+dotfiles hooks status
+dotfiles hooks disable
+```
+
+- **guard** (pre-commit): blocks added lines with a `/home/<user>/` path (use `~`, `$HOME` or `%h`) and obvious hard-coded secrets (AWS keys, Slack/GitHub tokens, private keys). Bypass with `git commit --no-verify`. Chains the repository-local `pre-commit` when present.
+- **strip** (commit-msg, separate switch): removes `Co-Authored-By`, `Generated with` and robot-emoji signature lines from the commit message. Off unless you pass `strip` to `hooks enable`.
 
 ## Security
 
@@ -118,6 +154,10 @@ Shared install flags: `--dry-run`, `--yes`, `--no-remote`, `--group <name>`, `--
 ### Local changes
 
 The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak.*` siblings. Overlay entries can select different sources; review both manifests before linking. The CLI opens no network listener. Optional helpers under [`bin/`](bin/README.md) include privileged and network-talking scripts; none run unless you invoke them.
+
+### Profiles and hooks
+
+Profile files under `profiles/**/git-*.conf` and `gcloud-*.conf` are gitignored; only `.example` templates are tracked. Identity is written only to `~/.gitconfig.local`. Global hooks stay disabled until `dotfiles hooks enable`; that command sets `core.hooksPath` for every repository on the machine and prints how to run `hooks disable`. The guard redacts matched secrets in its output. The strip hook is a separate opt-in and never runs until enabled.
 
 Report security issues privately to the maintainer; do not open a public issue with secrets, hostnames or personal data.
 

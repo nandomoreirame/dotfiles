@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Profile switching (`dotfiles profile list|show|switch`) for Git identity and gcloud configs; thin wrappers `bin/profile` and `bin/git/git-profile`
+- Opt-in Git hooks (`dotfiles hooks enable|disable|status`): guard blocks home paths and secrets; strip removes Co-Authored-By / Generated-with lines (off until enabled)
 - New-machine install flow (`./install.sh` and `dotfiles install`) with `--dry-run`, `--yes`, `--no-remote` and `--group`
 - Data-driven package lists under `packages/` with a private overlay merge (`private/packages/*.list`)
 - pacman / AUR / Flatpak / npm installers, verified oh-my-zsh download, fonts via pacman, setup registry
