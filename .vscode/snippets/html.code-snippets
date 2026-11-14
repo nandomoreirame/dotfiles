@@ -1,0 +1,31 @@
+{
+  "picsum.photos": {
+    "prefix": ["!img-picsum", "!tag-picsum", "!picsum-tag", "!picsum.photos"],
+    "scope": "typescriptreact,html,vue",
+    "description": "image tag picsum photos url",
+    "body": [
+      "<img",
+      "\tsrc=\"https://picsum.photos/${1:800}/${2:500}\"",
+      "\twidth={${1:800}}",
+      "\theight={${2:500}}",
+      "\talt=\"picsum photos\"",
+      "/>${0}",
+    ]
+  },
+  "placehold.it": {
+    "prefix": ["!img-placehold", "!placehold.it"],
+    "scope": "html,php",
+    "body": [
+      "<img src=\"//placehold.it/${1:350}x${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:placehold.it}\" />"
+    ],
+    "description": "img tag with placehold.it"
+  },
+  "lorempixel.it": {
+    "prefix": ["!img-lorempixel", "!lorempixel.com"],
+    "scope": "html,php",
+    "body": [
+      "<img src=\"//lorempixel.com/${1:300}/${2:150}\" width=\"${1:350}\" height=\"${2:150}\" alt=\"${3:lorempixel.com}\" />"
+    ],
+    "description": "Add placeholder image with lorempixel.com"
+  }
+}

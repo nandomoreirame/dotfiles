@@ -1,0 +1,108 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.terminal.clear",
+    "when": "terminalFocus && terminalProcessSupported",
+  },
+  {
+    "key": "ctrl+w",
+    "command": "workbench.action.terminal.kill",
+    "when": "terminalFocus && terminalProcessSupported",
+  },
+  {
+    "key": "ctrl+shift+d",
+    "command": "editor.action.duplicateSelection",
+  },
+  {
+    "key": "ctrl+alt+z",
+    "command": "workbench.action.toggleZenMode",
+    "when": "!isAuxiliaryWindowFocusedContext",
+  },
+  {
+    "key": "ctrl+k z",
+    "command": "-workbench.action.toggleZenMode",
+    "when": "!isAuxiliaryWindowFocusedContext",
+  },
+  {
+    "key": "ctrl+j",
+    "command": "editor.action.joinLines",
+  },
+  {
+    "key": "ctrl+shift+m",
+    "command": "-workbench.actions.view.problems",
+    "when": "workbench.panel.markers.view.active",
+  },
+  {
+    "key": "ctrl+shift+m",
+    "command": "cursor.generateGitCommitMessage",
+  },
+  {
+    "key": "ctrl+k ctrl+m",
+    "command": "workbench.action.toggleMaximizedPanel",
+  },
+  {
+    "key": "ctrl+k ctrl+v",
+    "command": "versionlens.icons.showVersionLenses",
+  },
+  {
+    "key": "cmd+i",
+    "command": "composerMode.agent",
+  },
+  {
+    "key": "cmd+i",
+    "command": "composerMode.agent",
+  },
+  {
+    "key": "ctrl+k ctrl+s",
+    "command": "workbench.action.toggleStatusbarVisibility",
+  },
+  {
+    "key": "ctrl+k ctrl+t",
+    "command": "hideCustomTitleBar",
+  },
+  {
+    "key": "ctrl+k ctrl+l",
+    "command": "showCustomTitleBar",
+  },
+  {
+    "key": "ctrl+shift+b",
+    "command": "workbench.action.toggleAuxiliaryBar",
+    "when": "!isAuxiliaryWindowFocusedContext",
+  },
+  {
+    "key": "ctrl+alt+b",
+    "command": "-workbench.action.toggleAuxiliaryBar",
+    "when": "!isAuxiliaryWindowFocusedContext",
+  },
+  {
+    "key": "ctrl+alt+b",
+    "command": "composer.toggleBrowserTab",
+  },
+  {
+    "key": "ctrl+shift+b",
+    "command": "-composer.toggleBrowserTab",
+  },
+  {
+    "key": "ctrl+shift+b",
+    "command": "-workbench.action.tasks.build",
+    "when": "taskCommandsRegistered",
+  },
+  {
+    "key": "ctrl+k ctrl+p",
+    "command": "mermaidChart.preview",
+  },
+  {
+    "key": "ctrl+i ctrl+c",
+    "command": "workbench.view.extension.codexSecondaryViewContainer",
+  },
+  {
+    "key": "ctrl+m ctrl+c",
+    "command": "workbench.view.extension.claude-sidebar-secondary",
+  },
+  {
+    "key": "ctrl+shift+p",
+    "command": "markdown.reopenAsPreview",
+    "when": "!hasCustomMarkdownPreview && !notebookEditorFocused && activeEditor == 'workbench.editors.files.textFileEditor' && resourceLangId =~ /^(markdown|prompt|instructions|chatagent|skill)$/",
+  },
+]

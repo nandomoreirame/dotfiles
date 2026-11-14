@@ -1,0 +1,214 @@
+{
+  "pre-tag": {
+    "prefix": [
+      "!pre",
+      "!json-pre",
+      "!tag-pre"
+    ],
+    "scope": "typescriptreact",
+    "description": "tag pre with JSON.stringify",
+    "body": [
+      "<pre>{JSON.stringify(${1:variable}, null, ${2:2})}</pre>${0}"
+    ]
+  },
+  "react-useEffect": {
+    "prefix": [
+      "!react-useEffect",
+      "!useEffect"
+    ],
+    "scope": "typescriptreact",
+    "description": "React.useEffect - https://react.dev/reference/react/useEffect",
+    "body": [
+      "useEffect(() => {",
+      "\tconsole.log('[ ${1:variable} ]', ${1:variable})",
+      "}, [${1:variable}$0])",
+    ]
+  },
+  "react-useEffect-sync-js": {
+    "prefix": [
+      "!react-useEffect-sync",
+      "!useEffect-sync-js"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "useEffect(() => {",
+      "\t(async () => {",
+      "\t\tawait doSomefn()",
+      "\t})()",
+      "\t// eslint-disable-next-line react-hooks/exhaustive-deps",
+      "}, [$0])"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react-useEffect-sync:ts": {
+    "prefix": [
+      "!react-useEffect-sync",
+      "!useEffect-sync-ts"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "useEffect(() => {",
+      "\t(async () => {",
+      "\t\tawait doSomefn()",
+      "\t})()",
+      "\t// eslint-disable-next-line react-hooks/exhaustive-deps",
+      "}, [$0])"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react-useState": {
+    "prefix": [
+      "!react-useState",
+      "!useState"
+    ],
+    "scope": "typescriptreact",
+    "description": "React useState hook - https://react.dev/reference/react/useState",
+    "body": [
+      "const [${1:variable}, set${2:Variable}] = useState$0${3:<boolean>}(${4:false})"
+    ]
+  },
+  "react-useBoolean": {
+    "prefix": [
+      "!react-useBoolean",
+      "!useBoolean"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "const { value: is${1:Boolean}, setValue: set${1:Boolean}, ${2:toggle: toggle${1:Boolean}, setTrue: set${1:Boolean}True, setFalse: set${1:Boolean}False} } = useBoolean$0(${3:false})"
+    ],
+    "description": "React useBoolean() sexy hook"
+  },
+  "react-component-clean": {
+    "prefix": [
+      "!react-component",
+      "!component",
+      "!react-component-clean",
+      "!component-clean"
+    ],
+    "scope": "typescriptreact",
+    "description": "React (TypeScript) stateless base component",
+    "body": [
+      "export function ${1:ComponentName}({ children }: { children: React.ReactNode }) {",
+      "\treturn (",
+      "\t\t<div>{children}${0}</div>",
+      "\t)",
+      "}",
+      ""
+    ]
+  },
+  "react-component": {
+    "prefix": [
+      "!react-component",
+      "!component"
+    ],
+    "scope": "typescriptreact",
+    "description": "React (TypeScript) stateless base component",
+    "body": [
+      "import { cn } from '@/lib/utils'",
+      "import { type ComponentProps } from 'react'",
+      "",
+      "interface ${1:ComponentName}Props extends ComponentProps<'${2:div}'> {}",
+      "",
+      "export function ${1:ComponentName}({ children, className, ...props }: ${1:ComponentName}Props) {",
+      "\treturn (",
+      "\t\t<${2:div} className={cn(${3:'flex', }className)} {...props}>",
+      "\t\t\t<>{children}${0}</>",
+      "\t\t</${2:div}>",
+      "\t)",
+      "}",
+      ""
+    ]
+  },
+  "react-use-client": {
+    "prefix": [
+      "!react-use-client",
+      "!use-client"
+    ],
+    "scope": "typescriptreact",
+    "description": "React client component",
+    "body": [
+      "${1:'use client'}",
+      "${0}"
+    ]
+  },
+  "react-use-server": {
+    "prefix": [
+      "!react-use-server",
+      "!use-server"
+    ],
+    "scope": "typescriptreact",
+    "description": "React server component",
+    "body": [
+      "${1:'use server'}",
+      "${0}"
+    ]
+  },
+  "react-useEffect-js": {
+    "prefix": [
+      "!react-useEffect",
+      "!useEffect"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "useEffect$2(() => {",
+      "\t$0",
+      "}, [$1]);"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react-useEffect-ts": {
+    "prefix": [
+      "!react-useEffect",
+      "!useEffect"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "useEffect$2(() => {",
+      "\t$0",
+      "}, [$1]);"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react-useEffect-sync:js": {
+    "prefix": [
+      "!react-useEffect-sync",
+      "!useEffect-sync-js",
+      "!useEffect"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "useEffect(() => {",
+      "\t(async () => {",
+      "\t\tawait doSomefn();",
+      "\t})();",
+      "\t// eslint-disable-next-line react-hooks/exhaustive-deps",
+      "}, [$0]);"
+    ],
+    "description": "React useEffect Hook"
+  },
+  "react-const-variants": {
+    "prefix": [
+      "!react-const-variants",
+      "!const-variants",
+      "!variants"
+    ],
+    "scope": "typescript,typescriptreact",
+    "body": [
+      "const ${1:alert}Variants = cva(",
+      "\t'${2:flex}',",
+      "\t{",
+      "\t\tvariants: {",
+      "\t\t\tvariant: {",
+      "\t\t\t\tdefault: 'bg-background text-foreground',",
+      "\t\t\t\t${3:destructive: 'border-destructive/50 text-destructive',}",
+      "\t\t\t},",
+      "\t\t},",
+      "\t\tdefaultVariants: {",
+      "\t\t\tvariant: 'default',",
+      "\t\t},",
+      "\t},",
+      ")",
+      "",
+    ]
+  }
+}

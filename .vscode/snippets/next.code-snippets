@@ -1,0 +1,46 @@
+{
+  "next-page": {
+    "prefix": [
+      "!next-page",
+      "!page"
+    ],
+    "scope": "typescriptreact",
+    "description": "Nextjs page",
+    "body": [
+      "import { type Metadata } from 'next'",
+      "",
+      "export const metadata: Metadata = {",
+      "\ttitle: '${1:Name}${0} page',",
+      "}",
+      "",
+      "export default function ${1:Name}Page() {",
+      "\treturn (",
+      "\t\t<div className=\"flex size-full items-center justify-center\">",
+      "\t\t\t<h1 className=\"mb-4 text-4xl font-extrabold\">${1:Name} Page${0}</h1>",
+      "\t\t</div>",
+      "\t)",
+      "}",
+      ""
+    ]
+  },
+  "next-layout": {
+    "prefix": [
+      "!next-layout",
+      "!layout"
+    ],
+    "scope": "typescriptreact",
+    "description": "Nextjs layout",
+    "body": [
+      "import { type PropsWithChildren } from 'react'",
+      "",
+      "export default function ${1:Name}Layout({ children }: Readonly<PropsWithChildren>) {",
+      "\treturn (",
+      "\t\t<div className=\"flex size-full items-center justify-center\">",
+      "\t\t\t{children}${0}",
+      "\t\t</div>",
+      "\t)",
+      "}",
+      ""
+    ]
+  }
+}

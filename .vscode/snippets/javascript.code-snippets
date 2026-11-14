@@ -1,0 +1,208 @@
+{
+  "console.log": {
+    "prefix": ["!log", "!console"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "console.log with variable",
+    "body": [
+      "// eslint-disable-next-line no-console",
+      "console.${2:log}('[ ${1:variable} ]', ${1:variable})",
+      "${0}"
+    ]
+  },
+  "logger": {
+    "prefix": ["!logger", "!winston"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "logger with winston",
+    "body": [
+      "logger.${2:info}({ ${1:variable} })",
+      "${0}"
+    ]
+  },
+  "debugger": {
+    "prefix": ["!debugger"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Debugger",
+    "body": ["debugger;$0"]
+  },
+  "try:catch": {
+    "prefix": ["!try-catch", "!try"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "try catch error",
+    "body": [
+      "try {",
+      "\t$0",
+      "} catch (error: any) {",
+      "\tconst errorMessage = '[ ${1:Error message} ]'",
+      "\t// eslint-disable-next-line no-console",
+      "\tconsole.error(`[ ${ errorMessage } ]`, error)",
+      "\tawait sendDiscordMessage(`${ errorMessage } ${error.toString()}`)",
+      "\tthrow new Error(`${ errorMessage } ${error.toString()}`)",
+      "}"
+    ]
+  },
+  "forEach": {
+    "prefix": ["!forEach", "!for-each"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "body": [
+      "${1:arrayVar}.forEach(${2:item}) => {",
+      "\t// eslint-disable-next-line no-console",
+      "\tconsole.log('[ ${2:item} ]', ${2:item})$0",
+      "})"
+    ],
+    "description": "for of loop"
+  },
+  "for-of": {
+    "prefix": ["!for-of"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "body": [
+      "for (const ${2:item} of ${1:arrayVar}) {",
+      "\t// eslint-disable-next-line no-console",
+      "\tconsole.log('[ ${2:item} ]', ${2:item})$0",
+      "}"
+    ],
+    "description": "for of loop"
+  },
+  "const": {
+    "prefix": ["!const"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Create const",
+    "body": ["const ${1:varHere} = $0;"]
+  },
+  "function-arrow": {
+    "prefix": ["!function", "!arrow-function", "!function-arrow"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Arrow function",
+    "body": ["($1) => {", "\t${0:// Write something here...}", "}"]
+  },
+  "const-arrow": {
+    "prefix": ["!const", "!arrow-const", "!arrow", "!const-arrow"],
+    "description": "Const Arrow function",
+    "body": ["const ${1:functionHere} = ($2) => {", "\t${3:// Write something here...}", "};", "$0"]
+  },
+  "filter": {
+    "prefix": ["!filter", "!array-filter", "!const-filter"],
+    "description": "Const Arrow function with array filter",
+    "body": [
+      "const ${1:newArray} = ${2:arrayVars}.filter(${3:item} => Boolean(${3:item}))$0"]
+  },
+  "import-default": {
+    "prefix": ["!import", "!import-default"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "import default from module",
+    "body": ["import ${1:Module} from '${2:module}';$0"]
+  },
+  "import-const": {
+    "prefix": ["!import", "!import-const", "!const-import"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "import const module",
+    "body": ["import { ${1:Const1}${2:, ${3:Const2}} } from '${4:module}';$0"]
+  },
+  "require": {
+    "prefix": ["!require", "!require-module"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "import module using CommonJS require",
+    "body": ["const ${1:Module} = require('${2:module}');$0"]
+  },
+  "require-default": {
+    "prefix": ["!require", "!require-default"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "import default module using CommonJS require",
+    "body": ["const ${1:Module} = require('${2:module}').default;$0"]
+  },
+  "require-const": {
+    "prefix": ["!require", "!require-const", "!const-require"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "import const module using CommonJS require",
+    "body": ["const { ${1:Const1}${2:, ${3:Const2}} } = require('${4:module}');$0"]
+  },
+  "http-get": {
+    "prefix": ["!http-get", "!http", "!get", "!axios-get"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Axios http get",
+    "body": [
+      "http",
+      "\t.get(`${1:/end/point}`, {})",
+      "\t.then(json => json.data)",
+      "\t.catch(error => ({ error }))",
+      "$0"
+    ]
+  },
+  "http-post": {
+    "prefix": ["!http-post", "!post", "!http", "!axios-post"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Axios http POST",
+    "body": [
+      "http",
+      "\t.post(`${1:/end/point}`, {})",
+      "\t.then(json => json.data)",
+      "\t.catch(error => ({ error }))",
+      "$0"
+    ]
+  },
+  "promise": {
+    "prefix": ["!promise", "!new-promise", "!promise-new"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "New Promise",
+    "body": ["new Promise((resolve, reject) => {", "\t${0:// Write something here...}", "\tresolve();", "})", "$0"]
+  },
+  "promise-then": {
+    "prefix": ["!promise", "!promise-then"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Promise then",
+    "body": ["${1:promise}.then((${2:value}) => {", "\t${0:// Write something here...}", "})", "$0"]
+  },
+  "then-chain": {
+    "prefix": ["!then", "!then-chain", "!promise-then-chain"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "chain .then()",
+    "body": [".then((${1:value}) => {$0})"]
+  },
+  "promise-catch": {
+    "prefix": ["!promise", "!promise-catch", "!catch"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "Promise catch",
+    "body": ["${1:promise}.catch((${2:err}) => {", "\t${3:// Write something here...}", "})", "$0"]
+  },
+  "catch-chain": {
+    "prefix": ["!catch-chain", "!promise-catch-chain", "!catch"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "chain .catch()",
+    "body": [".catch((${1:err}) => {$0})"]
+  },
+  "export-default": {
+    "prefix": ["!export", "!export-default"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export default",
+    "body": ["export default {", "\t${1:// Write something here...}", "}", "$0"]
+  },
+  "export-*": {
+    "prefix": ["!export", "!export-*", "!export-all"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export * from",
+    "body": ["export * from '${1:./NameOfComponentFile}';", "$0"]
+  },
+  "export-default:as": {
+    "prefix": ["!export", "!export-default", "!export-default-as"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export default as a const",
+    "body": ["export { default as ${1:Const} } from './${2:File}';$0"]
+  },
+  "export-const": {
+    "prefix": ["!export", "!export-const"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export arrow function const",
+    "body": ["export const ${1:Const} = () => {", "\t${2:// Write something here...}", "}", "$0"]
+  },
+  "export-function": {
+    "prefix": ["!export", "!export-function"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export default function",
+    "body": ["export function ${1:functionName}() {", "\t${2:// Write something here...}", "}", "$0"]
+  },
+  "export-default:function": {
+    "prefix": ["!export", "!export-default-function"],
+    "scope": "javascript,typescript,javascriptreact,typescriptreact,vue,svelte",
+    "description": "export default function",
+    "body": ["export default function () {", "\t${1:// Write something here...}", "}"]
+  }
+}

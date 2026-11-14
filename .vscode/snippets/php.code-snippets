@@ -1,0 +1,82 @@
+{
+  "prp": {
+    "prefix": ["!prp", "prp"],
+    "scope": "php,html",
+    "body": ["echo '<pre>[ $1 ] ' . print_r( $1, true ) . '</pre>';", "$0"],
+    "description": "Print pre to debug"
+  },
+  "prp:tag": {
+    "prefix": ["!prp:t", "prp:t"],
+    "scope": "html",
+    "body": ["<?php echo '<pre>' . print_r( $1, true ) . '</pre>'; ?>", "$0"],
+    "description": "Print pre to debug"
+  },
+  "php:tag": {
+    "prefix": ["!php:t", "php:t"],
+    "scope": "html",
+    "body": ["<?php $1 ?>", "$0"],
+    "description": "php tag"
+  },
+  "php:t": {
+    "prefix": ["!php:t", "php:t"],
+    "scope": "php,html",
+    "body": ["<?php", "$0"],
+    "description": "php"
+  },
+  "php:jdie": {
+    "prefix": ["php:j"],
+    "scope": "php,html",
+    "body": ["jdie(json_encode( $${1:data}, JSON_PRETTY_PRINT ));", "$0"],
+    "description": "convert and print array to json and die"
+  },
+  "php:var": {
+    "prefix": ["php:v"],
+    "scope": "php,html",
+    "body": ["$${1:var}$0"],
+    "description": "PHP Var"
+  },
+  "php:class": {
+    "prefix": ["php:c"],
+    "scope": "php,html",
+    "body": [
+      "namespace ${1:App};",
+      "",
+      "class ${2:ClassName}${3: extends AnotherClass}",
+      "{",
+      "\t$1",
+      "}",
+      "$0"
+    ],
+    "description": "PHP class"
+  },
+  "php:namespace": {
+    "prefix": ["php:n"],
+    "scope": "php,html",
+    "body": ["namespace ${1:App};", "$0"],
+    "description": "PHP namespace"
+  },
+  "php:function": {
+    "prefix": ["php:f"],
+    "scope": "php,html",
+    "body": ["public function ${1:__construct}()", "{", "\t$1", "}", "$0"],
+    "description": "PHP function"
+  },
+  "if:template": {
+    "prefix": ["if:t"],
+    "scope": "php,html",
+    "body": ["<?php if ($1): ?>", "\t$2", "<?php endif; ?>$0"],
+    "description": "PHP if template"
+  },
+  "else:template": {
+    "prefix": ["else:t"],
+    "scope": "php,html",
+    "body": ["<?php else: ?>", "\t$0"],
+    "description": "PHP else template"
+  },
+  "endif:template": {
+    "prefix": ["endif:t"],
+    "scope": "php,html",
+    "body": ["<?php endif; ?>$0"],
+    "description": "PHP else template"
+  }
+}

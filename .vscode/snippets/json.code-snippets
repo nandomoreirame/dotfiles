@@ -1,0 +1,12 @@
+{
+  "json": {
+    "prefix": ["!json"],
+    "scope": "json,jsonc",
+    "body": [
+      "{",
+      "\t\"${1:something}\": ${0}",
+      "}"
+    ],
+    "description": "Start empty json"
+  }
+}

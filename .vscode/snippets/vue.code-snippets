@@ -1,0 +1,439 @@
+{
+  "vue:v-for": {
+    "prefix": "v:for",
+    "scope": "vue-html",
+    "body": [
+      "<${1:div} v-for=\"(${2:item}, i) in ${2:item}s\" :key=\"i\">",
+      "\t{{ ${2:item} }}",
+      "</${1:div}>"
+    ],
+    "description": "v-for statement"
+  },
+  "vue:router-view": {
+    "prefix": "v:router-view",
+    "scope": "vue-html",
+    "body": [
+      "<router-view>$1</router-view>"
+    ],
+    "description": "router-view element"
+  },
+  "vue:router-link": {
+    "prefix": "v:router-link",
+    "scope": "vue-html",
+    "body": [
+      "<router-link $1>$2</router-link>"
+    ],
+    "description": "router-link element"
+  },
+  "vue:router-link-to": {
+    "prefix": "v:router-link",
+    "scope": "vue-html",
+    "body": [
+      "<router-link to=\"$1\">$2</router-link>"
+    ],
+    "description": "<router-link to=''></router-link>. router-link element"
+  },
+  "vue:nuxt-tag": {
+    "prefix": "v:nuxt",
+    "scope": "vue-html",
+    "body": [
+      "<nuxt />${0}"
+    ],
+    "description": "[nuxt] component tag"
+  },
+  "vue:nuxt-client-only": {
+    "prefix": "v:client-only",
+    "scope": "vue-html",
+    "body": [
+      "<client-only ${1:placeholder=\"${2:Loading...}\"}>",
+      "\t${0}",
+      "</client-only>"
+    ],
+    "description": "[nuxt] client-only component"
+  },
+  "vue:nuxt-link": {
+    "prefix": "v:nuxt-link",
+    "scope": "vue-html",
+    "body": [
+      "<nuxt-link to=\"/${1:path}\">${1:title}</nuxt-link>${0}"
+    ],
+    "description": "[nuxt] routing link"
+  },
+  "vue:to": {
+    "prefix": "v:to",
+    "scope": "vue-html",
+    "body": [
+      "to=\"$1\"${0}"
+    ],
+    "description": "[vue] to=''"
+  },
+  "vue:v-text": {
+    "prefix": "v:text",
+    "scope": "vue-html",
+    "body": [
+      "v-text=\"${1:var}\"${0}"
+    ],
+    "description": "[vue] v-text"
+  },
+  "vue:v-model": {
+    "prefix": "v:model",
+    "scope": "vue-html",
+    "body": [
+      "v-model=\"${1:var}\"${0}"
+    ],
+    "description": "[vue] v-model"
+  },
+  "vue:v-if": {
+    "prefix": "v:if",
+    "scope": "vue-html",
+    "body": [
+      "v-if=\"${1:condition}\"${0}"
+    ],
+    "description": "[vue] v-if"
+  },
+  "vue:v-else": {
+    "prefix": "v:else",
+    "scope": "vue-html",
+    "body": [
+      "v-else${0}"
+    ],
+    "description": "[vue] v-else"
+  },
+  "vue:@click": {
+    "prefix": "v:@click",
+    "scope": "vue-html",
+    "body": [
+      "@click=\"${1:handler}(${2:arg}, $event)\""
+    ],
+    "description": "[vue] @click handler with arguments"
+  },
+  "vue:template-base": {
+    "prefix": "v:base",
+    "scope": "vue",
+    "description": "Template Base for Vue",
+    "body": [
+      "<template>",
+      "\t<div class=\"${1:ComponentName}\">",
+      "\t\t<h1>${2:Vue Single File Component}</h1>",
+      "\t</div>",
+      "</template>",
+      "",
+      "<script>",
+      "export default {",
+      "\tname: '${1:ComponentName}',${0}",
+      "};",
+      "</script>",
+      "",
+      "<style lang=\"${3:scss}\" ${4:scoped}>",
+      ".${1:ComponentName} {",
+      "}",
+      "</style>",
+      ""
+    ]
+  },
+  "vue:template-base-src": {
+    "prefix": "v:base",
+    "scope": "vue",
+    "description": "[src] Template Base for Vue",
+    "body": [
+      "<script src=\"./${1:script}.js\"></script>",
+      "<style lang=\"${2:scss}\" src=\"./${3:style}.${2:scss}\" ${4:scoped}></style>",
+      "",
+      "<template>",
+      "\t<div class=\"${5:ComponentName}\">",
+      "\t\t<h1>${6:Vue Single File Component}</h1>${0}",
+      "\t</div>",
+      "</template>",
+      ""
+    ]
+  },
+  "vue:template": {
+    "prefix": "v:template",
+    "scope": "vue",
+    "description": "[template] Vue Single File Component",
+    "body": [
+      "<template>",
+      "\t<div class=\"${1:vue-component}\">",
+      "\t\t<h1>${2:Vue Single File Component}</h1>${0}",
+      "\t</div>",
+      "</template>",
+      ""
+    ]
+  },
+  "vue:script": {
+    "prefix": "v:script",
+    "scope": "vue",
+    "description": "[script] Vue Single File Component",
+    "body": [
+      "<script>",
+      "export default {",
+      "\tname: '${1:ComponentName}',${0}",
+      "};",
+      "</script>",
+      ""
+    ]
+  },
+  "vue:script-src": {
+    "prefix": "v:script",
+    "scope": "vue",
+    "description": "[script src] Vue Single File Component",
+    "body": [
+      "<script src=\"./${1:script}.js\"></script>${0}"
+    ]
+  },
+  "vue:style": {
+    "prefix": "v:style",
+    "scope": "vue",
+    "description": "[style] Vue Single File Component",
+    "body": [
+      "<style ${1:lang=\"${2:scss}\"} ${3:scoped}>",
+      ".${4:ComponentName} {${0}",
+      "}",
+      "</style>",
+      ""
+    ]
+  },
+  "vue:style-src": {
+    "prefix": "v:style",
+    "scope": "vue",
+    "description": "[style src] Vue Single File Component",
+    "body": [
+      "<style lang=\"${1:scss}\" src=\"./${2:style}.${1:scss}\" ${3:scoped}></style>${0}"
+    ]
+  },
+  "vue:import": {
+    "prefix": "v:import",
+    "scope": "vue,javascript,typescript",
+    "body": [
+      "import Vue from 'vue';${0}"
+    ],
+    "description": "Vue import component"
+  },
+  "vue:import-component": {
+    "prefix": "v:import",
+    "scope": "vue,javascript,typescript",
+    "body": [
+      "import ${1:ComponentHere} from '@/components/${1:ComponentHere}';${0}"
+    ],
+    "description": "Vue import component"
+  },
+  "vue:data": {
+    "prefix": "v:data",
+    "scope": "vue,javascript,typescript",
+    "description": "Vue data",
+    "body": [
+      "data() {",
+      "\treturn {",
+      "\t\t${1:title}: ${2:'Hello World!'},${0}",
+      "\t};",
+      "},"
+    ]
+  },
+  "vue:data-arrow": {
+    "prefix": "v:data",
+    "scope": "vue,javascript,typescript",
+    "description": "Vue data [arrow function]",
+    "body": [
+      "data: () => ({",
+      "\t${1:title}: ${2:'Hello World!'},",
+      "}),"
+    ]
+  },
+  "vue:asyncData": {
+    "prefix": "v:asyncData",
+    "scope": "vue,javascript,typescript",
+    "description": "Nuxt asyncData arrow function",
+    "body": [
+      "asyncData({ ${1:isDev}${2:, route}${3:, store}${4:, env}${5:, params}${6:, query}${7:, req}${8:, res}${9:, redirect}${10:, error} }) {",
+      "\treturn {",
+      "\t\t${0:title: 'Hello World!'},",
+      "\t};",
+      "},"
+    ]
+  },
+  "vue:fetch": {
+    "prefix": "v:fetch",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "fetch({ store, params }) {",
+      "\treturn http.get('/end/point')",
+      "\t\t.then((res) => {",
+      "\t\t\tstore.commit('setStars', res.data)",
+      "\t\t});",
+      "},"
+    ]
+  },
+  "vue:fetch-async": {
+    "prefix": "v:fetch:async",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: Nuxt fetch",
+    "body": [
+      "async fetch({ store, params }) {",
+      "\tlet { data } = await http.get('/end/point')",
+      "\tstore.commit('setStars', data)",
+      "},"
+    ]
+  },
+  "vue:components": {
+    "prefix": "v:components",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue components",
+    "body": [
+      "components: {",
+      "\t${0:VueComponent}: () => import('${1:@/components/VueComponent.vue}'),",
+      "},"
+    ]
+  },
+  "vue:mounted": {
+    "prefix": "v:mounted",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue mounted",
+    "body": [
+      "mounted() {",
+      "\t// eslint-disable-next-line no-console",
+      "\t${1:console.log('mounted...');}${0}",
+      "},"
+    ]
+  },
+  "vue:methods": {
+    "prefix": "v:methods",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue methods",
+    "body": [
+      "methods: {",
+      "\t${0}",
+      "},"
+    ]
+  },
+  "vue:computed": {
+    "prefix": "v:computed",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue computed",
+    "body": [
+      "computed: {",
+      "\t...mapState({",
+      "\t\t${2:isLoading}: ({ ${1:user} }) => ${1:user}.${2:isLoading},${0}",
+      "\t}),",
+      "},"
+    ]
+  },
+  "vue:props": {
+    "prefix": "v:props",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue props",
+    "body": [
+      "props: {",
+      "\t${1:title}: {",
+      "\t\ttype: ${2:String},",
+      "\t\tdefault: ${3:'Hello Props!'},${0}",
+      "\t},",
+      "},"
+    ]
+  },
+  "vue:watch": {
+    "prefix": "v:watch",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vue watch",
+    "body": [
+      "['search']() {",
+      "\tconst timeout = setTimeout(() => {",
+      "\t\tconsole.log('watching search...');",
+      "\t}, 500);",
+      "},"
+    ]
+  },
+  "vuex:import": {
+    "prefix": "vx:import",
+    "scope": "vue,javascript,typescript",
+    "description": "vuex import",
+    "body": [
+      "import { ${1:mapState,} ${2:mapActions,} ${3:mapMutations} } from 'vuex';${0}"
+    ]
+  },
+  "vuex": {
+    "prefix": "vx",
+    "scope": "vue,javascript,typescript",
+    "description": "Vuex start",
+    "body": [
+      "const state = {",
+      "\t${0}",
+      "}",
+      "",
+      "const mutations = {",
+      "}",
+      "",
+      "const actions = {",
+      "}",
+      "",
+      "export default {",
+      "\tnamespaced: true,",
+      "\tstate,",
+      "\tmutations,",
+      "\tactions",
+      "}",
+      ""
+    ]
+  },
+  "vuex-muxt": {
+    "prefix": "vx",
+    "scope": "vue,javascript,typescript",
+    "description": "[Nuxt] Vuex start",
+    "body": [
+      "export const state = () => ({",
+      "\t${0}",
+      "});",
+      "",
+      "export const mutations = {",
+      "};",
+      "",
+      "export const actions = {",
+      "};",
+      "",
+      "export const getters = {",
+      "};",
+      ""
+    ]
+  },
+  "vuex:state": {
+    "prefix": "vx:state",
+    "scope": "vue,javascript,typescript",
+    "description": "Vuex state",
+    "body": [
+      "export const state = () => ({",
+      "\t${1:loading}: ${2:false},",
+      "});",
+      ""
+    ]
+  },
+  "vuex:mapState": {
+    "prefix": "vx:mapState",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vuex mapState",
+    "body": [
+      "...mapState({",
+      "\t${2:stateVar}: ({ ${1:namespace} }) => ${1:namespace}.${2:stateVar},${0}",
+      "}),"
+    ]
+  },
+  "vuex:mapActions": {
+    "prefix": "vx:mapActions",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vuex mapActions",
+    "body": [
+      "...mapActions({",
+      "\t${2:storeActionHere}: '${1:namespace/}${2:storeActionHere}',",
+      "}),"
+    ]
+  },
+  "vuex:mapMutations": {
+    "prefix": "vx:mapMutations",
+    "scope": "vue,javascript,typescript",
+    "description": "scripts: vuex mapMutations",
+    "body": [
+      "...mapMutations({",
+      "\t${2:storeMutation}: '${1:namespace/}${2:storeMutation}',",
+      "}),"
+    ]
+  }
+}
