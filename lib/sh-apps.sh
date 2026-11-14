@@ -92,7 +92,9 @@ _install_ohmyzsh() {
         return 0
     fi
 
-    tmp="$(mktemp "${TMP_DIR:-/tmp}/ohmyzsh-install.XXXXXX")"
+    local tmp_root="${TMP_DIR:-/tmp}"
+    mkdir -p "$tmp_root"
+    tmp="$(mktemp "$tmp_root/ohmyzsh-install.XXXXXX")"
     # shellcheck disable=SC2064
     trap 'rm -f "$tmp"' RETURN
 

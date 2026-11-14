@@ -10,7 +10,7 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
 @test "readme opens with the problem and states the status" {
     sed -n 1,20p "$ROOT/README.md" | grep -qiE "new machine|from scratch|setting up"
     grep -q "^## Status" "$ROOT/README.md"
-    grep -qi "under construction" "$ROOT/README.md"
+    grep -qiE "install flow|CLI and the new-machine" "$ROOT/README.md"
     grep -q "^## Requirements" "$ROOT/README.md"
     grep -q "^## Security" "$ROOT/README.md"
     grep -q "^## License" "$ROOT/README.md"
