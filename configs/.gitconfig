@@ -1,0 +1,154 @@
+# Generic Git defaults for this clone.
+# Identity, signing and hooks come from ~/.gitconfig.local via:
+#   dotfiles init | dotfiles profile | dotfiles hooks enable
+
+[alias]
+    # Add
+    a = add --all
+    ac = !git add --all && git commit -am
+
+    # Commit
+    ci = commit
+    cm = commit -am
+    amend = commit --amend
+    c = !bun cz
+    cz = !bun cz
+
+    # Pull
+    pl = pull
+    up = pull --rebase --autostash
+
+    # Checkout
+    co = checkout
+    cob = checkout -b
+
+    # Push
+    p = push
+
+    # Status
+    s = status -s
+
+    # Diff
+    df = diff --color --color-words --abbrev
+    dt = difftool
+
+    # Remotes
+    remotes = remote -v
+
+    # Branches
+    br = branch
+    brs = branch -av
+    branches = branch -av
+    recent-branches = !git for-each-ref --count=5 --sort=-committerdate refs/heads/ --format='%(refname:short)'
+
+    # Tags
+    ts = tag -l
+    t = tag -a
+    tags = tag -l
+    tag = tag -a
+
+    # Logs
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+    # Upstream
+    set-upstream = !git branch --set-upstream-to=origin/`git symbolic-ref --short HEAD`
+
+    # more information: http://haacked.com/archive/2014/07/28/github-flow-aliases/
+    undo = reset HEAD~1 --mixed
+
+    cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|dev\\|staging' | xargs -n 1 git branch -d"
+	sweep = "\\!f(){ git branch --merged $([[ $1 \\!= \"-f\" ]] && git rev-parse master) | egrep -v \"(^\\*|^\\s*(master|staging)$)\" | xargs git branch -d; }; f"
+
+[color]
+    ui = always
+
+[apply]
+    whitespace = fix
+
+[core]
+    excludesfile = ~/.config/git/ignore
+    attributesfile = ~/.config/git/attributes
+    whitespace = fix,space-before-tab,tab-in-indent,trailing-space
+    editor = vim
+    autocrlf = input
+	pager = cat
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[mergetool]
+    prompt = false
+
+[push]
+    default = current
+
+[commit]
+	template = ~/.config/git/message
+
+[tag]
+	forceSignAnnotated = false
+
+[pager]
+    diff = diff-so-fancy | less --tabs=1,5 -RFX
+
+[filter "lfs"]
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+
+[pull]
+    rebase = true
+    ff = only
+
+[init]
+	defaultBranch = main
+
+[mergetool "sublime"]
+    cmd = ci -w $MERGED
+    trustExitCode = false
+
+[merge]
+    log = false
+
+[url "git@github.com:"]
+    insteadOf = "gh:"
+    pushInsteadOf = "github:"
+    pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+    insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+    insteadOf = "gst:"
+    pushInsteadOf = "gist:"
+    pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+    insteadOf = "gist:"
+
+[difftool]
+    prompt = false
+
+# Machine-local identity, signing and hooks (not versioned)
+[include]
+	path = ~/.gitconfig.local
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
