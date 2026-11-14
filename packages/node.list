@@ -1,0 +1,4 @@
+# Public global npm packages. Personal picks go in private/packages/node.list.
+
+## tools
+diff-so-fancy eslint firebase-tools npm pnpm prettier typescript yarn

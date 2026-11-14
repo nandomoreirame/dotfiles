@@ -1,0 +1,4 @@
+# Public AUR packages. Personal picks go in private/packages/aur.list.
+
+## dev
+google-chrome gitflow-avh google-cloud-cli opencode-bin
