@@ -242,6 +242,79 @@ EOF
     [ -z "${GIT_NAME:-}" ]
 }
 
+@test "_profile_load_conf_file: loads shipped linux-arch env.conf" {
+    unset WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP \
+        XDG_CONFIG_HOME XDG_DATA_HOME XDG_CACHE_HOME \
+        QT_QPA_PLATFORM QT_WAYLAND_DISABLE_WINDOWDECORATION \
+        GDK_BACKEND MOZ_ENABLE_WAYLAND _JAVA_AWT_WM_NONREPARENTING
+    _profile_load_conf_file "$ROOT/profiles/linux-arch/env.conf"
+    [ "$XDG_SESSION_TYPE" = "wayland" ]
+    [ "$XDG_CURRENT_DESKTOP" = "niri" ]
+    [ "$XDG_CONFIG_HOME" = "$HOME/.config" ]
+    [ "$XDG_DATA_HOME" = "$HOME/.local/share" ]
+    [ "$QT_QPA_PLATFORM" = "wayland" ]
+    [ "$_JAVA_AWT_WM_NONREPARENTING" = "1" ]
+}
+
+@test "_profile_load_conf_file: loads shipped linux-arch shell.conf" {
+    unset DOTFILES_AUR_HELPER TERMINAL
+    _profile_load_conf_file "$ROOT/profiles/linux-arch/shell.conf"
+    [ "$DOTFILES_AUR_HELPER" = "yay" ]
+    [ "$TERMINAL" = "ghostty" ]
+}
+
+@test "_profile_load_conf_file: expands \${NAME:-default} and keeps set values" {
+    local config_file="$TEST_DIR/expand.conf"
+    cat > "$config_file" << 'EOF'
+export TERMINAL="${TERMINAL:-ghostty}"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+EOF
+    unset TERMINAL XDG_CONFIG_HOME
+    _profile_load_conf_file "$config_file"
+    [ "$TERMINAL" = "ghostty" ]
+    [ "$XDG_CONFIG_HOME" = "$HOME/.config" ]
+
+    export TERMINAL="kitty"
+    unset XDG_CONFIG_HOME
+    _profile_load_conf_file "$config_file"
+    [ "$TERMINAL" = "kitty" ]
+}
+
+@test "_profile_load_conf_file: rejects PATH overwrite" {
+    local config_file="$TEST_DIR/evil-path.conf"
+    cat > "$config_file" << 'EOF'
+PATH="/tmp/evil"
+EOF
+    local saved_path="$PATH"
+    run _profile_load_conf_file "$config_file"
+    assert_failure
+    [ "$PATH" = "$saved_path" ]
+}
+
+@test "_profile_load_conf_file: rejects HOME and DOTFILES overwrite" {
+    local config_file="$TEST_DIR/evil-home.conf"
+    cat > "$config_file" << 'EOF'
+HOME="/tmp/evil-home"
+EOF
+    run _profile_load_conf_file "$config_file"
+    assert_failure
+
+    cat > "$config_file" << 'EOF'
+DOTFILES="/tmp/evil-dotfiles"
+EOF
+    run _profile_load_conf_file "$config_file"
+    assert_failure
+}
+
+@test "_profile_load_conf_file: rejects unsafe default in parameter expansion" {
+    local config_file="$TEST_DIR/evil-default.conf"
+    cat > "$config_file" << 'EOF'
+TERMINAL="${TERMINAL:-$(id)}"
+EOF
+    run _profile_load_conf_file "$config_file"
+    assert_failure
+}
+
 # ============================================
 # profile_list
 # ============================================
@@ -416,6 +489,17 @@ GIT_NAME=""
 GIT_EMAIL=""
 EOF
     run profile_validate "incomplete"
+    assert_failure
+    assert_output --partial "not configured"
+}
+
+@test "profile_validate: ignores inherited GIT_NAME when file omits it" {
+    mkdir -p "$PROFILES_DIR/email-only"
+    cat > "$PROFILES_DIR/email-only/git.conf" << 'EOF'
+GIT_EMAIL="only@example.com"
+EOF
+    export GIT_NAME="Stale From Caller"
+    run profile_validate "email-only"
     assert_failure
     assert_output --partial "not configured"
 }

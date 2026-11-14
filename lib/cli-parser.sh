@@ -209,6 +209,7 @@ _profile_cli_show_identity() {
         return 1
     fi
     printf 'Active identity: %s\n' "$name"
+    _profile_unset_identity_vars
     if _profile_load_conf_file "$conf" 2>/dev/null; then
         printf '  name:  %s\n' "${GIT_NAME:-not configured}"
         printf '  email: %s\n' "${GIT_EMAIL:-not configured}"
@@ -230,6 +231,7 @@ _profile_cli_validate_identity() {
         _cli_error "Identity profile '$name' not found"
         return 1
     fi
+    _profile_unset_identity_vars
     if ! _profile_load_conf_file "$conf"; then
         _cli_error "Identity profile '$name' failed validation"
         return 1

@@ -101,12 +101,13 @@ _profile_conf_has_unquoted_pipe() {
 }
 
 # Reject lines with shell metacharacters or dangerous builtins.
+# ${NAME:-default} is allowed; expansion is handled by _profile_conf_expand_value.
 _profile_conf_line_is_dangerous() {
     local line="$1"
-    # Intentional literal patterns (backtick, $(), ${, ;).
+    # Intentional literal patterns (backtick, $(), ;).
     # shellcheck disable=SC2016
     case "$line" in
-        *'`'* | *'$('* | *'${'* | *';'*) return 0 ;;
+        *'`'* | *'$('* | *';'*) return 0 ;;
     esac
     if _profile_conf_has_unquoted_pipe "$line"; then
         return 0
@@ -115,6 +116,82 @@ _profile_conf_line_is_dangerous() {
         return 0
     fi
     return 1
+}
+
+# Keys that must never be assigned from a conf file.
+_profile_conf_key_is_denied() {
+    case "$1" in
+        PATH|HOME|LD_PRELOAD|LD_LIBRARY_PATH|DOTFILES|PROFILES_DIR|BASH_ENV|ENV|SHELLOPTS|IFS|CDPATH|PS4|PROMPT_COMMAND)
+            return 0 ;;
+    esac
+    return 1
+}
+
+# Allow-list for assignment keys (GIT_*/GCLOUD_*/XDG_*/... plus explicit env/shell keys).
+_profile_conf_key_is_allowed() {
+    local key="$1"
+    if _profile_conf_key_is_denied "$key"; then
+        return 1
+    fi
+    case "$key" in
+        GIT_*|GCLOUD_*|XDG_*|QT_*|GDK_*|MOZ_*|WAYLAND_*)
+            return 0 ;;
+        _JAVA_AWT_WM_NONREPARENTING|DOTFILES_AUR_HELPER|TERMINAL)
+            return 0 ;;
+    esac
+    return 1
+}
+
+# Expand $HOME only; reject any other $, backtick, ; | ( ).
+_profile_conf_expand_home_only() {
+    local val="$1" stripped
+    stripped="${val//\$HOME/}"
+    # shellcheck disable=SC2016
+    case "$stripped" in
+        *'`'* | *'$'* | *';'* | *'|'*) return 1 ;;
+        *'('* | *')'*) return 1 ;;
+    esac
+    printf '%s' "${val//\$HOME/${HOME:-}}"
+}
+
+# Expand only $HOME and a single ${NAME:-default} / ${NAME-default}.
+_profile_conf_expand_value() {
+    local val="$1"
+    local name op def expanded
+
+    if [[ "$val" =~ ^\$\{([A-Za-z_][A-Za-z0-9_]*)(:?-)([^}]*)\}$ ]]; then
+        name="${BASH_REMATCH[1]}"
+        op="${BASH_REMATCH[2]}"
+        def="${BASH_REMATCH[3]}"
+        if ! def="$(_profile_conf_expand_home_only "$def")"; then
+            return 1
+        fi
+        if [ "$op" = ":-" ]; then
+            if [ -z "${!name:-}" ]; then
+                expanded="$def"
+            else
+                expanded="${!name}"
+            fi
+        else
+            if [ -z "${!name+x}" ]; then
+                expanded="$def"
+            else
+                expanded="${!name}"
+            fi
+        fi
+        printf '%s' "$expanded"
+        return 0
+    fi
+
+    _profile_conf_expand_home_only "$val"
+}
+
+# Clear identity scalars so validate/show do not inherit the caller's env.
+_profile_unset_identity_vars() {
+    unset GIT_NAME GIT_EMAIL GIT_SIGNING_KEY GIT_GPG_KEY \
+        GIT_GPG_FORMAT GIT_GPG_PROGRAM GIT_GPG_SSH_PROGRAM GIT_GPG_ALLOWED_SIGNERS \
+        GCLOUD_ACCOUNT GCLOUD_ACCOUNT_NAME GCLOUD_PROJECT GCLOUD_PROJECT_NAME
+    GCLOUD_PROJECTS=()
 }
 
 # Safe conf loader: blank/# comments, KEY=value, and GCLOUD_PROJECTS=( "id|Name" ... ).
@@ -223,6 +300,9 @@ _profile_load_conf_file() {
         if [[ "$line" =~ ^((export[[:space:]]+)?)([A-Z_][A-Z0-9_]*)=(.*)$ ]]; then
             key="${BASH_REMATCH[3]}"
             raw="${BASH_REMATCH[4]}"
+            if ! _profile_conf_key_is_allowed "$key"; then
+                return 1
+            fi
             if _profile_conf_line_is_dangerous "$raw"; then
                 return 1
             fi
@@ -231,11 +311,9 @@ _profile_load_conf_file() {
                 return 1
             fi
             val="$(_profile_conf_unquote "$raw")"
-            # After unquote, still reject expansions left in the value.
-            # shellcheck disable=SC2016
-            case "$val" in
-                *'`'* | *'$('* | *'${'* | *';'*) return 1 ;;
-            esac
+            if ! val="$(_profile_conf_expand_value "$val")"; then
+                return 1
+            fi
             printf -v "$key" '%s' "$val"
             continue
         fi
@@ -351,6 +429,7 @@ profile_show() {
 
         if [ -n "$current_git_config" ]; then
             local git_conf="$PROFILES_DIR/$profile_name/$current_git_config"
+            _profile_unset_identity_vars
             if [ -f "$git_conf" ] && _profile_load_conf_file "$git_conf" 2>/dev/null; then
                 echo "  Active configuration ($current_git_config):"
                 echo "    Name:  ${GIT_NAME:-not configured}"
@@ -407,6 +486,7 @@ profile_show() {
 
         if [ -n "$current_gcloud_config" ]; then
             local gcloud_conf="$PROFILES_DIR/$profile_name/$current_gcloud_config"
+            _profile_unset_identity_vars
             if [ -f "$gcloud_conf" ] && _profile_load_conf_file "$gcloud_conf" 2>/dev/null; then
                 echo "  Active configuration ($current_gcloud_config):"
                 echo "    Account: ${GCLOUD_ACCOUNT:-not configured}"
@@ -788,6 +868,7 @@ profile_validate() {
     local errors=0
 
     if [ -f "$PROFILES_DIR/$profile_name/git.conf" ]; then
+        _profile_unset_identity_vars
         if ! _profile_load_conf_file "$PROFILES_DIR/$profile_name/git.conf"; then
             echo "git.conf: failed safe load (invalid syntax)"
             ((errors++)) || true
@@ -798,6 +879,7 @@ profile_validate() {
     fi
 
     if [ -f "$PROFILES_DIR/$profile_name/gcloud.conf" ]; then
+        _profile_unset_identity_vars
         if ! _profile_load_conf_file "$PROFILES_DIR/$profile_name/gcloud.conf"; then
             echo "gcloud.conf: failed safe load (invalid syntax)"
             ((errors++)) || true
