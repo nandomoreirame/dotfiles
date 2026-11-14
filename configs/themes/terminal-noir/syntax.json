@@ -1,0 +1,42 @@
+{
+  "_comment": "Terminal Noir syntax colors (dark), from nandomoreira.dev. Colors come from configs/noctalia/palettes/Terminal Noir.json; the ANSI bright hues fill the roles the site does not define. Edit here, then run scripts/themes/build-terminal-noir.",
+  "editor": {
+    "background": "#0B0B0C",
+    "foreground": "#F4F4F5",
+    "muted": "#A1A1AA",
+    "surface": "#121214",
+    "surfaceElevated": "#18181B",
+    "border": "#222226",
+    "borderStrong": "#3F3F46",
+    "selection": "#52525B",
+    "lineNumber": "#6B6B74",
+    "primary": "#F5A623",
+    "primaryForeground": "#0B0B0C",
+    "success": "#34D399",
+    "warning": "#FACF9E",
+    "error": "#FFB7B0",
+    "info": "#79C0FF"
+  },
+  "tokens": [
+    { "name": "Comment", "scope": ["comment", "punctuation.definition.comment"], "color": "#A1A1AA", "fontStyle": "italic" },
+    { "name": "Keyword", "scope": ["keyword", "keyword.control", "storage", "storage.type", "storage.modifier", "keyword.operator.new", "keyword.operator.expression"], "color": "#F5A623" },
+    { "name": "Operator", "scope": ["keyword.operator", "punctuation"], "color": "#F4F4F5" },
+    { "name": "String", "scope": ["string", "punctuation.definition.string", "markup.inline.raw"], "color": "#34D399" },
+    { "name": "Regex and escape", "scope": ["string.regexp", "constant.character.escape"], "color": "#56D4DD" },
+    { "name": "Number and constant", "scope": ["constant.numeric", "constant.language", "constant.other", "support.constant", "variable.other.constant"], "color": "#FACF9E" },
+    { "name": "Function", "scope": ["entity.name.function", "support.function", "meta.function-call", "variable.function"], "color": "#79C0FF" },
+    { "name": "Type", "scope": ["entity.name.type", "entity.name.class", "entity.other.inherited-class", "support.type", "support.class", "entity.name.namespace"], "color": "#D2A8FF" },
+    { "name": "Variable", "scope": ["variable", "variable.other", "variable.parameter"], "color": "#F4F4F5" },
+    { "name": "Property", "scope": ["variable.other.property", "variable.other.object.property", "support.type.property-name", "meta.object-literal.key", "entity.name.tag.yaml"], "color": "#56D4DD" },
+    { "name": "Tag", "scope": ["entity.name.tag", "punctuation.definition.tag"], "color": "#FF7B72" },
+    { "name": "Attribute", "scope": ["entity.other.attribute-name"], "color": "#FACF9E" },
+    { "name": "Heading", "scope": ["markup.heading", "entity.name.section"], "color": "#F5A623", "fontStyle": "bold" },
+    { "name": "Bold", "scope": ["markup.bold"], "fontStyle": "bold" },
+    { "name": "Italic", "scope": ["markup.italic"], "fontStyle": "italic" },
+    { "name": "Link", "scope": ["markup.underline.link", "string.other.link"], "color": "#79C0FF" },
+    { "name": "Inserted", "scope": ["markup.inserted"], "color": "#34D399" },
+    { "name": "Deleted", "scope": ["markup.deleted"], "color": "#FFB7B0" },
+    { "name": "Changed", "scope": ["markup.changed"], "color": "#FACF9E" },
+    { "name": "Invalid", "scope": ["invalid", "invalid.illegal"], "color": "#FFB7B0" }
+  ]
+}

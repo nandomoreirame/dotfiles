@@ -104,3 +104,23 @@ gate() { run bash "$ROOT/scripts/public-check" "$@"; }
     [ "$status" -ne 0 ]
     [[ "$output" == *"leak-found"* ]]
 }
+
+@test "public-check rejects a non-allowlisted author credit" {
+    local handle
+    handle="$(printf '%s' "nando""moreira")"
+    mkrepo "powered by ${handle}"
+    mkdir -p "$R/scripts"; : > "$R/scripts/public-check.allow"; git -C "$R" add -A
+    gate "$R"; [ "$status" -ne 0 ]
+    [[ "$output" == *"author credit"* ]]
+}
+
+@test "public-check allows an exact credit line" {
+    local line handle
+    handle="$(printf '%s' "nando""moreira")"
+    line="from ${handle}.dev."
+    mkrepo "$line"
+    mkdir -p "$R/scripts"
+    printf 'credit:f.txt:%s\n' "$line" > "$R/scripts/public-check.allow"
+    git -C "$R" add -A
+    gate "$R"; [ "$status" -eq 0 ]
+}

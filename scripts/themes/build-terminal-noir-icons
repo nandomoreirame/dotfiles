@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# build-terminal-noir-icons — Build the Terminal-Noir icon theme: Adwaita with
+# its blue folder icons recolored to the Terminal Noir amber ramp. Everything
+# else falls through to Adwaita via Inherits.
+#
+# Why generated, not versioned: the SVGs come from the installed
+# adwaita-icon-theme, so a rebuild picks up upstream redraws. Rerun after an
+# adwaita-icon-theme update.
+#
+# Blue -> amber (Adwaita folder shades, darkest to lightest):
+#   #438de6 -> #C47F0E   #62a0ea -> #F5A623   #a4caee -> #FACF9E
+#   #afd4ff -> #FFD9A0   #c0d5ea -> #F3D7AE
+#
+# Usage: build-terminal-noir-icons [ADWAITA_DIR] [OUT_DIR]
+set -euo pipefail
+
+readonly SRC="${1:-/usr/share/icons/Adwaita}"
+readonly OUT="${2:-${XDG_DATA_HOME:-$HOME/.local/share}/icons/Terminal-Noir}"
+readonly ICONS=('folder*.svg' 'user-home.svg' 'user-desktop.svg' 'user-bookmarks.svg')
+
+TMP_DIR=""
+cleanup() { if [ -n "$TMP_DIR" ]; then rm -rf "$TMP_DIR"; fi; }
+trap cleanup EXIT
+
+main() {
+    local places="$SRC/scalable/places" svg name n=0
+    if [ ! -d "$places" ]; then
+        echo "error: Adwaita icons not found at $places" >&2
+        return 1
+    fi
+
+    mkdir -p "$(dirname "$OUT")"
+    TMP_DIR="$(mktemp -d "$OUT.XXXXXX")"
+    mkdir -p "$TMP_DIR/scalable/places"
+
+    shopt -s nullglob
+    for name in "${ICONS[@]}"; do
+        for svg in "$places"/$name; do
+            sed -e 's/#438de6/#C47F0E/Ig' \
+                -e 's/#62a0ea/#F5A623/Ig' \
+                -e 's/#a4caee/#FACF9E/Ig' \
+                -e 's/#afd4ff/#FFD9A0/Ig' \
+                -e 's/#c0d5ea/#F3D7AE/Ig' \
+                "$svg" > "$TMP_DIR/scalable/places/$(basename "$svg")"
+            n=$((n + 1))
+        done
+    done
+
+    cat > "$TMP_DIR/index.theme" <<'EOF'
+[Icon Theme]
+Name=Terminal-Noir
+Comment=Adwaita with amber folders (Terminal Noir, nandomoreira.dev)
+Inherits=Adwaita,AdwaitaLegacy,hicolor
+Directories=scalable/places
+
+[scalable/places]
+Context=Places
+Size=128
+MinSize=8
+MaxSize=512
+Type=Scalable
+EOF
+
+    rm -rf "$OUT"
+    mv "$TMP_DIR" "$OUT"
+    TMP_DIR=""
+    echo "built $OUT ($n icons)"
+}
+
+main "$@"

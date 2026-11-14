@@ -30,14 +30,18 @@ TARGET="$(cd "$TARGET" && pwd)"
 ALLOW_FILE="$TARGET/scripts/public-check.allow"
 FINDINGS=0
 
-# Load email allowlist entries from scripts/public-check.allow
+# Load email and credit allowlist entries from scripts/public-check.allow
 ALLOWED_EMAILS=()
+ALLOWED_CREDITS=()
 if [ -f "$ALLOW_FILE" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
         case "$line" in
             ''|\#*) continue ;;
             email:*)
                 ALLOWED_EMAILS+=("${line#email:}")
+                ;;
+            credit:*)
+                ALLOWED_CREDITS+=("${line#credit:}")
                 ;;
         esac
     done < "$ALLOW_FILE"
@@ -52,6 +56,17 @@ email_allowed() {
     esac
     for entry in "${ALLOWED_EMAILS[@]+"${ALLOWED_EMAILS[@]}"}"; do
         if [ "$addr" = "$entry" ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# credit:<file>:<exact line text> — author name allowed only on that exact line.
+credit_allowed() {
+    local rel="$1" text="$2" entry
+    for entry in "${ALLOWED_CREDITS[@]+"${ALLOWED_CREDITS[@]}"}"; do
+        if [ "$entry" = "${rel}:${text}" ]; then
             return 0
         fi
     done
@@ -156,6 +171,16 @@ scan_file() {
                 fi
             done <<< "$emails"
         fi
+
+        # Author handle / site: only exact allowlisted credit lines may name it.
+        # Built at runtime so this source line is not itself a finding.
+        _author_re="nando""moreira"
+        if printf '%s\n' "$line" | grep -qiE "$_author_re"; then
+            if ! credit_allowed "$rel" "$line"; then
+                report "$rel" "$line_no" "author credit"
+            fi
+        fi
+        unset _author_re
     done < "$abs"
 }
 

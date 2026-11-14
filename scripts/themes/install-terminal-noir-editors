@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# install-terminal-noir-editors — Package configs/vscode/terminal-noir as a
+# VSIX and install it in VS Code and Cursor.
+#
+# Why a VSIX and not a symlink into ~/.vscode/extensions: current VS Code and
+# Cursor only load extensions registered in extensions/extensions.json, so a
+# dropped folder is ignored. `--install-extension` registers it; `--force`
+# reinstalls over an older build. The install is a copy, so rerun this after
+# scripts/themes/build-terminal-noir changes the theme.
+#
+# Usage: install-terminal-noir-editors
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+readonly REPO_ROOT
+readonly EXT_DIR="$REPO_ROOT/configs/vscode/terminal-noir"
+readonly EDITORS=(code cursor)
+
+pack_vsix() {
+    local out="$1" stage version
+    stage="$(dirname "$out")/stage"
+    version="$(jq -r '.version' "$EXT_DIR/package.json")"
+
+    mkdir -p "$stage/extension"
+    cp -r "$EXT_DIR/." "$stage/extension/"
+
+    cat > "$stage/[Content_Types].xml" <<'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension=".json" ContentType="application/json"/><Default Extension=".vsixmanifest" ContentType="text/xml"/></Types>
+EOF
+    cat > "$stage/extension.vsixmanifest" <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Language="en-US" Id="terminal-noir" Version="$version" Publisher="nandomoreira"/>
+    <DisplayName>Terminal Noir</DisplayName>
+    <Description xml:space="preserve">Terminal Noir palette from nandomoreira.dev.</Description>
+    <Categories>Themes</Categories>
+    <Properties><Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.70.0"/></Properties>
+  </Metadata>
+  <Installation><InstallationTarget Id="Microsoft.VisualStudio.Code"/></Installation>
+  <Dependencies/>
+  <Assets><Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true"/></Assets>
+</PackageManifest>
+EOF
+
+    (cd "$stage" && bsdtar --format zip -cf "$out" '[Content_Types].xml' extension.vsixmanifest extension)
+}
+
+WORK_DIR=""
+cleanup() { if [ -n "$WORK_DIR" ]; then rm -rf "$WORK_DIR"; fi; }
+trap cleanup EXIT
+
+main() {
+    local vsix editor installed=0
+    WORK_DIR="$(mktemp -d)"
+    vsix="$WORK_DIR/terminal-noir-$(jq -r '.version' "$EXT_DIR/package.json").vsix"
+    pack_vsix "$vsix"
+
+    for editor in "${EDITORS[@]}"; do
+        if ! command -v "$editor" >/dev/null 2>&1; then
+            echo "skip: $editor not installed"
+            continue
+        fi
+        "$editor" --install-extension "$vsix" --force
+        installed=$((installed + 1))
+    done
+
+    if [ "$installed" -eq 0 ]; then
+        echo "error: neither VS Code nor Cursor is installed" >&2
+        return 1
+    fi
+}
+
+main "$@"

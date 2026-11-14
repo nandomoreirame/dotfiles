@@ -1,0 +1,25 @@
+# Terminal Noir (dark), from nandomoreira.dev.
+# Source of truth: configs/noctalia/palettes/Terminal Noir.json (.dark.terminal).
+
+palette = 0=#18181b
+palette = 1=#ff7b72
+palette = 2=#34d399
+palette = 3=#f5a623
+palette = 4=#58a6ff
+palette = 5=#bc8cff
+palette = 6=#39c5cf
+palette = 7=#a1a1aa
+palette = 8=#6b6b74
+palette = 9=#ffb7b0
+palette = 10=#56d364
+palette = 11=#facf9e
+palette = 12=#79c0ff
+palette = 13=#d2a8ff
+palette = 14=#56d4dd
+palette = 15=#f4f4f5
+background = #0b0b0c
+foreground = #f4f4f5
+cursor-color = #f5a623
+cursor-text = #0b0b0c
+selection-background = #52525b
+selection-foreground = #f4f4f5
