@@ -15,12 +15,24 @@ PAT_HOME='/home/[a-z_][a-z0-9_-]*/'
 PAT_SECRET='AKIA[0-9A-Z]{16}|xox[baprs]-[0-9A-Za-z-]{10,}|gh[pousr]_[0-9A-Za-z]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
 
 files=$(git diff --cached --name-only --diff-filter=ACM)
+self_path=$(realpath "$0" 2>/dev/null || true)
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null || true)
 
 fail=0
 while IFS= read -r f; do
   [ -z "$f" ] && continue
-  # never scan a hook file that defines these patterns (literals, not leaks)
-  case "$f" in git-hooks/pre-commit | */git-hooks/pre-commit | .githooks/pre-commit) continue ;; esac
+  # Skip only this hook itself (literals below are patterns under test, not leaks).
+  if [ -n "$self_path" ]; then
+    f_abs=
+    if [ -n "$repo_root" ] && [ -e "$repo_root/$f" ]; then
+      f_abs=$(realpath "$repo_root/$f" 2>/dev/null || true)
+    elif [ -e "$f" ]; then
+      f_abs=$(realpath "$f" 2>/dev/null || true)
+    fi
+    if [ -n "$f_abs" ] && [ "$f_abs" = "$self_path" ]; then
+      continue
+    fi
+  fi
 
   added=$(git diff --cached --no-color -U0 -- "$f" | grep -E -e '^\+[^+]' || true)
   [ -z "$added" ] && continue

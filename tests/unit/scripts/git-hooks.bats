@@ -99,3 +99,29 @@ CLI() { run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILE
     run grep -nE "[áàâãéêíóôõúç]|\b(bloqueado|segredo|corrija)\b" "$ROOT/git-hooks/pre-commit" "$ROOT/git-hooks/commit-msg" "$ROOT/lib/hooks.sh"
     [ "$status" -ne 0 ]
 }
+
+@test "pre-commit skips only itself via realpath, not every */git-hooks/pre-commit" {
+    ! grep -qE '\*/git-hooks/pre-commit' "$ROOT/git-hooks/pre-commit"
+    grep -q 'realpath' "$ROOT/git-hooks/pre-commit"
+}
+
+@test "hooks disable leaves a foreign core.hooksPath alone" {
+    touch "$HOME/.gitconfig.local"
+    git config --file "$HOME/.gitconfig.local" core.hooksPath "/tmp/foreign-hooks"
+    CLI hooks disable
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Warning"* ]] || [[ "$output" == *"foreign"* ]] || [[ "$output" == *"/tmp/foreign-hooks"* ]]
+    run git config --file "$HOME/.gitconfig.local" --get core.hooksPath
+    [ "$status" -eq 0 ]
+    [ "$output" = "/tmp/foreign-hooks" ]
+}
+
+@test "hooks enable warns when replacing a foreign core.hooksPath" {
+    touch "$HOME/.gitconfig.local"
+    git config --file "$HOME/.gitconfig.local" core.hooksPath "/tmp/foreign-hooks"
+    CLI hooks enable
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Warning"* ]] || [[ "$output" == *"/tmp/foreign-hooks"* ]]
+    run git config --file "$HOME/.gitconfig.local" --get core.hooksPath
+    [ "$output" = "$ROOT/git-hooks" ]
+}

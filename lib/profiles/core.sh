@@ -62,7 +62,195 @@ _profile_set_current() {
     echo "$profile_name" > "$CURRENT_PROFILE_FILE"
 }
 
-# Shared by core, git and gcloud modules: reject config files with shell metacharacters.
+# Return 0 if line looks like a blank or # comment (leading whitespace allowed).
+_profile_conf_is_blank_or_comment() {
+    [[ "$1" =~ ^[[:space:]]*$ || "$1" =~ ^[[:space:]]*# ]]
+}
+
+# Strip one layer of matching single or double quotes from a value; leave bare.
+_profile_conf_unquote() {
+    local raw="$1"
+    if [[ "$raw" =~ ^\"(.*)\"$ ]]; then
+        printf '%s' "${BASH_REMATCH[1]}"
+        return 0
+    fi
+    if [[ "$raw" =~ ^\'(.*)\'$ ]]; then
+        printf '%s' "${BASH_REMATCH[1]}"
+        return 0
+    fi
+    printf '%s' "$raw"
+}
+
+# True when an unquoted | appears outside single/double quotes.
+_profile_conf_has_unquoted_pipe() {
+    local s="$1" i c q=
+    for ((i = 0; i < ${#s}; i++)); do
+        c="${s:i:1}"
+        if [ -n "$q" ]; then
+            if [ "$c" = "$q" ]; then
+                q=
+            fi
+            continue
+        fi
+        case "$c" in
+            \' | \") q="$c" ;;
+            \|) return 0 ;;
+        esac
+    done
+    return 1
+}
+
+# Reject lines with shell metacharacters or dangerous builtins.
+_profile_conf_line_is_dangerous() {
+    local line="$1"
+    # Intentional literal patterns (backtick, $(), ${, ;).
+    # shellcheck disable=SC2016
+    case "$line" in
+        *'`'* | *'$('* | *'${'* | *';'*) return 0 ;;
+    esac
+    if _profile_conf_has_unquoted_pipe "$line"; then
+        return 0
+    fi
+    if [[ "$line" =~ (^|[[:space:]])(rm|exec|eval)[[:space:]] ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# Safe conf loader: blank/# comments, KEY=value, and GCLOUD_PROJECTS=( "id|Name" ... ).
+# Uses printf -v only; never eval or source. Returns non-zero on any reject.
+_profile_load_conf_file() {
+    local config_file="$1"
+    local line key raw val entry
+    local in_array=0
+    local -a tokens=()
+
+    if [ ! -f "$config_file" ]; then
+        return 1
+    fi
+
+    while IFS= read -r line || [ -n "$line" ]; do
+        line="${line%$'\r'}"
+
+        if [ "$in_array" -eq 1 ]; then
+            if _profile_conf_is_blank_or_comment "$line"; then
+                continue
+            fi
+            if _profile_conf_line_is_dangerous "$line"; then
+                return 1
+            fi
+            # End of array: optional whitespace then )
+            if [[ "$line" =~ ^[[:space:]]*\)[[:space:]]*$ ]]; then
+                GCLOUD_PROJECTS=("${tokens[@]}")
+                tokens=()
+                in_array=0
+                continue
+            fi
+            # One or more "entry" tokens on the line; optional trailing )
+            line="${line#"${line%%[![:space:]]*}"}"
+            line="${line%"${line##*[![:space:]]}"}"
+            local close=0
+            if [[ "$line" =~ ^(.*)\)[[:space:]]*$ ]]; then
+                line="${BASH_REMATCH[1]}"
+                line="${line%"${line##*[![:space:]]}"}"
+                close=1
+            fi
+            while [ -n "$line" ]; do
+                line="${line#"${line%%[![:space:]]*}"}"
+                [ -z "$line" ] && break
+                if [[ "$line" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                    entry="${BASH_REMATCH[1]}"
+                    line="${BASH_REMATCH[2]}"
+                    tokens+=("$entry")
+                else
+                    return 1
+                fi
+            done
+            if [ "$close" -eq 1 ]; then
+                GCLOUD_PROJECTS=("${tokens[@]}")
+                tokens=()
+                in_array=0
+            fi
+            continue
+        fi
+
+        if _profile_conf_is_blank_or_comment "$line"; then
+            continue
+        fi
+
+        if _profile_conf_line_is_dangerous "$line"; then
+            return 1
+        fi
+
+        # GCLOUD_PROJECTS=( ... ) single- or multi-line
+        if [[ "$line" =~ ^GCLOUD_PROJECTS=\((.*)$ ]]; then
+            local rest="${BASH_REMATCH[1]}"
+            rest="${rest#"${rest%%[![:space:]]*}"}"
+            tokens=()
+            if [[ "$rest" =~ ^(.*)\)[[:space:]]*$ ]]; then
+                rest="${BASH_REMATCH[1]}"
+                rest="${rest%"${rest##*[![:space:]]}"}"
+                while [ -n "$rest" ]; do
+                    rest="${rest#"${rest%%[![:space:]]*}"}"
+                    [ -z "$rest" ] && break
+                    if [[ "$rest" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                        tokens+=("${BASH_REMATCH[1]}")
+                        rest="${BASH_REMATCH[2]}"
+                    else
+                        return 1
+                    fi
+                done
+                GCLOUD_PROJECTS=("${tokens[@]}")
+                tokens=()
+                continue
+            fi
+            # Multi-line start: optional entries on the opening line
+            while [ -n "$rest" ]; do
+                rest="${rest#"${rest%%[![:space:]]*}"}"
+                [ -z "$rest" ] && break
+                if [[ "$rest" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                    tokens+=("${BASH_REMATCH[1]}")
+                    rest="${BASH_REMATCH[2]}"
+                else
+                    return 1
+                fi
+            done
+            in_array=1
+            continue
+        fi
+
+        # Optional export prefix; KEY must be UPPER_SNAKE
+        if [[ "$line" =~ ^((export[[:space:]]+)?)([A-Z_][A-Z0-9_]*)=(.*)$ ]]; then
+            key="${BASH_REMATCH[3]}"
+            raw="${BASH_REMATCH[4]}"
+            if _profile_conf_line_is_dangerous "$raw"; then
+                return 1
+            fi
+            # Disallow spaces outside quotes in bare values
+            if [[ ! "$raw" =~ ^\".*\"$ && ! "$raw" =~ ^\'.*\'$ && "$raw" =~ [[:space:]] ]]; then
+                return 1
+            fi
+            val="$(_profile_conf_unquote "$raw")"
+            # After unquote, still reject expansions left in the value.
+            # shellcheck disable=SC2016
+            case "$val" in
+                *'`'* | *'$('* | *'${'* | *';'*) return 1 ;;
+            esac
+            printf -v "$key" '%s' "$val"
+            continue
+        fi
+
+        return 1
+    done < "$config_file"
+
+    if [ "$in_array" -eq 1 ]; then
+        return 1
+    fi
+
+    return 0
+}
+
+# Dry-parse: success iff the file loads in a subshell (no caller side effects).
 _profile_validate_config_file() {
     local config_file="$1"
 
@@ -70,11 +258,11 @@ _profile_validate_config_file() {
         return 1
     fi
 
-    if grep -qE '(rm\s+-rf|exec\s+|eval\s+|`|\$\(\(|\$\([^)]*\))' "$config_file" 2>/dev/null; then
-        return 1
-    fi
-
-    return 0
+    (
+        # shellcheck disable=SC2034
+        GCLOUD_PROJECTS=()
+        _profile_load_conf_file "$config_file"
+    )
 }
 
 profile_list() {
@@ -163,9 +351,7 @@ profile_show() {
 
         if [ -n "$current_git_config" ]; then
             local git_conf="$PROFILES_DIR/$profile_name/$current_git_config"
-            if [ -f "$git_conf" ] && _profile_validate_config_file "$git_conf"; then
-                # shellcheck source=/dev/null
-                source "$git_conf" 2>/dev/null || true
+            if [ -f "$git_conf" ] && _profile_load_conf_file "$git_conf" 2>/dev/null; then
                 echo "  Active configuration ($current_git_config):"
                 echo "    Name:  ${GIT_NAME:-not configured}"
                 echo "    Email: ${GIT_EMAIL:-not configured}"
@@ -221,9 +407,7 @@ profile_show() {
 
         if [ -n "$current_gcloud_config" ]; then
             local gcloud_conf="$PROFILES_DIR/$profile_name/$current_gcloud_config"
-            if [ -f "$gcloud_conf" ] && _profile_validate_config_file "$gcloud_conf"; then
-                # shellcheck source=/dev/null
-                source "$gcloud_conf" 2>/dev/null || true
+            if [ -f "$gcloud_conf" ] && _profile_load_conf_file "$gcloud_conf" 2>/dev/null; then
                 echo "  Active configuration ($current_gcloud_config):"
                 echo "    Account: ${GCLOUD_ACCOUNT:-not configured}"
                 echo "    Project: ${GCLOUD_PROJECT:-not configured}"
@@ -604,18 +788,20 @@ profile_validate() {
     local errors=0
 
     if [ -f "$PROFILES_DIR/$profile_name/git.conf" ]; then
-        # shellcheck source=/dev/null
-        source "$PROFILES_DIR/$profile_name/git.conf"
-        if [ -z "${GIT_NAME:-}" ] || [ -z "${GIT_EMAIL:-}" ]; then
+        if ! _profile_load_conf_file "$PROFILES_DIR/$profile_name/git.conf"; then
+            echo "git.conf: failed safe load (invalid syntax)"
+            ((errors++)) || true
+        elif [ -z "${GIT_NAME:-}" ] || [ -z "${GIT_EMAIL:-}" ]; then
             echo "git.conf: GIT_NAME or GIT_EMAIL not configured"
             ((errors++)) || true
         fi
     fi
 
     if [ -f "$PROFILES_DIR/$profile_name/gcloud.conf" ]; then
-        # shellcheck source=/dev/null
-        source "$PROFILES_DIR/$profile_name/gcloud.conf"
-        if [ -z "${GCLOUD_ACCOUNT:-}" ]; then
+        if ! _profile_load_conf_file "$PROFILES_DIR/$profile_name/gcloud.conf"; then
+            echo "gcloud.conf: failed safe load (invalid syntax)"
+            ((errors++)) || true
+        elif [ -z "${GCLOUD_ACCOUNT:-}" ]; then
             echo "gcloud.conf: GCLOUD_ACCOUNT not configured"
             ((errors++)) || true
         fi
@@ -644,21 +830,15 @@ profile_load() {
 
     local env_conf="$PROFILES_DIR/$profile_name/env.conf"
     if [ -f "$env_conf" ]; then
-        if _profile_validate_config_file "$env_conf"; then
-            # shellcheck source=/dev/null
-            source "$env_conf"
-        else
-            echo "env.conf contains potentially dangerous commands, skipping load"
+        if ! _profile_load_conf_file "$env_conf"; then
+            echo "env.conf failed safe load (only KEY=value assignments are allowed), skipping"
         fi
     fi
 
     local shell_conf="$PROFILES_DIR/$profile_name/shell.conf"
     if [ -f "$shell_conf" ]; then
-        if _profile_validate_config_file "$shell_conf"; then
-            # shellcheck source=/dev/null
-            source "$shell_conf"
-        else
-            echo "shell.conf contains potentially dangerous commands, skipping load"
+        if ! _profile_load_conf_file "$shell_conf"; then
+            echo "shell.conf failed safe load (only KEY=value assignments are allowed), skipping"
         fi
     fi
 

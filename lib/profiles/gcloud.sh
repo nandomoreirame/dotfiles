@@ -92,7 +92,7 @@ _profile_gcloud_print_login_hint() {
 
 _profile_gcloud_first_project() {
     local entry
-    # GCLOUD_PROJECTS is set by sourcing the profile conf.
+    # GCLOUD_PROJECTS is set by _profile_load_conf_file.
     # shellcheck disable=SC2153
     if declare -p GCLOUD_PROJECTS &>/dev/null 2>&1; then
         for entry in "${GCLOUD_PROJECTS[@]}"; do
@@ -134,15 +134,12 @@ profile_switch_gcloud() {
         return 1
     fi
 
-    if declare -F _profile_validate_config_file >/dev/null 2>&1; then
-        if ! _profile_validate_config_file "$conf"; then
-            e_error "GCloud config file failed validation: $conf"
-            return 1
-        fi
+    unset GCLOUD_ACCOUNT GCLOUD_ACCOUNT_NAME GCLOUD_PROJECT GCLOUD_PROJECT_NAME
+    GCLOUD_PROJECTS=()
+    if ! _profile_load_conf_file "$conf"; then
+        e_error "GCloud config file failed validation: $conf"
+        return 1
     fi
-
-    # shellcheck source=/dev/null
-    source "$conf"
 
     if ! command -v gcloud >/dev/null 2>&1; then
         e_warning "gcloud CLI not found; skipping cloud account switch."

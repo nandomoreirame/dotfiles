@@ -13,7 +13,7 @@ _hooks_git_local_ensure() {
 }
 
 _hooks_enable() {
-    local want_strip=0 arg
+    local want_strip=0 arg current
     for arg in "$@"; do
         case "$arg" in
             guard) ;;
@@ -32,6 +32,15 @@ _hooks_enable() {
     fi
 
     _hooks_git_local_ensure
+    current="$(git config --file "$_HOOKS_GIT_LOCAL" --get core.hooksPath 2>/dev/null || true)"
+    if [ -n "$current" ] && [ "$current" != "$_HOOKS_PATH" ]; then
+        printf 'Warning: core.hooksPath is already set to %s\n' "$current" >&2
+        if ! _confirm "Replace with $_HOOKS_PATH?"; then
+            printf 'hooks enable cancelled\n'
+            return 1
+        fi
+    fi
+
     git config --file "$_HOOKS_GIT_LOCAL" core.hooksPath "$_HOOKS_PATH"
     if [ "$want_strip" -eq 1 ]; then
         git config --file "$_HOOKS_GIT_LOCAL" dotfiles.hookStrip true
@@ -45,8 +54,15 @@ _hooks_enable() {
 }
 
 _hooks_disable() {
+    local current
     _hooks_git_local_ensure
-    git config --file "$_HOOKS_GIT_LOCAL" --unset core.hooksPath 2>/dev/null || true
+    current="$(git config --file "$_HOOKS_GIT_LOCAL" --get core.hooksPath 2>/dev/null || true)"
+    if [ -n "$current" ] && [ "$current" != "$_HOOKS_PATH" ]; then
+        printf 'Warning: core.hooksPath is set to %s (not %s); leaving it unchanged\n' \
+            "$current" "$_HOOKS_PATH" >&2
+    else
+        git config --file "$_HOOKS_GIT_LOCAL" --unset core.hooksPath 2>/dev/null || true
+    fi
     git config --file "$_HOOKS_GIT_LOCAL" --unset dotfiles.hookStrip 2>/dev/null || true
     printf 'hooks disabled\n'
 }

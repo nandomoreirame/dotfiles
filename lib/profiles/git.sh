@@ -113,17 +113,12 @@ profile_switch_git() {
         return 1
     fi
 
-    if declare -F _profile_validate_config_file >/dev/null 2>&1; then
-        if ! _profile_validate_config_file "$conf"; then
-            e_error "Git config file failed validation: $conf"
-            return 1
-        fi
-    fi
-
     unset GIT_NAME GIT_EMAIL GIT_SIGNING_KEY GIT_GPG_KEY \
         GIT_GPG_FORMAT GIT_GPG_PROGRAM GIT_GPG_SSH_PROGRAM GIT_GPG_ALLOWED_SIGNERS
-    # shellcheck source=/dev/null
-    source "$conf"
+    if ! _profile_load_conf_file "$conf"; then
+        e_error "Git config file failed validation: $conf"
+        return 1
+    fi
 
     local git_local="$HOME/.gitconfig.local"
     touch "$git_local"
