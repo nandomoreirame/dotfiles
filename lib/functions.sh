@@ -22,6 +22,6 @@ function fs() {
 }
 
 function sizes() {
-    du -sxh "$1"/* 2>/dev/null | sort -rh
+    du -sxh "${1:-.}"/* 2>/dev/null | sort -rh
 }
 

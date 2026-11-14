@@ -125,4 +125,13 @@ teardown() {
     assert_output --partial "large.txt"
 }
 
-
+@test "sizes: without an argument lists the current directory, not the root" {
+    mkdir -p "$TEST_DIR/cwd-test"
+    echo data > "$TEST_DIR/cwd-test/only-here.txt"
+    cd "$TEST_DIR/cwd-test"
+    du() { printf 'du %s\n' "$*"; }
+    run sizes
+    assert_success
+    assert_output --partial "only-here.txt"
+    refute_output --partial "/usr"
+}
