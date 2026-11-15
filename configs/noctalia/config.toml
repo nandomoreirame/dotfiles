@@ -1,0 +1,113 @@
+[accessibility]
+ui_scale = 0.95
+
+[shell]
+# v5 has no global monospace key, only shell.font_family; set it per widget when needed.
+font_family = "Open Sans SemiBold"
+
+# Rounded screen corners (black overlay, 20 px radius).
+[shell.screen_corners]
+enabled = true
+size = 20
+
+# Floating + solid keeps panels on the opaque theme surface color.
+# Only affects bar clicks: keybinds still open panels at their default spot.
+[shell.panel]
+transparency_mode = "solid"
+control_center_placement = "floating"
+wallpaper_placement = "floating"
+session_placement = "floating"
+open_near_click_control_center = true
+open_near_click_launcher = true
+open_near_click_clipboard = true
+open_near_click_wallpaper = true
+open_near_click_session = true
+# Hairline on floating panels (#222226) instead of the outline role (#3F3F46).
+borders = true
+border_color = "#222226"
+border_width = 1.0
+
+[theme]
+mode = "dark"
+source = "custom"
+custom_palette = "Terminal Noir"
+
+# Built-in templates repaint other apps from the active palette. Qt is left
+# out (no qt5ct/qt6ct here) and so is cava (no cava config to patch).
+[theme.templates]
+enable_builtin_templates = true
+builtin_ids = ["gtk3", "gtk4", "btop"]
+
+[hooks]
+session_locked = "~/.dotfiles/bin/utils/nocta media-pause"
+shutting_down = "~/.dotfiles/bin/utils/podman-shutdown"
+logging_out = "~/.dotfiles/bin/utils/podman-shutdown"
+
+[idle]
+behavior_order = ["screen-off", "lock", "suspend"]
+
+[idle.behavior.screen-off]
+timeout = 600
+action = "screen_off"
+enabled = true
+
+[idle.behavior.lock]
+timeout = 660
+action = "lock"
+enabled = true
+
+[idle.behavior.suspend]
+timeout = 1800
+action = "lock_and_suspend"
+enabled = true
+
+[lockscreen]
+enabled = true
+lock_before_suspend = true
+grace_period_seconds = 0
+
+[wallpaper]
+enabled = true
+directory = "~/.dotfiles/wallpapers"
+fill_mode = "crop"
+transition = ["fade", "honeycomb"]
+transition_duration = 1500
+
+# Fixed wallpaper: no rotation.
+[wallpaper.automation]
+enabled = false
+interval_seconds = 300
+order = "random"
+
+[location]
+auto_locate = false
+address = "São Paulo"
+
+[weather]
+enabled = true
+unit = "metric"
+
+# Off by default; the widget/shortcut turns it on and the schedule follows location.
+[nightlight]
+enabled = false
+temperature_day = 5875
+temperature_night = 3611
+
+[notification]
+position = "top_right"
+layer = "overlay"
+# Toasts show on the focused monitor only, not on every output.
+follow_focused_output = true
+
+# niri's own "Screenshot captured" toast has no actions, so a click does
+# nothing. bin/utils/niri-screenshot-notify sends a clickable one instead
+# (opens the image / shows it in the folder); hide niri's to avoid a duplicate.
+[notification.filter.niri-screenshot]
+match = "niri"
+match_content = "^Screenshot captured"
+show_toast = false
+save_history = false
+
+[osd]
+position = "top_right"
+hide_delay_ms = 2000

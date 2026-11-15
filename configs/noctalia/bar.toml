@@ -1,0 +1,146 @@
+[bar]
+order = ["main"]
+
+# Floating islands: the bar is a fully transparent full-width strip (no
+# surface, border or shadow), so only the capsule groups show over the wallpaper.
+[bar.main]
+position = "top"
+thickness = 34
+background_opacity = 0.0
+border_width = 0.0
+shadow = false
+margin_edge = 0
+margin_ends = 0
+concave_edge_corners = false
+padding = 12
+widget_spacing = 12
+font_scale = 0.95
+capsule = true
+# Islands sit one step above surface_variant (#18181B), which blended into
+# the bar surface (#0B0B0C), with outline_variant as their edge.
+capsule_fill = "#202023"
+capsule_border = "outline_variant"
+start = ["workspaces", "media", "audio_visualizer"]
+center = ["group:g1"]
+end = ["tray", "group:g2", "notifications", "session"]
+
+[[bar.main.capsule_group]]
+id = "g1"
+members = ["sysmon"]
+fill = "#202023"
+border = "outline_variant"
+border_width = 1.0
+padding = 6.0
+
+[[bar.main.capsule_group]]
+id = "g2"
+members = ["keyboard_layout", "network", "bluetooth", "volume", "battery", "clock"]
+fill = "#202023"
+border = "outline_variant"
+border_width = 1.0
+padding = 6.0
+
+# Example: disable the bar on specific outputs (private overlay can retarget).
+[bar.main.monitor.dp1]
+match = "DP-1"
+enabled = false
+
+[bar.main.monitor.edp1]
+match = "eDP-1"
+enabled = false
+
+# Bar clicks: right = control center, middle = settings, wheel = workspace.
+[bar.main.dead_zone.actions]
+right = "panel-toggle control-center"
+middle = "settings-toggle"
+scroll_up = "exec niri msg action focus-workspace-up"
+scroll_down = "exec niri msg action focus-workspace-down"
+
+# Turned off from the Settings UI; the styling stays for when it comes back.
+[dock]
+enabled = false
+position = "bottom"
+margin_edge = 0
+concave_edge_corners = true
+radius = 20
+background_opacity = 0.85
+border = "outline_variant"
+border_width = 1.0
+reserve_space = true
+icon_size = 28
+launcher_position = "start"
+magnification_scale = 1.6
+show_dots = true
+
+[widget.active_window]
+display = "icon_only"
+min_length = 8
+
+[widget.audio_visualizer]
+bands = 20
+width = 137
+
+[widget.workspaces]
+pill_scale = 0.65
+show_labels = false
+
+[widget.sysmon]
+stat = "ram_used"
+visualization = "none"
+
+# Single-stat sysmon instances.
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+visualization = "none"
+font_family = "FiraCode Nerd Font Mono"
+
+[widget.ram]
+type = "sysmon"
+stat = "ram_pct"
+visualization = "none"
+font_family = "FiraCode Nerd Font Mono"
+
+[widget.disk]
+type = "sysmon"
+stat = "disk_used"
+path = "/"
+visualization = "none"
+font_family = "FiraCode Nerd Font Mono"
+
+[widget.media]
+max_length = 200
+artist_first = true
+hide_album_art = false
+rotate_album_art = true
+show_progress = true
+title_scroll = "always"
+hide_when_no_media = true
+
+[widget.tray]
+drawer = true
+hide_passive = true
+pinned = ["chrome_status_icon_1"]
+
+[widget.keyboard_layout]
+color = "primary"
+show_glyph = false
+
+[widget.network]
+show_label = false
+
+[widget.volume]
+show_label = true
+
+[widget.volume.actions]
+middle = "exec pwvucontrol || pavucontrol"
+
+[widget.battery]
+display_mode = "glyph"
+show_label = true
+hide_when_full = true
+hide_when_plugged = true
+
+[widget.clock]
+format = "{:%A, %d %b %Y - %H:%M:%S}"
+tooltip_format = "{:%H:%M %a, %b %d}"

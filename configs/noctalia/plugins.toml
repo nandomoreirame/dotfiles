@@ -1,0 +1,5 @@
+[plugins]
+# Built-in widgets only in the public tree. Enable plugins here (or replace this
+# file via the private overlay links.conf) after setting NOCTALIA_PLUGIN_AUTHOR.
+enabled = []
+auto_update = "official"
