@@ -41,3 +41,17 @@ Use [README.md](README.md) in this directory as the starting point: put your fil
 - a missing overlay is a silent no-op everywhere
 
 Do not commit anything under `/private/` in this repository except the two tracked documents (`.gitignore` already ignores the rest).
+
+## Desktop files kept private
+
+| Overlay path | Links to | Why private |
+|---|---|---|
+| `configs/niri/private.kdl` | `.config/niri/private.kdl` | Personal binds, window rules, OBS/daybar shortcuts |
+| `configs/niri/monitor.kdl` | `.config/niri/monitor.kdl` | Machine-specific outputs and positions |
+| `configs/noctalia/bar.toml` | `.config/noctalia/bar.toml` | Author plugin widgets on the bar |
+| `configs/noctalia/plugins.toml` | `.config/noctalia/plugins.toml` | Enabled plugin ids and settings |
+| `bin/utils/niri-hdmi-automode` | (PATH via `private/bin`) | TV-model-specific HDMI mode watcher |
+| `bin/utils/audio-jack-autoswitch` | (PATH via `private/bin`) | Laptop combo-jack profile switcher |
+| `bin/utils/rdo-solo*` | (PATH via `private/bin`) | Homelab RDO solo-session helpers |
+
+Set `NOCTALIA_PLUGIN_AUTHOR` in a private shell snippet so `nocta` and `noctalia-plugins-link` target your plugin namespace.

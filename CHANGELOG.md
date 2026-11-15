@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Niri config with example `monitor.kdl`, empty `private.kdl` hook, and scrubbed binds (no personal apps or paths)
+- Noctalia built-in widgets config (`bar.toml`, `plugins.toml` with `enabled = []`, `config.toml`, `user-templates.toml`)
+- Desktop helpers: `niri-*` (except hardware-specific), `nocta` / `nocta-hold` / `noctalia-restart` / `noctalia-plugins-link` (`NOCTALIA_PLUGIN_AUTHOR`), `webapp-*`, `game-mode` (`GAME_MODE_APPS`, `--dry-run`)
+- File-level links for niri and Noctalia so the private overlay can replace individual desktop files
 - Terminal Noir theme sources, generator (`scripts/themes/build-terminal-noir`) and per-app theme files for ghostty, tmux, bat, micro, Neovim, VS Code, GTK, Chrome and Obsidian
 - Terminal configs (ghostty, tmux, bat, micro) with palette-only colors and English comments
 - Neovim LazyVim config with `DOTFILES_SPELLLANG` (default English) and no personal paths

@@ -6,7 +6,7 @@ This repository separates shareable configuration from a private overlay, provid
 
 ## Status
 
-The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs and the Terminal Noir app configs work on Arch Linux / CachyOS. The Niri/Noctalia desktop migrates in a later milestone.
+The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs, the Terminal Noir app configs and the Niri/Noctalia desktop work on Arch Linux / CachyOS.
 
 ## Why
 
@@ -97,6 +97,41 @@ dotfiles --verify
 
 **Intentionally absent from the public tree:** `rm`/`cp`/`mv` keep their normal defaults (no recursive force aliases). The AI wrappers that disable permission prompts (`claude`, `codex`, `commit`) and `chrome-insecure` are not shipped; put them in `private/shell/` if you want them. Git identity and signing come from `dotfiles init` / `dotfiles profile`, never from the tracked `.gitconfig`.
 
+
+## Desktop (niri and Noctalia)
+
+The public tree ships a generic [niri](https://yalter.github.io/niri/) config and a [Noctalia](https://docs.noctalia.dev) bar that uses **built-in widgets only**. Personal binds, plugins and monitor layouts stay in the private overlay.
+
+### Hooks
+
+| File | Role |
+|---|---|
+| `configs/niri/monitor.kdl` | Example output (one active `eDP-1` plus a commented sample). Replace via private `links.conf` for your machine. |
+| `configs/niri/private.kdl` | Empty public stub included last by `config.kdl`. Replace with personal binds, window rules and startup entries. |
+| `configs/noctalia/bar.toml` | Built-in widgets only. Replace to restore a plugin bar. |
+| `configs/noctalia/plugins.toml` | `enabled = []`. Replace to enable plugins. |
+
+Private `links.conf` entries replace a public target by the same path. Example:
+
+```bash
+# in $DOTFILES_PRIVATE/links.conf
+[paths]
+private/configs/niri/private.kdl | .config/niri/private.kdl |
+private/configs/niri/monitor.kdl | .config/niri/monitor.kdl |
+private/configs/noctalia/bar.toml | .config/noctalia/bar.toml |
+private/configs/noctalia/plugins.toml | .config/noctalia/plugins.toml |
+```
+
+### Helpers and environment
+
+Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp-*`, `game-mode`). See [bin/README.md](bin/README.md).
+
+| Variable | Purpose |
+|---|---|
+| `NOCTALIA_PLUGIN_AUTHOR` | Author segment of a plugin id (`author/name`). Required for `nocta plugin ...` and `noctalia-plugins-link`. |
+| `GAME_MODE_APPS` | Space-separated process names `game-mode` freezes (`--dry-run` prints the list). |
+| `NOCTA_PLUGIN_ENTRIES` | Optional `name=entry[@target]` map for `nocta plugin` (empty by default). |
+
 ## Apps and Terminal Noir
 
 Each themed app keeps its Terminal Noir files next to its own config (no shared theme package in this repo). The two sources are `configs/noctalia/palettes/Terminal Noir.json` and `configs/themes/terminal-noir/syntax.json`. Rebuild the generated outputs with:
@@ -124,7 +159,7 @@ scripts/themes/build-terminal-noir
 
 Neovim `spelllang` defaults to English. Set `DOTFILES_SPELLLANG` (comma-separated) in a private shell snippet for extra locales. VS Code settings ship without MCP server blocks.
 
-**Kept private (overlay):** `opencode/opencode.json`, `solaar/rules.yaml`, `applications/input-remapper-gtk.desktop`, `espanso/match/base.yml` and `personal.yml`, `themes/terminal-noir/devnull-tui.json`, wallpapers. See [private/private-overlay.md](private/private-overlay.md) for where an overlay puts them.
+**Kept private (overlay):** `opencode/opencode.json`, `solaar/rules.yaml`, `applications/input-remapper-gtk.desktop`, `espanso/match/base.yml` and `personal.yml`, `themes/terminal-noir/devnull-tui.json`, wallpapers, niri `private.kdl` / machine `monitor.kdl`, Noctalia `bar.toml` / `plugins.toml` with author plugins, and hardware helpers (`niri-hdmi-automode`, `audio-jack-autoswitch`, `rdo-solo*`). See [private/private-overlay.md](private/private-overlay.md).
 
 | Command | Purpose |
 |---|---|
@@ -211,6 +246,11 @@ The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak
 ### Profiles and hooks
 
 Profile files under `profiles/**/git-*.conf` and `gcloud-*.conf` are gitignored; only `.example` templates are tracked. Identity is written only to `~/.gitconfig.local`. Global hooks stay disabled until `dotfiles hooks enable`; that command sets `core.hooksPath` for every repository on the machine and prints how to run `hooks disable`. The guard redacts matched secrets in its output. The strip hook is a separate opt-in and never runs until enabled.
+
+
+### Desktop helpers
+
+The `niri-*`, `nocta` and `noctalia-*` helpers talk only to the local niri and Noctalia sockets and to `notify-send`. They open no network listeners. `webapp-install` writes `.desktop` files under the user's home (`~/.local/share/applications`). `game-mode` freezes and thaws cgroup scopes for the apps in `GAME_MODE_APPS` (stop/continue via the cgroup freezer) and may power niri outputs on or off.
 
 Report security issues privately to the maintainer; do not open a public issue with secrets, hostnames or personal data.
 
