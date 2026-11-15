@@ -40,8 +40,6 @@ builtin_ids = ["gtk3", "gtk4", "btop"]
 
 [hooks]
 session_locked = "~/.dotfiles/bin/utils/nocta media-pause"
-shutting_down = "~/.dotfiles/bin/utils/podman-shutdown"
-logging_out = "~/.dotfiles/bin/utils/podman-shutdown"
 
 [idle]
 behavior_order = ["screen-off", "lock", "suspend"]
@@ -68,7 +66,8 @@ grace_period_seconds = 0
 
 [wallpaper]
 enabled = true
-directory = "~/.dotfiles/wallpapers"
+# Public default: user Pictures folder. Private wallpapers stay in the overlay.
+directory = "~/Pictures"
 fill_mode = "crop"
 transition = ["fade", "honeycomb"]
 transition_duration = 1500
@@ -80,8 +79,8 @@ interval_seconds = 300
 order = "random"
 
 [location]
-auto_locate = false
-address = "São Paulo"
+auto_locate = true
+address = ""
 
 [weather]
 enabled = true
