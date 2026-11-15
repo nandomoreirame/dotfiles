@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# webapp-launch - Launch a URL as a web app in a Chromium-based browser
+#
+# Opens a URL in "app mode" (frameless window) using the default
+# Chromium-based browser, falling back to chromium. Designed to be the
+# Exec target of the .desktop launchers created by webapp-install.
+# Ported from Omarchy's omarchy-launch-webapp, adapted for Niri/Wayland.
+#
+# Usage:
+#   webapp-launch <url> [extra-browser-args...]
+#
+# Examples:
+#   webapp-launch https://music.youtube.com
+#   webapp-launch https://chat.openai.com --new-window
+
+URL="${1:-}"
+if [[ -z "$URL" ]]; then
+  echo "Usage: webapp-launch <url> [extra-browser-args...]" >&2
+  exit 1
+fi
+shift
+
+# Resolve through webapp-browser so the CLI, the plugin and the .desktop files
+# agree on one browser. --exec maps the logical name to the real executable
+# (google-chrome is not on PATH here; its .desktop Exec points at the wrapper).
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+BROWSER_BIN="$("$SCRIPT_DIR/webapp-browser" --exec 2>/dev/null || echo chromium)"
+
+# Launch detached so the window survives the launcher process.
+# Prefer uwsm for proper Wayland session/cgroup placement when present.
+if command -v uwsm >/dev/null 2>&1; then
+  exec setsid uwsm app -- "$BROWSER_BIN" --app="$URL" "$@"
+else
+  exec setsid "$BROWSER_BIN" --app="$URL" "$@"
+fi

@@ -1,0 +1,329 @@
+#!/usr/bin/env bash
+#
+# game-mode -- freeze background work apps to free CPU/RAM for gaming, restore on
+# demand. TOGGLE model: it does NOT launch anything. You open Steam yourself (so
+# it renders with the full session env -- launching it under the freeze/systemd
+# paints it black); game-mode only PAUSES everything else.
+#
+# How it works:
+#   - session.slice holds niri (compositor) + pipewire (audio) -> never touched.
+#   - app.slice holds the GUI apps, one cgroup "scope" each. game-mode freezes
+#     each work scope individually via the cgroup v2 freezer (CPU->0, RAM
+#     reclaimable to zram, windows preserved), SKIPPING the ones you need live:
+#     Steam, RetroArch, Noctalia (noctalia), gamescope, game-mode's own scope, the
+#     game/streaming/emulation apps (Greenlight, XBPlay, xemu, PCSX2, Heroic,
+#     Lutris), plus any dedicated media player and any app currently playing
+#     audio -- so a streamed/emulated game and music keep running while you game.
+#   - Freezing individual scopes (NOT the app.slice parent) means anything
+#     started AFTER (a new terminal, `game-mode off`, a Noctalia hook) lands in a
+#     fresh, unfrozen scope -- so you can always toggle it back off.
+#   - It also drives the Noctalia shell: on -> Do Not Disturb + keep-awake (idle
+#     inhibitor); off -> restore both. Noctalia (noctalia) is kept unfrozen so IPC works.
+#
+# Trigger: Noctalia's Performance mode (via hooks) and/or a keybind.
+#
+# Usage:
+#   game-mode on       Verify Steam is open (notify if not), power off the
+#                      non-focused outputs, freeze the work scopes, and turn on
+#                      Do Not Disturb + keep-awake in the Noctalia shell.
+#   game-mode off      Thaw every work scope, power the outputs back on, and
+#                      turn off Do Not Disturb + keep-awake.
+#   game-mode toggle   off if active, on otherwise.
+#   game-mode status   Show state, frozen-scope count, whether Steam is open.
+#
+# Escape hatch: from a TTY (Ctrl+Alt+F2) run `game-mode off` -- the thaw writes
+# the cgroup files directly (no compositor needed) and NIRI_SOCKET is autodetected.
+set -euo pipefail
+shopt -s nullglob
+
+SELF="$(readlink -f "$0")"
+readonly SELF
+
+_uid="$(id -u)"
+readonly APP_CG="/sys/fs/cgroup/user.slice/user-${_uid}.slice/user@${_uid}.service/app.slice"
+readonly STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/game-mode.active"
+
+# Work apps to freeze (process comm names, space-separated). Override to taste.
+: "${GAME_MODE_APPS:=google-chrome-stable chromium firefox code cursor slack discord telegram-desktop}"
+readonly GAME_MODE_APPS
+
+# Scopes whose process tree contains ANY of these comms are KEPT running (not
+# frozen): the game stack + the shell that drives the toggle + native (non-flatpak)
+# game apps. NOTE: comm is truncated by the kernel to 15 chars, so match the
+# truncated form (e.g. the PCSX2 Qt binary is 'pcsx2-qt', Heroic/Lutris keep their
+# names). Flatpak game apps are matched by app-id instead (see KEEP_SCOPES_RE),
+# which is immune to comm truncation and to shared wrapper launchers like run.sh.
+readonly KEEP_COMMS_RE='^(steam|steamwebhelper|reaper|retroarch|gamescope|noctalia|pcsx2-qt|heroic|lutris)$'
+
+# Scopes whose cgroup dir name contains ANY of these substrings are KEPT running.
+# Used for flatpak game/streaming/emulation apps: their scope dir is
+# app-flatpak-<app-id>-<hash>.scope, so the stable app-id identifies them without
+# relying on the (truncated, sometimes generic 'run.sh') process comm. Add a new
+# flatpak game app here by its app-id (`flatpak list --columns=application`).
+readonly KEEP_SCOPES_RE='flatpak-(io\.github\.unknownskl\.greenlight|net\.studio08\.xbplay|app\.xemu\.xemu)'
+
+# Dedicated media/music players are ALSO kept unfrozen, regardless of whether
+# they are playing right this second, so playback survives and you can freely
+# pause/resume/skip them during the game. Browser-tab and PWA audio (e.g. the
+# Swing Music chromium app) is NOT matchable by comm without also keeping the
+# whole browser, so those are caught DYNAMICALLY while actually playing (see
+# media_pids). Tune to taste.
+readonly MEDIA_COMMS_RE='^([Ss]potify|spotifyd|ncspot|mpv|vlc|cmus|mpd|mopidy|audacious|rhythmbox|elisa|[Ss]trawberry|clementine|deadbeef|[Aa]marok|amberol|[Qq]uodlibet|lollypop)$'
+
+notify() {
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -a "game-mode" "$1" "${2:-}" || true
+    fi
+    printf '[game-mode] %s %s\n' "$1" "${2:-}"
+}
+
+# --- noctalia shell (DND + keep awake) ---------------------------------------
+
+HOLD="$(dirname "$SELF")/nocta-hold"
+readonly HOLD
+
+# Gaming focus ON/OFF via nocta-hold (ref-counted, so it coexists with
+# focus-mode and the dnd/keepawake watchers without clobbering each other).
+focus_on() {
+    "$HOLD" dnd acquire game-mode || true
+    "$HOLD" awake acquire game-mode || true
+}
+
+focus_off() {
+    "$HOLD" dnd release game-mode || true
+    "$HOLD" awake release game-mode || true
+}
+
+# --- outputs -----------------------------------------------------------------
+
+# Power off every output EXCEPT the focused one. Set GAME_MODE_KEEP_OUTPUTS=1 to
+# keep all monitors on.
+outputs_off_others() {
+    [[ -n "${GAME_MODE_KEEP_OUTPUTS:-}" ]] && return 0
+    command -v niri >/dev/null 2>&1 || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    local keeper o
+    keeper="$(niri msg --json focused-output 2>/dev/null | jq -r '.name // empty' || true)"
+    [[ -z "$keeper" ]] && return 0
+    while IFS= read -r o; do
+        [[ -n "$o" && "$o" != "$keeper" ]] || continue
+        niri msg output "$o" off 2>/dev/null || true
+    done < <(niri msg outputs 2>/dev/null | sed -nE 's/^Output .*\(([^)]+)\)$/\1/p')
+}
+
+# Power every connected output back on (idempotent).
+outputs_all_on() {
+    command -v niri >/dev/null 2>&1 || return 0
+    local o
+    while IFS= read -r o; do
+        [[ -n "$o" ]] && niri msg output "$o" on 2>/dev/null || true
+    done < <(niri msg outputs 2>/dev/null | sed -nE 's/^Output .*\(([^)]+)\)$/\1/p')
+}
+
+# --- freezer (per work scope) ------------------------------------------------
+
+# basename of this process's own cgroup scope, so we never freeze ourselves.
+my_scope() {
+    local cg
+    cg="$(cut -d: -f3 /proc/self/cgroup 2>/dev/null | head -1)"
+    printf '%s' "${cg##*/}"
+}
+
+# PIDs that currently own an audio OUTPUT stream in the "running" state -- i.e.
+# something is actively producing sound right now. Used to keep the owning
+# scopes unfrozen so whatever is playing keeps playing (covers browser tabs,
+# PWAs like Swing Music, and anything else making sound, not just the dedicated
+# players in MEDIA_COMMS_RE). Uses jq, never python3 (a mise shim here that can
+# stall in a spawned env).
+media_pids() {
+    command -v pw-dump >/dev/null 2>&1 || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    # Map each running audio-output stream to the REAL process that owns it:
+    # prefer the node's application.process.id (set for PulseAudio clients like
+    # browsers / Spotify / RetroArch); fall back to the owning PipeWire Client's
+    # kernel-verified pipewire.sec.pid (set for native clients whose node has no
+    # application.process.id, e.g. mpv --ao=pipewire). Covers both client kinds.
+    { pw-dump 2>/dev/null || true; } | jq -r '
+        ( [ .[]
+            | select(.type == "PipeWire:Interface:Client")
+            | { key:   (.id | tostring),
+                value: (.info.props["application.process.id"] // .info.props["pipewire.sec.pid"]) } ]
+          | from_entries ) as $clients
+        | .[]
+        | select(.type == "PipeWire:Interface:Node")
+        | select(.info.props["media.class"] == "Stream/Output/Audio")
+        | select(.info.state == "running")
+        | ( .info.props["application.process.id"] // $clients[(.info.props["client.id"] | tostring)] )
+        | select(. != null)
+    ' 2>/dev/null | sort -u || true
+}
+
+# True if the scope dir $1 holds a process we must keep running. $2 (optional)
+# is a space-padded list of PIDs currently playing audio.
+scope_is_kept() {
+    local d="$1" playing="${2:-}" pid c
+    # Keep the whole scope if its dir name carries a preserved flatpak app-id
+    # (Greenlight/XBPlay/xemu/...). Checked first: it needs no /proc reads and is
+    # immune to comm truncation and to the shared 'run.sh' flatpak wrapper.
+    [[ "${d##*/}" =~ $KEEP_SCOPES_RE ]] && return 0
+    while IFS= read -r pid; do
+        [[ -n "$pid" ]] || continue
+        # keep the whole scope if one of its processes is playing audio now
+        [[ -n "$playing" && "$playing" == *" $pid "* ]] && return 0
+        c=""
+        read -r c <"/proc/$pid/comm" 2>/dev/null || true
+        [[ "$c" =~ $KEEP_COMMS_RE ]] && return 0
+        [[ "$c" =~ $MEDIA_COMMS_RE ]] && return 0
+    done <"$d/cgroup.procs"
+    return 1
+}
+
+freeze_work_scopes() {
+    local self d playing
+    self="$(my_scope)"
+    # Snapshot the audio-playing PIDs ONCE (pw-dump is heavy), space-padded on
+    # both ends so a whole-PID substring match can't partial-match.
+    playing=" $(media_pids | tr '\n' ' ')"
+    for d in "$APP_CG"/*.scope; do
+        [[ -d "$d" ]] || continue
+        [[ "${d##*/}" == "$self" ]] && continue
+        scope_is_kept "$d" "$playing" && continue
+        echo 1 >"$d/cgroup.freeze" 2>/dev/null || true
+    done
+}
+
+thaw_all_scopes() {
+    local d
+    for d in "$APP_CG"/*.scope; do
+        [[ -d "$d" ]] || continue
+        echo 0 >"$d/cgroup.freeze" 2>/dev/null || true
+    done
+}
+
+frozen_count() {
+    local d n=0
+    for d in "$APP_CG"/*.scope; do
+        [[ -r "$d/cgroup.events" ]] || continue
+        grep -q '^frozen 1' "$d/cgroup.events" 2>/dev/null && n=$((n + 1))
+    done
+    printf '%s' "$n"
+}
+
+steam_running() {
+    compgen -G "$APP_CG/*[Ss]team*.scope" >/dev/null 2>&1 && return 0
+    pgrep -x steamwebhelper >/dev/null 2>&1
+}
+
+# Read Noctalia DND state as yes/no (empty if nocta fails / unknown).
+# Only doNotDisturb is supported; routed through nocta dnd status.
+# NOCTA_BIN overrides the sibling nocta path (tests).
+noctalia_state_bool() {
+    local field="${1:-}"
+    [ "$field" = "doNotDisturb" ] || return 0
+    local nocta_bin="${NOCTA_BIN:-$(dirname "$SELF")/nocta}"
+    local v
+    v="$("$nocta_bin" dnd status 2>/dev/null)" || return 0
+    case "$v" in
+    on) echo "yes" ;;
+    off) echo "no" ;;
+    esac
+}
+
+# --- subcommands -------------------------------------------------------------
+
+cmd_on() {
+    if [[ -f "$STATE_FILE" ]]; then
+        notify "Game mode already on" "Use 'game-mode off' to leave."
+        return 0
+    fi
+    if ! steam_running; then
+        notify "Steam is not open" "Open Steam from the launcher and try again."
+        return 0
+    fi
+    : >"$STATE_FILE"
+    outputs_off_others
+    freeze_work_scopes
+    focus_on
+    notify "Game mode on" "Work apps frozen; playing media kept. DND and keep-awake enabled."
+}
+
+cmd_off() {
+    thaw_all_scopes
+    outputs_all_on
+    focus_off
+    rm -f "$STATE_FILE"
+    notify "Game mode off" "Apps, monitors and notifications restored."
+}
+
+cmd_toggle() {
+    if [[ -f "$STATE_FILE" ]]; then
+        cmd_off
+    else
+        cmd_on
+    fi
+}
+
+
+cmd_dry_run() {
+    echo "game-mode dry-run: would freeze work apps from GAME_MODE_APPS:"
+    local a
+    for a in $GAME_MODE_APPS; do
+        echo "  - $a"
+    done
+    echo "keep (never frozen): steam, retroarch, noctalia, media players"
+    if [[ -f "$STATE_FILE" ]]; then
+        echo "current state: ACTIVE"
+    else
+        echo "current state: inactive"
+    fi
+}
+
+cmd_status() {
+    if [[ -f "$STATE_FILE" ]]; then
+        echo "state              : ACTIVE"
+    else
+        echo "state              : inactive"
+    fi
+    echo "frozen scopes      : $(frozen_count)"
+    echo "media playing now  : $(media_pids | grep -c . || true) stream(s)"
+    if steam_running; then
+        echo "Steam open         : yes"
+    else
+        echo "Steam open         : no"
+    fi
+    local dnd
+    dnd="$(noctalia_state_bool doNotDisturb)"
+    [[ -n "$dnd" ]] && echo "Do Not Disturb     : $dnd"
+}
+
+usage() {
+    sed -n '3,/^set /{/^set /d;p;}' "$SELF" | sed 's/^# \{0,1\}//'
+}
+
+main() {
+    # Make niri IPC work from a bare TTY (game-mode off), where NIRI_SOCKET may be
+    # unset -- otherwise monitors can't be powered back on from there.
+    if [[ -z "${NIRI_SOCKET:-}" && -n "${XDG_RUNTIME_DIR:-}" ]]; then
+        local s
+        for s in "$XDG_RUNTIME_DIR"/niri.*.sock; do
+            [[ -S "$s" ]] && {
+                export NIRI_SOCKET="$s"
+                break
+            }
+        done
+    fi
+
+    local sub="${1:-}"
+    shift || true
+    case "$sub" in
+        on) cmd_on ;;
+        off) cmd_off ;;
+        toggle) cmd_toggle ;;
+        status) cmd_status ;;
+        --dry-run|dry-run) cmd_dry_run ;;
+        ""|-h|--help|help) usage ;;
+        *) printf 'unknown subcommand: %s\n\n' "$sub" >&2; usage; exit 1 ;;
+    esac
+}
+
+main "$@"
