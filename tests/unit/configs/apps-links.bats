@@ -54,6 +54,7 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
 }
 
 @test "espanso public matches are english" {
-    run grep -rnE "[áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ]|\b(hoje|também|você|vocês|verdade|tudo bom)\b" "$ROOT/configs/espanso/match"
+    # LC_ALL=C.UTF-8 keeps UTF-8 bracket expressions from matching emoji/unicode bytes under bare C.
+    run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ]|\b(hoje|também|você|vocês|verdade|tudo bom)\b" "$ROOT/configs/espanso/match"
     [ "$status" -ne 0 ]
 }
