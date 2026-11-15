@@ -65,12 +65,21 @@ nh_count() {
   printf '%s' "$n"
 }
 
+nh_owner_ok() {
+  local owner="$1"
+  [ -n "$owner" ] || return 1
+  # Reject path separators and parent-dir references used as marker filenames.
+  [[ "$owner" == *..* || "$owner" == */* || "$owner" == *\\* ]] && return 1
+  [[ "$owner" =~ [[:cntrl:]] ]] && return 1
+  return 0
+}
+
 nh_hold() {
   local res="$1" action="${2:-}" owner="${3:-}"
   case "$res" in
   dnd | awake) ;;
   *)
-    echo "recurso invalido: $res" >&2
+    echo "invalid resource: $res" >&2
     return 2
     ;;
   esac
@@ -82,7 +91,11 @@ nh_hold() {
   case "$action" in
   acquire)
     [ -n "$owner" ] || {
-      echo "owner obrigatorio" >&2
+      echo "owner required" >&2
+      return 2
+    }
+    nh_owner_ok "$owner" || {
+      echo "invalid owner: $owner" >&2
       return 2
     }
     local before
@@ -98,7 +111,11 @@ nh_hold() {
     ;;
   release)
     [ -n "$owner" ] || {
-      echo "owner obrigatorio" >&2
+      echo "owner required" >&2
+      return 2
+    }
+    nh_owner_ok "$owner" || {
+      echo "invalid owner: $owner" >&2
       return 2
     }
     rm -f "$d/$owner"
@@ -114,7 +131,7 @@ nh_hold() {
     ;;
   active) [ "$(nh_count "$d")" -gt 0 ] ;;
   *)
-    echo "acao invalida: $action" >&2
+    echo "invalid action: $action" >&2
     return 2
     ;;
   esac
@@ -126,12 +143,12 @@ nh_status() {
     d="$NH_ROOT/$res"
     printf '%-6s: ' "$res"
     if [ -d "$d" ] && [ "$(nh_count "$d")" -gt 0 ]; then
-      printf 'ATIVO ('
+      printf 'ACTIVE ('
       for f in "$d"/*; do printf '%s ' "${f##*/}"; done
       printf '\b)'
-      [ -e "$NH_ROOT/.$res.preexisting" ] && printf ' [preexistente/manual]'
+      [ -e "$NH_ROOT/.$res.preexisting" ] && printf ' [preexisting/manual]'
     else
-      printf 'inativo'
+      printf 'inactive'
     fi
     printf '\n'
   done
@@ -145,8 +162,8 @@ dnd | awake)
   ;;
 status) nh_status ;;
 *)
-  echo "uso: nocta-hold <dnd|awake> <acquire|release|active> <owner>" >&2
-  echo "     nocta-hold status" >&2
+  echo "usage: nocta-hold <dnd|awake> <acquire|release|active> <owner>" >&2
+  echo "       nocta-hold status" >&2
   exit 2
   ;;
 esac

@@ -144,3 +144,45 @@ STUB
     [[ "$output" == *"awake"* ]]
     [[ "$output" == *"owner-b"* ]]
 }
+
+@test "user-facing messages are English" {
+    run "$SCRIPT" bogus acquire x
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"usage:"* ]]
+    [[ "$output" != *"uso:"* ]]
+    [[ "$output" != *"recurso"* ]]
+
+    run "$SCRIPT" dnd acquire
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"owner required"* ]]
+    [[ "$output" != *"obrigatorio"* ]]
+
+    run "$SCRIPT" dnd nope owner-a
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"invalid action"* ]]
+    [[ "$output" != *"acao"* ]]
+}
+
+@test "status uses English active/inactive labels" {
+    "$SCRIPT" dnd acquire owner-a
+    run "$SCRIPT" status
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"ACTIVE"* ]]
+    [[ "$output" != *"ATIVO"* ]]
+    [[ "$output" != *"inativo"* ]]
+    [[ "$output" != *"preexistente"* ]]
+}
+
+@test "rejects unsafe owner names" {
+    for owner in '../x' 'a/b' 'a/../b' '..'; do
+        run "$SCRIPT" dnd acquire "$owner"
+        [ "$status" -ne 0 ]
+        [[ "$output" == *"invalid owner"* ]]
+    done
+    # No hold markers created via path traversal
+    [ ! -e "$XDG_RUNTIME_DIR/nocta-hold/x" ]
+    [ ! -e "$XDG_RUNTIME_DIR/nocta-hold/dnd/a" ]
+    [ ! -e "$XDG_RUNTIME_DIR/nocta-hold/dnd/b" ]
+    # Only the lock file should exist under the hold root after rejected acquires
+    ! find "$XDG_RUNTIME_DIR/nocta-hold/dnd" -type f 2>/dev/null | grep -q .
+}
