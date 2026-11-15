@@ -75,3 +75,11 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
     run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; alias home chrome finder ips py timer zload c dc gs"
     [ "$status" -eq 0 ]
 }
+
+@test "http-server alias binds to localhost only" {
+    run grep -nE '^alias http-server=' "$CUSTOM/aliases.zsh"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"127.0.0.1"* ]]
+    [[ "$output" != *"0.0.0.0"* ]]
+    [[ "$output" != *"cors-allow-origin='*'"* ]]
+}

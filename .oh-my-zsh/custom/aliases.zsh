@@ -54,7 +54,8 @@ alias npm-check="npx npm-check -u"
 alias gitignore="npx gitignore"
 alias maildev="npx maildev"
 alias project-size="npx cloc . --vcs=git"
-alias http-server="npx http-server -a 0.0.0.0 -p 3030 -g --cors --cors-allow-origin='*'"
+# Local-only by default. Widen with: http-server -a 0.0.0.0 ...
+alias http-server="npx http-server -a 127.0.0.1 -p 3030 -g --cors"
 
 alias ls="eza -l --icons --hyperlink --group-directories-first --sort=type --group --time-style=long-iso --color=always --no-permissions --no-user"
 alias la="ls -a"
