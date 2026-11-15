@@ -145,9 +145,6 @@ spawn-at-startup "sh" "-c" "~/.dotfiles/bin/utils/niri-power-autoprofile"
 // Keep the screen awake while a long task runs (updates, rsync, ffmpeg, Rust
 // builds), then let it idle again. Coordinated with the rest via nocta-hold.
 spawn-at-startup "sh" "-c" "~/.dotfiles/bin/utils/niri-keepawake-tasks"
-// Audio: follow the P2 combo jack and apply the matching card profile. In this
-// laptop's sof-hda-dsp UCM, Speaker and Headphones are mutually exclusive and
-// live in DIFFERENT profiles, while all profiles report "available: yes" - so
 // fcitx5 input method (compose / dead keys for the us-intl + pt_BR layout).
 spawn-at-startup "fcitx5"
 // --- User apps: autostart DISABLED on purpose. Only Steam + 1Password start on
@@ -232,14 +229,6 @@ window-rule {
     match app-id=r#"^(md\.obsidian\.Obsidian|obsidian)$"#
     default-column-width { proportion 0.33333; }
 }
-
-// Grok Bot opens floating (Mod+Shift+Q scratchpad). AppImage, app-id "grok-bot".
-window-rule {
-    match app-id=r#"^grok-bot$"#
-    open-floating true
-    default-column-width { proportion 0.33333; }
-}
-
 
 // Discord opens floating (Mod+Shift+D opens it / closes it to the tray). Native package, app-id "discord".
 window-rule {
@@ -373,16 +362,9 @@ binds {
     Mod+Shift+Y hotkey-overlay-title="YouTube (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle youtube"; }
     Mod+Shift+U hotkey-overlay-title="YouTube Music (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle youtube-music"; }
     Mod+Shift+O hotkey-overlay-title="Obsidian (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle obsidian"; }
-    Mod+Shift+Q hotkey-overlay-title="Grok Bot (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle grok"; }
     Mod+Shift+D hotkey-overlay-title="Discord (toggle to tray)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle discord"; }
     Mod+Shift+L hotkey-overlay-title="LocalSend (toggle to tray)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle localsend"; }
     Mod+Alt+L   hotkey-overlay-title="LocalSend: send clipboard text" { spawn-sh "~/.dotfiles/bin/utils/localsend-clip phone"; }
-    // Daybar: quick capture on Super+Space, toolbar panel on Super+Shift+Space.
-    Mod+Space        hotkey-overlay-title="Daybar: quick capture" { spawn-sh "~/.dotfiles/bin/utils/nocta plugin daybar capture"; }
-    Mod+Shift+Space  hotkey-overlay-title="Daybar: panel" { spawn-sh "~/.dotfiles/bin/utils/nocta plugin daybar panel"; }
-    // Gistbar: gist search on Super+G, new gist from the clipboard on Super+Ctrl+G.
-    Mod+G            hotkey-overlay-title="Gistbar: search gists" { spawn-sh "~/.dotfiles/bin/utils/nocta plugin gistbar panel"; }
-    Mod+Ctrl+G       hotkey-overlay-title="Gistbar: new gist from clipboard" { spawn-sh "~/.dotfiles/bin/utils/nocta plugin gistbar create"; }
     // 1Password quick access (the app's native global shortcut doesn't work under
     // Wayland, so niri captures the key and calls --quick-access).
     Ctrl+Shift+Space hotkey-overlay-title="1Password quick access" { spawn "1password" "--quick-access"; }
@@ -404,11 +386,6 @@ binds {
     // then open Mini Video Me. See bin/utils/droidcam-ctl.
     Mod+Alt+C hotkey-overlay-title="DroidCam: connect" { spawn-sh "~/.dotfiles/bin/utils/droidcam-ctl start"; }
     Mod+Alt+X hotkey-overlay-title="DroidCam: disconnect" { spawn-sh "~/.dotfiles/bin/utils/droidcam-ctl stop"; }
-
-    // Focus mode: toggle. Enables DND + keep-awake, pauses media, and freezes
-    // distraction apps (Discord/Steam/Telegram/Spotify) while keeping work apps
-    // live. The work counterpart of game-mode. See bin/utils/focus-mode.
-    Mod+Alt+F hotkey-overlay-title="Focus mode (silence + de-distract)" { spawn-sh "~/.dotfiles/bin/utils/focus-mode toggle"; }
 
     // Wi-Fi manager: impala (iwd TUI) in a floating terminal. See window-rule above.
     Mod+Shift+W hotkey-overlay-title="Wi-Fi (impala)" { spawn "ghostty" "--class=impala-float" "-e" "impala"; }
@@ -500,9 +477,9 @@ binds {
     Mod+WheelScrollLeft      { focus-column-left; }
 
     // MX Master 3S extra buttons are handled by Solaar (HID++), NOT niri binds:
-    // diverted buttons trigger `niri msg action` via Solaar rules.yaml + Execute.
+    // diverted buttons trigger `niri msg action` via Solaar rules + Execute.
     // gesture -> toggle-overview, forward -> focus-workspace-down,
-    // back -> focus-workspace-up. See ~/.dotfiles/configs/solaar/rules.yaml.
+    // back -> focus-workspace-up. Private overlay: configs/solaar/rules.yaml.
 
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
@@ -585,9 +562,7 @@ binds {
     Ctrl+Alt+4 hotkey-overlay-title="Screenshot: area" { screenshot; }
     Ctrl+Alt+3 hotkey-overlay-title="Screenshot: window" { screenshot-window; }
     Ctrl+Alt+2 hotkey-overlay-title="Screenshot: full screen" { screenshot-screen; }
-    Ctrl+Alt+1 hotkey-overlay-title="Record video (start/stop)" { spawn-sh "~/.dotfiles/bin/utils/gsr-toggle"; }
-    // Ctrl+Alt+5: record straight to GIF; Ctrl+Alt+6: last Ctrl+Alt+1 video to GIF.
-    Ctrl+Alt+5 hotkey-overlay-title="Record GIF (start/stop)" { spawn-sh "~/.dotfiles/bin/utils/gsr-toggle --gif"; }
+    // Screen recording binds live in the private overlay.
     Ctrl+Alt+6 hotkey-overlay-title="Convert last video to GIF" { spawn-sh "~/.dotfiles/bin/utils/video-to-gif"; }
 
     // --- Session ---

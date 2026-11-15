@@ -414,12 +414,10 @@ run_nocta() {
 @test "niri config routes Noctalia actions through nocta" {
     local niri_cfg="$PROJECT_ROOT/configs/niri/config.kdl"
 
-    grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta plugin daybar capture"' "$niri_cfg"
-    grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta plugin daybar panel"' "$niri_cfg"
-    grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta plugin gistbar panel"' "$niri_cfg"
-    grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta plugin gistbar create"' "$niri_cfg"
+    # Author plugins (daybar/gistbar) and personal helpers live in private.kdl.
+    ! grep -qE 'nocta plugin (daybar|gistbar)|focus-mode|gsr-toggle|grok-bot' "$niri_cfg"
     # RDO binds stay in the private overlay; public config has no rdo-solo.
-! grep -q 'rdo-solo' "$niri_cfg"
+    ! grep -q 'rdo-solo' "$niri_cfg"
     grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta launcher"' "$niri_cfg"
     grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta clipboard"' "$niri_cfg"
     grep -q 'spawn-sh "~/.dotfiles/bin/utils/nocta control-center"' "$niri_cfg"
