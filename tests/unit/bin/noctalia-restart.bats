@@ -251,9 +251,11 @@ run_restart() {
     ! grep -q "niri msg action spawn" "$CALL_LOG"
 }
 
-@test "game-mode and sys-shell-restart have no v4 (qs) references" {
+@test "game-mode has no v4 (qs) references" {
+    [ -f "$PROJECT_ROOT/bin/utils/game-mode" ]
     ! grep -qw 'qs' "$PROJECT_ROOT/bin/utils/game-mode"
-    ! grep -qw 'qs' "$PROJECT_ROOT/bin/sys/sys-shell-restart"
+    # sys-shell-restart is not shipped in the public tree.
+    [ ! -e "$PROJECT_ROOT/bin/sys/sys-shell-restart" ]
 }
 
 @test "game-mode keeps the noctalia shell unfrozen" {
