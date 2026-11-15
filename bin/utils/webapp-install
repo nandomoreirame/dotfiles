@@ -40,12 +40,11 @@ warn()  { echo -e "${YELLOW}[warn]${NC}  $*"; }
 error() { echo -e "${RED}[error]${NC} $*" >&2; }
 
 # --- Directories ---
-DESKTOP_DIR="$HOME/.local/share/applications"
+DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
 ICON_DIR="$DESKTOP_DIR/icons"
 
-# Absolute path to the sibling launcher so the .desktop Exec is PATH-independent.
+# Absolute path to sibling helpers (webapp-browser / webapp-launch).
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
-LAUNCHER="$SCRIPT_DIR/webapp-launch"
 
 # --- Help ---
 show_help() {
@@ -67,22 +66,19 @@ list_webapps() {
   echo ""
   local found=false
   while IFS= read -r -d '' file; do
-    local exec_line name id kind
+    local exec_line name id
     exec_line="$(sed -n 's/^Exec=//p' "$file" | head -1)"
     name="$(sed -n 's/^Name=//p' "$file" | head -1)"
     id="$(basename "${file%.desktop}")"
     [[ -z "$name" ]] && name="$id"
     if [[ -n "$(sed -n 's/^X-Webappbar-Id=//p' "$file" | head -1)" ]]; then
-      kind=webapp
       found=true
       printf '  %b[webapp]%b %-24s %b%s%b\n' "$GREEN" "$NC" "$name" "$CYAN" "$exec_line" "$NC"
     elif [[ "$exec_line" == *webapp-launch* ]]; then
-      kind=legacy
       found=true
       printf '  %b[legacy]%b %-24s %b%s%b\n' "$YELLOW" "$NC" "$name" "$CYAN" "$exec_line" "$NC"
     elif [[ "$exec_line" == *--app-id=* ]] &&
          { [[ "$exec_line" == *google-chrome* ]] || [[ "$exec_line" == *chromium* ]] || [[ "$exec_line" == *chrome* ]]; }; then
-      kind=chrome
       found=true
       local appid="${exec_line##*--app-id=}"
       appid="${appid%% *}"
@@ -139,6 +135,12 @@ if [[ -z "$APP_NAME" || -z "$APP_URL" ]]; then
   exit 1
 fi
 
+# Reject path traversal / control chars in names used as file basenames.
+if [[ "$APP_NAME" == .* || "$APP_NAME" == */* || "$APP_NAME" == *\\* || "$APP_NAME" =~ [[:cntrl:]] ]]; then
+  error "Invalid app name: '$APP_NAME'"
+  exit 1
+fi
+
 APP_URL="$(normalize_url "$APP_URL")"
 
 mkdir -p "$ICON_DIR"
@@ -164,6 +166,10 @@ if [[ -z "$ICON_PATH" && -n "$ICON_REF" ]]; then
       exit 1
     fi
   else
+    if [[ "$ICON_REF" == .* || "$ICON_REF" == */* || "$ICON_REF" == *\\* || "$ICON_REF" == *..* || "$ICON_REF" =~ [[:cntrl:]] ]]; then
+      error "Invalid icon reference: '$ICON_REF'"
+      exit 1
+    fi
     ICON_PATH="$ICON_DIR/$ICON_REF"
   fi
 fi

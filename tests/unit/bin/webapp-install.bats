@@ -86,3 +86,34 @@ teardown() {
     grep -q '^Exec="chromium" --app="https://a.example/?q=50%%25"$' "$entry"
     grep -q '^X-Webappbar-Url=https://a.example/?q=50%25$' "$entry"
 }
+
+@test "honors XDG_DATA_HOME for the applications directory" {
+    export XDG_DATA_HOME="$TEST_DIR/xdg-data-home"
+    export WEBAPP_BROWSER=chromium
+    mkdir -p "$XDG_DATA_HOME"
+    run "$SCRIPT" "XDG App" https://xdg.example
+    [ "$status" -eq 0 ]
+    entry="$XDG_DATA_HOME/applications/XDG App.desktop"
+    [ -f "$entry" ]
+    [ ! -f "$HOME/.local/share/applications/XDG App.desktop" ]
+    grep -q '^X-Webappbar-Id=XDG App$' "$entry"
+}
+
+@test "rejects unsafe APP_NAME values" {
+    export WEBAPP_BROWSER=chromium
+    local id
+    for id in '../Evil' 'Evil/Name' $'Bad\nName' '.Hidden'; do
+        run "$SCRIPT" "$id" https://evil.example
+        [ "$status" -ne 0 ]
+        [ ! -e "$HOME/.local/share/applications/$id.desktop" ]
+        [ ! -e "$HOME/.local/share/Evil.desktop" ]
+    done
+}
+
+@test "rejects unsafe ICON_REF local paths" {
+    export WEBAPP_BROWSER=chromium
+    printf 'x' > "$TEST_DIR/outside.png"
+    run "$SCRIPT" SafeApp https://safe.example '../outside.png'
+    [ "$status" -ne 0 ]
+    [ ! -f "$HOME/.local/share/applications/SafeApp.desktop" ]
+}
