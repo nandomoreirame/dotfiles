@@ -155,3 +155,21 @@ TOML
 
     cmp -s "$NOCTALIA_OVERRIDES" "$TEST_DIR/original.toml"
 }
+
+@test "clears a fallback-only overrides file when the middle monitor returns" {
+    # Only the edp1 override table — removing it yields an empty file that must
+    # still replace the overrides path (otherwise the override sticks forever).
+    cat > "$NOCTALIA_OVERRIDES" <<'TOML'
+[bar.main.monitor.edp1]
+enabled = true
+match = "eDP-1"
+TOML
+    export FAKE_OUTPUTS="$DOCKED"
+
+    run "$SCRIPT" --once
+
+    [ "$status" -eq 0 ]
+    [ -f "$NOCTALIA_OVERRIDES" ]
+    [ ! -s "$NOCTALIA_OVERRIDES" ]
+    ! grep -qF "$HEADER" "$NOCTALIA_OVERRIDES"
+}

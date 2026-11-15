@@ -51,13 +51,12 @@ niri_bar_override_present() {
 }
 
 # Atomically replace the overrides file with the content of $1.
+# Always commit when generation succeeded, even if the result is empty: an
+# overrides file that held only the fallback table must become empty after
+# undock->dock, otherwise the eDP-1 override sticks forever.
 niri_bar_commit() {
     local tmp="$1"
-    if [ -s "$tmp" ] || [ ! -s "$OVERRIDES" ]; then
-        mv -f "$tmp" "$OVERRIDES"
-    else
-        rm -f "$tmp"
-    fi
+    mv -f "$tmp" "$OVERRIDES"
 }
 
 niri_bar_add_override() {
