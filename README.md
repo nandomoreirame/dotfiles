@@ -155,7 +155,7 @@ scripts/themes/build-terminal-noir
 | Electron | `configs/electron-flags.conf`, `electron40-flags.conf` | (flags only) |
 | Obsidian | (manual vault snippet) | `configs/obsidian/snippets/terminal-noir.css` |
 | fcitx5 | `configs/fcitx5/config` | (layout switch; Arch `[paths:arch]`) |
-| espanso | `configs/espanso/` | generic `abbrev.yml` / `fun.yml` (Arch `[paths:arch]`) |
+| espanso | `configs/espanso/` | English `abbrev.yml` / `fun.yml` (Arch `[paths:arch]`); language packs stay in the private overlay |
 
 Neovim `spelllang` defaults to English. Set `DOTFILES_SPELLLANG` (comma-separated) in a private shell snippet for extra locales. VS Code settings ship without MCP server blocks.
 

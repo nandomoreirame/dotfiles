@@ -21,7 +21,7 @@ A public clone of this repository must stay free of personal data. Anything that
 | `links.conf` | Symlink map merged after the public one |
 | `packages/` | `*.list` package picks for the installer |
 | `setup/` | `registry.conf` and one-shot setup steps |
-| `espanso/` | Private Espanso matches (`base.yml`, `personal.yml`) |
+| `espanso/` | Private Espanso matches (`base.yml`, `personal.yml`, language-specific abbrevs) |
 | `configs/opencode/opencode.json` | MCP server list for OpenCode (linked via private `links.conf`) |
 | `configs/solaar/rules.yaml` | Mouse button map for one device |
 | `configs/applications/input-remapper-gtk.desktop` | System-Python override for the input-remapper GUI |

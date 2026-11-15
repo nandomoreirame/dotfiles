@@ -52,3 +52,8 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
     run grep -rnE "@gmail|[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}|\+55|/home/[a-z]" "$ROOT/configs/espanso"
     [ "$status" -ne 0 ]
 }
+
+@test "espanso public matches are english" {
+    run grep -rnE "[áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ]|\b(hoje|também|você|vocês|verdade|tudo bom)\b" "$ROOT/configs/espanso/match"
+    [ "$status" -ne 0 ]
+}
