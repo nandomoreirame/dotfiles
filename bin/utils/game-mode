@@ -48,7 +48,7 @@ readonly STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/game-mode.active"
 # Work apps to freeze (process comm / scope-name fragments, space-separated).
 # Names must fit the kernel's 15-char /proc/<pid>/comm limit (e.g. google-chrome-s,
 # telegram-deskto). Override to taste.
-: "${GAME_MODE_APPS:=google-chrome-s chromium firefox code cursor slack discord telegram-deskto}"
+: "${GAME_MODE_APPS:=chrome chromium firefox code cursor slack discord telegram-deskto}"
 readonly GAME_MODE_APPS
 
 # Scopes whose process tree contains ANY of these comms are KEPT running (not
@@ -182,24 +182,31 @@ scope_is_kept() {
     return 1
 }
 
-# True if scope $1 matches GAME_MODE_APPS via scope basename, /proc/comm, or cmdline.
+# True if scope $1 matches GAME_MODE_APPS via unescaped scope basename,
+# /proc/comm, or the basename of argv[0] (exact / 15-char prefix).
 scope_matches_apps() {
-    local d="$1" base="${1##*/}" pid c cmd a
+    local d="$1" base="${1##*/}" pid c argv0 a base_unesc
+    # systemd escapes '-' as \x2d in scope names.
+    base_unesc="${base//\\x2d/-}"
+    # Scope names are controlled (app-<name>-<pid>.scope); substring is safe here.
     for a in $GAME_MODE_APPS; do
-        [[ -n "$a" && "$base" == *"$a"* ]] && return 0
+        [[ -n "$a" ]] || continue
+        [[ "$base" == *"$a"* || "$base_unesc" == *"$a"* ]] && return 0
     done
     while IFS= read -r pid; do
         [[ -n "$pid" ]] || continue
         c=""
         read -r c <"/proc/$pid/comm" 2>/dev/null || true
-        cmd=""
+        argv0=""
         if [[ -r "/proc/$pid/cmdline" ]]; then
-            cmd="$(tr '\0' ' ' <"/proc/$pid/cmdline" 2>/dev/null || true)"
+            # First NUL-terminated field only (argv[0]), then its basename.
+            argv0="$(tr '\0' '\n' <"/proc/$pid/cmdline" 2>/dev/null | head -n1 || true)"
+            argv0="${argv0##*/}"
         fi
         for a in $GAME_MODE_APPS; do
             [[ -n "$a" ]] || continue
             [[ "$c" == "$a" || "$c" == "${a:0:15}" ]] && return 0
-            [[ -n "$cmd" && "$cmd" == *"$a"* ]] && return 0
+            [[ -n "$argv0" && ( "$argv0" == "$a" || "$argv0" == "${a:0:15}" ) ]] && return 0
         done
     done <"$d/cgroup.procs"
     return 1

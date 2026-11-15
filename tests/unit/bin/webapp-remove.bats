@@ -102,3 +102,12 @@ teardown() {
     [ -f "$APPS/Outside.png" ]
     [ -f "$APPS/Mine.desktop" ]
 }
+
+@test "webapp-remove honors XDG_DATA_HOME" {
+    export XDG_DATA_HOME="$TEST_DIR/xdg"
+    mkdir -p "$XDG_DATA_HOME/applications/icons"
+    printf '[Desktop Entry]\nName=Demo\nExec=true\nX-Webappbar-Id=demo\n' > "$XDG_DATA_HOME/applications/demo.desktop"
+    run env HOME="$HOME" XDG_DATA_HOME="$XDG_DATA_HOME" PATH="$STUB_DIR:/usr/bin:/bin" bash "$SCRIPT" demo
+    [ "$status" -eq 0 ]
+    [ ! -e "$XDG_DATA_HOME/applications/demo.desktop" ]
+}

@@ -210,7 +210,6 @@ window-rule {
 }
 
 // ZapZap opens floating (no scratchpad / hide-show toggle in niri).
-// Launched via Mod+Shift+Z.
 window-rule {
     match app-id=r#"(?i)zapzap"#
     open-floating true
