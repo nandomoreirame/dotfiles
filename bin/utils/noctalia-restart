@@ -1,0 +1,173 @@
+#!/usr/bin/env bash
+# Cleanly restart the Noctalia shell, reaping orphaned
+# cliphist clipboard watchers so they never accumulate across restarts.
+#
+# Why: Noctalia spawns a pair of long-running clipboard watchers from its
+# clipboardWatchTextCommand/clipboardWatchImageCommand settings
+# (wl-paste --type {text,image} --watch cliphist store). Killing only the
+# shell leaves those wl-paste children reparented to systemd; the new shell
+# then spawns a fresh pair. Every restart leaked one more pair. This kills
+# noctalia by PID, reaps every cliphist watcher, then relaunches noctalia.
+#
+# Tray apps (Spotify) re-open their window when the tray host goes away with
+# the old shell. Under niri, windows of NOCTALIA_RESTART_TRAY_APPS that were not
+# open before the restart are closed again (back to the tray) once the new
+# shell's StatusNotifierWatcher is up; closing them earlier would quit the app.
+#
+# Usage: noctalia-restart
+#
+# Env (optional):
+#   NOCTALIA_RESTART_WAIT_SECS   max seconds to wait after SIGTERM (default 5)
+#   NOCTALIA_RESTART_POLL_SECS   poll interval while waiting (default 0.2)
+#   NOCTALIA_PROC_DIR           override /proc for watcher cmdline reads (tests)
+#   NOCTALIA_RESTART_TRAY_APPS   app-id regex (jq) of close-to-tray apps (default Spotify)
+#   NOCTALIA_RESTART_TRAY_ROUNDS polls (POLL_SECS apart) to wait for the tray and
+#                                for re-opened windows (default 15)
+set -eo pipefail
+
+readonly NOCTALIA_WATCH_MARKER="cliphist store"
+NOCTALIA_PROC_DIR="${NOCTALIA_PROC_DIR:-/proc}"
+
+# Return space-separated PIDs for an exact process name, or empty.
+noctalia_restart_pids() {
+  local name="$1"
+  pgrep -x "$name" 2>/dev/null || true
+}
+
+# Kill every noctalia PID from pgrep -x. Never uses pkill -f.
+# Optional first arg is a kill signal flag (e.g. -9). Default is SIGTERM.
+# Resolve kill via PATH (type -P) so the bash builtin is skipped and tests can stub it.
+noctalia_restart_kill_shells() {
+  local sig="${1:-}"
+  local pid kill_cmd
+  kill_cmd="$(type -P kill 2>/dev/null || echo /bin/kill)"
+  for pid in $(noctalia_restart_pids noctalia); do
+    [ -n "$pid" ] || continue
+    if [ -n "$sig" ]; then
+      "$kill_cmd" "$sig" "$pid" 2>/dev/null || true
+    else
+      "$kill_cmd" "$pid" 2>/dev/null || true
+    fi
+  done
+}
+
+# Poll until noctalia is gone, or the wait budget expires.
+# Returns 0 when gone, 1 when still alive at the deadline.
+noctalia_restart_wait_shells_gone() {
+  local wait_secs="${NOCTALIA_RESTART_WAIT_SECS:-5}"
+  local poll_secs="${NOCTALIA_RESTART_POLL_SECS:-0.2}"
+  local deadline
+
+  # SECONDS is integer; truncate fractional wait_secs for the deadline.
+  deadline=$((SECONDS + ${wait_secs%%.*}))
+
+  while ((SECONDS < deadline)); do
+    if [ -z "$(noctalia_restart_pids noctalia)" ]; then
+      return 0
+    fi
+    sleep "$poll_secs"
+  done
+
+  if [ -z "$(noctalia_restart_pids noctalia)" ]; then
+    return 0
+  fi
+  return 1
+}
+
+# Kill every long-running wl-paste clipboard watcher. We read cmdline under
+# NOCTALIA_PROC_DIR and match the "cliphist store" marker, so we only ever
+# target the clipboard watchers and never an unrelated wl-paste invocation.
+# Matching by name with `pgrep -x wl-paste` first keeps this from self-matching.
+noctalia_restart_reap_watchers() {
+  local pid cmd kill_cmd
+  kill_cmd="$(type -P kill 2>/dev/null || echo /bin/kill)"
+  for pid in $(pgrep -x wl-paste 2>/dev/null); do
+    cmd=$(tr '\0' ' ' <"$NOCTALIA_PROC_DIR/$pid/cmdline" 2>/dev/null) || continue
+    case "$cmd" in
+    *"$NOCTALIA_WATCH_MARKER"*) "$kill_cmd" "$pid" 2>/dev/null || true ;;
+    esac
+  done
+}
+
+# Spawn noctalia detached. Prefer niri's spawn; fall back to setsid.
+noctalia_restart_spawn_shell() {
+  if pgrep -x niri >/dev/null 2>&1; then
+    niri msg action spawn -- noctalia
+  else
+    setsid -f noctalia >/dev/null 2>&1
+  fi
+}
+
+# Make niri IPC reachable when niri is running. A terminal opened before a
+# re-login keeps a NIRI_SOCKET pointing at the dead compositor, so fall back to
+# the live socket in XDG_RUNTIME_DIR. Returns 1 when niri runs but cannot be
+# reached; returns 0 when niri is not running (the setsid fallback applies).
+noctalia_restart_ensure_niri() {
+  local sock
+  pgrep -x niri >/dev/null 2>&1 || return 0
+  if [ -z "${NIRI_SOCKET:-}" ] || [ ! -e "$NIRI_SOCKET" ]; then
+    for sock in "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/niri.*.sock; do
+      if [ -e "$sock" ]; then
+        export NIRI_SOCKET="$sock"
+        break
+      fi
+    done
+  fi
+  niri msg version >/dev/null 2>&1
+}
+
+# Print ids of open windows whose app-id matches NOCTALIA_RESTART_TRAY_APPS.
+noctalia_restart_tray_windows() {
+  niri msg --json windows 2>/dev/null \
+    | jq -r --arg re "${NOCTALIA_RESTART_TRAY_APPS:-(?i)^spotify$}" \
+      '.[] | select(.app_id // "" | test($re)) | .id' 2>/dev/null || true
+}
+
+# Close tray-app windows not listed in $1 (ids open before the restart). Waits
+# for the new tray host first and keeps polling, since an app may re-open its
+# window only after the new watcher appears.
+noctalia_restart_rehide_tray_windows() {
+  local before=" $1 " rounds="${NOCTALIA_RESTART_TRAY_ROUNDS:-15}"
+  local poll_secs="${NOCTALIA_RESTART_POLL_SECS:-0.2}" i id
+
+  for ((i = 0; i < rounds; i++)); do
+    busctl --user status org.kde.StatusNotifierWatcher >/dev/null 2>&1 && break
+    sleep "$poll_secs"
+  done
+  ((i < rounds)) || return 0
+
+  for ((i = 0; i < rounds; i++)); do
+    for id in $(noctalia_restart_tray_windows); do
+      [[ "$before" == *" $id "* ]] && continue
+      niri msg action close-window --id "$id" >/dev/null 2>&1 || true
+      before+="$id "
+    done
+    sleep "$poll_secs"
+  done
+}
+
+noctalia_restart_main() {
+  # 0. Check niri first: killing the shell with no way to respawn it would leave
+  #    the session with no shell at all.
+  if ! noctalia_restart_ensure_niri; then
+    echo "noctalia-restart: niri IPC unreachable (NIRI_SOCKET=${NIRI_SOCKET:-unset}); shell left running" >&2
+    return 1
+  fi
+  local tray_before=""
+  pgrep -x niri >/dev/null 2>&1 && tray_before="$(noctalia_restart_tray_windows | tr '\n' ' ')"
+  # 1. Stop the running shell by PID.
+  noctalia_restart_kill_shells
+  # 2. Wait for exit; SIGKILL leftovers at the deadline.
+  if ! noctalia_restart_wait_shells_gone; then
+    noctalia_restart_kill_shells -9
+  fi
+  # 3. Reap the now-orphaned clipboard watchers (and any leaked by past restarts).
+  noctalia_restart_reap_watchers
+  # 4. Relaunch the shell.
+  noctalia_restart_spawn_shell
+  # 5. Send tray apps that popped their window back to the tray.
+  pgrep -x niri >/dev/null 2>&1 && noctalia_restart_rehide_tray_windows "$tray_before"
+  return 0
+}
+
+noctalia_restart_main "$@"

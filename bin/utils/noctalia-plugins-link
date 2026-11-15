@@ -1,0 +1,220 @@
+#!/usr/bin/env bash
+# Symlink v5-ready plugin repos into the local Noctalia plugins dir.
+#
+# Usage:
+#   noctalia-plugins-link [--list]
+#
+# For each $NOCTALIA_PLUGIN_REPOS_DIR/<name> (default ~/dev/projects/noctalia-plugins),
+# skipping <name>-v4 worktrees and dotted backups,
+# with a root plugin.toml whose id is "${NOCTALIA_PLUGIN_AUTHOR}/<name>", creates:
+#   ${XDG_DATA_HOME:-$HOME/.local/share}/noctalia/plugins/<name> -> <repo>
+#
+# Skips QML repos (no plugin.toml), id mismatches, and real files/dirs at the
+# target. Replaces stale symlinks. Never deletes a real directory or file.
+# Does not edit plugins.toml.
+#
+# --list  Report-only: print linked / unlinked / skipped. Never modifies FS.
+#
+# Env:
+#   NOCTALIA_PLUGIN_REPOS_DIR  Override repos scan dir (tests).
+#   XDG_DATA_HOME              Override data home (tests).
+set -euo pipefail
+
+noctalia_plugins_link_require_author() {
+  author="${NOCTALIA_PLUGIN_AUTHOR:-}"
+  if [[ -z "$author" ]]; then
+    echo "Set NOCTALIA_PLUGIN_AUTHOR to the plugin author (the part before the slash in a plugin id)." >&2
+    return 1
+  fi
+}
+
+
+noctalia_plugins_link_usage() {
+  echo "Usage: noctalia-plugins-link [--list]" >&2
+}
+
+noctalia_plugins_link_warn() {
+  echo "noctalia-plugins-link: warning: $*" >&2
+}
+
+# Extract id = "..." from plugin.toml (first match). Empty if missing.
+noctalia_plugins_link_read_id() {
+  local toml="$1"
+  local line
+  line="$(grep -E '^[[:space:]]*id[[:space:]]*=' "$toml" 2>/dev/null | head -n1 || true)"
+  if [[ -z "$line" ]]; then
+    echo ""
+    return 0
+  fi
+  # Strip to the quoted value.
+  if [[ "$line" =~ id[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+    echo "${BASH_REMATCH[1]}"
+  else
+    echo ""
+  fi
+}
+
+# Report-only status for one candidate. Never creates or removes anything.
+noctalia_plugins_link_report_one() {
+  local repo="$1"
+  local plugins_dir="$2"
+  local name target expected_id actual_id current
+
+  name="${repo##*/}"
+  [[ -n "$name" ]] || return 0
+  author="${NOCTALIA_PLUGIN_AUTHOR}"
+
+  target="${plugins_dir}/${name}"
+
+  if [[ ! -f "${repo}/plugin.toml" ]]; then
+    echo "skipped ${name}: no plugin.toml"
+    return 0
+  fi
+
+  expected_id="${author}/${name}"
+  actual_id="$(noctalia_plugins_link_read_id "${repo}/plugin.toml")"
+
+  if [[ "$actual_id" != "$expected_id" ]]; then
+    echo "skipped ${name}: id mismatch"
+    return 0
+  fi
+
+  repo="$(cd "$repo" && pwd)"
+
+  if [[ -L "$target" ]]; then
+    current="$(readlink "$target")"
+    if [[ "$current" == "$repo" ]]; then
+      echo "linked ${name} -> ${repo}"
+      return 0
+    fi
+    echo "unlinked ${name}: run noctalia-plugins-link"
+    return 0
+  fi
+
+  if [[ -e "$target" ]]; then
+    echo "skipped ${name}: target exists (not a symlink)"
+    return 0
+  fi
+
+  echo "unlinked ${name}: run noctalia-plugins-link"
+}
+
+# Link (or refresh) one candidate. Creates plugins_dir as needed.
+noctalia_plugins_link_apply_one() {
+  local repo="$1"
+  local plugins_dir="$2"
+  local name target expected_id actual_id current
+
+  name="${repo##*/}"
+  [[ -n "$name" ]] || return 0
+  author="${NOCTALIA_PLUGIN_AUTHOR}"
+
+  target="${plugins_dir}/${name}"
+
+  if [[ ! -f "${repo}/plugin.toml" ]]; then
+    echo "skipped ${name}: no plugin.toml"
+    return 0
+  fi
+
+  expected_id="${author}/${name}"
+  actual_id="$(noctalia_plugins_link_read_id "${repo}/plugin.toml")"
+
+  if [[ "$actual_id" != "$expected_id" ]]; then
+    noctalia_plugins_link_warn "id mismatch for ${name}: got '${actual_id}', want '${expected_id}'"
+    echo "skipped ${name}: id mismatch"
+    return 0
+  fi
+
+  # Resolve repo to absolute path for a stable symlink target.
+  repo="$(cd "$repo" && pwd)"
+
+  if [[ -L "$target" ]]; then
+    current="$(readlink "$target")"
+    if [[ "$current" == "$repo" ]]; then
+      echo "linked ${name} -> ${repo}"
+      return 0
+    fi
+    # Stale symlink: replace.
+    rm -f "$target"
+    ln -s "$repo" "$target"
+    echo "linked ${name} -> ${repo}"
+    return 0
+  fi
+
+  if [[ -e "$target" ]]; then
+    noctalia_plugins_link_warn "refusing to replace real path at ${target}"
+    echo "skipped ${name}: target exists (not a symlink)"
+    return 0
+  fi
+
+  ln -s "$repo" "$target"
+  echo "linked ${name} -> ${repo}"
+}
+
+noctalia_plugins_link_process() {
+  local repos_dir="$1"
+  local plugins_dir="$2"
+  local list_only="$3"
+  local repo
+
+  if [[ "$list_only" != "1" ]]; then
+    mkdir -p "$plugins_dir"
+  fi
+
+  # Nullglob so an empty scan does not leave a literal pattern.
+  shopt -s nullglob
+  local candidates=("$repos_dir"/*)
+  shopt -u nullglob
+
+  for repo in "${candidates[@]}"; do
+    [[ -d "$repo" ]] || continue
+    # v4 worktrees (<name>-v4) and backups (<name>.bak) live next to the plugins: not v5 repos.
+    case "${repo##*/}" in
+    *-v4 | *.*) continue ;;
+    esac
+
+    if [[ "$list_only" == "1" ]]; then
+      noctalia_plugins_link_report_one "$repo" "$plugins_dir"
+    else
+      noctalia_plugins_link_apply_one "$repo" "$plugins_dir"
+    fi
+  done
+}
+
+noctalia_plugins_link_main() {
+  local arg author
+  local list_only=0
+
+  noctalia_plugins_link_require_author || exit 1
+
+  for arg in "$@"; do
+    case "$arg" in
+      --list)
+        list_only=1
+        ;;
+      -h | --help)
+        noctalia_plugins_link_usage
+        exit 0
+        ;;
+      *)
+        noctalia_plugins_link_usage
+        exit 2
+        ;;
+    esac
+  done
+
+  local repos_dir="${NOCTALIA_PLUGIN_REPOS_DIR:-${HOME}/dev/projects/noctalia-plugins}"
+  local data_home="${XDG_DATA_HOME:-${HOME}/.local/share}"
+  local plugins_dir="${data_home}/noctalia/plugins"
+
+  if [[ ! -d "$repos_dir" ]]; then
+    noctalia_plugins_link_warn "repos dir missing: ${repos_dir}"
+    exit 0
+  fi
+
+  noctalia_plugins_link_process "$repos_dir" "$plugins_dir" "$list_only"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  noctalia_plugins_link_main "$@"
+fi

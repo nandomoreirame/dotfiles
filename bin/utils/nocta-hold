@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# nocta-hold -- reference-counted holds on shared Noctalia shell resources, so
+# several independent drivers can each ask for a resource without one turning
+# off what another still needs.
+#
+# Resources:
+#   dnd    -> nocta dnd on|off
+#   awake  -> nocta awake on|off
+#
+# Model: each caller holds a named lease (a marker file). The resource turns ON
+# when the hold count goes 0 -> 1 and OFF when it goes 1 -> 0. For dnd, a DND
+# that was already ON by hand when the first hold arrives is remembered
+# (.preexisting) and never turned off by the last release, so a manual DND
+# survives. Concurrent callers are serialized with flock.
+#
+# Users: game-mode, focus-mode, niri-mic-dnd, niri-keepawake-tasks,
+#        niri-dnd-screenshare, niri-dnd-retroarch.
+#
+# Usage:
+#   nocta-hold <dnd|awake> acquire <owner>
+#   nocta-hold <dnd|awake> release <owner>
+#   nocta-hold <dnd|awake> active            # exit 0 if any hold is active
+#   nocta-hold status
+set -eo pipefail
+shopt -s nullglob
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly NH_ROOT="${XDG_RUNTIME_DIR:-/tmp}/nocta-hold"
+# Overridable so tests can inject a stub; default is sibling nocta binary.
+: "${NOCTA_BIN:=$SCRIPT_DIR/nocta}"
+
+# Run nocta; never abort the hold on IPC failure (shell may be down).
+nh_nocta() {
+  "$NOCTA_BIN" "$@" >/dev/null 2>&1 || true
+}
+
+# Echo on|off for Noctalia DND. Any failure or unexpected output is treated as off
+# so acquire never blocks when the status IPC fails.
+nh_dnd_is_on() {
+  local status
+  status="$("$NOCTA_BIN" dnd status 2>/dev/null)" || status="off"
+  case "$status" in
+  on) printf 'on\n' ;;
+  *) printf 'off\n' ;;
+  esac
+}
+
+nh_apply_on() {
+  case "$1" in
+  dnd) nh_nocta dnd on ;;
+  awake) nh_nocta awake on ;;
+  esac
+}
+
+nh_apply_off() {
+  case "$1" in
+  dnd) nh_nocta dnd off ;;
+  awake) nh_nocta awake off ;;
+  esac
+}
+
+nh_count() {
+  local d="$1" n=0 f
+  for f in "$d"/*; do [ -e "$f" ] && n=$((n + 1)); done
+  printf '%s' "$n"
+}
+
+nh_hold() {
+  local res="$1" action="${2:-}" owner="${3:-}"
+  case "$res" in
+  dnd | awake) ;;
+  *)
+    echo "recurso invalido: $res" >&2
+    return 2
+    ;;
+  esac
+  local d="$NH_ROOT/$res"
+  mkdir -p "$d"
+  exec 8>"$NH_ROOT/.$res.lock"
+  flock 8
+
+  case "$action" in
+  acquire)
+    [ -n "$owner" ] || {
+      echo "owner obrigatorio" >&2
+      return 2
+    }
+    local before
+    before="$(nh_count "$d")"
+    : >"$d/$owner"
+    if [ "$before" -eq 0 ]; then
+      if [ "$res" = dnd ] && [ "$(nh_dnd_is_on)" = "on" ]; then
+        : >"$NH_ROOT/.$res.preexisting" # already on by hand: don't own it
+      else
+        nh_apply_on "$res"
+      fi
+    fi
+    ;;
+  release)
+    [ -n "$owner" ] || {
+      echo "owner obrigatorio" >&2
+      return 2
+    }
+    rm -f "$d/$owner"
+    local after
+    after="$(nh_count "$d")"
+    if [ "$after" -eq 0 ]; then
+      if [ -e "$NH_ROOT/.$res.preexisting" ]; then
+        rm -f "$NH_ROOT/.$res.preexisting" # was manual: leave it as-is
+      else
+        nh_apply_off "$res"
+      fi
+    fi
+    ;;
+  active) [ "$(nh_count "$d")" -gt 0 ] ;;
+  *)
+    echo "acao invalida: $action" >&2
+    return 2
+    ;;
+  esac
+}
+
+nh_status() {
+  local res d f
+  for res in dnd awake; do
+    d="$NH_ROOT/$res"
+    printf '%-6s: ' "$res"
+    if [ -d "$d" ] && [ "$(nh_count "$d")" -gt 0 ]; then
+      printf 'ATIVO ('
+      for f in "$d"/*; do printf '%s ' "${f##*/}"; done
+      printf '\b)'
+      [ -e "$NH_ROOT/.$res.preexisting" ] && printf ' [preexistente/manual]'
+    else
+      printf 'inativo'
+    fi
+    printf '\n'
+  done
+}
+
+case "${1:-}" in
+dnd | awake)
+  res="$1"
+  shift
+  nh_hold "$res" "$@"
+  ;;
+status) nh_status ;;
+*)
+  echo "uso: nocta-hold <dnd|awake> <acquire|release|active> <owner>" >&2
+  echo "     nocta-hold status" >&2
+  exit 2
+  ;;
+esac

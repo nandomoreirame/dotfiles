@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+# nocta -- semantic IPC layer over Noctalia (`noctalia msg`).
+# Maps <action> to the matching `noctalia msg` call when the shell is running.
+#
+# Usage:
+#   nocta <action> [args...]
+#
+# Exit codes:
+#   0  success
+#   2  unknown action / bad args
+#   3  no Noctalia shell running
+#   4  plugin not migrated to v5 (no NOCTA_PLUGIN_ENTRIES row)
+set -eo pipefail
+
+nocta_require_author() {
+  author="${NOCTALIA_PLUGIN_AUTHOR:-}"
+  if [ -z "$author" ]; then
+    echo "Set NOCTALIA_PLUGIN_AUTHOR to the plugin author (the part before the slash in a plugin id)." >&2
+    return 1
+  fi
+}
+
+# Plugin name -> v5 entry[@target]. Target defaults to focused when omitted.
+# Format: name=entry or name=entry@target (space-separated pairs).
+# Override in tests: NOCTA_PLUGIN_ENTRIES="daybar=widget gistbar=widget"
+# Format: name=entry or name=entry@target (space-separated). Empty by default.
+: "${NOCTA_PLUGIN_ENTRIES:=}"
+
+# Plugin name -> v5 panel id toggled by the semantic "panel" event, for plugins
+# whose main panel is not called "panel". Format: name=panel (space-separated).
+: "${NOCTA_PLUGIN_PANELS:=daybar=toolbar}"
+
+# Look up the v5 entry[@target] for a plugin name. Prints value or empty.
+nocta_plugin_entry() {
+  local name="$1" pair key val
+  for pair in $NOCTA_PLUGIN_ENTRIES; do
+    key="${pair%%=*}"
+    val="${pair#*=}"
+    if [ "$key" = "$name" ]; then
+      printf '%s\n' "$val"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Dispatch an action to `noctalia msg`.
+# Returns 2 for unknown action.
+nocta_dispatch() {
+  local action="$1"
+  shift || true
+  case "$action" in
+  launcher)
+    noctalia msg panel-toggle launcher
+    ;;
+  clipboard)
+    noctalia msg panel-toggle clipboard
+    ;;
+  control-center)
+    noctalia msg panel-toggle control-center
+    ;;
+  settings)
+    noctalia msg settings-toggle
+    ;;
+  lock)
+    noctalia msg session lock
+    ;;
+  volume-up)
+    noctalia msg volume-up
+    ;;
+  volume-down)
+    noctalia msg volume-down
+    ;;
+  volume-mute)
+    noctalia msg volume-mute
+    ;;
+  brightness-up)
+    noctalia msg brightness-up
+    ;;
+  brightness-down)
+    noctalia msg brightness-down
+    ;;
+  bar-toggle)
+    noctalia msg bar-toggle
+    ;;
+  widgets-edit)
+    noctalia msg desktop-widgets-toggle-edit
+    ;;
+  wallpaper-random)
+    noctalia msg wallpaper-random
+    ;;
+  media-pause)
+    noctalia msg media pause
+    ;;
+  dnd)
+    case "${1:-}" in
+    on | off)
+      noctalia msg notification-dnd-set "$1"
+      ;;
+    status)
+      # v5 prints exactly on|off (application_ipc.cpp).
+      noctalia msg notification-dnd-status
+      ;;
+    *)
+      echo "nocta: usage: nocta dnd on|off|status" >&2
+      return 2
+      ;;
+    esac
+    ;;
+  awake)
+    case "${1:-}" in
+    on)
+      noctalia msg caffeine-enable
+      ;;
+    off)
+      noctalia msg caffeine-disable
+      ;;
+    *)
+      echo "nocta: usage: nocta awake on|off" >&2
+      return 2
+      ;;
+    esac
+    ;;
+  plugin)
+    local name="${1:-}" event="${2:-}" entry author
+    if [ -z "$name" ] || [ -z "$event" ]; then
+      echo "nocta: usage: nocta plugin <name> <event>" >&2
+      return 2
+    fi
+    nocta_require_author || return 1
+    author="${NOCTALIA_PLUGIN_AUTHOR}"
+    # panel event toggles the plugin panel; no entry row required.
+    if [ "$event" = "panel" ]; then
+      local panel="panel" pair
+      for pair in $NOCTA_PLUGIN_PANELS; do
+        if [ "${pair%%=*}" = "$name" ]; then
+          panel="${pair#*=}"
+        fi
+      done
+      noctalia msg panel-toggle "${author}/${name}:${panel}"
+      return 0
+    fi
+    if ! entry="$(nocta_plugin_entry "$name")"; then
+      echo "nocta: plugin ${name} not migrated to v5" >&2
+      return 4
+    fi
+    # entry may be "widget" or "usage@all"; target defaults to focused.
+    local target="focused"
+    case "$entry" in
+    *@*)
+      target="${entry#*@}"
+      entry="${entry%%@*}"
+      ;;
+    esac
+    noctalia msg plugin "${author}/${name}:${entry}" "$target" "$event"
+    ;;
+  *)
+    echo "nocta: unknown action: $action" >&2
+    return 2
+    ;;
+  esac
+}
+
+nocta_usage() {
+  echo "Usage: nocta <action> [args...]" >&2
+  echo "  Actions: launcher clipboard control-center settings lock" >&2
+  echo "           volume-up volume-down volume-mute brightness-up brightness-down" >&2
+  echo "           bar-toggle widgets-edit wallpaper-random media-pause" >&2
+  echo "           dnd on|off|status  awake on|off" >&2
+  echo "           plugin <name> <event>" >&2
+}
+
+nocta_main() {
+  local action="${1:-}"
+  if [ -z "$action" ]; then
+    nocta_usage
+    return 2
+  fi
+  shift || true
+
+  if ! pgrep -x noctalia >/dev/null 2>&1; then
+    echo "nocta: Noctalia is not running" >&2
+    return 3
+  fi
+
+  # Unknown first token with an event arg is treated as: plugin <name> <event>
+  case "$action" in
+  launcher|clipboard|control-center|settings|lock|volume-up|volume-down|volume-mute|brightness-up|brightness-down|bar-toggle|widgets-edit|wallpaper-random|media-pause|dnd|awake|plugin)
+    nocta_dispatch "$action" "$@"
+    ;;
+  *)
+    if [ -n "${1:-}" ]; then
+      nocta_dispatch plugin "$action" "$@"
+    else
+      nocta_dispatch "$action" "$@"
+    fi
+    ;;
+  esac
+}
+
+nocta_main "$@"
