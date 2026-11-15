@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# niri-keepawake-tasks -- keep the screen awake (no idle dim / lock / suspend)
+# while a long-running task is in progress, then let it idle again. Bound in niri
+# via spawn-at-startup.
+#
+# Why: a big update, sync, media job or Rust build shouldn't be interrupted by
+# the screen going off / suspend mid-run. Uses nocta-hold ("awake" resource) so
+# it never turns off keep-awake that game-mode/focus-mode/the mic watcher still
+# want.
+#
+# Watched processes are matched by EXACT name with `pgrep -x` (which, unlike
+# `pgrep -f`, never self-matches this watcher's own command line). Tune the list
+# in TASK_PATTERNS.
+#
+# Usage: niri-keepawake-tasks [interval-seconds]
+set -uo pipefail
+
+SELF="$(readlink -f "$0")"
+readonly SELF
+HOLD="$(dirname "$SELF")/nocta-hold"
+readonly HOLD
+readonly INTERVAL="${1:-5}"
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-keepawake-tasks.lock"
+
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# Genuinely long-running ops worth staying awake for. Edit to taste.
+readonly TASK_PATTERNS=(paru pacman makepkg rsync yt-dlp ffmpeg cargo rustc)
+
+task_running() {
+  local p
+  for p in "${TASK_PATTERNS[@]}"; do
+    pgrep -x "$p" >/dev/null 2>&1 && return 0
+  done
+  return 1
+}
+
+hold() { "$HOLD" "$@" >/dev/null 2>&1 || true; }
+
+main() {
+  local busy prev="unknown"
+  while true; do
+    if task_running; then busy=1; else busy=0; fi
+
+    if [ "$busy" = 1 ] && [ "$prev" != 1 ]; then
+      hold awake acquire tasks
+    elif [ "$busy" = 0 ] && [ "$prev" = 1 ]; then
+      hold awake release tasks
+    fi
+
+    prev="$busy"
+    sleep "$INTERVAL"
+  done
+}
+
+main "$@"

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# niri-dnd-retroarch -- enable Noctalia "Do Not Disturb" while RetroArch is the
+# focused window (i.e. you're playing fullscreen), so notifications don't pop
+# over a game. Bound in niri via spawn-at-startup.
+#
+# Why focus and not literal "fullscreen": this niri version exposes no
+# is_fullscreen field, and layout.window_size equals the output size for BOTH
+# tiled-full and real fullscreen. RetroArch is forced open-fullscreen by a
+# window-rule (app-id com.libretro.RetroArch), so "RetroArch is focused" is the
+# dependable proxy for "playing fullscreen".
+#
+# DND is driven through nocta-hold (ref-counted), so it coexists with the other
+# DND drivers (screenshare, mic watcher, game-mode, focus-mode) and a DND you set
+# by hand is preserved.
+#
+# Env overrides (testing): NIRI_DND_RA_APPID, NIRI_DND_RA_INTERVAL, NIRI_DND_RA_LOCK.
+# Usage: niri-dnd-retroarch [interval-seconds]
+set -uo pipefail
+
+SELF="$(readlink -f "$0")"
+readonly SELF
+HOLD="$(dirname "$SELF")/nocta-hold"
+readonly HOLD
+readonly APPID="${NIRI_DND_RA_APPID:-com.libretro.RetroArch}"
+readonly INTERVAL="${NIRI_DND_RA_INTERVAL:-${1:-2}}"
+readonly LOCK="${NIRI_DND_RA_LOCK:-${XDG_RUNTIME_DIR:-/tmp}/niri-dnd-retroarch.lock}"
+
+# Single instance via flock (avoid a pgrep -f guard, which self-matches).
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# True when RetroArch is the focused window.
+playing() {
+  local appid
+  appid=$(niri msg --json focused-window 2>/dev/null | jq -r '.app_id // ""' 2>/dev/null)
+  [ "$appid" = "$APPID" ]
+}
+
+hold() { "$HOLD" "$@" >/dev/null 2>&1 || true; }
+
+main() {
+  local now prev="unknown"
+  while true; do
+    if playing; then now=1; else now=0; fi
+
+    if [ "$now" = 1 ] && [ "$prev" != 1 ]; then
+      hold dnd acquire retroarch
+    elif [ "$now" = 0 ] && [ "$prev" = 1 ]; then
+      hold dnd release retroarch
+    fi
+
+    prev="$now"
+    sleep "$INTERVAL"
+  done
+}
+
+main "$@"

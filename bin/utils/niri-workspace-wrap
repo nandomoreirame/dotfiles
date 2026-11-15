@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Wrap-around vertical workspace switching for niri (per focused monitor).
+# niri's focus-workspace-up/down stop at the edges; this jumps to the opposite
+# end instead (first <-> last). Bound in niri via spawn-sh.
+# Usage: niri-workspace-wrap up|down
+dir="${1:-down}"
+
+# Current workspace index and the highest index on the focused monitor.
+read -r cur max < <(
+  niri msg --json workspaces 2>/dev/null | jq -r '
+    (map(select(.is_focused)) | .[0]) as $f
+    | (map(select(.output == $f.output)) | map(.idx) | max) as $max
+    | "\($f.idx) \($max)"
+  ' 2>/dev/null
+)
+
+# Fallback to plain (non-wrapping) movement if the query failed.
+if [[ -z "$cur" || -z "$max" ]]; then
+  if [[ "$dir" == up ]]; then
+    niri msg action focus-workspace-up
+  else
+    niri msg action focus-workspace-down
+  fi
+  exit 0
+fi
+
+if [[ "$dir" == up ]]; then
+  if (( cur <= 1 )); then
+    niri msg action focus-workspace "$max"
+  else
+    niri msg action focus-workspace-up
+  fi
+else
+  if (( cur >= max )); then
+    niri msg action focus-workspace 1
+  else
+    niri msg action focus-workspace-down
+  fi
+fi

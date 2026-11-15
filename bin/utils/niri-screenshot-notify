@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# niri-screenshot-notify -- clickable notification for every niri screenshot.
+# Bound in niri via spawn-at-startup.
+#
+# Why: niri's own "Screenshot captured" notification has no actions, so a
+# click does nothing. This watcher reacts to niri's ScreenshotCaptured event
+# and sends one through notify-open (click opens the image, a button shows it
+# in the folder). A filter in configs/noctalia/config.toml hides niri's
+# original notification so there is only one.
+#
+# Event-driven (niri msg event-stream), no polling.
+#
+# Usage: niri-screenshot-notify
+# Env:
+#   NIRI_SCREENSHOT_NOTIFY_ONCE  1 = do not reconnect when the stream ends (tests)
+set -uo pipefail
+
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-screenshot-notify.lock"
+NOTIFY_OPEN="$(dirname "$0")/notify-open"
+readonly NOTIFY_OPEN
+
+# Single instance via flock (never a pgrep -f guard, which self-matches).
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# A surviving shell may hold a stale NIRI_SOCKET after a re-login.
+if [ -z "${NIRI_SOCKET:-}" ] || [ ! -e "$NIRI_SOCKET" ]; then
+  for sock in "${XDG_RUNTIME_DIR:-/tmp}"/niri.*.sock; do
+    [ -e "$sock" ] && export NIRI_SOCKET="$sock" && break
+  done
+fi
+
+while :; do
+  # jq prints one line per screenshot: the saved path, or "" for clipboard-only.
+  while IFS= read -r path; do
+    if [ -n "$path" ]; then
+      "$NOTIFY_OPEN" "Screenshot saved" "$path" \
+        "$(basename "$path") · copied to the clipboard" 9>&- &
+    else
+      notify-send -a "Screenshot" "Screenshot copied" \
+        "Paste the image from the clipboard" 2>/dev/null
+    fi
+  done < <(niri msg --json event-stream 2>/dev/null \
+    | jq --unbuffered -r '.ScreenshotCaptured // empty | .path // ""')
+  if [ "${NIRI_SCREENSHOT_NOTIFY_ONCE:-0}" = 1 ]; then
+    wait
+    exit 0
+  fi
+  sleep 2
+done

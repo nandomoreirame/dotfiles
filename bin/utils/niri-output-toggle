@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Toggle a niri output on/off (runtime only, not persisted to monitor.kdl).
+# An output is active when niri reports a non-null `logical` block for it.
+# Bound in niri via spawn-sh.
+# Usage: niri-output-toggle <output-name>   (e.g. DP-1)
+set -eo pipefail
+
+name="${1:-}"
+if [[ -z "$name" ]]; then
+  echo "Usage: niri-output-toggle <output-name>" >&2
+  exit 2
+fi
+
+state="$(niri msg --json outputs | jq -r --arg n "$name" '
+  if has($n) then (if .[$n].logical == null then "off" else "on" end) else "missing" end
+')"
+
+case "$state" in
+  on) niri msg output "$name" off ;;
+  off) niri msg output "$name" on ;;
+  *)
+    echo "niri-output-toggle: output '$name' not connected" >&2
+    exit 1
+    ;;
+esac

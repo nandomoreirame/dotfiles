@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# niri-dnd-screenshare -- enable Noctalia "Do Not Disturb" while the screen is
+# being shared or recorded, for privacy. Bound in niri via spawn-at-startup.
+#
+# Why: on niri (Wayland) every screen capture path -- browser screen-share
+# (Meet/Zoom/Discord/Slack), gpu-screen-recorder, OBS, native apps -- goes
+# through xdg-desktop-portal, which niri backs with org.gnome.Mutter.ScreenCast.
+# An active capture shows up as a child object under
+# /org/gnome/Mutter/ScreenCast/Session/<id>. A webcam stays a v4l2 Video/Source
+# and never appears there, so this never false-triggers on the camera.
+#
+# DND is driven through nocta-hold (ref-counted), so it coexists with the other
+# DND drivers (mic watcher, retroarch, game-mode, focus-mode) and a DND you set
+# by hand is preserved (nocta-hold never turns off a pre-existing manual DND).
+#
+# Trade-off: up to INTERVAL seconds of latency before DND turns on; a capture
+# client that crashes WITHOUT calling Stop leaves niri's session object dangling
+# (DND stays on until the next share starts/stops or this watcher restarts).
+#
+# Usage: niri-dnd-screenshare [interval-seconds]
+set -uo pipefail
+
+SELF="$(readlink -f "$0")"
+readonly SELF
+HOLD="$(dirname "$SELF")/nocta-hold"
+readonly HOLD
+readonly SC_SERVICE="org.gnome.Mutter.ScreenCast"
+readonly INTERVAL="${1:-2}"
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-dnd-screenshare.lock"
+
+# Single instance via flock (never a pgrep -f guard, which self-matches).
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# True when at least one screencast Session object exists (capture in progress).
+capturing() {
+  local count
+  count=$(busctl --user tree "$SC_SERVICE" 2>/dev/null \
+    | grep -cE '/ScreenCast/Session/[A-Za-z0-9]' || true)
+  [ "${count:-0}" -gt 0 ]
+}
+
+hold() { "$HOLD" "$@" >/dev/null 2>&1 || true; }
+
+main() {
+  local now prev="unknown"
+  while true; do
+    if capturing; then now=1; else now=0; fi
+
+    if [ "$now" = 1 ] && [ "$prev" != 1 ]; then
+      hold dnd acquire screenshare
+    elif [ "$now" = 0 ] && [ "$prev" = 1 ]; then
+      hold dnd release screenshare
+    fi
+
+    prev="$now"
+    sleep "$INTERVAL"
+  done
+}
+
+main "$@"

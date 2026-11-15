@@ -1,0 +1,257 @@
+#!/usr/bin/env bash
+# Scratchpad emulation for niri (which has no minimize/hide).
+# A named "scratch" workspace (declared in config.kdl) acts as a hidden holding
+# area. This toggles a window between that workspace and the focused one:
+#   - in scratch  -> bring to the focused workspace and focus it (SHOW)
+#   - elsewhere    -> send it to scratch without stealing focus (HIDE)
+# If the app is not running, `toggle` launches it. `start` launches it straight
+# into the scratch workspace (used at login so the app is "always open but hidden").
+#
+# Usage:
+#   niri-scratchpad toggle <preset>   # show/hide; launch if not running
+#   niri-scratchpad start  <preset>   # launch hidden (for spawn-at-startup)
+#
+# Presets map a name to its Wayland app-id regex and launch command. A preset
+# may set HIDE=tray: the app closes to its system tray, so `toggle` closes the
+# window (the app keeps running) instead of parking it in scratch.
+set -euo pipefail
+
+readonly SCRATCH_WS="scratch"
+
+scratchpad_resolve() {
+  # Sets APP_ID (regex), CMD (array) and HIDE (scratch|tray) for the given preset.
+  # PREFILL=x-post makes the launch append the clipboard text to the URL.
+  # OPEN_URL is a deep link: appended to the launch command and re-opened (via
+  # xdg-open) whenever the window is revealed, so the app lands on that view.
+  # FLOAT=1 floats the window from here: apps that set their app-id after the
+  # window maps (Electron/Tauri) are missed by the open-floating window-rule.
+  # TILED=1 skips centering on reveal: the window is a column in the strip.
+  HIDE=scratch
+  PREFILL=
+  FLOAT=
+  TILED=
+  OPEN_URL=
+  case "$1" in
+    whatsapp)
+      # Migrated off the installed Chrome PWA (--app-id, hash-based) to a plain
+      # --app=URL webapp, matching the youtube/youtube-music presets. This
+      # decouples the toggle from chrome://apps, so removing the installed PWA
+      # there no longer breaks the shortcut. app-id becomes chrome-<host>__-<prof>.
+      APP_ID='^chrome-web\.whatsapp\.com__-'
+      CMD=(google-chrome-stable --app=https://web.whatsapp.com)
+      ;;
+    spotify)
+      # app-id capitalization differs by install: flatpak = "spotify",
+      # native (spotify-launcher) = "Spotify". Match case-insensitively.
+      # Closes to the tray (keeps playing); relaunching reopens that instance.
+      APP_ID='(?i)^spotify$'
+      CMD=(spotify-launcher)
+      HIDE=tray
+      ;;
+    youtube)
+      # --app webapps get app-id chrome-<host>__-<profile>; the profile suffix is
+      # environment-dependent (Default, Profile_1, ...), so match host-only.
+      APP_ID='^chrome-youtube\.com__-'
+      CMD=(google-chrome-stable --app=https://youtube.com)
+      ;;
+    youtube-music)
+      APP_ID='^chrome-music\.youtube\.com__-'
+      CMD=(google-chrome-stable --app=https://music.youtube.com)
+      ;;
+    obsidian)
+      # Toggle avoids relaunching: a second `obsidian` invocation while running
+      # opens the vault-switcher window ("Obsidian"), so launch ONLY when absent.
+      # Obsidian 1.15 (electron43) reports app-id "md.obsidian.Obsidian"; older
+      # builds used "obsidian". Match both or the toggle never finds the window
+      # and relaunches into the vault picker.
+      APP_ID='^(md\.obsidian\.Obsidian|obsidian)$'
+      CMD=(obsidian)
+      TILED=1
+      ;;
+    discord)
+      # Native Arch package (/usr/bin/discord); the Wayland app-id is lowercase
+      # "discord" (its .desktop StartupWMClass agrees, but the live window is the
+      # authority here). Anchored so no other app-id can hijack the toggle.
+      # Closes to the tray. Single-instance: relaunching while it sits in the
+      # tray just reopens the window, which is what the no-window branch wants.
+      APP_ID='^discord$'
+      CMD=(discord)
+      HIDE=tray
+      ;;
+    localsend)
+      # Autostarted with --hidden (~/.config/autostart/localsend_app.desktop), so
+      # after login it lives in the tray with no window. Single-instance: a second
+      # `localsend` reopens the tray instance's window instead of spawning another.
+      # Hides to the tray: closing the window keeps the process (same as its X).
+      APP_ID='^localsend$'
+      CMD=(localsend)
+      HIDE=tray
+      ;;
+    x-post)
+      # Quick X composer (Mod+Shift+X). The compose URL gets its own app-id
+      # (chrome-x.com__compose_post-<profile>), so the tiled x.com/home webapp
+      # never matches. HIDE=tray just closes the window: the next toggle opens a
+      # fresh composer instead of stacking one over the other.
+      APP_ID='^chrome-x\.com__compose_post-'
+      CMD=(google-chrome-stable --app=https://x.com/compose/post)
+      HIDE=tray
+      PREFILL=x-post
+      ;;
+    grok)
+      # Grok Bot desktop app (AppImage integrated by its own installer; the
+      # Wayland app-id is "grok-bot", same as its .desktop StartupWMClass).
+      # Parks in scratch like whatsapp/obsidian; anchored so no lookalike
+      # app-id can hijack the toggle.
+      APP_ID='^grok-bot$'
+      # No deep link: the app opens on its own default view, not a fixed bot.
+      CMD=("$HOME/.local/share/grok-bot/appimage")
+      FLOAT=1
+      ;;
+    *)
+      echo "niri-scratchpad: unknown preset '$1'" >&2
+      echo "known presets: whatsapp spotify youtube youtube-music obsidian discord localsend x-post grok" >&2
+      exit 1
+      ;;
+  esac
+}
+
+scratchpad_window_id() {
+  # Prints the id of the first window whose app_id matches APP_ID, or nothing.
+  niri msg --json windows 2>/dev/null \
+    | jq -r --arg re "$APP_ID" \
+      'map(select(.app_id // "" | test($re))) | sort_by(.id) | .[0].id // empty'
+}
+
+scratchpad_prefill_x_post() {
+  # Appends the clipboard text to the composer URL (?text= prefills the post).
+  # Read only at launch, so closing never touches the clipboard; an image-only
+  # or empty clipboard leaves the composer empty.
+  local text
+  text="$(wl-paste --no-newline --type text/plain 2>/dev/null)" || return 0
+  [[ -n "$text" ]] || return 0
+  CMD[-1]+="?text=$(printf '%s' "$text" | jq -sRr @uri)"
+}
+
+scratchpad_launch() {
+  # Launch the app detached so it survives this script exiting.
+  [[ "$PREFILL" == x-post ]] && scratchpad_prefill_x_post
+  setsid "${CMD[@]}" >/dev/null 2>&1 < /dev/null &
+}
+
+scratchpad_wait_for_window() {
+  # Waits up to ~15s for the app window to appear; prints its id.
+  local wid i
+  for ((i = 0; i < 30; i++)); do
+    sleep 0.5
+    wid="$(scratchpad_window_id)"
+    [[ -n "$wid" ]] && { printf '%s' "$wid"; return 0; }
+  done
+  return 1
+}
+
+scratchpad_in_scratch() {
+  # Returns 0 if window $1 is currently on the scratch workspace.
+  local wid="$1" ws_id name
+  ws_id="$(niri msg --json windows 2>/dev/null \
+    | jq -r --argjson id "$wid" 'map(select(.id == $id)) | .[0].workspace_id // empty')"
+  [[ -z "$ws_id" ]] && return 1
+  name="$(niri msg --json workspaces 2>/dev/null \
+    | jq -r --argjson wid "$ws_id" 'map(select(.id == $wid)) | .[0].name // ""')"
+  [[ "$name" == "$SCRATCH_WS" ]]
+}
+
+scratchpad_focused_ws_ref() {
+  # Prints a reference (name if set, else idx) for the currently focused workspace.
+  niri msg --json workspaces 2>/dev/null \
+    | jq -r 'map(select(.is_focused)) | .[0] | (.name // (.idx | tostring))'
+}
+
+scratchpad_focused_output() {
+  # Prints the name of the currently focused monitor/output.
+  niri msg --json focused-output 2>/dev/null | jq -r '.name // empty'
+}
+
+scratchpad_float() {
+  # No-op unless the preset asked for FLOAT; floating an already floating
+  # window is harmless.
+  [[ -n "$FLOAT" ]] || return 0
+  niri msg action move-window-to-floating --id "$1"
+  niri msg action center-window --id "$1"
+}
+
+scratchpad_show() {
+  # Bring the window to the focused MONITOR (its active workspace), then focus it.
+  # Targeting the monitor — not a workspace index — avoids niri resolving an
+  # ambiguous index relative to the window's current output (the scratch monitor),
+  # which made the window always reappear on the same screen instead of the focused one.
+  local wid="$1" out
+  out="$(scratchpad_focused_output)"
+  [[ -n "$out" ]] && niri msg action move-window-to-monitor --id "$wid" "$out"
+  scratchpad_float "$wid"
+  niri msg action focus-window --id "$wid"
+  [[ -z "$OPEN_URL" ]] || setsid xdg-open "$OPEN_URL" >/dev/null 2>&1 < /dev/null &
+  # Center the floating window on the focused screen when revealed.
+  [[ -n "$TILED" ]] || niri msg action center-window --id "$wid"
+}
+
+scratchpad_hide() {
+  niri msg action move-window-to-workspace --window-id "$1" --focus false "$SCRATCH_WS"
+  # When the hidden window was the focused one and alone on its workspace, niri
+  # has nowhere to keep the focus and follows it into scratch. Bounce back.
+  if [[ "$(scratchpad_focused_ws_ref)" == "$SCRATCH_WS" ]]; then
+    niri msg action focus-workspace-previous 2>/dev/null || true
+  fi
+}
+
+scratchpad_toggle() {
+  local wid
+  wid="$(scratchpad_window_id)"
+  if [[ -z "$wid" ]]; then
+    scratchpad_launch
+    if [[ -n "$FLOAT" ]]; then
+      wid="$(scratchpad_wait_for_window)" && scratchpad_float "$wid"
+    fi
+    return 0
+  fi
+  if [[ "$HIDE" == tray ]]; then
+    niri msg action close-window --id "$wid"
+    return 0
+  fi
+  if scratchpad_in_scratch "$wid"; then
+    scratchpad_show "$wid"
+  else
+    scratchpad_hide "$wid"
+  fi
+}
+
+scratchpad_start_hidden() {
+  local wid
+  wid="$(scratchpad_window_id)"   # reuse if already running
+  if [[ -z "$wid" ]]; then
+    scratchpad_launch
+    wid="$(scratchpad_wait_for_window)" || {
+      echo "niri-scratchpad: window did not appear" >&2
+      exit 1
+    }
+  fi
+  scratchpad_hide "$wid"
+}
+
+main() {
+  local action="${1:-}" preset="${2:-}"
+  [[ -z "$action" || -z "$preset" ]] && {
+    echo "Usage: niri-scratchpad <toggle|start> <preset>" >&2
+    exit 2
+  }
+  scratchpad_resolve "$preset"
+  case "$action" in
+    toggle) scratchpad_toggle ;;
+    start) scratchpad_start_hidden ;;
+    *)
+      echo "niri-scratchpad: unknown action '$action' (use toggle|start)" >&2
+      exit 2
+      ;;
+  esac
+}
+
+main "$@"

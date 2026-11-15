@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Launch system-tray apps only after Noctalia's StatusNotifierWatcher is on the
+# session bus. Bound in niri via spawn-at-startup.
+#
+# Why: 1Password creates its SNI tray item only if the StatusNotifierWatcher
+# already exists when it initializes, and never re-registers if it appears later.
+# On login it races Noctalia for the bus and usually loses, ending up with no
+# tray icon. This waits (bounded) for the watcher, then launches 1Password.
+#
+# Note: Slack autostart was intentionally removed (only Steam + 1Password start on
+# login). If you re-enable Slack here, keep the same watcher-wait rationale.
+#
+# Usage: niri-tray-autostart
+set -uo pipefail
+
+readonly NIRI_TRAY_WATCHER="org.kde.StatusNotifierWatcher"
+readonly NIRI_TRAY_MAX_TICKS=100 # 100 * 0.2s = 20s ceiling
+readonly NIRI_TRAY_TICK=0.2
+
+# True once the StatusNotifierWatcher well-known name has an owner on the bus.
+niri_tray_watcher_up() {
+  busctl --user list --no-legend 2>/dev/null | grep -q "$NIRI_TRAY_WATCHER"
+}
+
+# Block until the watcher is up or the ceiling is reached (then give up and
+# launch anyway, so a missing watcher never strands the apps).
+niri_tray_wait_watcher() {
+  local i=0
+  while [ "$i" -lt "$NIRI_TRAY_MAX_TICKS" ]; do
+    niri_tray_watcher_up && return 0
+    sleep "$NIRI_TRAY_TICK"
+    i=$((i + 1))
+  done
+  return 1
+}
+
+niri_tray_main() {
+  niri_tray_wait_watcher || true
+
+  setsid -f 1password --silent >/dev/null 2>&1
+}
+
+niri_tray_main "$@"

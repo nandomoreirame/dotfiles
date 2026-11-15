@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# niri-browser-focus - open a URL/args in Google Chrome and pull its window
+# into focus under the niri compositor.
+#
+# Why: niri (26.04) does not steal focus for windows requesting xdg-activation
+# without a valid activation token. A link opened by a CLI process (Claude Code,
+# a terminal handing off the click) has no such token, so a URL that lands as a
+# new tab in an already-open Chrome window never gets focus - the browser stays
+# hidden behind the terminal. This wrapper opens the URL, then explicitly focuses
+# the Chrome window via `niri msg action focus-window`.
+#
+# Registered as the Exec of a ~/.local/share/applications/google-chrome.desktop
+# override, so every link open (default browser) routes through it. Degrades to a
+# plain Chrome launch when not running under niri.
+
+CHROME=/usr/bin/google-chrome-stable
+
+# Resolve the niri IPC socket (present in the session env, but be defensive for
+# processes spawned without it, e.g. from a bare TTY handoff).
+if [ -z "${NIRI_SOCKET:-}" ]; then
+  for _sock in "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/niri.*.sock; do
+    [ -S "$_sock" ] && export NIRI_SOCKET="$_sock" && break
+  done
+fi
+
+# Detached helper: poll for the Chrome window, then focus it. Runs independently
+# and survives the `exec` below. Picks the newest Chrome window by id, which is
+# the existing window for a new-tab open and the fresh window for a new-window
+# open - covering both cases with one rule.
+if [ -n "${NIRI_SOCKET:-}" ] && command -v niri >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+  # single quotes are intentional: $id and niri msg run in the detached child.
+  # shellcheck disable=SC2016
+  setsid -f bash -c '
+    for _ in $(seq 1 40); do
+      id=$(niri msg --json windows 2>/dev/null \
+        | jq -r "[.[] | select(.app_id == \"google-chrome\")] | sort_by(.id) | last | .id // empty")
+      if [ -n "$id" ]; then
+        niri msg action focus-window --id "$id" >/dev/null 2>&1 && exit 0
+      fi
+      sleep 0.1
+    done
+  ' >/dev/null 2>&1
+fi
+
+exec "$CHROME" "$@"

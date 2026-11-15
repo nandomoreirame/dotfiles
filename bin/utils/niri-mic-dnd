@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# niri-mic-dnd -- enable Noctalia "Do Not Disturb" + keep-awake while the
+# microphone is actively being captured (i.e. you're in a call), and release
+# both when the mic goes idle. Bound in niri via spawn-at-startup.
+#
+# Why: complements niri-dnd-screenshare (which covers screen SHARING). A voice
+# call without sharing your screen still shouldn't get notification toasts, and
+# the screen shouldn't idle/lock while you're only listening. Uses nocta-hold so
+# it never turns off a DND/keep-awake that game-mode, focus-mode or the other
+# watchers still want.
+#
+# Detection: a PipeWire node with media.class "Stream/Input/Audio" in state
+# "running" means an app is actively capturing the mic. A webcam alone stays a
+# "Video/Source" and never triggers this.
+#
+# Trade-off: up to INTERVAL seconds of latency; a capture client that dies
+# without cleanup releases on the next poll.
+#
+# Usage: niri-mic-dnd [interval-seconds]
+set -uo pipefail
+
+SELF="$(readlink -f "$0")"
+readonly SELF
+HOLD="$(dirname "$SELF")/nocta-hold"
+readonly HOLD
+readonly INTERVAL="${1:-2}"
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-mic-dnd.lock"
+
+# Single instance via flock (never a pgrep -f guard, which self-matches).
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+mic_in_use() {
+  # A real mic capture is an Input/Audio stream that is running AND is NOT a
+  # sink-monitor capture. Noctalia's AudioVisualizer ("Quickshell Spectrum")
+  # captures the sink monitor (stream.capture.sink=true), so exclude those or the
+  # visualizer would look like a permanent call.
+  pw-dump 2>/dev/null | jq -e '
+    [ .[]
+      | select(.type == "PipeWire:Interface:Node")
+      | select(.info.props["media.class"] == "Stream/Input/Audio")
+      | select(.info.state == "running")
+      | select((.info.props["stream.capture.sink"] // false | tostring) != "true") ] | length > 0' >/dev/null 2>&1
+}
+
+hold() { "$HOLD" "$@" >/dev/null 2>&1 || true; }
+
+main() {
+  local using prev="unknown"
+  while true; do
+    if mic_in_use; then using=1; else using=0; fi
+
+    if [ "$using" = 1 ] && [ "$prev" != 1 ]; then
+      hold dnd acquire mic
+      hold awake acquire mic
+    elif [ "$using" = 0 ] && [ "$prev" = 1 ]; then
+      hold dnd release mic
+      hold awake release mic
+    fi
+
+    prev="$using"
+    sleep "$INTERVAL"
+  done
+}
+
+main "$@"

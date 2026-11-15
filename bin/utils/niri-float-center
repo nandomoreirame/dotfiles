@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# niri-float-center -- center floating windows of chosen apps on their output
+# when they open. Bound in niri via spawn-at-startup.
+#
+# Why: Nautilus passes its window handle to Quick Preview (sushi, Space), so
+# niri treats the preview as a child and centers it on the Nautilus window,
+# ignoring the window-rule's default-floating-position. With Nautilus in a
+# side column the preview lands in the bottom-right corner. niri has no rule
+# to disable parent centering, so this watcher moves the window afterwards.
+#
+# Event-driven (niri msg event-stream), no polling. Each window is centered
+# once: focus changes re-emit WindowOpenedOrChanged and must not undo a move
+# the user made by hand.
+#
+# Usage: niri-float-center
+# Env:
+#   NIRI_FLOAT_CENTER_APPS  app-id regex (jq syntax), default: Nautilus preview
+#   NIRI_FLOAT_CENTER_ONCE  1 = do not reconnect when the stream ends (tests)
+set -uo pipefail
+
+readonly APPS="${NIRI_FLOAT_CENTER_APPS:-^org\\.gnome\\.NautilusPreviewer$}"
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-float-center.lock"
+
+# Single instance via flock (never a pgrep -f guard, which self-matches).
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# A surviving shell may hold a stale NIRI_SOCKET after a re-login.
+if [ -z "${NIRI_SOCKET:-}" ] || [ ! -e "$NIRI_SOCKET" ]; then
+  for sock in "${XDG_RUNTIME_DIR:-/tmp}"/niri.*.sock; do
+    [ -e "$sock" ] && export NIRI_SOCKET="$sock" && break
+  done
+fi
+
+center() {
+  local id="$1" ws="$2" output ow oh w h x y
+  output=$(niri msg --json workspaces | jq -r --argjson ws "$ws" '.[] | select(.id == $ws) | .output')
+  [ -n "$output" ] || return 0
+  read -r ow oh < <(niri msg --json outputs \
+    | jq -r --arg o "$output" '.[$o].logical | "\(.width) \(.height)"')
+  read -r w h < <(niri msg --json windows \
+    | jq -r --argjson id "$id" '.[] | select(.id == $id) | .layout.tile_size | map(floor) | "\(.[0]) \(.[1])"')
+  [ -n "${ow:-}" ] && [ -n "${w:-}" ] || return 0
+  x=$(((ow - w) / 2))
+  y=$(((oh - h) / 2))
+  # Clamp here too: the landed-position math below needs the value actually sent.
+  ((x < 0)) && x=0
+  ((y < 0)) && y=0
+  move "$id" "$x" "$y"
+
+  # move-floating-window coordinates are relative to the output's working area,
+  # which a top bar (Noctalia) shrinks. Read where the window really landed: the
+  # difference is the area's offset, so re-center inside the area. Assumes the
+  # exclusive zones are on the top/left edges (true for this bar).
+  local ax ay ox oy
+  read -r ax ay < <(niri msg --json windows \
+    | jq -r --argjson id "$id" '.[] | select(.id == $id) | .layout.tile_pos_in_workspace_view // empty | map(floor) | "\(.[0]) \(.[1])"')
+  [ -n "${ax:-}" ] || return 0
+  ox=$((ax - x))
+  oy=$((ay - y))
+  ((ox > 0 || oy > 0)) || return 0
+  move "$id" $(((ow - ox - w) / 2)) $(((oh - oy - h) / 2))
+}
+
+move() {
+  local id="$1" x="$2" y="$3"
+  # A signed value (-5, +5) is a RELATIVE move for niri, so never go negative.
+  ((x < 0)) && x=0
+  ((y < 0)) && y=0
+  niri msg action move-floating-window --id "$id" -x "$x" -y "$y"
+}
+
+declare -A seen=()
+
+while :; do
+  while read -r id ws; do
+    [ -n "${seen[$id]:-}" ] && continue
+    seen[$id]=1
+    center "$id" "$ws"
+  done < <(niri msg --json event-stream 2>/dev/null \
+    | jq --unbuffered -r --arg re "$APPS" '
+        .WindowOpenedOrChanged.window // empty
+        | select(.is_floating and (.app_id // "" | test($re)) and .workspace_id != null)
+        | "\(.id) \(.workspace_id)"')
+  [ "${NIRI_FLOAT_CENTER_ONCE:-0}" = 1 ] && exit 0
+  sleep 2
+done

@@ -31,6 +31,29 @@ export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES
 | `sys-clean-cache` | Interactive cache cleanup across pacman, docker, npm and more | `sys-clean-cache` (`--help` / `--list` / `--dry-run` / `--only <step>`) | `sudo`/`paccache`, `docker`, `npm`, `pnpm`, `cargo`, `uv`, `journalctl` (optional) | root for some steps |
 | `sys-btrfs-backup` | Incremental OS backup to a remote host via btrfs send/receive | `sys-btrfs-backup` (`--dry-run` / `--help`); requires `BTRFS_BACKUP_HOST` and `BTRFS_BACKUP_DIR` | `btrfs`, `ssh` | **root**; contacts a remote host over SSH; deletes old snapshots on both sides (designed for a systemd timer) |
 
+| `niri-bar-autoplace` | Move the Noctalia bar to a fallback output when the preferred one is off | `niri-bar-autoplace` (spawn-at-startup) | `niri msg`, `jq` | none |
+| `niri-browser-focus` | Focus or launch a browser window | `niri-browser-focus` | `niri msg`, `jq` | none |
+| `niri-dnd-retroarch` | Enable Noctalia DND while RetroArch is focused | `niri-dnd-retroarch` (spawn-at-startup) | `niri msg`, `nocta`/`nocta-hold` | none |
+| `niri-dnd-screenshare` | Enable Noctalia DND while the screen is shared | `niri-dnd-screenshare` (spawn-at-startup) | `gdbus`/`dbus`, `nocta-hold` | none |
+| `niri-float-center` | Re-center floating Nautilus Quick Preview windows | `niri-float-center` (spawn-at-startup) | `niri msg`, `jq` | none |
+| `niri-keepawake-tasks` | Keep the screen awake during long tasks | `niri-keepawake-tasks` (spawn-at-startup) | `nocta-hold` | none |
+| `niri-mic-dnd` | Enable DND while the microphone is captured | `niri-mic-dnd` (spawn-at-startup) | `pw-dump`/`jq`, `nocta-hold` | none |
+| `niri-output-toggle` | Power a named niri output on or off | `niri-output-toggle <output>` | `niri msg` | none |
+| `niri-power-autoprofile` | Switch power-profiles-daemon on AC/battery | `niri-power-autoprofile` (spawn-at-startup) | `powerprofilesctl` | none |
+| `niri-scratchpad` | Toggle a floating app onto a hidden scratch workspace | `niri-scratchpad toggle <preset>` | `niri msg`, `jq` | none |
+| `niri-screenshot-notify` | Send a clickable screenshot notification | `niri-screenshot-notify` (spawn-at-startup) | `niri msg`, `notify-send`, `wl-copy` | none |
+| `niri-tray-autostart` | Start tray apps after Noctalia's SNI watcher is up | `niri-tray-autostart` (spawn-at-startup) | `niri msg`/`dbus`, tray apps | none |
+| `niri-workspace-wrap` | Wrap workspace focus at the ends | `niri-workspace-wrap up\|down` | `niri msg`, `jq` | none |
+| `nocta` | Semantic IPC wrapper over `noctalia msg` | `nocta <action>`; plugins need `NOCTALIA_PLUGIN_AUTHOR` | `noctalia`, `pgrep` | none |
+| `nocta-hold` | Ref-counted DND / keep-awake holds | `nocta-hold dnd\|awake acquire\|release <id>` | `nocta` | none |
+| `noctalia-restart` | Restart the Noctalia shell cleanly | `noctalia-restart` | `noctalia`, `niri msg` | none |
+| `noctalia-plugins-link` | Symlink plugin repos into the Noctalia plugins dir | `noctalia-plugins-link [--list]`; needs `NOCTALIA_PLUGIN_AUTHOR` | none | none |
+| `webapp-browser` | Resolve the browser used for installed webapps | `webapp-browser` | none | none |
+| `webapp-install` | Install a Chrome/Chromium webapp `.desktop` | `webapp-install <name> <url>` | browser binary | none (writes under `~/.local/share/applications`) |
+| `webapp-launch` | Launch an installed webapp by name | `webapp-launch <name>` | `gtk-launch`/`xdg-open` | none |
+| `webapp-remove` | Remove an installed webapp `.desktop` | `webapp-remove <name>` | none | none (deletes under the user home) |
+| `game-mode` | Freeze work apps and spare the game stack | `game-mode on\|off\|toggle\|status\|--dry-run`; apps from `GAME_MODE_APPS` | `niri msg`, `jq`, `nocta-hold` | none (sends SIGSTOP/SIGCONT via cgroup freeze) |
+
 ## Adding a helper
 
 1. Put the script under `bin/sys/` or `bin/utils/` with a shebang and `chmod +x`.

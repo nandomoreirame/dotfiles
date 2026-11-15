@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# niri-power-autoprofile -- switch the power-profiles-daemon profile automatically
+# when the laptop is plugged in / unplugged. Bound in niri via spawn-at-startup.
+#
+#   On AC   -> PROFILE_AC   (default: performance)
+#   On batt -> PROFILE_BATT (default: power-saver)
+#
+# Sets the profile over D-Bus (busctl) directly, because on this box the
+# `powerprofilesctl` CLI is shadowed by the mise python shim
+# (ModuleNotFoundError 'gi'). Noctalia reflects the change via its own DBus
+# watch. Profiles p-p-d offers here: power-saver, balanced, performance.
+#
+# Only re-applies on an AC<->battery transition, so a profile you pick by hand
+# sticks until you next plug/unplug. Override defaults with NIRI_PROFILE_AC /
+# NIRI_PROFILE_BATT.
+#
+# Usage: niri-power-autoprofile [interval-seconds]
+set -uo pipefail
+
+readonly INTERVAL="${1:-5}"
+readonly LOCK="${XDG_RUNTIME_DIR:-/tmp}/niri-power-autoprofile.lock"
+readonly PROFILE_AC="${NIRI_PROFILE_AC:-performance}"
+readonly PROFILE_BATT="${NIRI_PROFILE_BATT:-power-saver}"
+readonly PPD_SVC="net.hadess.PowerProfiles"
+readonly PPD_OBJ="/net/hadess/PowerProfiles"
+
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# 0 (true) if any Mains supply is online (on AC), 1 (false) on battery.
+on_ac() {
+  local t online
+  for t in /sys/class/power_supply/*/type; do
+    [ -r "$t" ] || continue
+    [ "$(cat "$t" 2>/dev/null)" = "Mains" ] || continue
+    online="$(cat "$(dirname "$t")/online" 2>/dev/null || echo 0)"
+    [ "$online" = 1 ] && return 0
+  done
+  return 1
+}
+
+ppd_get() {
+  busctl --system get-property "$PPD_SVC" "$PPD_OBJ" "$PPD_SVC" ActiveProfile 2>/dev/null \
+    | awk '{gsub(/"/,"",$2); print $2}'
+}
+
+ppd_set() {
+  busctl --system set-property "$PPD_SVC" "$PPD_OBJ" "$PPD_SVC" ActiveProfile s "$1" 2>/dev/null || true
+}
+
+main() {
+  local want prev="unknown"
+  while true; do
+    if on_ac; then want="$PROFILE_AC"; else want="$PROFILE_BATT"; fi
+    if [ "$want" != "$prev" ]; then
+      [ "$(ppd_get)" = "$want" ] || ppd_set "$want"
+      prev="$want"
+    fi
+    sleep "$INTERVAL"
+  done
+}
+
+main "$@"

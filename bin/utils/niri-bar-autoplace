@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# niri-bar-autoplace — Keep the Noctalia v5 bar on the middle monitor while
+# docked, and bring it to the laptop panel when that monitor is gone.
+#
+# Why: configs/noctalia/bar.toml pins the bar to HDMI-A-1 by disabling it on
+# DP-1 and eDP-1. v5 has no fallback for that: when no enabled output is
+# connected the bar renders nowhere, so undocking leaves the laptop barless.
+#
+# Behavior: polls `niri msg --json outputs` every NIRI_BAR_INTERVAL seconds.
+# When the primary output is missing or powered off (game-mode turns outputs
+# off), it writes a `[bar.main.monitor.edp1]` table with `enabled = true` into
+# Noctalia's state overrides (~/.local/state/noctalia/settings.toml), which v5
+# deep-merges over bar.toml and hot-reloads. When the primary output is back,
+# it removes that table. The versioned bar.toml never changes, so docking
+# does not dirty the repo. The file is only rewritten on a real transition,
+# and a failed or garbled niri query changes nothing.
+#
+# Trade-off: up to NIRI_BAR_INTERVAL seconds between (un)docking and the bar
+# moving. Noctalia rewrites settings.toml itself when settings change in its
+# UI; only the edp1 table is touched here, the rest is preserved verbatim.
+#
+# Usage:
+#   niri-bar-autoplace            # daemon (niri spawn-at-startup)
+#   niri-bar-autoplace --once     # sync once and exit
+set -uo pipefail
+
+readonly PRIMARY_OUTPUT="${NIRI_BAR_PRIMARY:-HDMI-A-1}"
+readonly FALLBACK_OUTPUT="${NIRI_BAR_FALLBACK:-eDP-1}"
+readonly FALLBACK_KEY="${NIRI_BAR_FALLBACK_KEY:-edp1}"
+readonly OVERRIDES="${NOCTALIA_OVERRIDES:-${XDG_STATE_HOME:-$HOME/.local/state}/noctalia/settings.toml}"
+readonly NIRI_BAR_INTERVAL="${NIRI_BAR_INTERVAL:-2}"
+readonly HEADER="[bar.main.monitor.${FALLBACK_KEY}]"
+
+# Exit 0 when the primary output is connected and on, 1 when it is not, and 2
+# when niri could not be queried (so the caller leaves everything as is).
+niri_bar_primary_active() {
+    local outputs state
+    outputs="$(niri msg --json outputs 2>/dev/null)" || return 2
+    state="$(jq -r --arg o "$PRIMARY_OUTPUT" \
+        'if (.[$o] // null) != null and .[$o].logical != null then "on" else "off" end' \
+        <<<"$outputs" 2>/dev/null)" || return 2
+    case "$state" in
+        on) return 0 ;;
+        off) return 1 ;;
+        *) return 2 ;;
+    esac
+}
+
+niri_bar_override_present() {
+    [ -f "$OVERRIDES" ] && grep -Eq "^[[:space:]]*\[bar\.main\.monitor\.${FALLBACK_KEY}\][[:space:]]*$" "$OVERRIDES"
+}
+
+# Atomically replace the overrides file with the content of $1.
+niri_bar_commit() {
+    local tmp="$1"
+    if [ -s "$tmp" ] || [ ! -s "$OVERRIDES" ]; then
+        mv -f "$tmp" "$OVERRIDES"
+    else
+        rm -f "$tmp"
+    fi
+}
+
+niri_bar_add_override() {
+    local tmp
+    mkdir -p "$(dirname "$OVERRIDES")"
+    tmp="$(mktemp "$OVERRIDES.XXXXXX")" || return 1
+    {
+        [ -f "$OVERRIDES" ] && cat "$OVERRIDES" && printf '\n'
+        printf '%s\n' "$HEADER" "enabled = true" "match = \"$FALLBACK_OUTPUT\""
+    } > "$tmp"
+    niri_bar_commit "$tmp"
+}
+
+# Drop the fallback table: its header and every line up to the next table.
+niri_bar_remove_override() {
+    local tmp
+    tmp="$(mktemp "$OVERRIDES.XXXXXX")" || return 1
+    awk -v key="$FALLBACK_KEY" '
+        function header(line) { sub(/^[[:space:]]+/, "", line); sub(/[[:space:]]+$/, "", line); return line }
+        /^[[:space:]]*\[/ { skip = (header($0) == "[bar.main.monitor." key "]") }
+        !skip { print }
+    ' "$OVERRIDES" | cat -s > "$tmp"
+    niri_bar_commit "$tmp"
+}
+
+niri_bar_tick() {
+    niri_bar_primary_active
+    case $? in
+        0) niri_bar_override_present && niri_bar_remove_override ;;
+        1) niri_bar_override_present || niri_bar_add_override ;;
+    esac
+    return 0
+}
+
+niri_bar_main() {
+    if [ "${1:-}" = "--once" ]; then
+        niri_bar_tick
+        return 0
+    fi
+
+    # Single instance: a duplicate launch just exits (no `pgrep -f` guard,
+    # which self-matches the launching shell's cmdline).
+    exec 9>"${XDG_RUNTIME_DIR:-/tmp}/niri-bar-autoplace.lock"
+    flock -n 9 || exit 0
+
+    while true; do
+        niri_bar_tick
+        sleep "$NIRI_BAR_INTERVAL"
+    done
+}
+
+niri_bar_main "$@"
