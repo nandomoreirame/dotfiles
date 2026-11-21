@@ -49,3 +49,11 @@ export PATH
 if [[ -S "$HOME/.1password/agent.sock" ]]; then
   export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
 fi
+
+# Private overlay env: private/env/*.zsh in name order, for every zsh (also
+# non-interactive ones). Keep these files fast and silent: API keys from files
+# outside git, never the keys themselves.
+for _private_env_file in "${DOTFILES_PRIVATE:-$DOTFILES/private}/env"/*.zsh(N); do
+  source "$_private_env_file"
+done
+unset _private_env_file

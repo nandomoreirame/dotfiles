@@ -17,6 +17,7 @@ A public clone of this repository must stay free of personal data. Anything that
 |---|---|
 | `bin/` | Executables prepended to `PATH` by `.zshenv` when the directory exists |
 | `shell/` | `*.zsh` files sourced by `.zshrc` in name order |
+| `env/` | `*.zsh` files sourced by `.zshenv` in name order, for every zsh (also non-interactive); keep them fast and silent, e.g. loading API keys from files outside git |
 | `shell/10-personal.zsh` | Suggested home for AI wrappers (`claude`/`codex`/`commit` with permissions disabled), `chrome-insecure`, token env files and folder aliases |
 | `links.conf` | Symlink map merged after the public one |
 | `packages/` | `*.list` package picks for the installer |
@@ -35,6 +36,7 @@ Use [README.md](README.md) in this directory as the starting point: put your fil
 ## Wiring already in place
 
 - `.zshenv` prepends `$DOTFILES/private/bin` to `PATH` when that directory exists
+- `.zshenv` sources each `private/env/*.zsh` in name order (honors `DOTFILES_PRIVATE`)
 - `.zshrc` sources `lib/private.sh`, then each `private/shell/*.zsh` in name order
 - `dotfiles links` merges `private/links.conf` after the public map
 - package lists and the setup registry merge `private/packages/*.list` and `private/setup/registry.conf`
