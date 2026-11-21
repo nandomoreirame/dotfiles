@@ -14,6 +14,7 @@ credit:configs/vscode/terminal-noir/package.json:  "publisher": "nandomoreira",
 credit:configs/ghostty/themes/terminal-noir-dark:# Terminal Noir (dark), from nandomoreira.dev.
 credit:configs/ghostty/themes/terminal-noir-light:# Terminal Noir (light), from nandomoreira.dev.
 credit:configs/micro/colorschemes/terminal-noir.micro:# Terminal Noir, from nandomoreira.dev.
+credit:configs/vicinae/themes/terminal-noir.toml:# Terminal Noir for Vicinae (nandomoreira.dev).
 credit:scripts/themes/install-terminal-noir-editors:    <Identity Language="en-US" Id="terminal-noir" Version="$version" Publisher="nandomoreira"/>
 credit:scripts/themes/install-terminal-noir-editors:    <Description xml:space="preserve">Terminal Noir palette from nandomoreira.dev.</Description>
 credit:scripts/themes/build-terminal-noir-icons:Comment=Adwaita with amber folders (Terminal Noir, nandomoreira.dev)

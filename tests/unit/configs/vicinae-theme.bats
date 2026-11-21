@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-# Vicinae (launcher) uses the Terminal Noir palette (nandomoreira.dev).
+# Vicinae (launcher) uses the Terminal Noir palette.
 # Every color in the theme must come from the palette sources, and the
 # versioned config must select the theme.
 #
