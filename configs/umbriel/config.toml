@@ -1,0 +1,7 @@
+# Umbriel entry point. The shared config lives in base.toml; the private
+# overlay may add private.toml next to it (linked by its links.conf). Includes
+# apply in list order and both are optional, so private.toml wins over base.toml.
+# Docs: https://docs.noctalia.dev/umbriel/configuration/#include
+
+[include.optional]
+files = ["base.toml", "private.toml"]
