@@ -109,3 +109,8 @@ _run_script() {
     run grep -F '~/.local/bin' "$PROJECT_ROOT/bin/README.md"
     assert_success
 }
+
+@test "links.conf exposes the helper in ~/.local/bin for the user unit" {
+    run grep -Fx 'bin/utils/espanso-hotplug | .local/bin/espanso-hotplug |' "$PROJECT_ROOT/configs/links.conf"
+    assert_success
+}
