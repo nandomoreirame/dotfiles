@@ -201,20 +201,6 @@ window-rule {
     open-floating true
 }
 
-// Wi-Fi manager (impala TUI over iwd) opens as a floating window.
-// System uses iwd, not NetworkManager, so the Noctalia wifi widget is inert.
-window-rule {
-    match app-id=r#"^impala-float$"#
-    open-floating true
-    default-column-width { fixed 960; }
-}
-
-// ZapZap opens floating (no scratchpad / hide-show toggle in niri).
-window-rule {
-    match app-id=r#"(?i)zapzap"#
-    open-floating true
-}
-
 // Spotify opens floating (Mod+Shift+S opens it / closes it to the tray). app-id capitalization differs
 // by install: flatpak = "spotify", native (spotify-launcher) = "Spotify". Match
 // case-insensitively so it works either way.
@@ -378,16 +364,13 @@ binds {
     // while keeping Steam/RetroArch/Noctalia live, and powers off the non-focused
     // outputs; toggling again restores. Open Steam yourself first. Also wired to
     // Noctalia's Performance-mode hooks. See bin/utils/game-mode. Escape: TTY -> game-mode off.
-    Mod+Alt+G hotkey-overlay-title="Game mode (freeze work apps)" { spawn-sh "~/.dotfiles/bin/utils/game-mode toggle"; }
+    Mod+Alt+G repeat=false hotkey-overlay-title="Game mode (freeze work apps)" { spawn-sh "~/.dotfiles/bin/utils/game-mode toggle"; }
 
 
     // DroidCam: connect / disconnect the phone camera headless (droidcam-cli),
     // then open Mini Video Me. See bin/utils/droidcam-ctl.
     Mod+Alt+C hotkey-overlay-title="DroidCam: connect" { spawn-sh "~/.dotfiles/bin/utils/droidcam-ctl start"; }
     Mod+Alt+X hotkey-overlay-title="DroidCam: disconnect" { spawn-sh "~/.dotfiles/bin/utils/droidcam-ctl stop"; }
-
-    // Wi-Fi manager: impala (iwd TUI) in a floating terminal. See window-rule above.
-    Mod+Shift+W hotkey-overlay-title="Wi-Fi (impala)" { spawn "ghostty" "--class=impala-float" "-e" "impala"; }
 
     // Noctalia shell (launcher / control center / settings) via nocta IPC wrapper.
     Ctrl+Space    hotkey-overlay-title="App launcher" { spawn-sh "~/.dotfiles/bin/utils/nocta launcher"; }

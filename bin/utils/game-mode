@@ -44,6 +44,7 @@ _uid="$(id -u)"
 : "${GAME_MODE_APP_CG:=/sys/fs/cgroup/user.slice/user-${_uid}.slice/user@${_uid}.service/app.slice}"
 readonly APP_CG="$GAME_MODE_APP_CG"
 readonly STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/game-mode.active"
+readonly LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/game-mode.lock"
 
 # Work apps to freeze (process comm / scope-name fragments, space-separated).
 # Names must fit the kernel's 15-char /proc/<pid>/comm limit (e.g. google-chrome-s,
@@ -76,7 +77,8 @@ readonly MEDIA_COMMS_RE='^([Ss]potify|spotifyd|ncspot|mpv|vlc|cmus|mpd|mopidy|au
 
 notify() {
     if command -v notify-send >/dev/null 2>&1; then
-        notify-send -a "game-mode" "$1" "${2:-}" || true
+        # fd 9 is closed so a lingering child never keeps the toggle lock held.
+        notify-send -a "game-mode" "$1" "${2:-}" 9>&- || true
     fi
     printf '[game-mode] %s %s\n' "$1" "${2:-}"
 }
@@ -89,13 +91,13 @@ readonly HOLD
 # Gaming focus ON/OFF via nocta-hold (ref-counted, so it coexists with
 # focus-mode and the dnd/keepawake watchers without clobbering each other).
 focus_on() {
-    "$HOLD" dnd acquire game-mode || true
-    "$HOLD" awake acquire game-mode || true
+    "$HOLD" dnd acquire game-mode 9>&- || true
+    "$HOLD" awake acquire game-mode 9>&- || true
 }
 
 focus_off() {
-    "$HOLD" dnd release game-mode || true
-    "$HOLD" awake release game-mode || true
+    "$HOLD" dnd release game-mode 9>&- || true
+    "$HOLD" awake release game-mode 9>&- || true
 }
 
 # --- outputs -----------------------------------------------------------------
@@ -291,6 +293,15 @@ cmd_off() {
     notify "Game mode off" "Apps, monitors and notifications restored."
 }
 
+# Serialize on/off/toggle: a second press made while the first is still
+# freezing (pw-dump is slow) waits for it and then turns game mode off, instead
+# of racing it and leaving scopes frozen with no state file.
+with_lock() {
+    exec 9>"$LOCK_FILE"
+    flock 9
+    "$@"
+}
+
 cmd_toggle() {
     if [[ -f "$STATE_FILE" ]]; then
         cmd_off
@@ -352,9 +363,9 @@ main() {
     local sub="${1:-}"
     shift || true
     case "$sub" in
-        on) cmd_on ;;
-        off) cmd_off ;;
-        toggle) cmd_toggle ;;
+        on) with_lock cmd_on ;;
+        off) with_lock cmd_off ;;
+        toggle) with_lock cmd_toggle ;;
         status) cmd_status ;;
         --dry-run|dry-run) cmd_dry_run ;;
         ""|-h|--help|help) usage ;;

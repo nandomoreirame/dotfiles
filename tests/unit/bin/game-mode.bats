@@ -80,3 +80,39 @@ STUB
     [ "$(cat "$CG/app-Steam-333.scope/cgroup.freeze")" = "0" ]
     [ -f "$RT/game-mode.active" ]
 }
+
+# Two presses while the first is still freezing (pw-dump is slow) must not race:
+# the second waits for the lock, then turns game mode off.
+@test "game-mode serializes concurrent toggles with a lock" {
+    CG="$BATS_TEST_TMPDIR/cg"; RT="$BATS_TEST_TMPDIR/run"
+    mkdir -p "$RT" "$BATS_TEST_TMPDIR/bin"
+    # The Steam scope makes steam_running true, so `on` really freezes.
+    for name in app-chromium-111.scope app-Steam-333.scope; do
+        mkdir -p "$CG/$name"
+        : > "$CG/$name/cgroup.procs"
+        printf '0\n' > "$CG/$name/cgroup.freeze"
+        printf 'frozen 0\n' > "$CG/$name/cgroup.events"
+    done
+    cp "$ROOT/bin/utils/game-mode" "$BATS_TEST_TMPDIR/bin/game-mode"
+    printf '#!/bin/sh\nexit 0\n' > "$BATS_TEST_TMPDIR/bin/nocta-hold"
+    printf '#!/bin/sh\nexit 1\n' > "$FAKE/pgrep"
+    printf '#!/bin/sh\nexit 0\n' > "$FAKE/notify-send"
+    printf '#!/bin/sh\nsleep 1\necho "[]"\n' > "$FAKE/pw-dump"
+    chmod +x "$BATS_TEST_TMPDIR/bin/"* "$FAKE/"*
+    gm() {
+        env -i HOME="$BATS_TEST_TMPDIR" PATH="$FAKE:/usr/bin:/bin" XDG_RUNTIME_DIR="$RT" \
+            GAME_MODE_APP_CG="$CG" GAME_MODE_APPS="chromium" GAME_MODE_KEEP_OUTPUTS=1 \
+            timeout 20 bash "$BATS_TEST_TMPDIR/bin/game-mode" toggle
+    }
+    gm & first=$!
+    sleep 0.3
+    gm
+    wait "$first"
+    [ ! -f "$RT/game-mode.active" ]
+    [ "$(cat "$CG/app-chromium-111.scope/cgroup.freeze")" = "0" ]
+}
+
+@test "game-mode closes the lock fd for long-lived children" {
+    run grep -cE '9>&-' "$ROOT/bin/utils/game-mode"
+    [ "$output" -ge 5 ]
+}
