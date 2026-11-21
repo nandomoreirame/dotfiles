@@ -17,9 +17,11 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
 
 @test "no ai wrapper or insecure browser function is defined" {
     for fn in claude codex commit chrome-insecure; do
-        run grep -nE "^${fn}\(\)" "$CUSTOM/functions.zsh"
+        run grep -rnE "^${fn}\(\)" "$CUSTOM/functions.zsh" "$CUSTOM/functions"
         [ "$status" -ne 0 ]
     done
+    [ ! -e "$CUSTOM/functions/ai-clis.zsh" ]
+    [ ! -e "$CUSTOM/functions/browser.zsh" ]
     run grep -rnE 'dangerously|--yolo|disable-web-security' "$CUSTOM"
     [ "$status" -ne 0 ]
 }
@@ -34,12 +36,12 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
     [ "$status" -ne 0 ]
     [[ "$output" == *"project"* ]]
     _a="nando""moreira"
-    run grep -n '${_a}' "$CUSTOM/functions.zsh"
+    run grep -rn '${_a}' "$CUSTOM/functions.zsh" "$CUSTOM/functions"
     [ "$status" -ne 0 ]
 }
 
 @test "custom files are in english" {
-    run grep -nE "[áàâãéêíóôõúç]|\b(não|erro|arquivo|concluiu)\b" "$CUSTOM"/*.zsh
+    run grep -nE "[áàâãéêíóôõúç]|\b(não|erro|arquivo|concluiu)\b" "$CUSTOM"/*.zsh "$CUSTOM"/functions/*.zsh
     [ "$status" -ne 0 ]
 }
 
@@ -82,4 +84,35 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
     [[ "$output" == *"127.0.0.1"* ]]
     [[ "$output" != *"0.0.0.0"* ]]
     [[ "$output" != *"cors-allow-origin='*'"* ]]
+}
+
+@test "functions.zsh sources the generic modules in order" {
+    run grep -E '^for _zsh_fn_mod in ' "$CUSTOM/functions.zsh"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"spinner git navigation http download gcp"* ]]
+    for m in spinner git navigation http download gcp; do
+        [ -f "$CUSTOM/functions/$m.zsh" ]
+    done
+}
+
+@test "_run_with_spinner idle timeout returns 124" {
+    zrun '_SPINNER_IDLE=1 _run_with_spinner "x" sleep 30'
+    [ "$status" -eq 124 ]
+}
+
+@test "_run_with_spinner copies the output to _SPINNER_LOG" {
+    zrun 'log=$(mktemp); _SPINNER_LOG="$log" _run_with_spinner "x" echo hello >/dev/null 2>&1; cat "$log"'
+    [[ "$output" == *"hello"* ]]
+}
+
+@test "push and pull run git through the spinner and keep its exit code" {
+    fake="$BATS_TEST_TMPDIR/fake"; mkdir -p "$fake"
+    printf '#!/bin/sh\necho "git $*"\n[ "$1" = pull ] && exit 3\nexit 0\n' > "$fake/git"
+    chmod +x "$fake/git"
+    zrun "export PATH='$fake':\$PATH; push origin main"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"git push origin main"* ]]
+    zrun "export PATH='$fake':\$PATH; pull --rebase"
+    [ "$status" -eq 3 ]
+    [[ "$output" == *"git pull --rebase"* ]]
 }
