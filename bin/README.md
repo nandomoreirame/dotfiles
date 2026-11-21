@@ -52,6 +52,7 @@ export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES
 | `webapp-launch` | Launch a URL as a web app window | `webapp-launch <url>` | `webapp-browser`, `setsid` | none |
 | `webapp-remove` | Remove an installed webapp `.desktop` | `webapp-remove <name>` | none | none (deletes under the user home) |
 | `game-mode` | Freeze work apps and spare the game stack | `game-mode on\|off\|toggle\|status\|--dry-run`; apps from `GAME_MODE_APPS` | `niri msg`, `jq`, `nocta-hold` | none (sends SIGSTOP/SIGCONT via cgroup freeze) |
+| `beaverhabits` | Beaver Habits client: today's status, report with streaks, mark or unmark a habit | `beaverhabits list\|report\|done <habit>\|undo <habit>\|pick`; settings in `~/.config/beaverhabits/env` | `curl`, `jq`, `vicinae` (for `pick`) | none (HTTPS calls to your own Beaver Habits instance) |
 
 ## Adding a helper
 
@@ -69,3 +70,4 @@ Every helper here is optional. The repository never invokes them; you run them y
 - `clean-claude-sessions` **deletes** Claude Code session files and each matching subagent directory under the user home. Prefer `--dry-run` first.
 - `localsend-clip` sends **clipboard text** (often secrets) to a LocalSend favorite on the LAN over HTTPS. It pins the favorite's TLS certificate (`--cacert` of the verified peer PEM) and does not disable verification with `-k`. It opens no inbound ports.
 - `droidcam-ctl` talks to a phone camera on the local network; it opens no inbound ports.
+- `beaverhabits` calls the REST API of the Beaver Habits instance named in `BEAVERHABITS_URL` (no default). The API token comes from `BEAVERHABITS_TOKEN` or from the file in `BEAVERHABITS_ENV_FILE`, reaches curl through a file descriptor and is never printed or passed as an argument. `~/.config/beaverhabits/env` is parsed for three keys and never sourced.

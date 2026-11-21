@@ -6,7 +6,7 @@ This repository separates shareable configuration from a private overlay, provid
 
 ## Status
 
-The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs, the Terminal Noir app configs and the Niri/Noctalia desktop work on Arch Linux / CachyOS.
+The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs, the Terminal Noir app configs and the Umbriel/Niri/Noctalia desktop work on Arch Linux / CachyOS.
 
 ## Why
 
@@ -14,7 +14,7 @@ A public dotfiles repo that cannot prove it is clean will leak CPF numbers, LAN 
 
 ## Requirements
 
-Arch Linux or CachyOS, Bash 4.3+, Git and GNU coreutils. The optional desktop helpers target Niri, Noctalia v5 and zsh; the install flow itself needs pacman and (for AUR packages) an AUR helper.
+Arch Linux or CachyOS, Bash 4.3+, Git and GNU coreutils. The optional desktop helpers target Umbriel or Niri, Noctalia v5, Vicinae and zsh; the install flow itself needs pacman and (for AUR packages) an AUR helper.
 
 ## New machine
 
@@ -98,9 +98,9 @@ dotfiles --verify
 **Intentionally absent from the public tree:** `rm`/`cp`/`mv` keep their normal defaults (no recursive force aliases). The AI wrappers that disable permission prompts (`claude`, `codex`, `commit`) and `chrome-insecure` are not shipped; put them in `private/shell/` if you want them. Git identity and signing come from `dotfiles init` / `dotfiles profile`, never from the tracked `.gitconfig`.
 
 
-## Desktop (niri and Noctalia)
+## Desktop (Umbriel, niri and Noctalia)
 
-The public tree ships a generic [niri](https://yalter.github.io/niri/) config and a [Noctalia](https://docs.noctalia.dev) bar that uses **built-in widgets only**. Personal binds, plugins and monitor layouts stay in the private overlay.
+The public tree ships generic configs for two compositors, [Umbriel](https://docs.noctalia.dev/umbriel/) (the default session) and [niri](https://yalter.github.io/niri/), a [Noctalia](https://docs.noctalia.dev) bar that uses **built-in widgets only** and the [Vicinae](https://github.com/vicinaehq/vicinae) launcher with the Terminal Noir theme. Personal binds, plugins and monitor layouts stay in the private overlay.
 
 ### Hooks
 
@@ -110,6 +110,9 @@ The public tree ships a generic [niri](https://yalter.github.io/niri/) config an
 | `configs/niri/private.kdl` | Empty public stub included last by `config.kdl`. Replace with personal binds, window rules and startup entries. |
 | `configs/noctalia/bar.toml` | Built-in widgets only. Replace to restore a plugin bar. |
 | `configs/noctalia/plugins.toml` | `enabled = []`. Replace to enable plugins. |
+| `configs/umbriel/config.toml` | Includes `base.toml`, then the optional `private.toml` (both optional, list order), so a private file wins over the base. Add `private.toml` through the private `links.conf` with personal binds, rules, outputs and a full `autostart` list (arrays replace, tables merge, rule lists append). |
+| `configs/vicinae/dotfiles.json` | Theme, launcher window and font. The Vicinae GUI owns `~/.config/vicinae/settings.json`; add `"imports": ["dotfiles.json"]` there. |
+| `configs/vicinae/scripts/` | Script commands. The Beaver Habits ones call `bin/utils/beaverhabits` and read `~/.config/beaverhabits/env`. |
 
 Private `links.conf` entries replace a public target by the same path. Example:
 
@@ -120,17 +123,19 @@ private/configs/niri/private.kdl | .config/niri/private.kdl |
 private/configs/niri/monitor.kdl | .config/niri/monitor.kdl |
 private/configs/noctalia/bar.toml | .config/noctalia/bar.toml |
 private/configs/noctalia/plugins.toml | .config/noctalia/plugins.toml |
+private/configs/umbriel/private.toml | .config/umbriel/private.toml |
 ```
 
 ### Helpers and environment
 
-Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp-*`, `game-mode`). See [bin/README.md](bin/README.md).
+Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp-*`, `game-mode`, `beaverhabits`). See [bin/README.md](bin/README.md).
 
 | Variable | Purpose |
 |---|---|
 | `NOCTALIA_PLUGIN_AUTHOR` | Author segment of a plugin id (`author/name`). Required for `nocta plugin ...` and `noctalia-plugins-link`. |
 | `GAME_MODE_APPS` | Space-separated process names `game-mode` freezes (`--dry-run` prints the list). |
 | `NOCTA_PLUGIN_ENTRIES` | Optional `name=entry[@target]` map for `nocta plugin` (empty by default). |
+| `BEAVERHABITS_URL`, `BEAVERHABITS_TOKEN`, `BEAVERHABITS_ENV_FILE` | Beaver Habits instance and token for `beaverhabits`; also read from `~/.config/beaverhabits/env`. |
 
 ## Apps and Terminal Noir
 

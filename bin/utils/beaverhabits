@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+# Beaver Habits (https://github.com/daya0576/beaverhabits) REST API client, used
+# by the Vicinae script commands in configs/vicinae/scripts/beaverhabits.
+#
+# Usage:
+#   beaverhabits list            # today's status of the active habits
+#   beaverhabits report          # progress, last 14 days, streaks (ANSI colors)
+#   beaverhabits done <habit>    # mark a habit done today
+#   beaverhabits undo <habit>    # mark a habit not done today
+#   beaverhabits pick            # choose a pending habit in `vicinae dmenu`, mark it done
+#
+# <habit> is a case-insensitive name: an exact match wins, else a unique substring.
+#
+# Settings come from the environment first, then from the config file
+# ${XDG_CONFIG_HOME:-~/.config}/beaverhabits/env (KEY=VALUE lines, parsed, never
+# sourced), so launchers that do not load your shell still find them:
+#   BEAVERHABITS_URL       instance base URL (required, http or https)
+#   BEAVERHABITS_TOKEN     API token, or
+#   BEAVERHABITS_ENV_FILE  a file with an API_TOKEN=... line (e.g. the server .env)
+#   BEAVERHABITS_TODAY     ISO date override, for tests
+#   NO_COLOR               disable ANSI colors in `report`
+#
+# The token goes to curl through a file descriptor, never through argv or output.
+#
+# Exit codes: 0 ok, 1 missing or invalid settings, 2 usage or habit not
+# resolved, 3 API error.
+set -eo pipefail
+
+bh_die() {
+  echo "beaverhabits: $2" >&2
+  exit "$1"
+}
+
+# Reads the allowed keys from the config file; the environment wins.
+bh_load_config() {
+  local file="${XDG_CONFIG_HOME:-$HOME/.config}/beaverhabits/env" line key value
+  [[ -r "$file" ]] || return 0
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^(BEAVERHABITS_URL|BEAVERHABITS_TOKEN|BEAVERHABITS_ENV_FILE)=(.*)$ ]] || continue
+    key="${BASH_REMATCH[1]}"
+    value="${BASH_REMATCH[2]}"
+    value="${value#[\"\']}"
+    value="${value%[\"\']}"
+    # A leading ~/ is expanded by hand; the line is never evaluated.
+    # shellcheck disable=SC2088  # the literal "~/" is the pattern on purpose
+    [[ "${value:0:2}" == "~/" ]] && value="$HOME/${value:2}"
+    [[ -n "${!key:-}" ]] || printf -v "$key" '%s' "$value"
+  done <"$file"
+}
+
+bh_load_config
+BH_URL="${BEAVERHABITS_URL:-}"
+BH_URL="${BH_URL%/}"
+BH_TODAY="${BEAVERHABITS_TODAY:-$(date +%F)}"
+
+bh_check_url() {
+  [[ -n "$BH_URL" ]] || bh_die 1 "BEAVERHABITS_URL is not set (environment or ${XDG_CONFIG_HOME:-~/.config}/beaverhabits/env)"
+  [[ "$BH_URL" =~ ^https?://[A-Za-z0-9.-]+(:[0-9]+)?(/[A-Za-z0-9._~/-]*)?$ ]] ||
+    bh_die 1 "BEAVERHABITS_URL must be an http or https URL"
+}
+
+bh_token() {
+  local token="${BEAVERHABITS_TOKEN:-}" file="${BEAVERHABITS_ENV_FILE:-}"
+  if [[ -z "$token" && -n "$file" && -r "$file" ]]; then
+    token="$(sed -nE 's/^API_TOKEN=["'\'']?([^"'\'']*)["'\'']?$/\1/p' "$file" | tail -n 1)"
+  fi
+  [[ -n "$token" ]] || bh_die 1 "API token not found (set BEAVERHABITS_TOKEN or BEAVERHABITS_ENV_FILE)"
+  printf '%s' "$token"
+}
+
+# bh_api METHOD PATH [JSON_BODY]
+bh_api() {
+  local method="$1" path="$2" body="${3:-}" token
+  bh_check_url
+  token="$(bh_token)" || exit 1
+  local args=(-fsS -m 15 -X "$method")
+  [[ -n "$body" ]] && args+=(-H "Content-Type: application/json" --data "$body")
+  curl "${args[@]}" --header @<(printf 'Authorization: Bearer %s\n' "$token") \
+    "$BH_URL/api/v1$path" ||
+    bh_die 3 "request failed: $method $path"
+}
+
+bh_export() {
+  bh_api GET /habits/export
+}
+
+# Active habits as TSV: id, name, done-today (true|false).
+bh_today_tsv() {
+  local json
+  json="$(bh_export)" || exit $?
+  jq -r --arg today "$BH_TODAY" '
+    .habits[]
+    | select((.status // "active") == "active")
+    | ([.records[]? | select(.day == $today)] | max_by(.timestamp) | .done // false) as $done
+    | [.id, .name, ($done | tostring)] | @tsv' <<<"$json"
+}
+
+bh_list() {
+  local tsv id name is_done
+  tsv="$(bh_today_tsv)" || exit $?
+  while IFS=$'\t' read -r id name is_done; do
+    [[ -n "$id" ]] || continue
+    if [[ "$is_done" == true ]]; then
+      printf '✓ %s\n' "$name"
+    else
+      printf '○ %s\n' "$name"
+    fi
+  done <<<"$tsv"
+}
+
+bh_report() {
+  local json color=true
+  [[ -n "${NO_COLOR:-}" ]] && color=false
+  json="$(bh_export)" || exit $?
+  jq -r --arg today "$BH_TODAY" --argjson color "$color" '
+    def c($code): if $color then "\u001b[\($code)m" else "" end;
+    def spaces($n): [range(0; ([$n, 0] | max))] | map(" ") | join("");
+    def pad($n): if length > $n then .[0:$n - 1] + "…" else . + spaces($n - length) end;
+    def days($n): if $n == 1 then "1 day" else "\($n) days" end;
+    ($today + "T00:00:00Z" | fromdateiso8601) as $base
+    | def day($i): $base - 86400 * $i | strftime("%Y-%m-%d");
+    def wday($i): $base - 86400 * $i | strftime("%w") | tonumber;
+    def streak($m; $i): if $m[day($i)] == true then 1 + streak($m; $i + 1) else 0 end;
+    def best($m):
+      [$m | to_entries[] | select(.value) | .key + "T00:00:00Z" | fromdateiso8601 / 86400 | floor]
+      | sort
+      | reduce .[] as $d ({prev: null, run: 0, best: 0};
+          .run = (if .prev != null and $d == .prev + 1 then .run + 1 else 1 end)
+          | .prev = $d | .best = ([.best, .run] | max))
+      | .best;
+    # Two weeks of cells, oldest first, with a gap between the weeks.
+    def grid(cell): ([range(13; 6; -1)] | map(cell) | join(" ")) + "  " + ([range(6; -1; -1)] | map(cell) | join(" "));
+    [.habits[]
+     | select((.status // "active") == "active")
+     | (reduce ([.records[]?] | sort_by(.timestamp))[] as $r ({}; .[$r.day] = $r.done)) as $m
+     | {name, m: $m, done: ($m[$today] == true),
+        streak: streak($m; (if $m[$today] == true then 0 else 1 end)),
+        week: ([range(0; 7) | select($m[day(.)] == true)] | length),
+        best: best($m)}] as $hs
+    | if ($hs | length) == 0 then "No active habits." else
+      ($hs | map(.name | length) | max | [., 24] | min | . + 2) as $ncol
+    | ($hs | map(select(.done)) | length) as $ndone
+    | ($hs | length) as $total
+    | (2 + $ncol + 28 + 3 + 9 + 2 + 6 + 2 + 8) as $width
+    | ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][wday(0)] as $wd
+    | ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][($base | strftime("%m") | tonumber) - 1] as $mon
+    | "Habits · \($wd), \($mon) \($base | strftime("%d") | tonumber)" as $title
+    | "\($ndone) of \($total) done" as $count
+    | (($ndone * 30 / $total) | round) as $fill
+    | c("1;33") + $title + c("0") + spaces($width - ($title | length) - ($count | length)) + $count,
+      c("32") + ([range($fill)] | map("■") | join("")) + c("37")
+        + ([range(30 - $fill)] | map("□") | join("")) + c("0")
+        + "  \(($ndone * 100 / $total) | round)%",
+      "",
+      c("37") + spaces(2 + $ncol) + grid(["S", "M", "T", "W", "T", "F", "S"][wday(.)])
+        + "   " + ("streak" | pad(9)) + "  " + ("7 days" | pad(6)) + "  best" + c("0"),
+      ($hs[]
+       | . as $h
+       | (if $h.done then c("32") + "✓" else c("37") + "○" end) + c("0") + " "
+         + ($h.name | pad($ncol))
+         + grid(if $h.m[day(.)] == true then c("32") + "●" else c("37") + "·" end) + c("0")
+         + "   "
+         + (if $h.streak == 0 then c("37") + ("—" | pad(9)) + c("0") else (days($h.streak) | pad(9)) end)
+         + "  " + ("\($h.week)/7" | pad(6))
+         + "  " + (if $h.best == 0 then c("37") + "—" + c("0") else days($h.best) end))
+    end' <<<"$json"
+}
+
+bh_resolve() {
+  local query="$1" tsv matches
+  [[ -n "$query" ]] || bh_die 2 "missing habit name"
+  tsv="$(bh_today_tsv)" || exit $?
+  matches="$(jq -Rr --arg q "$query" '
+    ($q | gsub("(?<c>[.*+?^${}()|\\[\\]\\\\/])"; "\\\(.c)")) as $esc
+    | [inputs, .] | map(split("\t")) as $rows
+    | ($rows | map(select(.[1] | test("^" + $esc + "$"; "i")))) as $exact
+    | (if ($exact | length) > 0 then $exact
+       else $rows | map(select(.[1] | test($esc; "i"))) end)
+    | .[] | "\(.[0])\t\(.[1])"' <<<"$tsv")"
+  case "$(grep -c . <<<"$matches" || true)" in
+  0) bh_die 2 "no active habit matches '$query'" ;;
+  1) printf '%s\n' "$matches" ;;
+  *) bh_die 2 "'$query' matches more than one habit: $(cut -f2 <<<"$matches" | paste -sd ',' | sed 's/,/, /g')" ;;
+  esac
+}
+
+# bh_tick true|false <habit>
+bh_tick() {
+  local done="$1" query="${2:-}" match id name date
+  match="$(bh_resolve "$query")" || exit $?
+  id="${match%%$'\t'*}"
+  name="${match#*$'\t'}"
+  [[ "$id" =~ ^[A-Za-z0-9_-]+$ ]] || bh_die 3 "unexpected habit id from the API"
+  date="$(date -d "$BH_TODAY" +%d-%m-%Y)"
+  bh_api POST "/habits/$id/completions" \
+    "{\"done\":$done,\"date\":\"$date\",\"date_fmt\":\"%d-%m-%Y\"}" >/dev/null
+  if [[ "$done" == true ]]; then
+    printf '✓ %s: done today\n' "$name"
+  else
+    printf '○ %s: not done today\n' "$name"
+  fi
+}
+
+bh_pick() {
+  local tsv pending choice
+  tsv="$(bh_today_tsv)" || exit $?
+  pending="$(awk -F'\t' '$3 == "false" { print $2 }' <<<"$tsv")"
+  [[ -n "$pending" ]] || { echo "Every habit is done today."; return 0; }
+  choice="$(vicinae dmenu --placeholder "Mark a habit done" <<<"$pending")" || return 0
+  [[ -n "$choice" ]] || return 0
+  bh_tick true "$choice"
+}
+
+bh_main() {
+  case "${1:-}" in
+  list) bh_list ;;
+  report) bh_report ;;
+  done) bh_tick true "${2:-}" ;;
+  undo) bh_tick false "${2:-}" ;;
+  pick) bh_pick ;;
+  *) bh_die 2 "usage: beaverhabits list | report | done <habit> | undo <habit> | pick" ;;
+  esac
+}
+
+bh_main "$@"
