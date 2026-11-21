@@ -1,0 +1,84 @@
+# Terminal Noir for Vicinae (nandomoreira.dev).
+# Colors come from configs/noctalia/palettes/Terminal Noir.json and
+# configs/themes/terminal-noir/syntax.json; tests/unit/configs/vicinae-theme.bats
+# rejects any color outside them.
+
+[meta]
+version = 1
+name = "Terminal Noir"
+description = "Near-black surfaces, zinc text and an amber accent."
+variant = "dark"
+inherits = "vicinae-dark"
+
+[colors.core]
+accent = "#F5A623"
+accent_foreground = "#0B0B0C"
+background = "#0B0B0C"
+foreground = "#F4F4F5"
+secondary_background = "#121214"
+border = "#222226"
+
+[colors.main_window]
+border = "#F5A623"
+footer = { background = "#121214" }
+
+[colors.settings_window]
+border = "#3F3F46"
+
+[colors.accents]
+blue = "#58A6FF"
+green = "#34D399"
+magenta = "#BC8CFF"
+orange = "#F5A623"
+red = "#FF7B72"
+yellow = "#FACF9E"
+cyan = "#39C5CF"
+purple = "#D2A8FF"
+
+[colors.shortcut]
+border = "#3F3F46"
+
+[colors.text]
+default = "#F4F4F5"
+muted = "#A1A1AA"
+danger = "#FFB7B0"
+success = "#34D399"
+placeholder = "#6B6B74"
+selection = { background = "#52525B", foreground = "#F4F4F5" }
+
+[colors.text.links]
+default = "#F5A623"
+visited = "#BC8CFF"
+
+[colors.input]
+border = "#222226"
+border_focus = "#F5A623"
+border_error = "#FFB7B0"
+
+[colors.button.primary]
+background = "#18181B"
+foreground = "#F4F4F5"
+hover = { background = "#222226" }
+focus = { outline = "#F5A623" }
+
+[colors.list.item.hover]
+foreground = "#F4F4F5"
+secondary_foreground = "#A1A1AA"
+
+[colors.list.item.selection]
+background = "#18181B"
+foreground = "#F5A623"
+secondary_background = "#222226"
+secondary_foreground = "#F4F4F5"
+
+[colors.grid.item]
+background = "#121214"
+hover = { outline = "#3F3F46" }
+selection = { outline = "#F5A623" }
+
+[colors.scrollbars]
+background = "#3F3F46"
+
+[colors.loading]
+bar = "#F5A623"
+spinner = "#F4F4F5"

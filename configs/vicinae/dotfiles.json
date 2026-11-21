@@ -1,0 +1,23 @@
+{
+	"$schema": "https://vicinae.com/schemas/config.json",
+	"theme": {
+		"dark": {
+			"name": "terminal-noir"
+		}
+	},
+	"launcher_window": {
+		"client_side_decorations": {
+			"enabled": true,
+			"border_width": 3
+		},
+		"compact_mode": {
+			"enabled": true
+		}
+	},
+	"font": {
+		"normal": {
+			"family": "Inter"
+		}
+	},
+	"pop_to_root_on_close": true
+}
