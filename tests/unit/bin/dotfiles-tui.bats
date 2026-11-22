@@ -24,7 +24,12 @@ STUB
     cat > "$STUBS/dotfiles" <<'STUB'
 #!/bin/sh
 echo "dotfiles $*" >> "$CALL_LOG"
+echo "stub output for $*"
+case " $* " in *" ${FAKE_FAIL_ARG:-__none__} "*) exit 1 ;; esac
+exit 0
 STUB
+    # sudo -v / sudo -n true succeed without a password in the tests.
+    printf '#!/bin/sh\necho "sudo $*" >> "$CALL_LOG.sudo"\nexit 0\n' > "$STUBS/sudo"
     chmod +x "$STUBS"/*
 }
 
@@ -36,6 +41,7 @@ drive() {
     for key in "$@"; do feed="$feed; printf '$key'; sleep 1"; done
     run timeout 40 env -i HOME="$BATS_TEST_TMPDIR" TERM=xterm-256color \
         PATH="$STUBS:/usr/bin:/bin" CALL_LOG="$CALL_LOG" FAKE_UPDATES="${FAKE_UPDATES:-}" \
+        FAKE_FAIL_ARG="${FAKE_FAIL_ARG:-}" \
         DOTFILES_TUI_CLI="$STUBS/dotfiles" \
         bash -c "($feed) | script -qec 'stty rows 30 cols 100; $SCRIPT' /dev/null"
 }
@@ -74,6 +80,26 @@ drive() {
     [[ "$output" == *"Install checklist"* ]]
     run cat "$CALL_LOG"
     [ "$output" = "dotfiles packages install --manager pacman --yes" ]
+}
+
+@test "the install output and the result show inside the TUI" {
+    drive '\r' ' ' '\r' '\r' 'q'
+    [[ "$output" == *"Installing"* ]]
+    [[ "$output" == *"stub output for packages install --manager pacman --yes"* ]]
+    [[ "$output" == *"All steps finished"* ]]
+    [[ "$output" == *".cache/dotfiles/tui-"*".log"* ]]
+    # The commands ran in the background, never in the normal terminal.
+    [[ "$output" != *"==> pacman"*"Press enter to return"* ]]
+}
+
+@test "a failed step is marked and named in the summary" {
+    FAKE_FAIL_ARG=pacman drive '\r' ' ' '\r' '\r' 'q'
+    [[ "$output" == *"Failed: pacman"* ]]
+}
+
+@test "sudo is unlocked once before the background run" {
+    drive '\r' ' ' '\r' '\r' 'q'
+    grep -q '^sudo -v$' "$CALL_LOG.sudo"
 }
 
 @test "nothing runs when no step is selected" {

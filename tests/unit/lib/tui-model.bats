@@ -143,3 +143,67 @@ base-devel" ]
     model 'set -euf; _tui_steps >/dev/null; _tui_base_missing >/dev/null; echo OK'
     [[ "$output" == *"OK"* ]]
 }
+
+# ---- background runner ----
+
+@test "the logged runner records each step and captures its output" {
+    cat > "$STUBS/dotfiles" <<'STUB'
+#!/bin/sh
+echo "dotfiles $*" >> "$CALL_LOG"
+printf '\033[32minstalling\033[0m %s\n' "$*"
+case " $* " in *" ${FAKE_FAIL_ARG:-__none__} "*) echo "boom" >&2; exit 3 ;; esac
+STUB
+    chmod +x "$STUBS/dotfiles"
+    FAKE_FAIL_ARG=aur model "_tui_run_logged '$BATS_TEST_TMPDIR/state' '$BATS_TEST_TMPDIR/log' pacman aur links"
+    run cat "$BATS_TEST_TMPDIR/state"
+    [ "$output" = "start pacman
+ok pacman
+start aur
+fail aur
+start links
+ok links
+done 1" ]
+    grep -q 'installing.* packages install --manager pacman --yes' "$BATS_TEST_TMPDIR/log"
+    grep -q 'boom' "$BATS_TEST_TMPDIR/log"
+    grep -q '^==> aur' "$BATS_TEST_TMPDIR/log"
+}
+
+@test "the logged runner never reads the terminal" {
+    cat > "$STUBS/dotfiles" <<'STUB'
+#!/bin/sh
+read -r answer && echo "read: $answer"
+echo "stdin done"
+STUB
+    chmod +x "$STUBS/dotfiles"
+    run bash -c "echo SECRET | env -i HOME='$BATS_TEST_TMPDIR' PATH='$STUBS' DOTFILES_TUI_CLI='$STUBS/dotfiles' /usr/bin/bash -c \"source '$PROJECT_ROOT/lib/tui-model.sh'; _tui_run_logged '$BATS_TEST_TMPDIR/state' '$BATS_TEST_TMPDIR/log' links\""
+    run grep -c SECRET "$BATS_TEST_TMPDIR/log"
+    [ "$output" = "0" ]
+}
+
+@test "a raw command can run as one logged step" {
+    model "_tui_run_logged_cmd '$BATS_TEST_TMPDIR/state' '$BATS_TEST_TMPDIR/log' update '$STUBS/dotfiles' custom args"
+    run cat "$BATS_TEST_TMPDIR/state"
+    [ "$output" = "start update
+ok update
+done 0" ]
+}
+
+@test "step status follows the state file" {
+    printf 'start pacman\nok pacman\nstart aur\nfail aur\nstart links\n' > "$BATS_TEST_TMPDIR/state"
+    model "for s in pacman aur links fonts; do _tui_step_status '$BATS_TEST_TMPDIR/state' \$s; done; _tui_runner_done '$BATS_TEST_TMPDIR/state' || echo running"
+    [ "$output" = "ok
+failed
+running
+pending
+running" ]
+    printf 'done 1\n' >> "$BATS_TEST_TMPDIR/state"
+    model "_tui_runner_done '$BATS_TEST_TMPDIR/state' && echo finished"
+    [ "$output" = "finished" ]
+}
+
+@test "the log tail drops color codes and cuts long lines" {
+    printf 'one\n\033[1;32mtwo\033[0m\n%s\n' "$(printf 'x%.0s' $(seq 1 50))" > "$BATS_TEST_TMPDIR/log"
+    PATH_EXTRA=1 run env -i PATH="/usr/bin:/bin" /usr/bin/bash -c "source '$PROJECT_ROOT/lib/tui-model.sh'; _tui_log_tail '$BATS_TEST_TMPDIR/log' 2 10"
+    [ "$output" = "two
+xxxxxxxxxx" ]
+}

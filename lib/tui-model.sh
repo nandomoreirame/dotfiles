@@ -106,3 +106,79 @@ _tui_run_steps() {
     done
     [ "${#TUI_FAILED_STEPS[@]}" -eq 0 ]
 }
+
+# ---- background runner -------------------------------------------------------
+# The TUI runs steps in the background and redraws from two files: a state file
+# with one event per line ("start <id>", "ok <id>", "fail <id>", "done <rc>")
+# and a log with every byte the commands print. Commands never read the
+# terminal (stdin is /dev/null), so a prompt fails instead of hanging the TUI.
+
+# _tui_run_logged <state> <log> <id...>: run checklist steps, logging.
+_tui_run_logged() {
+    local state="$1" log="$2" id args rc=0
+    shift 2
+    : >"$state"
+    for id in "$@"; do
+        printf 'start %s\n' "$id" >>"$state"
+        if args="$(_tui_step_args "$id")"; then
+            printf '\n==> %s: %s %s\n' "$id" "$DOTFILES_TUI_CLI" "$args" >>"$log"
+            # shellcheck disable=SC2086 # args is a fixed word list from _tui_step_args
+            if "$DOTFILES_TUI_CLI" $args </dev/null >>"$log" 2>&1; then
+                printf 'ok %s\n' "$id" >>"$state"
+                continue
+            fi
+        fi
+        printf 'fail %s\n' "$id" >>"$state"
+        rc=1
+    done
+    printf 'done %s\n' "$rc" >>"$state"
+}
+
+# _tui_run_logged_cmd <state> <log> <id> <command...>: one raw command as a step.
+_tui_run_logged_cmd() {
+    local state="$1" log="$2" id="$3" rc=0
+    shift 3
+    : >"$state"
+    printf 'start %s\n' "$id" >>"$state"
+    printf '\n==> %s: %s\n' "$id" "$*" >>"$log"
+    if "$@" </dev/null >>"$log" 2>&1; then
+        printf 'ok %s\n' "$id" >>"$state"
+    else
+        printf 'fail %s\n' "$id" >>"$state"
+        rc=1
+    fi
+    printf 'done %s\n' "$rc" >>"$state"
+}
+
+# _tui_step_status <state> <id>: pending, running, ok or failed.
+_tui_step_status() {
+    local status=pending event name
+    [ -r "$1" ] || { printf 'pending\n'; return 0; }
+    while read -r event name; do
+        [ "$name" = "$2" ] || continue
+        case "$event" in
+            start) status=running ;;
+            ok) status=ok ;;
+            fail) status=failed ;;
+        esac
+    done <"$1"
+    printf '%s\n' "$status"
+}
+
+# _tui_runner_done <state>: true once the runner wrote its final "done" line.
+_tui_runner_done() {
+    local event rest
+    [ -r "$1" ] || return 1
+    while read -r event rest; do
+        [ "$event" = "done" ] && return 0
+    done <"$1"
+    return 1
+}
+
+# _tui_log_tail <log> <lines> <width>: the last lines, color codes and carriage
+# returns removed, each cut to the given width.
+_tui_log_tail() {
+    [ -r "$1" ] || return 0
+    tail -n "$2" "$1" | sed -e 's/\x1b\[[0-9;?]*[A-Za-z]//g' -e 's/\x1b[()][A-Z0-9]//g' -e 's/\r//g' |
+        cut -c "1-$3"
+}
