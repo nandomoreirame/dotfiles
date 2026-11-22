@@ -312,6 +312,19 @@ EOF
     [ -z "$(ls "$HOME"/.config/x/ | grep -v '^c$')" ]
 }
 
+@test "a symlink that already resolves to the source through another path is kept" {
+    export DOTFILES="$BATS_TEST_TMPDIR/dot" HOME="$BATS_TEST_TMPDIR/home"
+    export DOTFILES_PRIVATE="$DOTFILES/private" LINKS_CONFIG="$DOTFILES/configs/links.conf"
+    mkdir -p "$DOTFILES/configs/x" "$HOME/.config/x"; echo a > "$DOTFILES/configs/x/c"
+    ln -s "$DOTFILES" "$BATS_TEST_TMPDIR/alias"
+    ln -s "$BATS_TEST_TMPDIR/alias/configs/x/c" "$HOME/.config/x/c"
+    printf '[paths]\nconfigs/x/c | .config/x/c |\n' > "$DOTFILES/configs/links.conf"
+    run bash -c "source '$ROOT/lib/links.sh'; _link_paths"
+    [ "$status" -eq 0 ]
+    [[ "$output" != *"Linked"* ]]
+    [ "$(readlink "$HOME/.config/x/c")" = "$BATS_TEST_TMPDIR/alias/configs/x/c" ]
+}
+
 @test "the public links.conf ships sections and no private-only paths" {
     grep -q "^\[files\]" "$ROOT/configs/links.conf"
     grep -q "^\[paths\]" "$ROOT/configs/links.conf"

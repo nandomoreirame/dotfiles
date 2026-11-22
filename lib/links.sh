@@ -135,7 +135,10 @@ _create_links() {
             continue
         fi
         destination="$HOME/$target"
-        if [ -L "$destination" ] && [ "$(readlink -- "$destination")" = "$src" ]; then
+        # Keep a link that already reaches the source, even through another
+        # path (for example a symlinked checkout).
+        if [ -L "$destination" ] && { [ "$(readlink -- "$destination")" = "$src" ] ||
+            [ "$(readlink -f -- "$destination")" = "$(readlink -f -- "$src")" ]; }; then
             continue
         fi
         parent=$(dirname -- "$destination")
