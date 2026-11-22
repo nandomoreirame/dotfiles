@@ -253,7 +253,7 @@ numlock_toggle = true
 "Mod+Shift+Return" = { action = "spawn ghostty -e claude", repeat = false }
 "Mod+Shift+B" = { action = "spawn google-chrome-stable", repeat = false }
 "Mod+Shift+Alt+B" = { action = "spawn google-chrome-stable --incognito", repeat = false }
-"Mod+Shift+F" = { action = "spawn nautilus --new-window", repeat = false }
+"Mod+Shift+F" = { action = "spawn luciole", repeat = false }
 "Mod+Shift+E" = { action = "spawn cursor", repeat = false }
 "Mod+Shift+I" = { action = "spawn code", repeat = false }
 "Mod+Shift+N" = { action = "spawn google-chrome-stable --app=https://notion.so", repeat = false }

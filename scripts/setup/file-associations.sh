@@ -15,6 +15,8 @@ _desktop_exists() {
   return 1
 }
 
+# _set_default <handler> <mime...>: set only MIME types with no default.
+# REPLACEABLE lists handlers that may be replaced anyway (space-separated).
 _set_default() {
   local handler="$1"; shift
   local mime
@@ -26,7 +28,9 @@ _set_default() {
   for mime in "$@"; do
     # Never override a default the user (or another app) already chose.
     current="$(xdg-mime query default "$mime" 2>/dev/null || true)"
-    if [ -n "$current" ]; then
+    if [ -n "$current" ] && [ "$current" != "$handler" ] && [[ " ${REPLACEABLE:-} " == *" $current "* ]]; then
+      printf '  %s: replacing %s\n' "$mime" "$current"
+    elif [ -n "$current" ]; then
       printf '  %s already opens with %s (kept)\n' "$mime" "$current"
       continue
     fi
@@ -37,6 +41,9 @@ _set_default() {
 }
 
 printf '%s\n' "Applying default file associations..."
+
+# Luciole is the file manager; it takes over folders from Nautilus, a GNOME default.
+REPLACEABLE="org.gnome.Nautilus.desktop" _set_default dev.noctalia.luciole.desktop inode/directory
 
 _set_default libreoffice-calc.desktop \
   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet \

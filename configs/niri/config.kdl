@@ -331,7 +331,7 @@ binds {
     Mod+Shift+Return hotkey-overlay-title="Claude Code (ghostty)" { spawn "ghostty" "-e" "claude"; }
     Mod+Shift+B      hotkey-overlay-title="Browser" { spawn "google-chrome-stable"; }
     Mod+Shift+Alt+B  hotkey-overlay-title="Browser (private)" { spawn "google-chrome-stable" "--incognito"; }
-    Mod+Shift+F      hotkey-overlay-title="File manager" { spawn "nautilus" "--new-window"; }
+    Mod+Shift+F      hotkey-overlay-title="File manager" { spawn "luciole"; }
 
     // Editors: Cursor -> Super+Shift+E (quit relocated to Ctrl+Alt+Delete only),
     // VS Code -> Super+Shift+I (Super+Shift+V collides with niri float-switch).

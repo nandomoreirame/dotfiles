@@ -228,3 +228,41 @@ run_lv() { run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" USER=tester "$@" 
 @test "the registry runs libvirt.sh during install" {
     grep -Fq 'libvirt.sh|auto|' "$ROOT/scripts/setup/registry.conf"
 }
+
+# fa_stubs <current-default-for-inode/directory>: xdg-mime that reports it.
+fa_stubs() {
+    mkdir -p "$HOME/.local/share/applications"
+    printf '[Desktop Entry]\nName=Luciole\n' > "$HOME/.local/share/applications/dev.noctalia.luciole.desktop"
+    printf '#!/bin/sh\necho "xdg-mime $*" >> "%s"\n[ "$1" = "query" ] && [ "$3" = "inode/directory" ] && [ -n "%s" ] && echo "%s"\nexit 0\n' "$LOG" "$1" "$1" > "$STUBS/xdg-mime"
+    chmod +x "$STUBS/xdg-mime"
+}
+
+@test "file-associations makes Luciole the folder handler when none is set" {
+    fa_stubs ""
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/file-associations.sh"
+    [ "$status" -eq 0 ]
+    grep -Fqx 'xdg-mime default dev.noctalia.luciole.desktop inode/directory' "$LOG"
+}
+
+@test "file-associations replaces Nautilus as the folder handler" {
+    fa_stubs "org.gnome.Nautilus.desktop"
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/file-associations.sh"
+    [ "$status" -eq 0 ]
+    grep -Fqx 'xdg-mime default dev.noctalia.luciole.desktop inode/directory' "$LOG"
+}
+
+@test "file-associations keeps another folder handler the user chose" {
+    fa_stubs "thunar.desktop"
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/file-associations.sh"
+    [ "$status" -eq 0 ]
+    run grep -F 'xdg-mime default dev.noctalia.luciole.desktop' "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "the file manager is Luciole in the package list and the compositor binds" {
+    grep -qw 'luciole-git' "$ROOT/packages/aur.list"
+    grep -Fq '"Mod+Shift+F" = { action = "spawn luciole"' "$ROOT/configs/umbriel/base.toml"
+    grep -Fq 'spawn "luciole"' "$ROOT/configs/niri/config.kdl"
+    run grep -n 'nautilus' "$ROOT/configs/umbriel/base.toml" "$ROOT/configs/niri/config.kdl"
+    [ "$status" -ne 0 ]
+}
