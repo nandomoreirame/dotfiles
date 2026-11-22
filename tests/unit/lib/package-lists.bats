@@ -85,3 +85,12 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
     [ "$status" -ne 0 ]
     [[ "$output" == *"Invalid package name"* ]]
 }
+
+@test "the desktop groups install Umbriel, its portal and the Vicinae launcher" {
+    export DOTFILES="$ROOT"
+    run bash -c "source '$ROOT/lib/package-lists.sh'; _package_list pacman desktop"
+    [[ " $(echo $output) " == *" umbriel "* ]]
+    [[ " $(echo $output) " == *" xdg-desktop-portal-umbriel "* ]]
+    run bash -c "source '$ROOT/lib/package-lists.sh'; _package_list aur desktop"
+    [[ " $(echo $output) " == *" vicinae-bin "* ]]
+}

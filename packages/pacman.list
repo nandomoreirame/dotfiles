@@ -1,5 +1,6 @@
 # Public Arch packages installed by pacman. Personal picks go in private/packages/pacman.list.
 # Groups: core shell containers fonts desktop
+# umbriel and its portal come from the CachyOS repo (on plain Arch, use umbriel-git from the AUR).
 
 ## core
 bat curl git ncdu zsh vim bind-tools gnupg wget aria2 shellcheck wl-clipboard fzf ripgrep unzip fontconfig git-delta base-devel github-cli pacman-contrib bash-completion duf plocate pkgfile zoxide eza mise reflector rebuild-detector
@@ -14,4 +15,4 @@ podman podman-docker podman-compose fuse-overlayfs flatpak
 ttf-firacode-nerd ttf-jetbrains-mono-nerd ttf-meslo-nerd ttf-roboto-mono-nerd ttf-ubuntu-nerd ttf-ubuntu-mono-nerd ttf-nerd-fonts-symbols noto-fonts noto-fonts-emoji noto-fonts-cjk
 
 ## desktop
-cliphist wlsunset cava matugen ddcutil polkit-gnome pavucontrol nwg-displays loupe sushi gnome-disk-utility mpv meld micro chromium gst-plugins-base gst-plugins-good gst-plugin-gtk4
+umbriel xdg-desktop-portal-umbriel cliphist wlsunset cava matugen ddcutil polkit-gnome pavucontrol nwg-displays loupe sushi gnome-disk-utility mpv meld micro chromium gst-plugins-base gst-plugins-good gst-plugin-gtk4
