@@ -34,6 +34,10 @@ Then install:
 ./install.sh --yes
 ```
 
+A rerun on a configured machine skips what is already there and ends with a summary:
+
+![dotfiles install on a configured machine: installed packages are skipped, setup scripts run and the install finishes](.github/assets/install.png)
+
 Limit packages to one group, or skip the verified remote installer:
 
 ```bash
