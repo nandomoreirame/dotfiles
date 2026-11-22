@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Scratchpad toggle and close helpers for Umbriel.
+
+Apps that close to the tray (Spotify, Chrome webapps, Grok) can leave their
+floating window outside its scratchpad. Umbriel keeps that orphan "visible",
+never draws it and still routes clicks to it, so it acts as an invisible
+overlay, and the next scratchpad-toggle spawns a duplicate instance.
+
+Usage:
+  umbriel-scratchpad toggle <name>   fix orphans of <name>, then scratchpad-toggle
+  umbriel-scratchpad close           close the active window (Ctrl+Q / Mod+Q)
+
+toggle: an orphan (floating, outside any scratchpad, app id matching a
+window_rule with default_scratchpad = <name>) moves back into an empty
+scratchpad; it is minimized when the move fails or the scratchpad already
+holds a window.
+
+close: a scratchpad window whose client owns no other window is closed for
+good (window-kill). A shared client (every Chrome webapp is the same Chrome
+process) is never killed: it gets window-close, and a window that survives it
+gets minimized so it cannot linger as an orphan.
+"""
+
+import glob
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import tomllib
+
+
+def query_windows():
+    """Return the window list from the first `subscribe windows` event."""
+    proc = subprocess.Popen(
+        ["umbriel", "subscribe", "windows"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+    )
+    try:
+        line = proc.stdout.readline()
+    finally:
+        proc.terminate()
+        proc.wait()
+    try:
+        return json.loads(line).get("data", [])
+    except (json.JSONDecodeError, AttributeError):
+        return []
+
+
+def msg(*args):
+    subprocess.run(["umbriel", "msg", *args], check=False)
+
+
+def config_dir():
+    base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+    return os.path.join(base, "umbriel")
+
+
+def app_id_patterns(name):
+    """Collect app id regexes of window rules that target scratchpad <name>."""
+    patterns = []
+    for path in sorted(glob.glob(os.path.join(config_dir(), "*.toml"))):
+        try:
+            with open(path, "rb") as fh:
+                data = tomllib.load(fh)
+        except (OSError, tomllib.TOMLDecodeError):
+            continue
+        for rule in data.get("window_rule", []):
+            if rule.get("default_scratchpad") != name:
+                continue
+            app_id = rule.get("match", {}).get("app_id")
+            if not isinstance(app_id, str):
+                continue
+            try:
+                patterns.append(re.compile(app_id))
+            except re.error:
+                continue
+    return patterns
+
+
+def find(windows, wid):
+    return next((w for w in windows if w.get("id") == wid), None)
+
+
+def toggle(name):
+    patterns = app_id_patterns(name)
+    windows = query_windows() if patterns else []
+    has_member = any(w.get("scratchpad") == name for w in windows)
+    orphans = [
+        w
+        for w in windows
+        if w.get("floating")
+        and not w.get("scratchpad")
+        and any(p.search(w.get("app_id", "")) for p in patterns)
+    ]
+    for orphan in orphans:
+        wid = orphan["id"]
+        if not has_member:
+            msg("window-focus", wid)
+            msg("window-move-to-scratchpad", name)
+            after = find(query_windows(), wid)
+            if after is not None and after.get("scratchpad") == name:
+                has_member = True
+                continue
+            msg("window-minimize", wid)
+        elif orphan.get("visible") and not orphan.get("minimized"):
+            msg("window-minimize", wid)
+    msg("scratchpad-toggle", name)
+
+
+def close():
+    windows = query_windows()
+    active = next((w for w in windows if w.get("active")), None)
+    if active is None:
+        return
+    wid = active["id"]
+    if not active.get("scratchpad"):
+        msg("window-close", wid)
+        return
+    pid = active.get("pid")
+    shared = any(w.get("pid") == pid and w.get("id") != wid for w in windows)
+    if not shared:
+        msg("window-kill", wid)
+        return
+    msg("window-close", wid)
+    time.sleep(float(os.environ.get("UMBRIEL_SCRATCHPAD_CLOSE_WAIT", "0.5")))
+    if find(query_windows(), wid) is not None:
+        msg("window-minimize", wid)
+
+
+def main(argv):
+    if len(argv) == 2 and argv[0] == "toggle" and argv[1]:
+        toggle(argv[1])
+        return 0
+    if argv == ["close"]:
+        close()
+        return 0
+    print("usage: umbriel-scratchpad toggle <name> | close", file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

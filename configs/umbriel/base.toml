@@ -261,13 +261,13 @@ numlock_toggle = true
 "Ctrl+Shift+Space" = { action = "spawn 1password --quick-access", repeat = false }
 
 # Scratchpads (show/hide; launch when empty). See [[scratchpad]] below.
-"Mod+Shift+X" = "scratchpad-toggle x-post"
-"Mod+Shift+Y" = "scratchpad-toggle youtube"
-"Mod+Shift+U" = "scratchpad-toggle youtube-music"
-"Mod+Shift+O" = "scratchpad-toggle obsidian"
-"Mod+Shift+D" = "scratchpad-toggle discord"
-"Mod+Shift+L" = "scratchpad-toggle localsend"
-"Mod+Shift+S" = "scratchpad-toggle spotify"
+"Mod+Shift+X" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle x-post", repeat = false }
+"Mod+Shift+Y" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle youtube", repeat = false }
+"Mod+Shift+U" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle youtube-music", repeat = false }
+"Mod+Shift+O" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle obsidian", repeat = false }
+"Mod+Shift+D" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle discord", repeat = false }
+"Mod+Shift+L" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle localsend", repeat = false }
+"Mod+Shift+S" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle spotify", repeat = false }
 "Mod+Alt+L" = { action = "spawn $HOME/.dotfiles/bin/utils/localsend-clip phone", repeat = false }
 
 
@@ -297,8 +297,8 @@ numlock_toggle = true
 "Mod+L" = { action = "spawn $HOME/.dotfiles/bin/utils/nocta lock", repeat = false }
 
 # Close and overview
-"Ctrl+Q" = { action = "window-close", repeat = false }
-"Mod+Q" = { action = "window-close", repeat = false }
+"Ctrl+Q" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad close", repeat = false }
+"Mod+Q" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad close", repeat = false }
 "Mod+O" = { action = "overview-toggle", repeat = false }
 
 # ---- Focus ----
@@ -566,26 +566,32 @@ default_floating_size_px = { width = 1200, height = 720 }
 [[scratchpad]]
 name = "spotify"
 spawn_when_empty = "spotify-launcher"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "youtube"
 spawn_when_empty = "google-chrome-stable --app=https://youtube.com"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "youtube-music"
 spawn_when_empty = "google-chrome-stable --app=https://music.youtube.com"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "obsidian"
 spawn_when_empty = "obsidian"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "discord"
 spawn_when_empty = "discord"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "localsend"
 spawn_when_empty = "localsend"
+hide_when_empty = true
 
 [[scratchpad]]
 name = "x-post"

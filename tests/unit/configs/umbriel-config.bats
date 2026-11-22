@@ -48,3 +48,14 @@ setup() {
     run env -i HOME="$BATS_TEST_TMPDIR" PATH="/usr/bin:/bin" XDG_CONFIG_HOME="$BATS_TEST_TMPDIR/xdg" umbriel config validate
     [ "$status" -eq 0 ]
 }
+
+@test "every scratchpad hides when empty so a closed window does not leave its dim behind" {
+    run python3 - "$U/base.toml" <<'PY'
+import sys, tomllib
+pads = tomllib.load(open(sys.argv[1], "rb")).get("scratchpad", [])
+missing = [p["name"] for p in pads if p.get("hide_when_empty") is not True]
+print(" ".join(missing))
+sys.exit(1 if missing or not pads else 0)
+PY
+    [ "$status" -eq 0 ] || { echo "missing hide_when_empty: $output"; false; }
+}
