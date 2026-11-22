@@ -279,7 +279,7 @@ numlock_toggle = true
 
 # Noctalia shell
 # Launcher and clipboard history: Vicinae (replaces the Noctalia launcher).
-"Mod" = "spawn vicinae toggle"
+# No bare Mod bind: tapping Super alone opens nothing.
 "Ctrl+Space" = { action = "spawn vicinae toggle", repeat = false }
 "Mod+D" = { action = "spawn vicinae toggle", repeat = false }
 "Mod+Alt+V" = { action = "spawn vicinae cmd launch clipboard:history", repeat = false }
