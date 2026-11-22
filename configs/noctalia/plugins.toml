@@ -1,5 +1,66 @@
 [plugins]
-# Built-in widgets only in the public tree. Enable plugins here (or replace this
-# file via the private overlay links.conf) after setting NOCTALIA_PLUGIN_AUTHOR.
-enabled = []
+enabled = ["noctalia/kaomoji", "nandomoreirame/aibar", "nandomoreirame/rdo-solo", "noctalia/screen_recorder", "yuuto/arch-updater", "dotnetrob/cat", "jrohland/claudecode", "prponkshe/mango-displays", "davemhammer/tailscale", "yocraft/desktop-launcher", "nomadcxx/gamer-mode", "alexmnrs/github-activity", "hy4ri/github-notifications", "nandomoreirame/daybar", "nandomoreirame/recbar", "nandomoreirame/webappbar", "nandomoreirame/ghbar", "nandomoreirame/obs-live", "nandomoreirame/camsbar", "nandomoreirame/cleanbar", "noctalia/umbriel-companion"]
 auto_update = "official"
+
+# The manifest ships the panel attached, which inherits the bar's background_opacity
+# (wallpaper blur shows through). Floating + shell.panel.transparency_mode = "solid" keeps it opaque.
+[plugin_settings."nandomoreirame/aibar"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+# Same as aibar: attached panels get no border and blend into the wallpaper.
+[plugin_settings."nandomoreirame/rdo-solo"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."nandomoreirame/scaffold"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+# Every other plugin panel that ships attached: floating gives it the solid
+# surface and the #222226 hairline from [shell.panel] in config.toml.
+[plugin_settings."nandomoreirame/daybar"]
+toolbar_placement = "floating"
+toolbar_open_near_click = true
+
+[plugin_settings."yuuto/arch-updater"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."dotnetrob/cat"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."jrohland/claudecode"]
+popout_placement = "floating"
+popout_open_near_click = true
+
+[plugin_settings."nomadcxx/gamer-mode"]
+main_placement = "floating"
+main_open_near_click = true
+
+[plugin_settings."alexmnrs/github-activity"]
+calendar_placement = "floating"
+calendar_open_near_click = true
+
+[plugin_settings."hy4ri/github-notifications"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."prponkshe/mango-displays"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+# Attached panels inherit the bar background; floating keeps the solid surface
+# and the #222226 hairline from [shell.panel] in config.toml.
+[plugin_settings."nandomoreirame/webappbar"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."nandomoreirame/ghbar"]
+panel_placement = "floating"
+panel_open_near_click = true
+
+[plugin_settings."nandomoreirame/cleanbar"]
+panel_placement = "floating"
+panel_open_near_click = true

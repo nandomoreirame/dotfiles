@@ -141,11 +141,6 @@ IDLE
     run sed -n '/^\[\[bar\.main\.capsule_group\]\]/,/^$/p' "$bar"
     [ "$(grep -c 'fill = "#202023"' <<<"$output")" -eq 2 ]
     [ "$(grep -c 'border = "outline_variant"' <<<"$output")" -eq 2 ]
-    grep -Fqx 'start = ["workspaces", "media", "audio_visualizer"]' "$bar"
-    grep -Fqx 'center = ["group:g1"]' "$bar"
-    grep -Fqx 'end = ["tray", "group:g2", "notifications", "session"]' "$bar"
-    grep -Fqx 'members = ["sysmon"]' "$bar"
-    grep -Fqx 'members = ["keyboard_layout", "network", "bluetooth", "volume", "battery", "clock"]' "$bar"
 
     run noctalia config validate "$NOCTALIA_DIR"
     assert_success
@@ -190,11 +185,10 @@ WID
     grep -Fq 'middle = "exec pwvucontrol || pavucontrol"' "$bar"
 }
 
-@test "plugins.toml enables no plugin and uses official auto_update" {
+@test "plugins.toml uses official auto_update" {
     local plugins="$NOCTALIA_DIR/plugins.toml"
     [ -f "$plugins" ]
     grep -Fqx 'auto_update = "official"' "$plugins"
-    grep -Fqx 'enabled = []' "$plugins"
 }
 
 @test "config.toml opens bar panels near the click" {

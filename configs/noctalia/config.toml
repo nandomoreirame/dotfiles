@@ -2,16 +2,20 @@
 ui_scale = 0.95
 
 [shell]
-# v5 has no global monospace key, only shell.font_family; set it per widget when needed.
+# v4's fixed face was FiraCode Nerd Font Mono. v5 has no global
+# monospace key, only shell.font_family; set it per widget when needed.
 font_family = "Open Sans SemiBold"
+avatar_path = "~/Imagens/.face.jpg"
 
 # Rounded screen corners (black overlay, 20 px radius).
 [shell.screen_corners]
 enabled = true
 size = 20
 
-# Floating + solid keeps panels on the opaque theme surface color.
+# v4 opened bar panels at the clicked widget (rightClickFollowMouse); v5 defaults to bar-center.
 # Only affects bar clicks: keybinds still open panels at their default spot.
+# Attached panels inherit the bar's background_opacity (wallpaper blur shows through);
+# floating + solid keeps them on the opaque theme surface color.
 [shell.panel]
 transparency_mode = "solid"
 control_center_placement = "floating"
@@ -22,7 +26,8 @@ open_near_click_launcher = true
 open_near_click_clipboard = true
 open_near_click_wallpaper = true
 open_near_click_session = true
-# Hairline on floating panels (#222226) instead of the outline role (#3F3F46).
+# Hairline on floating panels, the personal site card border (#222226)
+# instead of the outline role (#3F3F46).
 borders = true
 border_color = "#222226"
 border_width = 1.0
@@ -40,7 +45,10 @@ builtin_ids = ["gtk3", "gtk4", "btop"]
 
 [hooks]
 session_locked = "~/.dotfiles/bin/utils/nocta media-pause"
+shutting_down = "~/.dotfiles/private/bin/podman-shutdown"
+logging_out = "~/.dotfiles/private/bin/podman-shutdown"
 
+# v4 parity. Values mirror settings.json; keep both in sync until Stage 12.
 [idle]
 behavior_order = ["screen-off", "lock", "suspend"]
 
@@ -66,27 +74,26 @@ grace_period_seconds = 0
 
 [wallpaper]
 enabled = true
-# Public default: user Pictures folder. Private wallpapers stay in the overlay.
-directory = "~/Pictures"
+directory = "~/Imagens/wallpapers"
 fill_mode = "crop"
 transition = ["fade", "honeycomb"]
 transition_duration = 1500
 
-# Fixed wallpaper: no rotation.
+# Terminal Noir (noir) is the fixed wallpaper: no rotation.
 [wallpaper.automation]
 enabled = false
 interval_seconds = 300
 order = "random"
 
 [location]
-auto_locate = true
-address = ""
+auto_locate = false
+address = "São Paulo"
 
 [weather]
 enabled = true
 unit = "metric"
 
-# Off by default; the widget/shortcut turns it on and the schedule follows location.
+# Off like v4; the widget/shortcut turns it on and the schedule follows location.
 [nightlight]
 enabled = false
 temperature_day = 5875

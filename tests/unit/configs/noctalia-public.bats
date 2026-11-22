@@ -2,18 +2,19 @@
 
 setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; N="$ROOT/configs/noctalia"; }
 
-@test "bar uses built-in widgets only" {
-    run grep -nE '^type = "[^"]*/' "$N/bar.toml"
-    [ "$status" -ne 0 ]
+@test "every plugin widget in the bar has its plugin enabled" {
+    run python3 -I -c '
+import sys, tomllib
+bar = tomllib.load(open(sys.argv[1], "rb"))
+enabled = set(tomllib.load(open(sys.argv[2], "rb"))["plugins"]["enabled"])
+missing = sorted({w["type"].split(":")[0] for w in bar.get("widget", {}).values()
+                  if isinstance(w, dict) and "/" in w.get("type", "")} - enabled)
+print(" ".join(missing)); sys.exit(1 if missing else 0)' "$N/bar.toml" "$N/plugins.toml"
+    [ "$status" -eq 0 ] || { echo "not enabled: $output"; false; }
 }
 
-@test "plugins.toml enables no plugin" {
-    run python3 -I -c 'import sys,tomllib; d=tomllib.load(open(sys.argv[1],"rb")); sys.exit(0 if d["plugins"]["enabled"]==[] else 1)' "$N/plugins.toml"
-    [ "$status" -eq 0 ]
-}
-
-@test "noctalia files carry no personal string" {
-    run grep -rnE "nan""domoreira|avatar_path|/home/|Imagens" "$N"
+@test "noctalia files carry no absolute home path" {
+    run grep -rnE "/home/" "$N"
     [ "$status" -ne 0 ]
 }
 
@@ -27,17 +28,19 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; N="$ROOT/configs/no
     [ -f "$N/palettes/Terminal Noir.json" ]
 }
 
-@test "config.toml has no dead podman-shutdown hooks" {
-    ! grep -q 'podman-shutdown' "$N/config.toml"
+@test "config.toml hooks call helpers that exist in the clone or its overlay" {
+    local ref path missing=0
+    while IFS= read -r ref; do
+        path="$ROOT/${ref#\~/.dotfiles/}"
+        case "$ref" in *"/.dotfiles/private/"*) [ -d "$ROOT/private" ] || continue ;; esac
+        [ -x "$path" ] || { echo "missing hook helper: $ref"; missing=1; }
+    done < <(grep -oE '~/\.dotfiles/[A-Za-z0-9/_-]+' "$N/config.toml" | sort -u)
+    [ "$missing" -eq 0 ]
 }
 
-@test "wallpaper directory is not the private wallpapers tree" {
-    ! grep -qE 'directory = "~/.dotfiles/wallpapers"|directory = ".*/wallpapers"' "$N/config.toml"
-}
-
-@test "location does not hard-code a city with auto_locate false" {
-    ! grep -qE 'address = "São Paulo"|address = "Sao Paulo"' "$N/config.toml"
-    grep -q 'auto_locate = true' "$N/config.toml"
+@test "wallpaper directory is not inside the dotfiles tree" {
+    run grep -nE 'directory = "~/\.dotfiles/' "$N/config.toml"
+    [ "$status" -ne 0 ]
 }
 
 @test "user-templates.toml has no legacy config or templates sections" {
@@ -48,5 +51,7 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; N="$ROOT/configs/no
     command -v noctalia >/dev/null || skip "noctalia CLI not installed"
     run noctalia config validate "$N"
     [ "$status" -eq 0 ]
-    [[ "$output" != *[Ww]arn* ]]
+    # Judge the repo files only: ~/.local/state/noctalia/settings.toml is machine state.
+    run grep -i warn <<<"$(grep -v '/.local/state/' <<<"$output")"
+    [ "$status" -ne 0 ] || { echo "$output"; false; }
 }

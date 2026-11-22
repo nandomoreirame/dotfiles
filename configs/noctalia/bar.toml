@@ -3,6 +3,8 @@ order = ["main"]
 
 # Floating islands: the bar is a fully transparent full-width strip (no
 # surface, border or shadow), so only the capsule groups show over the wallpaper.
+# Layout and capsule groups were saved from the Settings UI into
+# ~/.local/state/noctalia/settings.toml; they live here now.
 [bar.main]
 position = "top"
 thickness = 34
@@ -20,13 +22,13 @@ capsule = true
 # the bar surface (#0B0B0C), with outline_variant as their edge.
 capsule_fill = "#202023"
 capsule_border = "outline_variant"
-start = ["workspaces", "media", "audio_visualizer"]
+start = ["workspaces", "media", "audio_visualizer", "pill"]
 center = ["group:g1"]
-end = ["tray", "group:g2", "notifications", "session"]
+end = ["cleanbar", "camsbar", "recbar", "scaffold", "ghbar", "tray", "group:g2", "notifications", "widget_2", "session"]
 
 [[bar.main.capsule_group]]
 id = "g1"
-members = ["sysmon"]
+members = ["aibar", "bar_2", "cat", "sysmon", "status", "bar"]
 fill = "#202023"
 border = "outline_variant"
 border_width = 1.0
@@ -40,7 +42,7 @@ border = "outline_variant"
 border_width = 1.0
 padding = 6.0
 
-# Example: disable the bar on specific outputs (private overlay can retarget).
+# The bar lives on the middle monitor (HDMI-A-1) only.
 [bar.main.monitor.dp1]
 match = "DP-1"
 enabled = false
@@ -49,7 +51,7 @@ enabled = false
 match = "eDP-1"
 enabled = false
 
-# Bar clicks: right = control center, middle = settings, wheel = workspace.
+# v4 bar clicks: right = control center, middle = settings, wheel = workspace.
 [bar.main.dead_zone.actions]
 right = "panel-toggle control-center"
 middle = "settings-toggle"
@@ -72,6 +74,51 @@ launcher_position = "start"
 magnification_scale = 1.6
 show_dots = true
 
+[widget.aibar]
+type = "nandomoreirame/aibar:bar"
+
+[widget.bar]
+type = "nandomoreirame/rdo-solo:bar"
+
+[widget.bar_2]
+type = "nandomoreirame/daybar:bar"
+
+[widget.cat]
+type = "dotnetrob/cat:cat"
+cat_size = 28
+run_threshold = 40
+walk_threshold = 10
+show_cpu_percent = true
+
+[widget.status]
+type = "davemhammer/tailscale:status"
+
+[widget.widget_2]
+type = "yuuto/arch-updater:widget"
+
+[widget.pill]
+type = "jrohland/claudecode:pill"
+enabled = false
+
+[widget.rdo_solo]
+type = "nandomoreirame/rdo-solo:bar"
+
+# Red CAM pill while a webcam is open (hidden otherwise).
+[widget.camsbar]
+type = "nandomoreirame/camsbar:bar"
+
+# Red REC/GIF pill with elapsed time while gsr-toggle records (hidden otherwise).
+[widget.recbar]
+type = "nandomoreirame/recbar:bar"
+
+# Hello World template example. Remove its slot and enabled id to disable.
+[widget.scaffold]
+type = "nandomoreirame/scaffold:bar"
+scale = 0.75
+
+[widget.ghbar]
+type = "nandomoreirame/ghbar:bar"
+
 [widget.active_window]
 display = "icon_only"
 min_length = 8
@@ -88,7 +135,7 @@ show_labels = false
 stat = "ram_used"
 visualization = "none"
 
-# Single-stat sysmon instances.
+# Single-stat sysmon instances kept from the v4 SystemMonitor port.
 [widget.cpu]
 type = "sysmon"
 stat = "cpu_usage"
@@ -104,7 +151,7 @@ font_family = "FiraCode Nerd Font Mono"
 [widget.disk]
 type = "sysmon"
 stat = "disk_used"
-path = "/"
+path = "/home"
 visualization = "none"
 font_family = "FiraCode Nerd Font Mono"
 
@@ -144,3 +191,6 @@ hide_when_plugged = true
 [widget.clock]
 format = "{:%A, %d %b %Y - %H:%M:%S}"
 tooltip_format = "{:%H:%M %a, %b %d}"
+
+[widget.cleanbar]
+type = "nandomoreirame/cleanbar:bar"
