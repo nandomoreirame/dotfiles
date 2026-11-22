@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 
 _install_mise_packages() {
     local config_file="$DOTFILES/configs/mise/config.toml"
@@ -27,7 +29,7 @@ _install_mise_packages() {
         return 0
     fi
 
-    if ! mise install; then
+    if ! spin_run "Installing runtimes with mise" mise install; then
         e_error "mise install failed"
         return 1
     fi

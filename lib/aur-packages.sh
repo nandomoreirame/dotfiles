@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 # shellcheck source=lib/package-lists.sh
@@ -26,7 +28,9 @@ _aur_run() {
         printf '[dry-run] %s\n' "$*"
         return 0
     fi
-    "$@"
+    # AUR helpers call sudo themselves.
+    spin_sudo_prime
+    spin_run "${SPIN_MSG:-$*}" "$@"
 }
 
 # _aur_packages [names...]
@@ -69,8 +73,7 @@ _aur_packages() {
             e_arrow "Skipping installed package: $pack"
             continue
         fi
-        e_info "Installing AUR: $pack"
-        if ! _aur_run "$aur_helper" -S --noconfirm --needed -- "$pack"; then
+        if ! SPIN_MSG="Installing AUR: $pack" _aur_run "$aur_helper" -S --noconfirm --needed -- "$pack"; then
             e_error "Failed to install $pack"
             failed_pkgs+=("$pack")
             continue
@@ -105,8 +108,7 @@ _aur_remove() {
     fi
     _confirm "Remove AUR packages: ${_packages[*]}?" || return 1
     for pack in "${_packages[@]}"; do
-        e_info "Removing $pack"
-        if ! _aur_run "$aur_helper" -R --noconfirm -- "$pack"; then
+        if ! SPIN_MSG="Removing $pack" _aur_run "$aur_helper" -R --noconfirm -- "$pack"; then
             e_error "Failed to remove $pack"
             return 1
         fi

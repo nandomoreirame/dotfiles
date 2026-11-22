@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 # shellcheck source=lib/package-lists.sh
@@ -16,7 +18,7 @@ _flatpak_run() {
         printf '[dry-run] %s\n' "$*"
         return 0
     fi
-    "$@"
+    spin_run "${SPIN_MSG:-$*}" "$@"
 }
 
 # _flatpak_packages [names...]
@@ -49,8 +51,7 @@ _flatpak_packages() {
             e_arrow "Skipping installed package: $pack"
             continue
         fi
-        e_info "Installing $pack"
-        if ! _flatpak_run flatpak install -y flathub -- "$pack"; then
+        if ! SPIN_MSG="Installing $pack" _flatpak_run flatpak install -y flathub -- "$pack"; then
             e_error "Failed to install $pack"
             failed_pkgs+=("$pack")
             continue
@@ -80,8 +81,7 @@ _flatpak_remove() {
     done
     _confirm "Remove Flatpak packages: ${_packages[*]}?" || return 1
     for pack in "${_packages[@]}"; do
-        e_info "Removing $pack"
-        if ! _flatpak_run flatpak uninstall -y -- "$pack"; then
+        if ! SPIN_MSG="Removing $pack" _flatpak_run flatpak uninstall -y -- "$pack"; then
             e_error "Failed to remove $pack"
             return 1
         fi

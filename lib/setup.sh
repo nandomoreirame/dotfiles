@@ -7,6 +7,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/private.sh
 source "${BASH_SOURCE[0]%/*}/private.sh"
 
@@ -55,8 +57,9 @@ _setup_exec() {
         printf '[dry-run] %s (%s)\n' "$file" "$desc"
         return 0
     fi
-    e_info "Setup: $desc ($file)"
-    if ! bash "$path"; then
+    # Auto steps are non-interactive; sudo is asked for before the spinner.
+    spin_sudo_prime
+    if ! spin_run "Setup: $desc" bash "$path"; then
         e_warning "'$file' failed (continuing)"
         return 1
     fi

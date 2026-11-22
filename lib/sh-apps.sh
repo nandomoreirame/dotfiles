@@ -8,6 +8,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 
@@ -16,7 +18,7 @@ _sh_run() {
         printf '[dry-run] %s\n' "$*"
         return 0
     fi
-    "$@"
+    spin_run "${SPIN_MSG:-$*}" "$@"
 }
 
 _sh_sudo() {
@@ -96,7 +98,7 @@ _install_ohmyzsh() {
     mkdir -p "$tmp_root"
     tmp="$(mktemp "$tmp_root/ohmyzsh-install.XXXXXX")"
 
-    if ! curl -fsSL "$url" -o "$tmp"; then
+    if ! spin_run "Downloading oh-my-zsh installer" curl -fsSL "$url" -o "$tmp"; then
         e_error "Failed to download oh-my-zsh installer"
         rm -f "$tmp"
         return 1
@@ -109,7 +111,7 @@ _install_ohmyzsh() {
         return 1
     fi
 
-    if ! sh "$tmp" --unattended; then
+    if ! spin_run "Installing oh-my-zsh" sh "$tmp" --unattended; then
         e_error "oh-my-zsh installer failed"
         rm -f "$tmp"
         return 1

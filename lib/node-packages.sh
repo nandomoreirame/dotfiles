@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 # shellcheck source=lib/package-lists.sh
@@ -16,7 +18,7 @@ _node_run() {
         printf '[dry-run] %s\n' "$*"
         return 0
     fi
-    "$@"
+    spin_run "${SPIN_MSG:-$*}" "$@"
 }
 
 _node_is_installed() {
@@ -59,8 +61,7 @@ _node_packages() {
             e_arrow "Skipping installed package: $package"
             continue
         fi
-        e_info "Installing $package"
-        if ! _node_run npm install -g -- "$package"; then
+        if ! SPIN_MSG="Installing $package" _node_run npm install -g -- "$package"; then
             e_error "Failed to install $package"
             failed_pkgs+=("$package")
             continue
@@ -94,8 +95,7 @@ _node_remove() {
     done
     _confirm "Remove npm packages: ${_packages[*]}?" || return 1
     for package in "${_packages[@]}"; do
-        e_info "Removing $package"
-        if ! _node_run npm uninstall -g -- "$package"; then
+        if ! SPIN_MSG="Removing $package" _node_run npm uninstall -g -- "$package"; then
             e_error "Failed to remove $package"
             return 1
         fi

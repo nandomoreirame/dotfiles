@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 # shellcheck source=lib/package-lists.sh
@@ -16,8 +18,8 @@ _pacman_run() {
         printf '[dry-run] %s\n' "$*"
         return 0
     fi
-    # shellcheck disable=SC2068
-    sudo "$@"
+    spin_sudo_prime
+    spin_run "${SPIN_MSG:-$*}" sudo "$@"
 }
 
 # _pacman_packages [names...]
@@ -60,8 +62,7 @@ _pacman_packages() {
     fi
 
     for pack in "${to_install[@]}"; do
-        e_info "Installing $pack"
-        if ! _pacman_run pacman -S --noconfirm --needed -- "$pack"; then
+        if ! SPIN_MSG="Installing $pack" _pacman_run pacman -S --noconfirm --needed -- "$pack"; then
             e_error "Failed to install $pack"
             failed_pkgs+=("$pack")
             continue
@@ -91,8 +92,7 @@ _pacman_remove() {
     done
     _confirm "Remove pacman packages: ${_packages[*]}?" || return 1
     for pack in "${_packages[@]}"; do
-        e_info "Removing $pack"
-        if ! _pacman_run pacman -R --noconfirm -- "$pack"; then
+        if ! SPIN_MSG="Removing $pack" _pacman_run pacman -R --noconfirm -- "$pack"; then
             e_error "Failed to remove $pack"
             return 1
         fi

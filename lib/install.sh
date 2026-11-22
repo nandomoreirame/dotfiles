@@ -6,6 +6,8 @@
 source "${BASH_SOURCE[0]%/*}/environments.sh"
 # shellcheck source=lib/output.sh
 source "${BASH_SOURCE[0]%/*}/output.sh"
+# shellcheck source=lib/spinner.sh
+source "${BASH_SOURCE[0]%/*}/spinner.sh"
 # shellcheck source=lib/prompt.sh
 source "${BASH_SOURCE[0]%/*}/prompt.sh"
 # shellcheck source=lib/apps.sh
@@ -62,7 +64,8 @@ _install_step_prerequisites() {
         return 0
     fi
     if [ "${DOTFILES_IS_ARCH:-false}" = "true" ]; then
-        sudo pacman -S --noconfirm --needed base-devel git curl || return 1
+        spin_sudo_prime
+        spin_run "Installing base-devel, git and curl" sudo pacman -S --noconfirm --needed base-devel git curl || return 1
     fi
     return 0
 }
@@ -98,7 +101,7 @@ _install_step_aur_helper() {
     fi
 
     tmp="$(mktemp -d)"
-    if ! git clone "$url" "$tmp/yay"; then
+    if ! spin_run "Cloning yay" git clone "$url" "$tmp/yay"; then
         rm -rf "$tmp"
         return 1
     fi
@@ -107,7 +110,13 @@ _install_step_aur_helper() {
         rm -rf "$tmp"
         return 1
     fi
-    if ! (cd "$tmp/yay" && makepkg "${mkpkg_args[@]}"); then
+    # makepkg asks questions without --noconfirm: only spin when it cannot prompt.
+    local -a build=()
+    if [ "${DOTFILES_YES:-0}" = 1 ]; then
+        spin_sudo_prime
+        build=(spin_run "Building yay")
+    fi
+    if ! (cd "$tmp/yay" && "${build[@]}" makepkg "${mkpkg_args[@]}"); then
         rm -rf "$tmp"
         return 1
     fi
