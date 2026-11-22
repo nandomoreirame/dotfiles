@@ -383,7 +383,13 @@ declare -gA _DOTFILES_MODULES=(
     [install]=_install_module
     [profile]=_profile_module
     [hooks]=_hooks_module
+    [tui]=_tui_module
 )
+
+# The TUI runs as its own process: tui.sh changes shell options and the locale.
+_tui_module() {
+    exec "$_DOTFILES_CODE_ROOT/bin/utils/dotfiles-tui" "$@"
+}
 
 _install_module() {
     # shellcheck source=lib/install.sh

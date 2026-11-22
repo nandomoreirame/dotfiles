@@ -1,0 +1,9 @@
+# gitleaks settings for scripts/public-check.
+# Keep every default rule; skip only vendored third-party code (git submodules
+# under lib/vendor/), which is not ours to scrub and trips generic rules.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Vendored third-party submodules"
+paths = ['''(^|/)lib/vendor/''']

@@ -1,6 +1,6 @@
 # Third-party software
 
-This repository vendors the following projects as git submodules under `tests/bats/lib/`:
+This repository vendors the following projects as git submodules (test tooling under `tests/bats/lib/`, runtime libraries under `lib/vendor/`):
 
 | Project | License | Path |
 |---|---|---|
@@ -8,6 +8,7 @@ This repository vendors the following projects as git submodules under `tests/ba
 | [bats-support](https://github.com/bats-core/bats-support) | MIT | `tests/bats/lib/bats-support` |
 | [bats-assert](https://github.com/bats-core/bats-assert) | CC0-1.0 | `tests/bats/lib/bats-assert` |
 | [bats-file](https://github.com/bats-core/bats-file) | MIT | `tests/bats/lib/bats-file` |
+| [tui.sh](https://github.com/alganet/tuish) | ISC | `lib/vendor/tuish` (pinned commit; loaded only by `bin/utils/dotfiles-tui`) |
 
 ### Bundled editor themes
 

@@ -10,3 +10,6 @@
 [submodule "tests/bats/lib/bats-file"]
 	path = tests/bats/lib/bats-file
 	url = https://github.com/bats-core/bats-file.git
+[submodule "lib/vendor/tuish"]
+	path = lib/vendor/tuish
+	url = https://github.com/alganet/tuish.git

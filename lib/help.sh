@@ -78,6 +78,7 @@ _help() {
     esac
     printf '%s\n' 'Usage: dotfiles <command> [options]' '' 'Install'
     _help_row "install [options]" "Run the new-machine install flow"
+    _help_row "tui" "Guided installer: prerequisites gate, then a checklist"
     _help_row "packages install [--manager <m>]" "Install from packages/<manager>.list"
     _help_row "packages remove --manager <m> <names>" "Remove packages by name"
     _help_row "langs install" "Install languages from configs/mise/config.toml"

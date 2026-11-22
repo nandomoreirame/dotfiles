@@ -34,6 +34,12 @@ Then install:
 ./install.sh --yes
 ```
 
+Prefer a guided run? `dotfiles tui` checks the base tools (git, curl, sudo, base-devel, an AUR helper) and pending system updates first, and unlocks a checklist of install steps only when both are clean:
+
+```bash
+dotfiles tui
+```
+
 A rerun on a configured machine skips what is already there and ends with a summary:
 
 ![dotfiles install on a configured machine: installed packages are skipped, setup scripts run and the install finishes](.github/assets/install.png)

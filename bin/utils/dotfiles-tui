@@ -1,0 +1,305 @@
+#!/usr/bin/env bash
+# dotfiles-tui - interactive installer for the dotfiles, run as `dotfiles tui`.
+#
+# Screen 1 checks the prerequisites: base tools (git, curl, sudo, base-devel,
+# an AUR helper) and pending system updates. The install checklist (screen 2)
+# stays locked until both are clean. Every action runs outside the TUI, in the
+# normal terminal, so pacman output and the sudo prompt stay visible.
+#
+# Built on tui.sh (lib/vendor/tuish, ISC). Its compat.sh turns on `set -euf`
+# and pins LC_ALL=C, so it is loaded only in this process, never by lib/.
+
+usage() {
+  cat <<'EOF'
+Usage: dotfiles tui
+
+Interactive installer. Checks the base tools and pending system updates, then
+offers a checklist of install steps (packages per manager, fonts, runtimes,
+links, setup) that run through the dotfiles CLI.
+
+Keys: arrows or j/k move, space selects, enter confirms, q quits.
+For scripts and CI use 'dotfiles install' instead.
+EOF
+}
+
+case "${1:-}" in
+  -h | --help) usage; exit 0 ;;
+  "") ;;
+  *) printf "error: unexpected argument '%s'\n\n" "$1" >&2; usage >&2; exit 2 ;;
+esac
+
+if [ ! -t 0 ] || [ ! -t 1 ]; then
+  printf '%s\n' "error: dotfiles tui needs a terminal; in scripts use 'dotfiles install'" >&2
+  exit 2
+fi
+
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../.." && pwd)"
+: "${DOTFILES_TUI_CLI:=$ROOT/bin/dotfiles}"
+export DOTFILES_TUI_CLI
+
+# Remember the caller's locale: commands run outside the TUI get it back.
+_tui_orig_lc_all="${LC_ALL-__unset__}"
+
+# shellcheck source=lib/tui-model.sh
+. "$ROOT/lib/tui-model.sh"
+_tuish_src="$ROOT/lib/vendor/tuish/src"
+for _mod in compat ord tui term event hid viewport keybind; do
+  # shellcheck disable=SC1090
+  . "$_tuish_src/$_mod.sh"
+done
+unset _mod
+
+# ---- state -------------------------------------------------------------------
+
+_screen=prereq    # prereq | checklist
+_action=""        # what the finished TUI session asks the main loop to do
+_missing=""       # newline-separated missing base items
+_pending=""       # pending update count, or "error"
+_cursor=1
+_drawn=0          # first idle draws once; keys and resize redraw on their own
+_step_ids=()
+_step_labels=()
+_selected=()
+
+_load_steps() {
+  local line
+  while IFS= read -r line; do
+    _step_ids+=("${line%%|*}")
+    _step_labels+=("${line#*|}")
+    _selected+=(0)
+  done <<EOF
+$(_tui_steps)
+EOF
+}
+
+_refresh_prereqs() {
+  printf '%s\n' "Checking the base tools and pending updates..."
+  _missing="$(_tui_base_missing)"
+  _pending="$(_tui_pending_updates)" || _pending=error
+}
+
+_gate_open() { [ -z "$_missing" ] && [ "$_pending" = 0 ]; }
+
+_selected_ids() {
+  local i
+  for i in "${!_step_ids[@]}"; do
+    [ "${_selected[$i]}" = 1 ] && printf '%s\n' "${_step_ids[$i]}"
+  done
+  return 0
+}
+
+# ---- drawing -----------------------------------------------------------------
+
+_title() {
+  tuish_clear_screen
+  tuish_reverse
+  tuish_clear_to_edge 1
+  tuish_vmove 1 1
+  tuish_print " dotfiles tui: $1 "
+  tuish_sgr_reset
+}
+
+# _status_row <row> <ok:0|1> <label>
+_status_row() {
+  if [ "$2" = 1 ]; then
+    tuish_text "$1" 3 "[ok]" fg=2
+  else
+    tuish_text "$1" 3 "[!!]" fg=1
+  fi
+  tuish_text "$1" 9 "$3"
+}
+
+_render_prereq() {
+  local row=3 item ok
+  _title "Prerequisites"
+  tuish_text "$row" 2 "Base tools" fg=6
+  for item in git curl sudo base-devel aur-helper; do
+    row=$((row + 1))
+    ok=1
+    case $'\n'"$_missing"$'\n' in *$'\n'"$item"$'\n'*) ok=0 ;; esac
+    case "$item" in
+      aur-helper) _status_row "$row" "$ok" "AUR helper (yay or paru)" ;;
+      *) _status_row "$row" "$ok" "$item" ;;
+    esac
+  done
+  row=$((row + 2))
+  tuish_text "$row" 2 "System updates" fg=6
+  row=$((row + 1))
+  case "$_pending" in
+    0) _status_row "$row" 1 "up to date" ;;
+    error) _status_row "$row" 0 "could not check (offline or no pacman database?)" ;;
+    1) _status_row "$row" 0 "1 pending update" ;;
+    *) _status_row "$row" 0 "$_pending pending updates" ;;
+  esac
+  row=$((row + 2))
+  if _gate_open; then
+    tuish_text "$row" 2 "Ready. Press enter for the install checklist." fg=2
+  else
+    tuish_text "$row" 2 "The install checklist unlocks when everything above is ok." fg=3
+  fi
+  local keys="r recheck   q quit"
+  [ -n "$_missing" ] && keys="i install missing   $keys"
+  case "$_pending" in 0 | error) ;; *) keys="u update system   $keys" ;; esac
+  _gate_open && keys="enter continue   $keys"
+  tuish_text $((row + 2)) 2 "$keys" fg=8
+}
+
+_render_checklist() {
+  local i row mark
+  _title "Install checklist"
+  for i in "${!_step_ids[@]}"; do
+    row=$((i + 3))
+    mark="[ ]"
+    [ "${_selected[$i]}" = 1 ] && mark="[x]"
+    if [ $((i + 1)) -eq "$_cursor" ]; then
+      tuish_reverse
+      tuish_text "$row" 2 " $mark ${_step_labels[$i]} "
+      tuish_sgr_reset
+    else
+      tuish_text "$row" 2 " $mark ${_step_labels[$i]} "
+    fi
+  done
+  row=$((${#_step_ids[@]} + 4))
+  tuish_text "$row" 2 "space select   a all/none   enter run selected   b back   q quit" fg=8
+}
+
+_render() {
+  case "$_screen" in
+    prereq) _render_prereq ;;
+    checklist) _render_checklist ;;
+  esac
+}
+
+# ---- keys --------------------------------------------------------------------
+
+_finish() {
+  _action="$1"
+  tuish_quit
+}
+
+_on_key_prereq() {
+  case "$TUISH_EVENT" in
+    "char q" | esc) _finish quit ;;
+    "char r") _finish recheck ;;
+    "char i") [ -n "$_missing" ] && _finish install-base ;;
+    "char u") case "$_pending" in 0 | error) ;; *) _finish update ;; esac ;;
+    enter) _gate_open && _finish checklist ;;
+  esac
+  return 0
+}
+
+_on_key_checklist() {
+  local total=${#_step_ids[@]} i all=1
+  case "$TUISH_EVENT" in
+    "char q") _finish quit ;;
+    "char b" | esc) _finish back ;;
+    up | "char k") [ "$_cursor" -gt 1 ] && _cursor=$((_cursor - 1)); _render ;;
+    down | "char j") [ "$_cursor" -lt "$total" ] && _cursor=$((_cursor + 1)); _render ;;
+    space)
+      i=$((_cursor - 1))
+      if [ "${_selected[$i]}" = 1 ]; then _selected[i]=0; else _selected[i]=1; fi
+      _render
+      ;;
+    "char a")
+      for i in "${!_selected[@]}"; do [ "${_selected[$i]}" = 1 ] || all=0; done
+      for i in "${!_selected[@]}"; do _selected[i]=$((1 - all)); done
+      _render
+      ;;
+    enter) [ -n "$(_selected_ids)" ] && _finish run ;;
+  esac
+  return 0
+}
+
+_on_key() {
+  case "$TUISH_EVENT" in
+    idle) [ "$_drawn" = 1 ] || { _render; _drawn=1; }; return 0 ;;
+    resize) _render; return 0 ;;
+    ctrl-c) _finish quit; return 0 ;;
+  esac
+  case "$_screen" in
+    prereq) _on_key_prereq ;;
+    checklist) _on_key_checklist ;;
+  esac
+}
+
+# ---- outside the TUI -----------------------------------------------------------
+
+# _outside <command...>: run with the caller's locale in the normal terminal.
+_outside() {
+  if [ "$_tui_orig_lc_all" = __unset__ ]; then
+    env -u LC_ALL "$@"
+  else
+    LC_ALL="$_tui_orig_lc_all" "$@"
+  fi
+}
+
+_pause() {
+  printf '\n%s' "Press enter to return to dotfiles tui. "
+  read -r _ || :
+}
+
+_install_base() {
+  local pkgs
+  # shellcheck disable=SC2086 # one argument per missing item
+  pkgs="$(_tui_base_packages $_missing)"
+  if [ -n "$pkgs" ]; then
+    # Same rule as the installer: upgrade and install together, never a partial upgrade.
+    # shellcheck disable=SC2086 # pkgs is a space-separated package list
+    _outside sudo pacman -Syu --needed $pkgs || :
+  fi
+  case $'\n'"$_missing"$'\n' in
+    *$'\n'aur-helper$'\n'*)
+      # shellcheck disable=SC2016 # $1 expands in the child bash, not here
+      _outside bash -c '. "$1/lib/install.sh" && DOTFILES_YES=1 _install_step_aur_helper' _ "$ROOT" || :
+      ;;
+  esac
+}
+
+_run_selected() {
+  local -a ids=()
+  local id
+  while IFS= read -r id; do
+    [ -n "$id" ] && ids+=("$id")
+  done <<EOF
+$(_selected_ids)
+EOF
+  if _outside_run_steps "${ids[@]}"; then
+    printf '\n%s\n' "All selected steps finished."
+  else
+    printf '\n%s\n' "Failed steps: ${TUI_FAILED_STEPS[*]}"
+  fi
+}
+
+# Run the model's step runner with the caller's locale, in this process so
+# TUI_FAILED_STEPS survives.
+_outside_run_steps() {
+  local saved="${LC_ALL-}" rc=0
+  if [ "$_tui_orig_lc_all" = __unset__ ]; then unset LC_ALL; else export LC_ALL="$_tui_orig_lc_all"; fi
+  _tui_run_steps "$@" || rc=1
+  export LC_ALL="$saved"
+  return "$rc"
+}
+
+# ---- main loop -------------------------------------------------------------------
+
+_load_steps
+_refresh_prereqs
+while :; do
+  _action=""
+  _drawn=0
+  tuish_init
+  tuish_viewport fullscreen
+  # tuish_fini drops the bindings, so every session binds again after init.
+  tuish_bind '*' '_on_key'
+  tuish_run || :
+  tuish_fini
+  case "$_action" in
+    "" | quit) break ;;
+    recheck) _refresh_prereqs ;;
+    checklist) _screen=checklist ;;
+    back) _screen=prereq ;;
+    install-base) _install_base; _pause; _refresh_prereqs ;;
+    update) _outside sudo pacman -Syu || :; _pause; _refresh_prereqs ;;
+    run) _run_selected; _pause ;;
+  esac
+done

@@ -49,6 +49,7 @@ export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES
 | `noctalia-restart` | Restart the Noctalia shell cleanly | `noctalia-restart` | `noctalia`, `niri msg` | none |
 | `noctalia-plugins-link` | Symlink plugin repos into the Noctalia plugins dir | `noctalia-plugins-link [--list]`; needs `NOCTALIA_PLUGIN_AUTHOR` | none | none |
 | `webapp` | Install, list, launch and remove web apps (Chromium app mode with a `.desktop` launcher), and pick their browser | `webapp install <name> <url>` / `list` / `remove [<name>...]` / `launch <url>` / `browser [get\|set <id>]` | a Chromium-family browser, `curl` (optional `fzf`, `uwsm`) | none (writes and deletes launchers under the user home) |
+| `dotfiles-tui` | Guided installer behind `dotfiles tui`: checks the base tools and pending updates, then runs a checklist of install steps | `dotfiles tui` | a terminal, `stty`, `checkupdates` (pacman-contrib), tui.sh in `lib/vendor/tuish` | `sudo` only for the pacman update and base installs it offers |
 | `game-mode` | Freeze work apps and spare the game stack | `game-mode on\|off\|toggle\|status\|--dry-run`; apps from `GAME_MODE_APPS` | `niri msg`, `jq`, `nocta-hold` | none (sends SIGSTOP/SIGCONT via cgroup freeze) |
 | `beaverhabits` | Beaver Habits client: today's status, report with streaks, mark or unmark a habit | `beaverhabits list\|report\|done <habit>\|undo <habit>\|pick`; settings in `~/.config/beaverhabits/env` | `curl`, `jq`, `vicinae` (for `pick`) | none (HTTPS calls to your own Beaver Habits instance) |
 
