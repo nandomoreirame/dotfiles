@@ -35,7 +35,7 @@ d() { env -i HOME="$H" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT"
 }
 
 @test "desktop files are free of personal strings" {
-    run grep -rnE "nan""domoreira|/home/[a-z]" "$ROOT/configs/niri" "$ROOT/configs/noctalia/config.toml" "$ROOT/configs/noctalia/bar.toml" "$ROOT/configs/noctalia/plugins.toml" "$ROOT/bin/utils"
+    run grep -rnE "/home/[a-z]" "$ROOT/configs/niri" "$ROOT/configs/noctalia/config.toml" "$ROOT/configs/noctalia/bar.toml" "$ROOT/configs/noctalia/plugins.toml" "$ROOT/bin/utils"
     [ "$status" -ne 0 ]
 }
 

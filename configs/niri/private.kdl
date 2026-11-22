@@ -1,2 +1,98 @@
-// The private overlay replaces this file (see private/private-overlay.md).
-// Put personal binds, window rules and spawn-at-startup entries here.
+// Personal niri overrides, included last by config.kdl (the public file).
+// Later definitions win: these binds, outputs and settings replace the public ones.
+
+// Localized screenshots folder.
+screenshot-path "~/Imagens/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// Outputs of this machine (applied after monitor.kdl).
+output "eDP-1" {
+    mode "1920x1080@60.050"
+    scale 1.25
+    transform "normal"
+}
+
+output "DP-1" {
+    mode "1920x1080@60.000"
+    scale 1.0
+    transform "270"
+}
+
+output "HDMI-A-1" {
+    mode "2560x1080@59.980"
+    scale 1.0
+    transform "normal"
+}
+
+// Hardware helpers that live in the private overlay.
+spawn-at-startup "sh" "-c" "~/.dotfiles/private/bin/niri-hdmi-automode"
+spawn-at-startup "sh" "-c" "~/.dotfiles/private/bin/audio-jack-autoswitch"
+// WhatsApp scratchpad autostart, disabled on purpose (drop /- to enable).
+/-spawn-at-startup "sh" "-c" "~/.dotfiles/bin/utils/niri-scratchpad start whatsapp"
+
+// Personal apps.
+window-rule {
+    match app-id=r#"^grok-bot$"#
+    open-floating true
+    default-column-width { proportion 0.33333; }
+}
+
+window-rule {
+    match app-id=r#"^dev\.nandomoreira\.live-chat-float$"#
+    open-floating true
+    // 824x720 has the aspect of the OBS scene 4 frame (1045x914), so the capture fills it.
+    default-column-width { fixed 824; }
+    default-window-height { fixed 720; }
+}
+
+window-rule {
+    match app-id=r#"^chrome-web\.whatsapp\.com__-"#
+    open-floating true
+    default-column-width { proportion 0.66667; }
+    default-window-height { proportion 0.8; }
+}
+
+window-rule {
+    match app-id=r#"^dev\.nandomoreira\.devnull-post$"#
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 420; }
+}
+
+window-rule {
+    match app-id=r#"^dev\.nandomoreira\.quick-translate$"#
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 520; }
+}
+
+binds {
+    Mod+Shift+Q hotkey-overlay-title="Grok Bot (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle grok"; }
+    Mod+Space        hotkey-overlay-title="Daybar: captura rápida" { spawn-sh "~/.dotfiles/private/bin/nocta plugin daybar capture"; }
+    Mod+Shift+Space  hotkey-overlay-title="Daybar: painel" { spawn-sh "~/.dotfiles/private/bin/nocta plugin daybar panel"; }
+    Mod+G            hotkey-overlay-title="Gistbar: buscar gists" { spawn-sh "~/.dotfiles/private/bin/nocta plugin gistbar panel"; }
+    Mod+Ctrl+G       hotkey-overlay-title="Gistbar: novo gist da área de transferência" { spawn-sh "~/.dotfiles/private/bin/nocta plugin gistbar create"; }
+    Mod+Alt+Y hotkey-overlay-title="Live chat (obs-live-hub)" { spawn-sh "~/.dotfiles/private/bin/live-chat-float"; }
+    Mod+Alt+D hotkey-overlay-title="/dev/null: novo commit" { spawn-sh "DEVNULL_POST_EDITOR=micro ~/.dotfiles/private/bin/devnull-post"; }
+    Mod+Alt+Shift+D hotkey-overlay-title="/dev/null: novo commit (clipboard)" { spawn-sh "DEVNULL_POST_EDITOR=micro ~/.dotfiles/private/bin/devnull-post clip"; }
+    Mod+Ctrl+D hotkey-overlay-title="/dev/null: tweet de humor (Claude)" { spawn-sh "~/.dotfiles/private/bin/devnull-joke"; }
+    Mod+Alt+Shift+T hotkey-overlay-title="Traduzir (colar e traduzir)" { spawn-sh "QUICK_TRANSLATE_EDITOR=micro ~/.dotfiles/private/bin/quick-translate"; }
+    Mod+Alt+Shift+E hotkey-overlay-title="Traduzir para inglês (digitar em pt-BR)" { spawn-sh "QUICK_TRANSLATE_EDITOR=micro ~/.dotfiles/private/bin/quick-translate en"; }
+    Mod+Ctrl+Shift+D hotkey-overlay-title="/dev/null: tweet de humor com tema (Claude)" { spawn-sh "DEVNULL_POST_EDITOR=micro ~/.dotfiles/private/bin/devnull-joke ask"; }
+    Mod+Alt+S hotkey-overlay-title="RDO: sessão solo (toggle)" { spawn-sh "~/.dotfiles/private/bin/nocta plugin rdo-solo toggle"; }
+    Mod+Alt+F hotkey-overlay-title="Focus mode (silence + de-distract)" { spawn-sh "~/.dotfiles/private/bin/focus-mode toggle"; }
+    Mod+Shift+W hotkey-overlay-title="WhatsApp (scratchpad)" { spawn-sh "~/.dotfiles/bin/utils/niri-scratchpad toggle whatsapp"; }
+    Mod+Alt+M hotkey-overlay-title="OBS: mutar/desmutar microfone" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all mute"; }
+    Mod+Alt+0 hotkey-overlay-title="OBS: cena 0 (começando)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 0"; }
+    Mod+Alt+1 hotkey-overlay-title="OBS: cena 1 (volto já)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 1"; }
+    Mod+Alt+2 hotkey-overlay-title="OBS: cena 2 (pair programming)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 2"; }
+    Mod+Alt+3 hotkey-overlay-title="OBS: cena 3 (pair programming barato)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 3"; }
+    Mod+Alt+4 hotkey-overlay-title="OBS: cena 4 (pair programming visitante)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 4"; }
+    Mod+Alt+5 hotkey-overlay-title="OBS: cena 5 (janelas + browser)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 5"; }
+    Mod+Alt+6 hotkey-overlay-title="OBS: cena 6 (janelas + browser inverte)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 6"; }
+    Mod+Alt+7 hotkey-overlay-title="OBS: cena 7 (janelas + cursor)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 7"; }
+    Mod+Alt+8 hotkey-overlay-title="OBS: cena 8 (tela ultrawide)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 8"; }
+    Mod+Alt+9 hotkey-overlay-title="OBS: cena 9 (chat yt + câmeras)" { spawn-sh "noctalia msg plugin nandomoreirame/obs-live:live all scene 9"; }
+    Ctrl+Alt+1 hotkey-overlay-title="Record video (start/stop)" { spawn-sh "~/.dotfiles/private/bin/gsr-toggle"; }
+    Ctrl+Alt+5 hotkey-overlay-title="Record GIF (start/stop)" { spawn-sh "~/.dotfiles/private/bin/gsr-toggle --gif"; }
+    Mod+Alt+L   hotkey-overlay-title="LocalSend: enviar texto copiado p/ iPhone" { spawn-sh "~/.dotfiles/bin/utils/localsend-clip 'iPhone 12'"; }
+}
