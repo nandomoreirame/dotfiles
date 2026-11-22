@@ -1,0 +1,112 @@
+# Personal Umbriel overrides, included after base.toml by config.toml.
+# Tables (keybinds, environment) merge key by key; rule lists ([[window_rule]],
+# [[scratchpad]]) append; plain arrays such as autostart replace the base list.
+
+[general]
+autostart = [
+  "noctalia",
+  "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1",
+  "fcitx5",
+  "solaar --window=hide",
+  "$HOME/.dotfiles/bin/utils/niri-tray-autostart",
+  "$HOME/.dotfiles/private/bin/audio-jack-autoswitch",
+]
+
+# Monitors of this machine.
+[output.eDP-1]
+mode = "1920x1080@60.049"
+scale = 1.3
+position = [5112, 1557]
+
+[output.DP-1]
+mode = "1920x1080@60.0"
+scale = 1.0
+position = [632, 1308]
+
+[output.HDMI-A-1]
+mode = "2560x1080@59.978"
+scale = 1.0
+position = [2552, 1308]
+
+[keybinds]
+"Mod+Shift+Q" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle grok", repeat = false }
+"Mod+Shift+W" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle whatsapp", repeat = false }
+"Mod+Alt+L" = { action = "spawn $HOME/.dotfiles/bin/utils/localsend-clip 'iPhone 12'", repeat = false }
+"Mod+Space" = { action = "spawn $HOME/.dotfiles/private/bin/nocta plugin daybar capture", repeat = false }
+"Mod+Shift+Space" = { action = "spawn $HOME/.dotfiles/private/bin/nocta plugin daybar panel", repeat = false }
+"Mod+G" = { action = "spawn $HOME/.dotfiles/private/bin/nocta plugin gistbar panel", repeat = false }
+"Mod+Ctrl+G" = { action = "spawn $HOME/.dotfiles/private/bin/nocta plugin gistbar create", repeat = false }
+"Mod+Alt+S" = { action = "spawn $HOME/.dotfiles/private/bin/nocta plugin rdo-solo toggle", repeat = false }
+"Mod+Alt+Y" = { action = "spawn $HOME/.dotfiles/private/bin/live-chat-float", repeat = false }
+"Mod+Alt+D" = { action = "spawn DEVNULL_POST_EDITOR=micro $HOME/.dotfiles/private/bin/devnull-post", repeat = false }
+"Mod+Alt+Shift+D" = { action = "spawn DEVNULL_POST_EDITOR=micro $HOME/.dotfiles/private/bin/devnull-post clip", repeat = false }
+"Mod+Ctrl+D" = { action = "spawn $HOME/.dotfiles/private/bin/devnull-joke", repeat = false }
+"Mod+Ctrl+Shift+D" = { action = "spawn DEVNULL_POST_EDITOR=micro $HOME/.dotfiles/private/bin/devnull-joke ask", repeat = false }
+"Mod+Alt+Shift+T" = { action = "spawn QUICK_TRANSLATE_EDITOR=micro $HOME/.dotfiles/private/bin/quick-translate", repeat = false }
+"Mod+Alt+Shift+E" = { action = "spawn QUICK_TRANSLATE_EDITOR=micro $HOME/.dotfiles/private/bin/quick-translate en", repeat = false }
+"Mod+Alt+F" = { action = "spawn $HOME/.dotfiles/private/bin/focus-mode toggle", repeat = false }
+"Mod+Ctrl+T" = { action = "spawn vicinae cmd launch @thomaslombart/store.raycast.todoist:create-task", repeat = false }
+"Mod+Ctrl+N" = { action = "spawn vicinae cmd launch @marcjulian/store.raycast.obsidian:createNoteCommand", repeat = false }
+"Mod+Ctrl+O" = { action = "spawn vicinae cmd launch @marcjulian/store.raycast.obsidian:searchNoteCommand", repeat = false }
+"Mod+Ctrl+R" = { action = "spawn vicinae cmd launch @gebeto/store.raycast.translate:quick-translate", repeat = false }
+"Mod+Ctrl+C" = { action = "spawn vicinae cmd launch @thomas/store.raycast.google-calendar:create-quick-event", repeat = false }
+"Mod+Ctrl+B" = { action = "spawn $HOME/.dotfiles/bin/utils/beaverhabits pick", repeat = false }
+"Mod+Alt+M" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all mute", repeat = false }
+"Mod+Alt+0" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 0", repeat = false }
+"Mod+Alt+1" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 1", repeat = false }
+"Mod+Alt+2" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 2", repeat = false }
+"Mod+Alt+3" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 3", repeat = false }
+"Mod+Alt+4" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 4", repeat = false }
+"Mod+Alt+5" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 5", repeat = false }
+"Mod+Alt+6" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 6", repeat = false }
+"Mod+Alt+7" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 7", repeat = false }
+"Mod+Alt+8" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 8", repeat = false }
+"Mod+Alt+9" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all scene 9", repeat = false }
+"Ctrl+Alt+1" = { action = "spawn $HOME/.dotfiles/private/bin/gsr-toggle", repeat = false }
+"Ctrl+Alt+5" = { action = "spawn $HOME/.dotfiles/private/bin/gsr-toggle --gif", repeat = false }
+
+# Floating WhatsApp webapp, same size as the other webapps.
+[[window_rule]]
+match.app_id = "^chrome-web[.]whatsapp[.]com__-"
+default_floating = true
+default_floating_size = { width = 0.66667, height = 0.8 }
+
+[[window_rule]]
+match.app_id = "^grok-bot$"
+default_floating = true
+default_floating_size = { width = 0.33333 }
+
+[[window_rule]]
+match.app_id = "^dev[.]nandomoreira[.]live-chat-float$"
+default_floating = true
+default_floating_size_px = { width = 824, height = 720 }
+
+[[window_rule]]
+match.app_id = "^dev[.]nandomoreira[.]devnull-post$"
+default_floating = true
+default_floating_size_px = { width = 760, height = 420 }
+
+[[window_rule]]
+match.app_id = "^dev[.]nandomoreira[.]quick-translate$"
+default_floating = true
+default_floating_size_px = { width = 760, height = 520 }
+
+[[scratchpad]]
+name = "whatsapp"
+spawn_when_empty = "google-chrome-stable --app=https://web.whatsapp.com"
+hide_when_empty = true
+
+[[scratchpad]]
+name = "grok"
+spawn_when_empty = "$HOME/.local/share/grok-bot/appimage"
+hide_when_empty = true
+
+[[window_rule]]
+match.app_id = "^chrome-web[.]whatsapp[.]com__-"
+default_scratchpad = "whatsapp"
+default_focused = true
+
+[[window_rule]]
+match.app_id = "^grok-bot$"
+default_scratchpad = "grok"
+default_focused = true

@@ -25,3 +25,11 @@ credit:scripts/themes/build-terminal-noir:            "# Terminal Noir, from nan
 credit:configs/gtk-4.0/gtk.css:/* Terminal Noir accent (nandomoreira.dev). libadwaita 1.6+ reads the accent
 credit:configs/obsidian/snippets/terminal-noir.css:/* Terminal Noir (nandomoreira.dev) for Obsidian, dark mode only.
 credit:configs/chrome/terminal-noir-theme/manifest.json:  "description": "Terminal Noir palette from nandomoreira.dev (configs/noctalia/palettes/Terminal Noir.json, dark side).",
+
+# Author app ids in the window rules: they must match the real Wayland app ids.
+credit:configs/niri/private.kdl:    match app-id=r#"^dev\.nandomoreira\.live-chat-float$"#
+credit:configs/niri/private.kdl:    match app-id=r#"^dev\.nandomoreira\.devnull-post$"#
+credit:configs/niri/private.kdl:    match app-id=r#"^dev\.nandomoreira\.quick-translate$"#
+credit:configs/umbriel/private.toml:match.app_id = "^dev[.]nandomoreira[.]live-chat-float$"
+credit:configs/umbriel/private.toml:match.app_id = "^dev[.]nandomoreira[.]devnull-post$"
+credit:configs/umbriel/private.toml:match.app_id = "^dev[.]nandomoreira[.]quick-translate$"

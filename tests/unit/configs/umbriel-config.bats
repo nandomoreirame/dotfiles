@@ -15,8 +15,11 @@ setup() {
     [ "$status" -eq 0 ]
 }
 
-@test "private.toml is not in the public tree" {
-    [ ! -e "$U/private.toml" ]
+@test "private.toml and outputs.toml are tracked and linked" {
+    [ -f "$U/private.toml" ]
+    [ -f "$U/outputs.toml" ]
+    grep -Fq 'configs/umbriel/private.toml | .config/umbriel/private.toml' "$ROOT/configs/links.conf"
+    grep -Fq 'configs/umbriel/outputs.toml | .config/umbriel/outputs.toml' "$ROOT/configs/links.conf"
 }
 
 @test "base.toml carries no personal binds, outputs or app ids" {
