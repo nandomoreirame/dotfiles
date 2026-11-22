@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** the CLI uses noun-verb subcommands separated by spaces. `dotfiles packages install|remove --manager <pacman|aur|flatpak|node|sh>` replaces `pacman:install`, `aur:install`, `flatpak:install`, `node:install`, `sh:install`, `apps:install` and the matching `:remove` commands. `langs install`, `fonts install`, `setup run <name>`, `links create [--files|--paths]`, `links verify` and `status` replace `langs:install`, `fonts:install`, `setup:run`, `links --all|--files|--paths`, `--verify` and `--status`. `-V` replaces `-v` for the version, `--only <names>` became positional names, and every command has its own `--help`.
+
 ### Added
 
 - Niri config with example `monitor.kdl`, empty `private.kdl` hook, and scrubbed binds (no personal apps or paths)

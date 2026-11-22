@@ -67,15 +67,15 @@ dotfiles --help
 ## Usage
 
 ```bash
-dotfiles links --all
-dotfiles pacman:install --group fonts --dry-run --yes
-dotfiles apps:install --dry-run --yes
+dotfiles links create
+dotfiles packages install --manager pacman --group fonts --dry-run --yes
+dotfiles packages install --dry-run --yes
 dotfiles setup
 dotfiles init
 dotfiles profile switch personal
 dotfiles hooks enable
 dotfiles doctor
-dotfiles --verify
+dotfiles links verify
 ```
 
 `configs/links.conf` maps the shell, Git, theme-free and Terminal Noir app configs shipped below. Add `[files]` names relative to `configs/`, or `[paths]` rows in the form `configs/tool.conf | .config/tool.conf`. `[paths:arch]` adds Arch-specific rows. Targets are relative to HOME; paths containing parent traversal are rejected.
@@ -171,21 +171,22 @@ Neovim `spelllang` defaults to English. Set `DOTFILES_SPELLLANG` (comma-separate
 | Command | Purpose |
 |---|---|
 | `./install.sh` | New-machine flow (prerequisites, AUR helper, packages, fonts, runtimes, links, setup) |
-| `dotfiles links --files` / `--paths` | Create only file or path links |
-| `dotfiles pacman:install` / `aur:install` / `flatpak:install` / `node:install` | Install from the matching list |
-| `dotfiles apps:install` | Run pacman, AUR, Flatpak, Node, sh and langs |
-| `dotfiles fonts:install` | Install the pacman fonts group |
-| `dotfiles setup` / `setup:run <name>` | Run auto setup scripts, or one by name |
+| `dotfiles links create [--files\|--paths]` | Create every link, or only file or path links |
+| `dotfiles packages install --manager <m> [names]` | Install from `packages/<m>.list` (`pacman`, `aur`, `flatpak`, `node`, `sh`), or only the named packages |
+| `dotfiles packages install` | Run every manager (pacman, AUR, Flatpak, Node, sh), then langs |
+| `dotfiles packages remove --manager <m> <names>` | Remove packages by name (every manager except `sh`) |
+| `dotfiles langs install` / `fonts install` | Install the mise runtimes, or the pacman fonts group |
+| `dotfiles setup` / `setup run <name>` | Run auto setup scripts, or one by name |
 | `dotfiles init` | Write `~/.gitconfig.local` identity |
 | `dotfiles profile list\|show\|switch <name>` | List or switch Git/gcloud identity profiles |
 | `dotfiles hooks enable\|disable\|status` | Opt-in global Git hooks (off by default) |
 | `dotfiles doctor` | Check prerequisites, links, packages, identity and profile |
-| `dotfiles --verify` | Report missing, broken and foreign links |
-| `dotfiles --status` | Check links, PATH, environment, packages and active profile |
+| `dotfiles links verify` | Report missing, broken and foreign links |
+| `dotfiles status` | Check links, PATH, environment, packages and active profile |
 | `bash tests/run-tests [path]` | Run unit and integration tests |
 | `bash scripts/public-check [--staged] [path]` | Personal-data gate |
 
-Shared install flags: `--dry-run`, `--yes`, `--no-remote`, `--group <name>`, `--only <names>`. For automation, set `DOTFILES_YES=1`; `DOTFILES_PROMPT_STDIN=1` permits scripted stdin answers. Optional helpers are listed in [bin/README.md](bin/README.md). Thin wrappers: `bin/profile` and `bin/git/git-profile` exec into `dotfiles profile`.
+Shared install options: `--dry-run`, `-y`/`--yes`, `--no-remote`, `--group <name>`. Every command has its own help: `dotfiles <command> --help`. For automation, set `DOTFILES_YES=1`; `DOTFILES_PROMPT_STDIN=1` permits scripted stdin answers. Optional helpers are listed in [bin/README.md](bin/README.md). Thin wrappers: `bin/profile` and `bin/git/git-profile` exec into `dotfiles profile`.
 
 ## Profiles
 

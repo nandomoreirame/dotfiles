@@ -1,7 +1,7 @@
 # Helper scripts
 
-`bin/dotfiles` is the CLI core: `links`, `--status`, `--verify`, `--help` and
-`--version`. Add `bin` and each helper directory below it to PATH to use it (`dotfiles --status` checks every existing one); no elevated privileges are needed.
+`bin/dotfiles` is the CLI core: `links create`, `links verify`, `status`, `--help` and
+`--version`. Add `bin` and each helper directory below it to PATH to use it (`dotfiles status` checks every existing one); no elevated privileges are needed.
 
 
 Optional helpers under `bin/sys/` and `bin/utils/`. Nothing here is required by the rest of the repository; each script is standalone and covered by its own BATS file.
