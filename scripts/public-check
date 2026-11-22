@@ -124,65 +124,48 @@ scan_file() {
         return 0
     fi
 
-    local line_no=0 line
-    while IFS= read -r line || [ -n "$line" ]; do
-        line_no=$((line_no + 1))
+    # One grep per pattern per file (not per line): line numbers come from -n.
+    scan_pattern "$rel" "$abs" 'cpf' '\b[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}\b'
+    scan_pattern "$rel" "$abs" 'cnpj' '\b[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2}\b'
+    scan_pattern "$rel" "$abs" 'phone' '\(?[0-9]{2}\)?[ -]?9?[0-9]{4}-[0-9]{4}'
+    scan_pattern "$rel" "$abs" 'whatsapp link' 'wa\.me/55[0-9]{10,11}'
+    # Private IPv4: 10/8, 172.16/12, 192.168/16, 100.64/10
+    scan_pattern "$rel" "$abs" 'private ipv4' '\b10\.([0-9]{1,3}\.){2}[0-9]{1,3}\b'
+    scan_pattern "$rel" "$abs" 'private ipv4' '\b172\.(1[6-9]|2[0-9]|3[0-1])\.([0-9]{1,3}\.)[0-9]{1,3}\b'
+    scan_pattern "$rel" "$abs" 'private ipv4' '\b192\.168\.([0-9]{1,3}\.)[0-9]{1,3}\b'
+    scan_pattern "$rel" "$abs" 'private ipv4' '\b100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.([0-9]{1,3}\.)[0-9]{1,3}\b'
+    scan_pattern "$rel" "$abs" 'home path' '/home/[A-Za-z]'
+    scan_pattern "$rel" "$abs" 'home path' '/Users/[A-Za-z]'
 
-        if printf '%s\n' "$line" | grep -qE '\b[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}\b'; then
-            report "$rel" "$line_no" "cpf"
+    # E-mails: catch common forms, allow documentation and allowfile entries.
+    local hit line_no addr text
+    while IFS= read -r hit; do
+        line_no="${hit%%:*}"
+        addr="${hit#*:}"
+        if ! email_allowed "$addr"; then
+            report "$rel" "$line_no" "personal e-mail"
         fi
-        if printf '%s\n' "$line" | grep -qE '\b[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2}\b'; then
-            report "$rel" "$line_no" "cnpj"
-        fi
-        if printf '%s\n' "$line" | grep -qE '\(?[0-9]{2}\)?[ -]?9?[0-9]{4}-[0-9]{4}'; then
-            report "$rel" "$line_no" "phone"
-        fi
-        if printf '%s\n' "$line" | grep -qE 'wa\.me/55[0-9]{10,11}'; then
-            report "$rel" "$line_no" "whatsapp link"
-        fi
-        # Private IPv4: 10/8, 172.16/12, 192.168/16, 100.64/10
-        if printf '%s\n' "$line" | grep -qE '\b10\.([0-9]{1,3}\.){2}[0-9]{1,3}\b'; then
-            report "$rel" "$line_no" "private ipv4"
-        fi
-        if printf '%s\n' "$line" | grep -qE '\b172\.(1[6-9]|2[0-9]|3[0-1])\.([0-9]{1,3}\.)[0-9]{1,3}\b'; then
-            report "$rel" "$line_no" "private ipv4"
-        fi
-        if printf '%s\n' "$line" | grep -qE '\b192\.168\.([0-9]{1,3}\.)[0-9]{1,3}\b'; then
-            report "$rel" "$line_no" "private ipv4"
-        fi
-        if printf '%s\n' "$line" | grep -qE '\b100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.([0-9]{1,3}\.)[0-9]{1,3}\b'; then
-            report "$rel" "$line_no" "private ipv4"
-        fi
-        if printf '%s\n' "$line" | grep -qE '/home/[A-Za-z]'; then
-            report "$rel" "$line_no" "home path"
-        fi
-        if printf '%s\n' "$line" | grep -qE '/Users/[A-Za-z]'; then
-            report "$rel" "$line_no" "home path"
-        fi
+    done < <(grep -noE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' "$abs" || true)
 
-        # E-mails: catch common forms, allow documentation and allowfile entries.
-        local emails
-        emails="$(printf '%s\n' "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' || true)"
-        if [ -n "$emails" ]; then
-            while IFS= read -r addr || [ -n "$addr" ]; do
-                [ -n "$addr" ] || continue
-                if ! email_allowed "$addr"; then
-                    report "$rel" "$line_no" "personal e-mail"
-                fi
-            done <<< "$emails"
+    # Author handle / site: only exact allowlisted credit lines may name it.
+    # Built at runtime so this source line is not itself a finding.
+    # Word boundaries keep the GitHub user nandomoreirame from matching.
+    local author_re="nando""moreira"
+    while IFS= read -r hit; do
+        line_no="${hit%%:*}"
+        text="${hit#*:}"
+        if ! credit_allowed "$rel" "$text"; then
+            report "$rel" "$line_no" "author credit"
         fi
+    done < <(grep -niE "\\b${author_re}\\b" "$abs" || true)
+}
 
-        # Author handle / site: only exact allowlisted credit lines may name it.
-        # Built at runtime so this source line is not itself a finding.
-        # Word boundaries keep the GitHub user nandomoreirame from matching.
-        _author_re="nando""moreira"
-        if printf '%s\n' "$line" | grep -qiE "\\b${_author_re}\\b"; then
-            if ! credit_allowed "$rel" "$line"; then
-                report "$rel" "$line_no" "author credit"
-            fi
-        fi
-        unset _author_re
-    done < "$abs"
+# scan_pattern <rel> <abs> <reason> <ERE>: report each matching line once.
+scan_pattern() {
+    local hit
+    while IFS= read -r hit; do
+        report "$1" "${hit%%:*}" "$3"
+    done < <(grep -nE -- "$4" "$2" || true)
 }
 
 while IFS= read -r -d '' rel || [ -n "$rel" ]; do

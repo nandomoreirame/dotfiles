@@ -132,3 +132,20 @@ gate() { run bash "$ROOT/scripts/public-check" "$@"; }
     mkdir -p "$R/scripts"; : > "$R/scripts/public-check.allow"; git -C "$R" add -A
     gate "$R"; [ "$status" -eq 0 ]
 }
+
+@test "public-check scans large files without one grep per line" {
+    mkrepo "clean"
+    seq 1 3000 | sed 's/^/plain text line /' > "$R/big.txt"
+    git -C "$R" add big.txt
+    run timeout 10 bash "$ROOT/scripts/public-check" "$R"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"public-check: ok"* ]]
+}
+
+@test "public-check reports the line number of each finding" {
+    mkrepo "clean"
+    printf 'a\nb\n%s\n' "$(ip)" > "$R/f.txt"
+    git -C "$R" add f.txt
+    gate "$R"; [ "$status" -ne 0 ]
+    [[ "$output" == *"f.txt:3: private ipv4"* ]]
+}
