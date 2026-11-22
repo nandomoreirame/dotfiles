@@ -5,7 +5,8 @@ setup() {
     CUSTOM="$ROOT/.oh-my-zsh/custom"
 }
 
-zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; source '$CUSTOM/functions.zsh'; $1"; }
+# stdin is /dev/null: a stub that reads stdin (cat) must never wait on the runner.
+zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; source '$CUSTOM/functions.zsh'; $1" </dev/null; }
 
 @test "no rm cp or mv alias is defined" {
     zrun 'alias rm cp mv 2>&1; true'
