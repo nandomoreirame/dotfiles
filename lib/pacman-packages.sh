@@ -61,6 +61,13 @@ _pacman_packages() {
         return 0
     fi
 
+    # Arch does not support partial upgrades: sync and upgrade once, and only
+    # when something is missing, before installing the new packages.
+    if ! SPIN_MSG="Syncing and upgrading the system" _pacman_run pacman -Syu --noconfirm; then
+        e_error "System upgrade failed; no package was installed"
+        return 1
+    fi
+
     for pack in "${to_install[@]}"; do
         if ! SPIN_MSG="Installing $pack" _pacman_run pacman -S --noconfirm --needed -- "$pack"; then
             e_error "Failed to install $pack"

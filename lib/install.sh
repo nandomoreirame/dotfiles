@@ -64,8 +64,17 @@ _install_step_prerequisites() {
         return 0
     fi
     if [ "${DOTFILES_IS_ARCH:-false}" = "true" ]; then
+        local pkg
+        local -a missing=()
+        for pkg in base-devel git curl; do
+            pacman -Q -- "$pkg" >/dev/null 2>&1 || missing+=("$pkg")
+        done
+        if [ "${#missing[@]}" -eq 0 ]; then
+            e_arrow "Prerequisites already installed"
+            return 0
+        fi
         spin_sudo_prime
-        spin_run "Installing base-devel, git and curl" sudo pacman -S --noconfirm --needed base-devel git curl || return 1
+        spin_run "Installing ${missing[*]}" sudo pacman -Syu --noconfirm --needed "${missing[@]}" || return 1
     fi
     return 0
 }

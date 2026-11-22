@@ -86,3 +86,30 @@ run_pm() {
     [ "$status" -eq 0 ]
     grep -q "pacman -S --noconfirm --needed -- new-pkg" "$LOG"
 }
+
+@test "pacman syncs and upgrades once before installing missing packages" {
+    PCMD='_pacman_packages "installed-pkg new-a new-b"'
+    run_pm DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    [ "$(grep -c -- '^pacman -Syu --noconfirm$' "$LOG")" -eq 1 ]
+    sync_line="$(grep -n -- '^pacman -Syu' "$LOG" | cut -d: -f1)"
+    first_install="$(grep -n -- '^pacman -S --noconfirm --needed' "$LOG" | head -1 | cut -d: -f1)"
+    [ "$sync_line" -lt "$first_install" ]
+}
+
+@test "pacman never syncs when every package is already installed" {
+    PCMD='_pacman_packages "installed-pkg"'
+    run_pm DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    run grep -q -- '-Syu' "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "a failed sync installs nothing" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Syu" ] && exit 1\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    PCMD='_pacman_packages "new-a"'
+    run_pm DOTFILES_YES=1
+    [ "$status" -ne 0 ]
+    run grep -q -- '^pacman -S --noconfirm --needed' "$LOG"
+    [ "$status" -ne 0 ]
+}

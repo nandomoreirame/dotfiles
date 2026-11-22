@@ -70,6 +70,11 @@ _install_ohmyzsh() {
     local row url sum tmp actual
     e_header "Installing oh-my-zsh"
 
+    if [ -d "${ZSH:-$HOME/.oh-my-zsh}" ]; then
+        e_arrow "oh-my-zsh already installed (${ZSH:-$HOME/.oh-my-zsh})"
+        return 0
+    fi
+
     if [ "${DOTFILES_NO_REMOTE:-0}" = 1 ]; then
         e_warning "Skipping oh-my-zsh (--no-remote / DOTFILES_NO_REMOTE=1)"
         return 0
@@ -122,11 +127,21 @@ _install_ohmyzsh() {
 
 _install_mise() {
     e_header "Installing mise"
+    if pacman -Q mise >/dev/null 2>&1; then
+        e_arrow "mise already installed"
+        return 0
+    fi
     _sh_sudo pacman -S --noconfirm --needed mise
 }
 
 _install_docker_arch() {
     e_header "Installing Docker (Arch)"
+    # pacman -Q also matches providers, so podman-docker counts as docker and
+    # its conflict with the docker package is never triggered.
+    if pacman -Q docker >/dev/null 2>&1; then
+        e_arrow "docker already provided by $(pacman -Q docker 2>/dev/null | cut -d' ' -f1)"
+        return 0
+    fi
     _sh_sudo pacman -S --noconfirm --needed docker docker-compose || return 1
     if [ "${DOTFILES_DRY_RUN:-0}" != 1 ]; then
         _sh_sudo systemctl enable --now docker || true

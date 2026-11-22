@@ -124,3 +124,23 @@ run_install() {
     run grep -nE 'trap .* RETURN' "$ROOT/lib/install.sh" "$ROOT/lib/sh-apps.sh"
     [ "$status" -ne 0 ]
 }
+
+run_prereq() {
+    run env -i HOME="$HOME" PATH="$FAKE:/usr/bin:/bin" DOTFILES="$ROOT" DOTFILES_PRIVATE="$DOTFILES_PRIVATE" DOTFILES_IS_ARCH=true TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/install.sh'; _install_step_prerequisites"
+}
+
+@test "prerequisites skip pacman when base-devel git and curl are installed" {
+    run_prereq
+    [ "$status" -eq 0 ]
+    run grep -q "pacman -S" "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "prerequisites upgrade and install only the missing packages" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] && [ "$3" = "base-devel" ] && exit 1\n[ "$1" = "-Q" ] && exit 0\nexit 0\n' "$LOG" > "$FAKE/pacman"
+    printf '#!/bin/sh\necho "sudo $*" >> "%s"\nexec "$@"\n' "$LOG" > "$FAKE/sudo"
+    run_prereq
+    [ "$status" -eq 0 ]
+    grep -q -- "pacman -Syu --noconfirm --needed base-devel$" "$LOG"
+}

@@ -53,7 +53,7 @@ run_sh() {
 }
 
 @test "mise installs through pacman" {
-    printf '#!/bin/sh\necho "pacman $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
     PCMD='_install_mise'
     run_sh DOTFILES_YES=1
     grep -q "pacman .*mise" "$LOG"
@@ -73,4 +73,50 @@ run_sh() {
     PCMD='_get_app_function awscli; _get_app_function terraform; _get_app_function agy-cli'
     run_sh
     [ -z "$output" ]
+}
+
+@test "oh-my-zsh is skipped when its directory already exists" {
+    printf 'ohmyzsh|https://example.com/install.sh|%s\n' "$SUM" > "$TABLE"
+    mkdir -p "$HOME/.oh-my-zsh"
+    PCMD='_install_ohmyzsh'
+    run_sh
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"already installed"* ]]
+    run grep -q "^curl" "$LOG"
+    [ "$status" -ne 0 ]
+    run grep -q "^sh " "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "mise is skipped when the package is already installed" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    PCMD='_install_mise'
+    run_sh DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    run grep -q "pacman -S" "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "docker is skipped when docker or a provider such as podman-docker is installed" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/systemctl"
+    chmod +x "$STUBS/systemctl"
+    PCMD='_install_docker_arch'
+    run_sh DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    run grep -q "pacman -S" "$LOG"
+    [ "$status" -ne 0 ]
+    run grep -q "^systemctl" "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "docker installs and enables the service when absent" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] && exit 1\nexit 0\n' "$LOG" > "$STUBS/pacman"
+    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/systemctl"
+    printf '#!/bin/sh\necho "usermod $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/usermod"
+    chmod +x "$STUBS/systemctl" "$STUBS/usermod"
+    PCMD='_install_docker_arch'
+    run_sh DOTFILES_YES=1
+    grep -q "pacman -S --noconfirm --needed docker docker-compose" "$LOG"
+    grep -q "systemctl enable --now docker" "$LOG"
 }
