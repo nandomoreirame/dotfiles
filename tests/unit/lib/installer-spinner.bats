@@ -61,8 +61,8 @@ fn_body() { sed -n "/^$2() {/,/^}/p" "$ROOT/lib/$1"; }
     [[ "$(cat "$ROOT/lib/sh-apps.sh")" == *'spin_run "Downloading oh-my-zsh installer"'* ]]
 }
 
-@test "webapp-install downloads icons through the spinner" {
-    run grep -cE 'spin_run "(Fetching favicon|Downloading icon)' "$ROOT/bin/utils/webapp-install"
+@test "webapp install downloads icons through the spinner" {
+    run grep -cE 'spin_run "(Fetching favicon|Downloading icon)' "$ROOT/bin/utils/webapp"
     [ "$output" -eq 2 ]
 }
 

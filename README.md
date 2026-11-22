@@ -134,7 +134,7 @@ private/configs/umbriel/private.toml | .config/umbriel/private.toml |
 
 ### Helpers and environment
 
-Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp-*`, `game-mode`, `beaverhabits`). See [bin/README.md](bin/README.md).
+Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp`, `game-mode`, `beaverhabits`). See [bin/README.md](bin/README.md).
 
 | Variable | Purpose |
 |---|---|
@@ -262,7 +262,7 @@ Profile files under `profiles/**/git-*.conf` and `gcloud-*.conf` are gitignored;
 
 ### Desktop helpers
 
-The `niri-*`, `nocta` and `noctalia-*` helpers talk only to the local niri and Noctalia sockets and to `notify-send`. They open no network listeners. `webapp-install` writes `.desktop` files under the user's home (`~/.local/share/applications`). `game-mode` freezes and thaws cgroup scopes for the apps in `GAME_MODE_APPS` (stop/continue via the cgroup freezer) and may power niri outputs on or off.
+The `niri-*`, `nocta` and `noctalia-*` helpers talk only to the local niri and Noctalia sockets and to `notify-send`. They open no network listeners. `webapp install` writes `.desktop` files under the user's home (`~/.local/share/applications`). `game-mode` freezes and thaws cgroup scopes for the apps in `GAME_MODE_APPS` (stop/continue via the cgroup freezer) and may power niri outputs on or off.
 
 Report security issues privately to the maintainer; do not open a public issue with secrets, hostnames or personal data.
 

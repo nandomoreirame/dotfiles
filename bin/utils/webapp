@@ -1,0 +1,496 @@
+#!/usr/bin/env bash
+# webapp - Manage web apps: Chromium "app mode" windows with a .desktop launcher.
+#
+# One command for the old webapp-install, webapp-launch, webapp-remove and
+# webapp-browser scripts. Entries share their format with the Noctalia
+# webappbar plugin (X-Webappbar-* keys). Follows clig.dev: -h on every
+# command, usage errors exit 2, no prompt without a terminal, no color when
+# output is not a terminal or NO_COLOR is set.
+set -euo pipefail
+
+readonly VERSION="1.0.0"
+readonly COMMANDS="install list remove launch browser"
+
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../.." && pwd)"
+# shellcheck source=lib/output.sh
+source "$ROOT/lib/output.sh"
+# shellcheck source=lib/spinner.sh
+source "$ROOT/lib/spinner.sh"
+
+DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+ICON_DIR="$DESKTOP_DIR/icons"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/webappbar"
+CONFIG_FILE="$CONFIG_DIR/browser"
+# Browser preference order, shared with the plugin's lib/browser.luau.
+FAMILIES=(google-chrome chromium brave-browser vivaldi-stable microsoft-edge opera)
+
+# ---- output ----------------------------------------------------------------
+# Messages come from lib/output.sh. clig.dev: no color when stdout is not a
+# terminal or NO_COLOR is set, and errors and warnings go to stderr.
+
+if [[ ! -t 1 || -n "${NO_COLOR:-}" ]]; then
+  # shellcheck disable=SC2034 # read by lib/output.sh
+  bold='' underline='' reset='' purple='' red='' green='' tan='' blue=''
+fi
+
+die() { e_error "$*" >&2; exit 1; }
+# usage_error <command> <message>: wrong invocation, exit 2 with the usage.
+usage_error() {
+  printf 'error: %s\n\n' "$2" >&2
+  "help_${1:-main}" >&2
+  exit 2
+}
+
+# ---- help ------------------------------------------------------------------
+
+help_main() {
+  cat <<'EOF'
+Usage: webapp <command> [options]
+
+Manage web apps: a website in a Chromium "app mode" window with its own
+launcher entry.
+
+Commands:
+  install    Create a launcher for a web app
+  list       List web apps (managed, legacy and Chrome PWAs)
+  remove     Remove web app launchers
+  launch     Open a URL as a web app window
+  browser    Show or set the browser used for web apps
+
+Options:
+  -h, --help     Show this help
+  --version      Print the version
+
+Run 'webapp <command> --help' for the options of one command.
+EOF
+}
+
+help_install() {
+  cat <<'EOF'
+Usage: webapp install <name> <url> [--icon <url|file>] [--exec <cmd>] [--mime <types>]
+
+Create ~/.local/share/applications/<name>.desktop. Without <name> and <url>
+it asks for them and for the icon, but only when stdin is a terminal.
+
+Options:
+  --icon <url|file>   PNG URL to download, or a file name under applications/icons
+                      (default: the site favicon)
+  --exec <cmd>        Exec line override
+  --mime <types>      MimeType= value, for example "x-scheme-handler/mailto;"
+  -h, --help          Show this help
+
+Examples:
+  webapp install "YouTube Music" music.youtube.com
+  webapp install Gmail mail.google.com --icon https://example.com/gmail.png
+EOF
+}
+
+help_list() {
+  cat <<'EOF'
+Usage: webapp list
+
+List the web app launchers: [webapp] managed by this command or the Noctalia
+webappbar, [legacy] old webapp-launch entries, [chrome] Chrome-installed PWAs.
+EOF
+}
+
+help_remove() {
+  cat <<'EOF'
+Usage: webapp remove [<name>...]
+
+Remove managed and legacy launchers with their icons. Without a name it opens
+an fzf multi-select (TAB selects). Chrome PWAs are left to chrome://apps.
+Exits 1 when a name matches no web app.
+EOF
+}
+
+help_launch() {
+  cat <<'EOF'
+Usage: webapp launch <url> [-- <browser-args>...]
+
+Open <url> in app mode with the resolved browser. Arguments after -- go to the
+browser unchanged.
+
+Example:
+  webapp launch https://music.youtube.com -- --new-window
+EOF
+}
+
+help_browser() {
+  cat <<'EOF'
+Usage: webapp browser [get|exec|id|list|set <id|path>]
+
+Resolve the browser for web apps, in this order: $WEBAPP_BROWSER,
+~/.config/webappbar/browser, the xdg default (Chromium family only), the first
+installed browser, chromium.
+
+Actions:
+  get           Print the logical binary (default)
+  exec          Print the real executable (follows the .desktop Exec line)
+  id            Print the matching desktop id
+  list          Print the installed Chromium desktop ids
+  set <id|path> Store the choice in ~/.config/webappbar/browser
+EOF
+}
+
+# ---- browser resolution ----------------------------------------------------
+
+bin_for_id() {
+  case "${1:-}" in
+    google-chrome | google-chrome-stable | chrome) echo google-chrome ;;
+    chromium | chromium-browser | ungoogled-chromium) echo chromium ;;
+    brave | brave-browser) echo brave-browser ;;
+    vivaldi | vivaldi-stable) echo vivaldi-stable ;;
+    microsoft-edge | msedge) echo microsoft-edge ;;
+    opera) echo opera ;;
+    *) return 1 ;;
+  esac
+}
+
+# A known name, or an absolute path to a custom binary.
+bin_for_value() {
+  local value="$1"
+  [[ -n "$value" ]] || return 1
+  if bin_for_id "${value%.desktop}" >/dev/null 2>&1; then
+    bin_for_id "${value%.desktop}"
+  elif [[ "$value" == /* ]]; then
+    echo "$value"
+  else
+    return 1
+  fi
+}
+
+# Every XDG application data dir, in spec order.
+data_dirs() {
+  local -a sys_dirs=()
+  printf '%s\n' "${XDG_DATA_HOME:-$HOME/.local/share}"
+  IFS=: read -r -a sys_dirs <<<"${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+  printf '%s\n' "${sys_dirs[@]}"
+}
+
+installed_ids() {
+  local id dir
+  for id in "${FAMILIES[@]}"; do
+    while IFS= read -r dir; do
+      if [[ -f "$dir/applications/$id.desktop" ]]; then
+        echo "$id"
+        break
+      fi
+    done < <(data_dirs)
+  done
+}
+
+browser_get() {
+  local value id
+  if [[ -n "${WEBAPP_BROWSER:-}" ]] && value="$(bin_for_value "$WEBAPP_BROWSER")"; then
+    echo "$value"; return
+  fi
+  if [[ -r "$CONFIG_FILE" ]]; then
+    read -r value <"$CONFIG_FILE" || true
+    if value="$(bin_for_value "$value")"; then echo "$value"; return; fi
+  fi
+  if command -v xdg-settings >/dev/null 2>&1 &&
+    id="$(xdg-settings get default-web-browser 2>/dev/null)" && value="$(bin_for_value "$id")"; then
+    echo "$value"; return
+  fi
+  # No pipe into head: under pipefail an early close is SIGPIPE (141) and set -e exits.
+  id="$(installed_ids)"
+  id="${id%%$'\n'*}"
+  if [[ -n "$id" ]] && value="$(bin_for_id "$id")"; then echo "$value"; return; fi
+  echo chromium
+}
+
+# First argument of an Exec line, honouring one level of quoting.
+exec_first_arg() {
+  local line="$1"
+  if [[ "$line" == \"* ]]; then
+    line="${line#\"}"
+    printf '%s' "${line%%\"*}"
+  else
+    printf '%s' "${line%% *}"
+  fi
+}
+
+# The .desktop Exec line wins (google-chrome is often only google-chrome-stable);
+# mirrors browser_exec() in the plugin.
+browser_exec() {
+  local bin id dir line
+  bin="$(browser_get)"
+  if [[ "$bin" == /* ]]; then echo "$bin"; return; fi
+  for id in "${FAMILIES[@]}"; do
+    [[ "$(bin_for_id "$id")" == "$bin" ]] || continue
+    while IFS= read -r dir; do
+      [[ -r "$dir/applications/$id.desktop" ]] || continue
+      line="$(sed -n 's/^Exec=//p' "$dir/applications/$id.desktop" | head -1)"
+      [[ -n "$line" ]] || continue
+      exec_first_arg "$line"
+      echo
+      return
+    done < <(data_dirs)
+  done
+  echo "$bin"
+}
+
+browser_id() {
+  local bin id
+  bin="$(browser_get)"
+  for id in "${FAMILIES[@]}"; do
+    if [[ "$(bin_for_id "$id")" == "$bin" ]]; then echo "$id"; return; fi
+  done
+  echo "$bin"
+}
+
+cmd_browser() {
+  case "${1:-get}" in
+    -h | --help) help_browser ;;
+    get) browser_get ;;
+    exec) browser_exec ;;
+    id) browser_id ;;
+    list) installed_ids ;;
+    set)
+      [[ -n "${2:-}" ]] || usage_error browser "browser set needs <id|path>"
+      mkdir -p "$CONFIG_DIR"
+      printf '%s\n' "$2" >"$CONFIG_FILE"
+      e_success "Web apps now open with $2"
+      ;;
+    *) usage_error browser "unknown browser action '$1'" ;;
+  esac
+}
+
+# ---- install ---------------------------------------------------------------
+
+# Names become file basenames: no traversal, separators or control characters.
+safe_name() {
+  [[ -n "$1" && "$1" != .* && "$1" != */* && "$1" != *\\* && ! "$1" =~ [[:cntrl:]] ]]
+}
+
+normalize_url() {
+  local u="$1"
+  [[ "$u" =~ ^[a-zA-Z][a-zA-Z0-9+.-]*: ]] || u="https://$u"
+  echo "$u"
+}
+
+# Escape one Exec argument the way the Desktop Entry spec and the plugin's
+# desktop.luau do: % doubles, and \ " ` $ get a backslash.
+escape_exec_value() {
+  local v="$1"
+  v="${v//%/%%}"
+  v="${v//\\/\\\\}"
+  v="${v//\"/\\\"}"
+  v="${v//\`/\\\`}"
+  v="${v//\$/\\\$}"
+  printf '%s' "$v"
+}
+
+cmd_install() {
+  local name="" url="" icon="" exec_override="" mime=""
+  local -a positional=()
+  while (($#)); do
+    case "$1" in
+      -h | --help) help_install; return ;;
+      --icon | --exec | --mime)
+        [[ $# -ge 2 ]] || usage_error install "$1 needs a value"
+        case "$1" in --icon) icon="$2" ;; --exec) exec_override="$2" ;; --mime) mime="$2" ;; esac
+        shift 2
+        ;;
+      --icon=*) icon="${1#--icon=}"; shift ;;
+      --exec=*) exec_override="${1#--exec=}"; shift ;;
+      --mime=*) mime="${1#--mime=}"; shift ;;
+      --) shift; positional+=("$@"); break ;;
+      -*) usage_error install "unknown option '$1'" ;;
+      *) positional+=("$1"); shift ;;
+    esac
+  done
+  ((${#positional[@]} <= 2)) || usage_error install "unexpected argument '${positional[2]}'"
+
+  if ((${#positional[@]} == 0)); then
+    [[ -t 0 ]] || usage_error install "install needs <name> and <url> (no terminal to ask)"
+    read -rp "Name> " name
+    read -rp "URL>  " url
+    # Empty keeps the default: the site favicon.
+    [[ -n "$icon" ]] || read -rp "Icon (PNG URL or file in applications/icons, empty = site favicon)> " icon
+  else
+    name="${positional[0]}"
+    url="${positional[1]:-}"
+  fi
+  [[ -n "$name" && -n "$url" ]] || usage_error install "install needs <name> and <url>"
+  safe_name "$name" || die "invalid app name '$name'"
+  url="$(normalize_url "$url")"
+
+  mkdir -p "$ICON_DIR"
+  local icon_path=""
+  if [[ -z "$icon" ]]; then
+    local favicon="https://www.google.com/s2/favicons?domain=${url}&sz=128"
+    if spin_run "Fetching favicon" curl -fsL -o "$ICON_DIR/$name.png" "$favicon" >/dev/null 2>&1 &&
+      [[ -s "$ICON_DIR/$name.png" ]]; then
+      icon_path="$ICON_DIR/$name.png"
+    else
+      e_warning "could not fetch the favicon; the launcher has no icon (use --icon)" >&2
+    fi
+  elif [[ "$icon" =~ ^https?:// ]]; then
+    icon_path="$ICON_DIR/$name.png"
+    if ! spin_run "Downloading icon" curl -fsSL -o "$icon_path" "$icon" || [[ ! -s "$icon_path" ]]; then
+      die "could not download the icon from $icon"
+    fi
+  else
+    safe_name "$icon" && [[ "$icon" != *..* ]] || die "invalid icon reference '$icon'"
+    icon_path="$ICON_DIR/$icon"
+  fi
+
+  local browser exec_line desktop_file="$DESKTOP_DIR/$name.desktop"
+  browser="$(browser_exec)"
+  if [[ -n "$exec_override" ]]; then
+    exec_line="$exec_override"
+  else
+    exec_line="\"$(escape_exec_value "$browser")\" --app=\"$(escape_exec_value "$url")\""
+  fi
+
+  mkdir -p "$DESKTOP_DIR"
+  {
+    echo "[Desktop Entry]"
+    echo "Version=1.0"
+    echo "Name=$name"
+    echo "Comment=$name (web app)"
+    echo "Exec=$exec_line"
+    echo "Terminal=false"
+    echo "Type=Application"
+    [[ -n "$icon_path" ]] && echo "Icon=$icon_path"
+    echo "Categories=Network;WebApp;"
+    echo "StartupNotify=true"
+    [[ -n "$mime" ]] && echo "MimeType=$mime"
+    echo "X-Webappbar-Id=$name"
+    echo "X-Webappbar-Url=$url"
+    echo "X-Webappbar-Browser=$browser"
+  } >"$desktop_file"
+  chmod +x "$desktop_file"
+  update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+
+  e_success "Created web app '$name'"
+  e_info "  Open it from the app launcher, or run: webapp launch $url"
+  e_info "  Remove it with: webapp remove \"$name\""
+}
+
+# ---- list ------------------------------------------------------------------
+
+# kind_of <file>: managed, legacy, chrome or nothing.
+kind_of() {
+  local exec_line
+  exec_line="$(sed -n 's/^Exec=//p' "$1" | head -1)"
+  if grep -q '^X-Webappbar-Id=' "$1"; then
+    echo managed
+  elif [[ "$exec_line" == *webapp-launch* ]]; then
+    echo legacy
+  elif [[ "$exec_line" == *--app-id=* && "$exec_line" == *chrom* ]]; then
+    echo chrome
+  fi
+}
+
+cmd_list() {
+  case "${1:-}" in -h | --help) help_list; return ;; "") ;; *) usage_error list "unexpected argument '$1'" ;; esac
+  local file name kind found=false
+  while IFS= read -r -d '' file; do
+    kind="$(kind_of "$file")"
+    [[ -n "$kind" ]] || continue
+    found=true
+    name="$(sed -n 's/^Name=//p' "$file" | head -1)"
+    [[ -n "$name" ]] || name="$(basename "${file%.desktop}")"
+    case "$kind" in
+      managed) printf '%s[webapp]%s %s\n' "$green" "$reset" "$name" ;;
+      legacy) printf '%s[legacy]%s %s\n' "$tan" "$reset" "$name" ;;
+      chrome) printf '%s[chrome]%s %s\n' "$tan" "$reset" "$name" ;;
+    esac
+  done < <(find "$DESKTOP_DIR" -maxdepth 1 -name '*.desktop' -print0 2>/dev/null | sort -z)
+  [[ "$found" == true ]] || e_info "No web apps in $DESKTOP_DIR"
+}
+
+# ---- remove ----------------------------------------------------------------
+
+chrome_pwa_named() {
+  local f
+  while IFS= read -r -d '' f; do
+    [[ "$(sed -n 's/^Name=//p' "$f" | head -1)" == "$1" ]] && return 0
+  done < <(find "$DESKTOP_DIR" -maxdepth 1 -name 'chrome-*.desktop' -print0 2>/dev/null)
+  return 1
+}
+
+cmd_remove() {
+  local -a names=()
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      -h | --help) help_remove; return ;;
+      -*) usage_error remove "unknown option '$arg'" ;;
+      *) names+=("$arg") ;;
+    esac
+  done
+
+  if ((${#names[@]} == 0)); then
+    local -a apps=()
+    local file kind
+    while IFS= read -r -d '' file; do
+      kind="$(kind_of "$file")"
+      [[ "$kind" == managed || "$kind" == legacy ]] && apps+=("$(basename "${file%.desktop}")")
+    done < <(find "$DESKTOP_DIR" -maxdepth 1 -name '*.desktop' -print0 2>/dev/null)
+    ((${#apps[@]})) || { e_info "No web apps to remove."; return; }
+    command -v fzf >/dev/null 2>&1 || usage_error remove "fzf not found; pass the names: webapp remove <name>..."
+    IFS=$'\n' read -r -d '' -a names < <(
+      printf '%s\n' "${apps[@]}" | sort |
+        fzf --multi --prompt "Remove web app(s)> " --header "TAB selects, ENTER confirms" && printf '\0'
+    ) || true
+    ((${#names[@]})) || { e_info "Nothing selected."; return; }
+  fi
+
+  local name target failed=0
+  for name in "${names[@]}"; do
+    [[ -n "$name" ]] || continue
+    target="$DESKTOP_DIR/$name.desktop"
+    if safe_name "$name" && [[ -f "$target" ]] && [[ "$(kind_of "$target")" =~ ^(managed|legacy)$ ]]; then
+      rm -f -- "$target" "$ICON_DIR/$name.png"
+      e_success "Removed $name"
+    elif safe_name "$name" && chrome_pwa_named "$name"; then
+      e_warning "'$name' is a Chrome PWA: remove it in chrome://apps (right-click, Remove)" >&2
+    else
+      e_error "No web app named '$name' found" >&2
+      failed=1
+    fi
+  done
+  update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+  return "$failed"
+}
+
+# ---- launch ----------------------------------------------------------------
+
+cmd_launch() {
+  case "${1:-}" in
+    -h | --help) help_launch; return ;;
+    "" | -*) usage_error launch "launch needs a <url>" ;;
+  esac
+  local url="$1"
+  shift
+  [[ "${1:-}" == "--" ]] && shift
+  local browser
+  browser="$(browser_exec)"
+  # Detach so the window outlives the launcher; uwsm places it in the session.
+  if command -v uwsm >/dev/null 2>&1; then
+    exec setsid uwsm app -- "$browser" --app="$url" "$@"
+  fi
+  exec setsid "$browser" --app="$url" "$@"
+}
+
+# ---- main ------------------------------------------------------------------
+
+main() {
+  case "${1:-}" in
+    "") usage_error main "missing command" ;;
+    -h | --help) help_main ;;
+    --version) echo "webapp $VERSION" ;;
+    install | list | remove | launch | browser)
+      local cmd="$1"
+      shift
+      "cmd_$cmd" "$@"
+      ;;
+    *) usage_error main "unknown command '$1' (commands: ${COMMANDS// /, })" ;;
+  esac
+}
+
+main "$@"
