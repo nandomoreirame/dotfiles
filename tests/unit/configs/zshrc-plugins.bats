@@ -44,3 +44,21 @@ setup() {
     run grep -nE 'tokens\.env|\.env"|stitch|typesafe|marginalia|homelab' "$ROOT/configs/.zshrc"
     [ "$status" -ne 0 ]
 }
+
+@test "zshrc loads oh-my-zsh from ~/.oh-my-zsh when ZSH is not inherited" {
+    # A graphical session started without a login shell exports no ZSH.
+    mkdir -p "$HOME_DECOY/.oh-my-zsh"
+    echo 'print OMZ-LOADED' > "$HOME_DECOY/.oh-my-zsh/oh-my-zsh.sh"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES="$ROOT" ZDOTDIR="$BATS_TEST_TMPDIR" \
+        zsh -f -c "source '$ROOT/configs/.zshrc' 2>/dev/null; print \"ZSH=\$ZSH\""
+    [[ "$output" == *"OMZ-LOADED"* ]]
+    [[ "$output" == *"ZSH=$HOME_DECOY/.oh-my-zsh"* ]]
+}
+
+@test "zshrc keeps an inherited ZSH" {
+    mkdir -p "$BATS_TEST_TMPDIR/omz"
+    echo 'print CUSTOM-OMZ' > "$BATS_TEST_TMPDIR/omz/oh-my-zsh.sh"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES="$ROOT" ZDOTDIR="$BATS_TEST_TMPDIR" ZSH="$BATS_TEST_TMPDIR/omz" \
+        zsh -f -c "source '$ROOT/configs/.zshrc' 2>/dev/null"
+    [[ "$output" == *"CUSTOM-OMZ"* ]]
+}

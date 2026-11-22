@@ -22,8 +22,10 @@ ZSH_DISABLE_COMPFIX=true
 # Load ZSH options (ZSH_THEME, plugins, etc.) BEFORE oh-my-zsh so plugins load correctly
 [[ -r "$ZSH_CUSTOM/options.zsh" ]] && source "$ZSH_CUSTOM/options.zsh"
 
-# Load Oh My Zsh when installed (typically ~/.oh-my-zsh from the verified installer)
-if [[ -n "${ZSH:-}" && -r "$ZSH/oh-my-zsh.sh" ]]; then
+# Load Oh My Zsh when installed (typically ~/.oh-my-zsh from the verified installer).
+# Default ZSH here: a graphical session started without a login shell exports none.
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
   source "$ZSH/oh-my-zsh.sh"
 fi
 
