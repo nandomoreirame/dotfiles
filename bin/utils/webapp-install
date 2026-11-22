@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# shellcheck source=lib/spinner.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/lib/spinner.sh"
 
 # webapp-install - Create a .desktop launcher for a web app
 #
@@ -150,7 +152,7 @@ ICON_PATH=""
 if [[ -z "$ICON_REF" ]]; then
   # Try to auto-fetch a favicon.
   FAVICON_URL="https://www.google.com/s2/favicons?domain=${APP_URL}&sz=128"
-  if curl -fsL -o "$ICON_DIR/$APP_NAME.png" "$FAVICON_URL" 2>/dev/null && [[ -s "$ICON_DIR/$APP_NAME.png" ]]; then
+  if spin_run "Fetching favicon" curl -fsL -o "$ICON_DIR/$APP_NAME.png" "$FAVICON_URL" >/dev/null 2>&1 && [[ -s "$ICON_DIR/$APP_NAME.png" ]]; then
     ICON_PATH="$ICON_DIR/$APP_NAME.png"
     ok "Favicon fetched automatically."
   elif [[ "$INTERACTIVE" == true ]]; then
@@ -161,7 +163,7 @@ fi
 if [[ -z "$ICON_PATH" && -n "$ICON_REF" ]]; then
   if [[ "$ICON_REF" =~ ^https?:// ]]; then
     ICON_PATH="$ICON_DIR/$APP_NAME.png"
-    if ! curl -fsSL -o "$ICON_PATH" "$ICON_REF" || [[ ! -s "$ICON_PATH" ]]; then
+    if ! spin_run "Downloading icon" curl -fsSL -o "$ICON_PATH" "$ICON_REF" || [[ ! -s "$ICON_PATH" ]]; then
       error "Failed to download icon from $ICON_REF"
       exit 1
     fi

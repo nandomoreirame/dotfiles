@@ -13,6 +13,8 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 readonly REPO_ROOT
+# shellcheck source=lib/spinner.sh
+source "$REPO_ROOT/lib/spinner.sh"
 readonly EXT_DIR="$REPO_ROOT/configs/vscode/terminal-noir"
 readonly EDITORS=(code cursor)
 
@@ -62,7 +64,7 @@ main() {
             echo "skip: $editor not installed"
             continue
         fi
-        "$editor" --install-extension "$vsix" --force
+        spin_run "Installing Terminal Noir in $editor" "$editor" --install-extension "$vsix" --force
         installed=$((installed + 1))
     done
 

@@ -34,7 +34,7 @@ STUB
     # Only the tools the script needs, so the real editors in /usr/bin stay
     # out of reach.
     local tool
-    for tool in bash jq bsdtar mktemp cp mkdir rm dirname cat; do
+    for tool in bash jq bsdtar mktemp cp mkdir rm dirname cat sleep; do
         ln -s "/usr/bin/$tool" "$STUB_DIR/$tool"
     done
 
