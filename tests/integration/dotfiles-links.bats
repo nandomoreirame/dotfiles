@@ -11,31 +11,31 @@ setup() {
     CLI() { env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$DOTFILES" bash "$ROOT/bin/dotfiles" "$@"; }
 }
 
-@test "links all then verify succeeds and a second run changes nothing" {
-    run CLI links --all
+@test "links create then verify succeeds and a second run changes nothing" {
+    run CLI links create
     [ "$status" -eq 0 ]
     [ -L "$HOME/.sample" ]
     [ -L "$HOME/.config/tool/conf" ]
     [ -L "$HOME/.config/tool/secret.conf" ]
     before="$(find "$HOME" -type l -printf '%p -> %l %i %T@\n' | sort)"
-    run CLI links --all
+    run CLI links create
     [ "$status" -eq 0 ]
     [ "$before" = "$(find "$HOME" -type l -printf '%p -> %l %i %T@\n' | sort)" ]
-    run CLI --verify
+    run CLI links verify
     [ "$status" -eq 0 ]
 }
 
 @test "a pre-existing file is backed up, not lost" {
     printf 'mine\n' > "$HOME/.sample"
-    run CLI links --files
+    run CLI links create --files
     [ "$status" -eq 0 ]
     [ -L "$HOME/.sample" ]
     grep -rq "mine" "$HOME" --include='*sample*' --exclude-dir=.config
 }
 
 @test "verify fails after a link is removed" {
-    CLI links --all >/dev/null
+    CLI links create >/dev/null
     rm "$HOME/.config/tool/secret.conf"
-    run CLI --verify
+    run CLI links verify
     [ "$status" -ne 0 ]
 }

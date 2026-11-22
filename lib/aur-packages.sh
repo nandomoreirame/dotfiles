@@ -92,7 +92,7 @@ _aur_remove() {
     local -a _packages=("$@")
     local pack aur_helper
     if [ "${#_packages[@]}" -eq 0 ]; then
-        e_error "aur:remove needs at least one package name"
+        e_error "packages remove needs at least one package name"
         return 1
     fi
     for pack in "${_packages[@]}"; do

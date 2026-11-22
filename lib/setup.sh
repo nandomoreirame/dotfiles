@@ -86,7 +86,7 @@ _run_setup() {
 _setup_run_one() {
     local name="${1:-}" file policy desc path
     if [ -z "$name" ]; then
-        e_error "Usage: dotfiles setup:run <name>"
+        e_error "Usage: dotfiles setup run <name>"
         return 1
     fi
     shift || true

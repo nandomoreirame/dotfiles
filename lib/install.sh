@@ -169,7 +169,7 @@ _install_step_runtimes() {
 _install_step_links() {
     e_info "links"
     if [ "${DOTFILES_DRY_RUN:-0}" = 1 ]; then
-        printf '[dry-run] dotfiles links --all\n'
+        printf '[dry-run] dotfiles links create\n'
         return 0
     fi
     _links --all

@@ -63,7 +63,8 @@ teardown() {
     run _links_handler "--help"
     assert_success
     assert_output --partial "dotfiles links"
-    assert_output --partial "--all"
+    assert_output --partial "create"
+    assert_output --partial "verify"
     assert_output --partial "--files"
     assert_output --partial "--paths"
 }
@@ -74,7 +75,7 @@ teardown() {
     assert_output --partial "dotfiles links"
 }
 
-@test "_links_handler: rejects unknown options" {
+@test "_links_handler: rejects unknown actions" {
     run _links_handler "--invalid-option"
     assert_failure
     assert_output --partial "Unknown"
@@ -84,8 +85,7 @@ teardown() {
 @test "_dispatch: rejects unknown modules" {
     run _dispatch "invalid_module" "action"
     assert_failure
-    assert_output --partial "Unknown"
-    assert_output --partial "Available modules"
+    assert_output --partial "Unknown command"
 }
 
 
@@ -112,10 +112,15 @@ teardown() {
     assert_output --partial "dotfiles v"
 }
 
-@test "_parse_command: prints version with -v" {
-    run _parse_command "-v"
+@test "_parse_command: prints version with -V" {
+    run _parse_command "-V"
     assert_success
     assert_output --partial "dotfiles v"
+}
+
+@test "_parse_command: -v is not the version" {
+    run _parse_command "-v"
+    assert_failure
 }
 
 @test "_parse_command: rejects unknown commands" {

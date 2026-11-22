@@ -6,20 +6,13 @@ setup() {
     mkdir -p "$HOME"
 }
 
-@test "pacman remove without names fails" {
-    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" pacman:remove
+remove_without_names() {
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" packages remove --manager "$1"
     [ "$status" -ne 0 ]
     [[ "$output" == *"name"* ]]
 }
 
-@test "aur remove without names fails" {
-    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" aur:remove
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"name"* ]]
-}
-
-@test "flatpak remove without names fails" {
-    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" flatpak:remove
-    [ "$status" -ne 0 ]
-    [[ "$output" == *"name"* ]]
-}
+@test "pacman remove without names fails" { remove_without_names pacman; }
+@test "aur remove without names fails" { remove_without_names aur; }
+@test "flatpak remove without names fails" { remove_without_names flatpak; }
+@test "node remove without names fails" { remove_without_names node; }

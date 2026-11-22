@@ -65,7 +65,7 @@ setup() {
 
 @test "status and doctor report the active profile" {
     CLI profile switch personal
-    CLI --status
+    CLI status
     [[ "$output" == *"personal"* ]]
 }
 

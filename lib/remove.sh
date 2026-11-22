@@ -17,7 +17,7 @@ _remove_require_names() {
     local kind="$1"
     shift
     if [ "$#" -eq 0 ]; then
-        e_error "${kind}:remove needs at least one package name"
+        e_error "packages remove needs at least one package name ($kind)"
         return 1
     fi
     return 0

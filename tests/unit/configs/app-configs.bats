@@ -28,9 +28,9 @@ MIGRATED=(
 
 @test "verify passes on a scratch home" {
     export HOME="$BATS_TEST_TMPDIR/home"; mkdir -p "$HOME"
-    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" links --all
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" links create
     [ "$status" -eq 0 ]
-    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" --verify
+    run env -i HOME="$HOME" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" bash "$ROOT/bin/dotfiles" links verify
     [ "$status" -eq 0 ]
 }
 

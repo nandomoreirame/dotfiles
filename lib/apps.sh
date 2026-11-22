@@ -23,7 +23,7 @@ source "${BASH_SOURCE[0]%/*}/fonts.sh"
 # shellcheck source=lib/mise-packages.sh
 source "${BASH_SOURCE[0]%/*}/mise-packages.sh"
 
-# Resolve package names from --group / --only / defaults.
+# Resolve package names from explicit names, --group or the full list.
 _apps_resolve_names() {
     local kind="$1"
     local group="${2:-}"
@@ -80,7 +80,7 @@ _apps_install_fonts() {
     _install_fonts
 }
 
-# apps:install runs pacman, AUR, Flatpak, Node, sh and langs in that order.
+# `packages install` without --manager runs pacman, AUR, Flatpak, Node, sh and langs.
 _apps_install_all() {
     local group="${1:-}" only="${2:-}"
     local fail_count=0

@@ -80,7 +80,7 @@ _node_remove() {
     local -a _packages=("$@")
     local package
     if [ "${#_packages[@]}" -eq 0 ]; then
-        e_error "node:remove needs at least one package name"
+        e_error "packages remove needs at least one package name"
         return 1
     fi
     if ! command -v npm >/dev/null 2>&1; then

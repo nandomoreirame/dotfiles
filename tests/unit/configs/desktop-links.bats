@@ -8,22 +8,22 @@ setup() {
 d() { env -i HOME="$H" PATH="/usr/bin:/bin" TERM=xterm-256color DOTFILES="$ROOT" DOTFILES_PRIVATE="$P" DOTFILES_YES=1 bash "$ROOT/bin/dotfiles" "$@"; }
 
 @test "desktop configs are linked and verified" {
-    run d links --all
+    run d links create
     [ "$status" -eq 0 ]
     [ -L "$H/.config/niri/config.kdl" ]
     [ -L "$H/.config/noctalia/bar.toml" ]
-    run d --verify
+    run d links verify
     [ "$status" -eq 0 ]
 }
 
 @test "private links replace the niri and bar files" {
     echo '// mine' > "$P/configs/niri/private.kdl"; echo '# mine' > "$P/configs/noctalia/bar.toml"
     printf '[paths]\nprivate/configs/niri/private.kdl | .config/niri/private.kdl |\nprivate/configs/noctalia/bar.toml | .config/noctalia/bar.toml |\n' > "$P/links.conf"
-    run d links --all
+    run d links create
     [ "$status" -eq 0 ]
     [ "$(readlink "$H/.config/niri/private.kdl")" = "$P/configs/niri/private.kdl" ]
     [ "$(readlink "$H/.config/noctalia/bar.toml")" = "$P/configs/noctalia/bar.toml" ]
-    run d --verify
+    run d links verify
     [ "$status" -eq 0 ]
 }
 
