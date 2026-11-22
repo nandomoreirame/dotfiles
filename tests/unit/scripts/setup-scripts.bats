@@ -100,3 +100,59 @@ setup() {
     run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|pacote|falha)\b|${_a}|discord|spotify" "$ROOT/scripts/setup"
     [ "$status" -ne 0 ]
 }
+
+# ---- vicinae.sh: settings.json import and the user service ----
+
+vic_stubs() {
+    printf '#!/bin/sh\nexit 0\n' > "$STUBS/vicinae"
+    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/systemctl"
+    chmod +x "$STUBS/vicinae" "$STUBS/systemctl"
+}
+
+run_vic() { run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/vicinae.sh"; }
+
+@test "vicinae is a no-op when vicinae is missing" {
+    run env -i HOME="$HOME" PATH="$STUBS" /usr/bin/bash "$ROOT/scripts/setup/vicinae.sh"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"vicinae not found"* ]]
+    [ ! -e "$HOME/.config/vicinae/settings.json" ]
+}
+
+@test "vicinae creates settings.json importing dotfiles.json when missing" {
+    vic_stubs
+    run_vic
+    [ "$status" -eq 0 ]
+    run jq -r '.imports[0]' "$HOME/.config/vicinae/settings.json"
+    [ "$output" = "dotfiles.json" ]
+}
+
+@test "vicinae leaves a settings.json that already imports dotfiles.json untouched" {
+    vic_stubs
+    mkdir -p "$HOME/.config/vicinae"
+    printf '// GUI comment\n{\n  "imports": ["dotfiles.json"],\n  "font": {"normal": {"size": 12}}\n}\n' > "$HOME/.config/vicinae/settings.json"
+    before="$(md5sum < "$HOME/.config/vicinae/settings.json")"
+    run_vic
+    [ "$status" -eq 0 ]
+    [ "$(md5sum < "$HOME/.config/vicinae/settings.json")" = "$before" ]
+}
+
+@test "vicinae warns instead of rewriting a settings.json without the import" {
+    vic_stubs
+    mkdir -p "$HOME/.config/vicinae"
+    printf '// GUI comment\n{\n  "font": {"normal": {"size": 12}}\n}\n' > "$HOME/.config/vicinae/settings.json"
+    before="$(md5sum < "$HOME/.config/vicinae/settings.json")"
+    run_vic
+    [ "$status" -eq 0 ]
+    [[ "$output" == *'"imports": ["dotfiles.json"]'* ]]
+    [ "$(md5sum < "$HOME/.config/vicinae/settings.json")" = "$before" ]
+}
+
+@test "vicinae enables the user service" {
+    vic_stubs
+    run_vic
+    grep -Fqx 'systemctl --user enable --now vicinae.service' "$LOG"
+}
+
+@test "the registry runs vicinae.sh during install" {
+    grep -Fq 'vicinae.sh|auto|' "$ROOT/scripts/setup/registry.conf"
+}

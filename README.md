@@ -102,6 +102,8 @@ dotfiles --verify
 
 The public tree ships generic configs for two compositors, [Umbriel](https://docs.noctalia.dev/umbriel/) (the default session) and [niri](https://yalter.github.io/niri/), a [Noctalia](https://docs.noctalia.dev) bar that uses **built-in widgets only** and the [Vicinae](https://github.com/vicinaehq/vicinae) launcher with the Terminal Noir theme. Personal binds, plugins and monitor layouts stay in the private overlay.
 
+The installer adds `umbriel` and `xdg-desktop-portal-umbriel` (CachyOS repo; `umbriel-git` from the AUR on plain Arch) and `vicinae-bin` (AUR) with the desktop groups. The `vicinae.sh` setup step creates `~/.config/vicinae/settings.json` importing `dotfiles.json` when it is missing (it never rewrites an existing one) and enables `vicinae.service`.
+
 ### Hooks
 
 | File | Role |
