@@ -33,10 +33,26 @@ _aur_run() {
     spin_run "${SPIN_MSG:-$*}" "$@"
 }
 
+# _aur_installed_as <name>: print the installed package that satisfies <name>.
+# AUR names often ship as -bin or -git variants of the same app, which conflict
+# with each other, so any installed variant counts.
+_aur_installed_as() {
+    local name="$1" base candidate
+    base="${name%-bin}"
+    base="${base%-git}"
+    for candidate in "$name" "$base" "$base-bin" "$base-git"; do
+        if pacman -Q -- "$candidate" &>/dev/null; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
 # _aur_packages [names...]
 _aur_packages() {
     local packages_to_install="$1"
-    local aur_helper pack
+    local aur_helper pack installed
     local -a _packages=() failed_pkgs=()
 
     aur_helper="$(_get_aur_helper)"
@@ -69,8 +85,12 @@ _aur_packages() {
     e_info "Using AUR helper: $aur_helper"
 
     for pack in "${_packages[@]}"; do
-        if pacman -Q -- "$pack" &>/dev/null; then
-            e_arrow "Skipping installed package: $pack"
+        if installed="$(_aur_installed_as "$pack")"; then
+            if [ "$installed" = "$pack" ]; then
+                e_arrow "Skipping installed package: $pack"
+            else
+                e_arrow "Skipping installed package: $pack (installed as $installed)"
+            fi
             continue
         fi
         if ! SPIN_MSG="Installing AUR: $pack" _aur_run "$aur_helper" -S --noconfirm --needed -- "$pack"; then
@@ -82,6 +102,7 @@ _aur_packages() {
 
     if [ "${#failed_pkgs[@]}" -gt 0 ]; then
         e_error "Failed AUR packages: ${failed_pkgs[*]}"
+        _failure_record "AUR" "${failed_pkgs[@]}"
         return 1
     fi
     return 0

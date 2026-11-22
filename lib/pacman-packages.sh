@@ -78,6 +78,7 @@ _pacman_packages() {
 
     if [ "${#failed_pkgs[@]}" -gt 0 ]; then
         e_error "Failed pacman packages: ${failed_pkgs[*]}"
+        _failure_record "pacman" "${failed_pkgs[@]}"
         return 1
     fi
     return 0

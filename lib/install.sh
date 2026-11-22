@@ -24,7 +24,14 @@ source "${BASH_SOURCE[0]%/*}/links.sh"
 source "${BASH_SOURCE[0]%/*}/aur-packages.sh"
 
 _INSTALL_FAILED=0
+_INSTALL_FAILED_STEPS=()
 _INSTALL_GROUP="${DOTFILES_INSTALL_GROUP:-}"
+
+_install_step_failed() {
+    e_error "$1 failed"
+    _INSTALL_FAILED=1
+    _INSTALL_FAILED_STEPS+=("$1")
+}
 
 _install_step() {
     local name="$1" func="$2"
@@ -38,13 +45,11 @@ _install_step() {
         printf '[dry-run] %s\n' "$name"
     fi
     if [ "${DOTFILES_FAIL_STEP:-}" = "$name" ]; then
-        e_error "${name} failed"
-        _INSTALL_FAILED=1
+        _install_step_failed "$name"
         return 0
     fi
     if ! "$func"; then
-        e_error "${name} failed"
-        _INSTALL_FAILED=1
+        _install_step_failed "$name"
         return 0
     fi
     return 0
@@ -141,15 +146,18 @@ _install_step_packages() {
         printf 'group: %s\n' "$group"
     fi
     [ -n "$group" ] || group=all
-    if [ "$group" = "all" ]; then
-        _apps_install_pacman "" "" || return 1
-        _apps_install_aur "" "" || return 1
-        _apps_install_flatpak "" "" || return 1
-        _apps_install_node "" "" || return 1
-        _apps_install_sh "" "" || return 1
-    else
-        _apps_install_pacman "$group" "" || return 1
+    if [ "$group" != "all" ]; then
+        _apps_install_pacman "$group" ""
+        return
     fi
+    # One failing manager must not skip the others.
+    local failed=0
+    _apps_install_pacman "" "" || failed=1
+    _apps_install_aur "" "" || failed=1
+    _apps_install_flatpak "" "" || failed=1
+    _apps_install_node "" "" || failed=1
+    _apps_install_sh "" "" || failed=1
+    return "$failed"
 }
 
 _install_step_fonts() {
@@ -192,6 +200,8 @@ _install_print_next_steps() {
 
 _dotfiles_install() {
     _INSTALL_FAILED=0
+    _INSTALL_FAILED_STEPS=()
+    DOTFILES_FAILURES=()
     _INSTALL_GROUP="${DOTFILES_INSTALL_GROUP:-}"
 
     if [ "${DOTFILES_IS_ARCH:-false}" != "true" ]; then
@@ -212,11 +222,22 @@ _dotfiles_install() {
     _install_step "setup" _install_step_setup
 
     _install_print_next_steps
+    _install_report
+}
 
-    if [ "$_INSTALL_FAILED" -ne 0 ]; then
-        e_error "One or more install steps failed"
-        return 1
+# _install_report: end with what failed, so nobody scrolls back to find it.
+_install_report() {
+    local item
+    if [ "$_INSTALL_FAILED" -eq 0 ] && [ "${#DOTFILES_FAILURES[@]}" -eq 0 ]; then
+        e_success "Install finished"
+        return 0
     fi
-    e_success "Install finished"
-    return 0
+    printf '\n'
+    e_error "Install finished with failures"
+    [ "${#_INSTALL_FAILED_STEPS[@]}" -eq 0 ] || printf '  Failed steps: %s\n' "${_INSTALL_FAILED_STEPS[*]}"
+    for item in "${DOTFILES_FAILURES[@]}"; do
+        printf '  %s\n' "$item"
+    done
+    printf '  %s\n' "Scroll up to the matching \"Failed to install\" line for the error."
+    return 1
 }

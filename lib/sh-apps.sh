@@ -194,6 +194,7 @@ _sh_apps() {
 
     if [ "${#failed_pkgs[@]}" -gt 0 ]; then
         e_error "Failed shell apps: ${failed_pkgs[*]}"
+        _failure_record "shell apps" "${failed_pkgs[@]}"
         return 1
     fi
     return 0

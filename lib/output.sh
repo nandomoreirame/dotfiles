@@ -36,6 +36,13 @@ e_underline() {
 e_bold() {
     printf "${bold}%s${reset}\n" "$@"
 }
+# _failure_record <label> <items...>: remember a failure for the install summary.
+_failure_record() {
+    local label="$1"
+    shift
+    DOTFILES_FAILURES+=("$label: $*")
+}
+
 e_note() {
     printf "${underline}${bold}${blue}Note:${reset}  ${blue}%s${reset}\n" "$@"
 }

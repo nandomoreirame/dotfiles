@@ -144,3 +144,39 @@ run_prereq() {
     [ "$status" -eq 0 ]
     grep -q -- "pacman -Syu --noconfirm --needed base-devel$" "$LOG"
 }
+
+# Sources lib/install.sh with every package kind stubbed, then runs $PCMD.
+run_steps() {
+    run env -i HOME="$HOME" PATH="$FAKE:/usr/bin:/bin" DOTFILES="$ROOT" DOTFILES_PRIVATE="$DOTFILES_PRIVATE" DOTFILES_IS_ARCH=true DOTFILES_YES=1 TERM=xterm-256color \
+        bash -c "source '$ROOT/lib/install.sh'
+            _apps_install_pacman() { echo CALLED-pacman; }
+            _apps_install_aur() { echo CALLED-aur; _failure_record AUR broken-pkg; return 1; }
+            _apps_install_flatpak() { echo CALLED-flatpak; }
+            _apps_install_node() { echo CALLED-node; }
+            _apps_install_sh() { echo CALLED-sh; }
+            $PCMD"
+}
+
+@test "the packages step keeps going after one manager fails" {
+    PCMD='_install_step_packages; echo "RC=$?"'
+    run_steps
+    for k in pacman aur flatpak node sh; do
+        [[ "$output" == *"CALLED-$k"* ]] || { echo "skipped: $k"; false; }
+    done
+    [[ "$output" == *"RC=1"* ]]
+}
+
+@test "the install summary names the failed steps and packages" {
+    PCMD='_install_step packages _install_step_packages; _install_report; echo "RC=$?"'
+    run_steps
+    [[ "$output" == *"Failed steps: packages"* ]]
+    [[ "$output" == *"AUR: broken-pkg"* ]]
+    [[ "$output" == *"RC=1"* ]]
+}
+
+@test "the install summary reports success when nothing failed" {
+    PCMD='_install_report; echo "RC=$?"'
+    run_steps
+    [[ "$output" == *"Install finished"* ]]
+    [[ "$output" == *"RC=0"* ]]
+}

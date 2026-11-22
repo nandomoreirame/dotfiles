@@ -70,6 +70,7 @@ _node_packages() {
 
     if [ "${#failed_pkgs[@]}" -gt 0 ]; then
         e_error "Failed npm packages: ${failed_pkgs[*]}"
+        _failure_record "npm" "${failed_pkgs[@]}"
         return 1
     fi
     return 0

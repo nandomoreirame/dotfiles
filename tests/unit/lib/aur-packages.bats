@@ -92,3 +92,29 @@ run_aur() {
     [[ "$output" == *"Invalid package name"* ]]
     ! grep -q "yay -S" "$LOG"
 }
+
+@test "an installed variant without -bin counts as installed" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] || exit 0\nshift\n[ "$1" = "--" ] && shift\n[ "$1" = "heroic" ] && exit 0\nexit 1\n' "$LOG" > "$STUBS/pacman"
+    PCMD='_aur_packages "heroic-bin"'
+    run_aur DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"heroic-bin (installed as heroic)"* ]]
+    run grep -q "yay -S" "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "an installed -git variant counts as installed" {
+    printf '#!/bin/sh\necho "pacman $*" >> "%s"\n[ "$1" = "-Q" ] || exit 0\nshift\n[ "$1" = "--" ] && shift\n[ "$1" = "tool-git" ] && exit 0\nexit 1\n' "$LOG" > "$STUBS/pacman"
+    PCMD='_aur_packages "tool-bin"'
+    run_aur DOTFILES_YES=1
+    [ "$status" -eq 0 ]
+    run grep -q "yay -S" "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "a failed AUR package is recorded for the install summary" {
+    printf '#!/bin/sh\necho "yay $*" >> "%s"\nexit 1\n' "$LOG" > "$STUBS/yay"
+    PCMD='_aur_packages "broken-pkg"; printf "RECORDED=%s\n" "${DOTFILES_FAILURES[*]}"'
+    run_aur DOTFILES_YES=1
+    [[ "$output" == *"RECORDED=AUR: broken-pkg"* ]]
+}
