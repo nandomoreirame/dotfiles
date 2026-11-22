@@ -142,7 +142,7 @@ _install_step_packages() {
     e_info "packages"
     local group="$_INSTALL_GROUP"
     if [ -z "$group" ] && [ "${DOTFILES_YES:-0}" != 1 ]; then
-        group="$(_choose "Select package group" all core shell containers vm fonts desktop)" || group=all
+        group="$(_choose "Select package group" all core shell containers vm fonts desktop apps)" || group=all
         printf 'group: %s\n' "$group"
     fi
     [ -n "$group" ] || group=all

@@ -65,11 +65,12 @@ run_pm() {
     [[ "$output" == *"[dry-run]"* ]]
 }
 
-@test "pacman list has no personal picks" {
-    PCMD='_pacman_packages ""'
+@test "the pacman apps group ships the desktop apps publicly" {
+    PCMD='_pacman_packages "$(_package_list pacman apps | tr "\n" " ")"'
     run_pm DOTFILES_DRY_RUN=1 DOTFILES_YES=1
-    [[ "$output" != *"discord"* ]]
-    [[ "$output" != *"obsidian"* ]]
+    for app in discord obsidian spotify-launcher libreoffice-fresh localsend tailscale; do
+        [[ "$output" == *"$app"* ]] || { echo "missing: $app"; false; }
+    done
 }
 
 @test "hostile package name is rejected" {

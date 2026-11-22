@@ -1,15 +1,15 @@
-# Public Arch packages installed by pacman. Personal picks go in private/packages/pacman.list.
-# Groups: core shell containers vm fonts desktop
+# Public Arch packages installed by pacman. Machine-only extras go in private/packages/pacman.list.
+# Groups: core shell containers vm fonts desktop apps
 # umbriel and its portal come from the CachyOS repo (on plain Arch, use umbriel-git from the AUR).
 
 ## core
 bat curl git ncdu zsh vim bind-tools gnupg wget aria2 shellcheck wl-clipboard fzf ripgrep unzip fontconfig git-delta base-devel github-cli pacman-contrib bash-completion duf plocate pkgfile zoxide eza mise reflector rebuild-detector
 
 ## shell
-ghostty btop glances fastfetch zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k
+ghostty btop glances fastfetch zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k neovim
 
 ## containers
-podman podman-docker podman-compose fuse-overlayfs flatpak
+podman podman-docker podman-compose fuse-overlayfs flatpak podman-desktop
 
 ## vm
 qemu-desktop libvirt virt-manager dnsmasq edk2-ovmf swtpm
@@ -19,3 +19,6 @@ ttf-firacode-nerd ttf-jetbrains-mono-nerd ttf-meslo-nerd ttf-roboto-mono-nerd tt
 
 ## desktop
 umbriel xdg-desktop-portal-umbriel cliphist wlsunset cava matugen ddcutil polkit-gnome pavucontrol nwg-displays loupe sushi gnome-disk-utility mpv meld micro chromium gst-plugins-base gst-plugins-good gst-plugin-gtk4
+
+## apps
+discord obsidian spotify-launcher libreoffice-fresh qbittorrent localsend nextcloud-client solaar tailscale googleworkspace-cli

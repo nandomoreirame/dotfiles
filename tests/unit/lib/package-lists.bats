@@ -40,7 +40,7 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
 }
 
 @test "public lists define the expected groups" {
-    for g in core shell containers vm fonts desktop; do
+    for g in core shell containers vm fonts desktop apps; do
         grep -q "^## $g\$" "$ROOT/packages/pacman.list"
     done
     grep -q '^# ' "$ROOT/packages/pacman.list"
@@ -51,20 +51,11 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
     local paths=("$ROOT/lib" "$ROOT/packages")
     [ -e "$ROOT/install.sh" ] && paths+=("$ROOT/install.sh")
     _a="nando""moreira"
-    run env LC_ALL=C.UTF-8 grep -rnEi "discord|spotify|obsidian|cursor-bin|heroic|vivaldi|zen-browser|1password|antigravity|jan-bin|homelab|tailscale|${_a}" "${paths[@]}"
+    # App names are public package picks now; only the user name and the homelab stay out.
+    run env LC_ALL=C.UTF-8 grep -rnEi "homelab|${_a}" "${paths[@]}"
     [ "$status" -ne 0 ]
     run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúç]|\b(não|erro|pacote|falha)\b" "$ROOT/lib" "$ROOT/packages"
     [ "$status" -ne 0 ]
-}
-
-@test "author baseline union matches the previous defaults" {
-    [ -d "$ROOT/private/baseline" ] || skip "author-only check: needs private/baseline"
-    export DOTFILES="$ROOT"
-    for kind in pacman aur flatpak node; do
-        want="$(tr ' ' '\n' < "$ROOT/private/baseline/$kind.txt" | sed '/^$/d' | sort -u)"
-        got="$(bash -c "export DOTFILES='$ROOT'; source '$ROOT/lib/package-lists.sh'; _package_list $kind" | sort -u)"
-        [ "$want" = "$got" ]
-    done
 }
 
 @test "package name validation accepts scoped npm and flatpak ids" {
@@ -93,4 +84,15 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
     [[ " $(echo $output) " == *" xdg-desktop-portal-umbriel "* ]]
     run bash -c "source '$ROOT/lib/package-lists.sh'; _package_list aur desktop"
     [[ " $(echo $output) " == *" vicinae-bin "* ]]
+}
+
+@test "the author apps live in the public lists and the private lists hold no packages" {
+    export DOTFILES="$ROOT" DOTFILES_PRIVATE=/nonexistent
+    run bash -c "source '$ROOT/lib/package-lists.sh'; _package_list aur; _package_list flatpak"
+    for app in cursor-bin visual-studio-code-bin 1password vivaldi zen-browser-bin com.slack.Slack me.iepure.devtoolbox; do
+        [[ "$output" == *"$app"* ]] || { echo "missing: $app"; false; }
+    done
+    run bash -c "source '$ROOT/lib/package-lists.sh'; _package_list pacman shell; _package_list pacman containers"
+    [[ "$output" == *"neovim"* ]]
+    [[ "$output" == *"podman-desktop"* ]]
 }

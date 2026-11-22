@@ -1,4 +1,4 @@
-# Public Flatpak apps. Personal picks go in private/packages/flatpak.list.
+# Public Flatpak apps. Machine-only extras go in private/packages/flatpak.list.
 
 ## apps
-com.github.tchx84.Flatseal
+com.github.tchx84.Flatseal com.slack.Slack me.iepure.devtoolbox

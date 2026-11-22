@@ -1,7 +1,10 @@
-# Public AUR packages. Personal picks go in private/packages/aur.list.
+# Public AUR packages. Machine-only extras go in private/packages/aur.list.
 
 ## dev
-google-chrome gitflow-avh google-cloud-cli opencode-bin
+google-chrome gitflow-avh google-cloud-cli opencode-bin cursor-bin visual-studio-code-bin antigravity jan-bin
 
 ## desktop
-vicinae-bin
+vicinae-bin luciole-git
+
+## apps
+vivaldi zen-browser-bin 1password 1password-cli input-remapper-bin heroic-games-launcher-bin espanso-wayland
