@@ -34,9 +34,10 @@ MIGRATED=(
     [ "$status" -eq 0 ]
 }
 
-@test "lazygit config starts no ai agent" {
-    run grep -niE 'claude|codex|gemini|--dangerously|allowedTools' "$ROOT/configs/lazygit/config.yml"
+@test "lazygit runs its AI commit with restricted tools only" {
+    run grep -niE -- '--dangerously|codex|gemini' "$ROOT/configs/lazygit/config.yml"
     [ "$status" -ne 0 ]
+    grep -q -- '--allowedTools "Skill" "Read" "Bash(git:\*)"' "$ROOT/configs/lazygit/config.yml"
 }
 
 @test "migrated files contain no personal data" {

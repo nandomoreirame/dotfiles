@@ -1,3 +1,12 @@
-# Lazygit defaults for this clone.
-# Author-specific custom commands (for example committing through an AI agent)
-# live in the private overlay, not here.
+# In the files panel, `c` commits everything through Claude (/git commit all) instead of the
+# manual commit. The prompt is non interactive, so nobody can answer a permission question:
+# --add-dir lets it read the git skill's files (a Read rule with a path pattern did not match in
+# -p mode) and --allowedTools grants reading, the skill and git only. Without them the run stops
+# at the first Read outside the repository and commits nothing.
+customCommands:
+  - key: "c"
+    context: "files"
+    description: "Commit all with Claude"
+    command: 'claude -p "/git commit all" --add-dir ~/.claude/skills --allowedTools "Skill" "Read" "Bash(git:*)" "Bash(rtk git:*)" < /dev/null'
+    output: popup
+    loadingText: "Claude is committing..."
