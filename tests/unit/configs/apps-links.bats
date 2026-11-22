@@ -2,12 +2,14 @@
 
 setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
 
-@test "private files are not in the public tree" {
-    for p in configs/opencode configs/solaar configs/applications/input-remapper-gtk.desktop \
-             configs/themes/terminal-noir/devnull-tui.json configs/espanso/match/base.yml \
-             configs/espanso/match/personal.yml wallpapers; do
-        [ ! -e "$ROOT/$p" ]
+@test "sensitive configs exist only as ignored *.private.* names" {
+    for p in configs/espanso/match/base.yml configs/espanso/match/personal.yml configs/opencode/opencode.json; do
+        [ ! -e "$ROOT/$p" ] || { echo "plain sensitive file: $p"; false; }
     done
+    grep -qx '\*.private.\*' "$ROOT/.gitignore"
+    grep -qx '\*.private' "$ROOT/.gitignore"
+    run git -C "$ROOT" ls-files '*.private.*' '*.private'
+    [ -z "$output" ]
 }
 
 @test "every app config is linked" {
@@ -53,8 +55,7 @@ setup() { ROOT="$(cd "$BATS_TEST_DIRNAME/../../.." && pwd)"; }
     [ "$status" -ne 0 ]
 }
 
-@test "espanso public matches are english" {
-    # LC_ALL=C.UTF-8 keeps UTF-8 bracket expressions from matching emoji/unicode bytes under bare C.
-    run env LC_ALL=C.UTF-8 grep -rnE "[áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ]|\b(hoje|também|você|vocês|verdade|tudo bom)\b" "$ROOT/configs/espanso/match"
+@test "tracked espanso matches hold no e-mail, phone or document number" {
+    run git -C "$ROOT" grep -nE "@[a-z0-9.-]+\.[a-z]{2,}|wa\.me/|\b[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}\b" -- configs/espanso
     [ "$status" -ne 0 ]
 }

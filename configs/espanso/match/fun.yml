@@ -1,5 +1,4 @@
-# Expressions and jokes (iPhone-style text replacements).
-# Language-specific jokes belong in the private overlay.
+# Expressions and jokes (iPhone text replacements).
 
 matches:
   - trigger: ".kk"
@@ -8,11 +7,15 @@ matches:
 
   - trigger: ".hua"
     left_word: true
-    replace: "HAHAHAHAHAHAHAHAHAHAHAHA"
+    replace: "HUAHUAHUAHUAHUAHUAHUAHUAHUAHUA"
 
-  - trigger: ".lol"
+  - trigger: ".hue"
     left_word: true
-    replace: "lololololololololololol"
+    replace: "HUEHUEHUEHUEHUEHUEHUEHUEHUEHUE"
+
+  - trigger: ".huea"
+    left_word: true
+    replace: "huaehuaehuaehuaehuaehueahuaehuaehuae"
 
   - trigger: ".flip"
     left_word: true
@@ -22,34 +25,46 @@ matches:
     left_word: true
     replace: '¯\_(ツ)_/¯'
 
-  - trigger: ".tbh"
+  - trigger: ".tdb"
     left_word: true
-    replace: "to be honest"
+    replace: "tudo bom"
 
-  - trigger: ".idk"
+  - trigger: ".tmj"
     left_word: true
-    replace: "I don't know"
+    replace: "tamo junto"
+
+  - trigger: ".pz"
+    left_word: true
+    replace: "poizé"
+
+  - trigger: ".turu"
+    left_word: true
+    replace: "turupom"
+
+  - trigger: ".mds"
+    left_word: true
+    replace: "MELDELS"
 
   - trigger: ".wtf"
     left_word: true
     replace: "what the fuck"
 
-  - trigger: ".ty"
+  - trigger: ".mon"
     left_word: true
-    replace: "thank you"
+    replace: "mon amour"
 
-  - trigger: ".np"
+  - trigger: ".dolce"
     left_word: true
-    replace: "no problem"
+    replace: "Dolce far niente"
 
-  - trigger: ".omw"
+  - trigger: ".gato"
     left_word: true
-    replace: "on my way"
+    replace: "gato de schrodinger"
 
-  - trigger: ".brb"
+  - trigger: ".chap"
     left_word: true
-    replace: "be right back"
+    replace: "CHAPARADALHAÇO"
 
-  - trigger: ".cat"
+  - triggers: [".lb", ".luba"]
     left_word: true
-    replace: "Schrodinger's cat"
+    replace: "luba luba dub dub"

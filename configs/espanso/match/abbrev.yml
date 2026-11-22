@@ -1,45 +1,44 @@
-# Plain-word English abbreviations (no "." prefix).
-# Language-specific packs (pt-BR, etc.) belong in the private overlay.
-# word: true fires only on a whole word ("idk " expands, "idkfoo" does not);
-# propagate_case: true keeps the capital ("Idk" -> "I don't know").
+# Plain-word abbreviations (no "." prefix), like the iPhone ones.
+# word: true fires only on a whole word ("vc " expands, "vcard" does not);
+# propagate_case: true keeps the capital ("Vc" -> "Você").
 
 matches:
-  - trigger: "idk"
-    replace: "I don't know"
+  - trigger: "hj"
+    replace: "hoje"
     word: true
     propagate_case: true
 
-  - trigger: "imo"
-    replace: "in my opinion"
+  - trigger: "tbm"
+    replace: "também"
     word: true
     propagate_case: true
 
-  - trigger: "imho"
-    replace: "in my humble opinion"
+  - trigger: "tbom"
+    replace: "tabom"
     word: true
     propagate_case: true
 
-  - trigger: "tbh"
-    replace: "to be honest"
+  - trigger: "td"
+    replace: "tudo"
     word: true
     propagate_case: true
 
-  - trigger: "np"
-    replace: "no problem"
+  - trigger: "tdb"
+    replace: "tudo bom"
     word: true
     propagate_case: true
 
-  - trigger: "ty"
-    replace: "thank you"
+  - trigger: "vc"
+    replace: "você"
     word: true
     propagate_case: true
 
-  - trigger: "yw"
-    replace: "you're welcome"
+  - trigger: "vcs"
+    replace: "vocês"
     word: true
     propagate_case: true
 
-  - trigger: "brb"
-    replace: "be right back"
+  - trigger: "vdd"
+    replace: "verdade"
     word: true
     propagate_case: true
