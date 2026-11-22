@@ -40,6 +40,7 @@ export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES
 | `niri-output-toggle` | Power a named niri output on or off | `niri-output-toggle <output>` | `niri msg` | none |
 | `niri-power-autoprofile` | Switch power-profiles-daemon on AC/battery | `niri-power-autoprofile` (spawn-at-startup) | `busctl` | none |
 | `niri-scratchpad` | Toggle a floating app onto a hidden scratch workspace | `niri-scratchpad toggle <preset>` | `niri msg`, `jq` | none |
+| `umbriel-scratchpad` | Toggle Umbriel scratchpads and close windows without leaving invisible orphans behind | `umbriel-scratchpad toggle <name>` / `umbriel-scratchpad close` | `umbriel`, `python3` (3.11+) | none |
 | `niri-screenshot-notify` | Send a clickable screenshot notification | `niri-screenshot-notify` (spawn-at-startup) | `niri msg`, `notify-send`, `wl-copy` | none |
 | `niri-tray-autostart` | Start tray apps after Noctalia's SNI watcher is up | `niri-tray-autostart` (spawn-at-startup) | `niri msg`/`dbus`, tray apps | none |
 | `niri-workspace-wrap` | Wrap workspace focus at the ends | `niri-workspace-wrap up\|down` | `niri msg`, `jq` | none |

@@ -1,4 +1,13 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
+# Scratchpad toggle and close helpers for Umbriel. The logic lives in the
+# embedded Python below (stdlib only: tomllib, json, re, subprocess).
+#
+# Usage:
+#   umbriel-scratchpad toggle <name>   fix orphans of <name>, then scratchpad-toggle
+#   umbriel-scratchpad close           close the active window (Ctrl+Q / Mod+Q)
+set -eo pipefail
+
+exec python3 - "$@" <<'PY'
 """Scratchpad toggle and close helpers for Umbriel.
 
 Apps that close to the tray (Spotify, Chrome webapps, Grok) can leave their
@@ -144,3 +153,4 @@ def main(argv):
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+PY
