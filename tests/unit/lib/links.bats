@@ -329,7 +329,8 @@ EOF
     grep -q "^\[files\]" "$ROOT/configs/links.conf"
     grep -q "^\[paths\]" "$ROOT/configs/links.conf"
     grep -q "^\[paths:arch\]" "$ROOT/configs/links.conf"
-    run grep -E 'opencode|solaar|input-remapper|wallpapers|devnull-tui' "$ROOT/configs/links.conf"
+    # Private files are linked by the overlay's links.conf, never by the public one.
+    run grep -E '\.private(\.| |$)' "$ROOT/configs/links.conf"
     [ "$status" -ne 0 ]
 }
 

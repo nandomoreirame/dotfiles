@@ -9,6 +9,10 @@
 !/private/README.md
 !/private/private-overlay.md
 .env*
+# Private configs live next to the public ones as <name>.private.<ext> (or
+# <dotfile>.private): symlinks into the private repo, never tracked here.
+*.private.*
+*.private
 *.local
 *.bak
 tests/.tmp/
