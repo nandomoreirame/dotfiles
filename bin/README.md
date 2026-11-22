@@ -1,6 +1,6 @@
 # Helper scripts
 
-`bin/dotfiles` is the CLI core: `links create`, `links verify`, `status`, `--help` and
+`bin/dotfiles` is the CLI core: `install`, `tui`, `packages`, `links create`, `links verify`, `status`, `--help` and
 `--version`. Add `bin` and each helper directory below it to PATH to use it (`dotfiles status` checks every existing one); no elevated privileges are needed.
 
 
@@ -49,7 +49,7 @@ export PATH="$PATH:$DOTFILES/bin:$DOTFILES/bin/sys:$DOTFILES/bin/utils:$DOTFILES
 | `noctalia-restart` | Restart the Noctalia shell cleanly | `noctalia-restart` | `noctalia`, `niri msg` | none |
 | `noctalia-plugins-link` | Symlink plugin repos into the Noctalia plugins dir | `noctalia-plugins-link [--list]`; needs `NOCTALIA_PLUGIN_AUTHOR` | none | none |
 | `webapp` | Install, list, launch and remove web apps (Chromium app mode with a `.desktop` launcher), and pick their browser | `webapp install <name> <url>` / `list` / `remove [<name>...]` / `launch <url>` / `browser [get\|set <id>]` | a Chromium-family browser, `curl` (optional `fzf`, `uwsm`) | none (writes and deletes launchers under the user home) |
-| `dotfiles-tui` | Guided installer behind `dotfiles tui`: checks the base tools and pending updates, then runs a checklist of install steps | `dotfiles tui` | a terminal, `stty`, `checkupdates` (pacman-contrib), tui.sh in `lib/vendor/tuish` | `sudo` only for the pacman update and base installs it offers |
+| `dotfiles-tui` | Guided installer behind `dotfiles tui`: checks the base tools and pending updates, then runs a checklist of install steps | `dotfiles tui` | a terminal, `stty`, `checkupdates` (pacman-contrib), tui.sh in `lib/vendor/tuish` | `sudo` only for the pacman update, base install and checklist; asks once with `sudo -v`, then refreshes it every 50 s until the run ends. Logs go to `~/.cache/dotfiles/tui-<date>.log` |
 | `game-mode` | Freeze work apps and spare the game stack | `game-mode on\|off\|toggle\|status\|--dry-run`; apps from `GAME_MODE_APPS` | `niri msg`, `jq`, `nocta-hold` | none (sends SIGSTOP/SIGCONT via cgroup freeze) |
 | `beaverhabits` | Beaver Habits client: today's status, report with streaks, mark or unmark a habit | `beaverhabits list\|report\|done <habit>\|undo <habit>\|pick`; settings in `~/.config/beaverhabits/env` | `curl`, `jq`, `vicinae` (for `pick`) | none (HTTPS calls to your own Beaver Habits instance) |
 
@@ -68,5 +68,8 @@ Every helper here is optional. The repository never invokes them; you run them y
 - `sys-clean-cache` can call `sudo`/`paccache`, `docker`, package managers and `journalctl`. Some steps need root; review the printed command before confirming.
 - `clean-claude-sessions` **deletes** Claude Code session files and each matching subagent directory under the user home. Prefer `--dry-run` first.
 - `localsend-clip` sends **clipboard text** (often secrets) to a LocalSend favorite on the LAN over HTTPS. It pins the favorite's TLS certificate (`--cacert` of the verified peer PEM) and does not disable verification with `-k`. It opens no inbound ports.
+- `dotfiles-tui` asks for the sudo password once with `sudo -v` in the normal terminal and keeps the timestamp alive with `sudo -n true` while a run is active; it never stores the password. Its update and base install run `pacman --noconfirm`. Steps run with stdin from `/dev/null`, so a prompt fails instead of hanging, and every log stays in `~/.cache/dotfiles/`.
+- `umbriel-scratchpad close` kills a scratchpad app whose process owns no other window (unsaved work in that app is lost); otherwise it asks the window to close.
+- `webapp` writes and deletes `.desktop` launchers and icons under the user home; `install` without `--icon` downloads the site favicon over HTTPS.
 - `droidcam-ctl` talks to a phone camera on the local network; it opens no inbound ports.
 - `beaverhabits` calls the REST API of the Beaver Habits instance named in `BEAVERHABITS_URL` (no default). The API token comes from `BEAVERHABITS_TOKEN` or from the file in `BEAVERHABITS_ENV_FILE`, reaches curl through a file descriptor and is never printed or passed as an argument. `~/.config/beaverhabits/env` is parsed for three keys and never sourced.

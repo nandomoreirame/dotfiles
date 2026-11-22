@@ -6,7 +6,7 @@ This repository separates shareable configuration from a private overlay, provid
 
 ## Status
 
-The CLI, new-machine install flow, profiles, opt-in Git hooks, the generic shell/Git configs, the Terminal Noir app configs and the Umbriel/Niri/Noctalia desktop work on Arch Linux / CachyOS.
+The CLI, the new-machine install flow (scripted with `./install.sh` or guided with `dotfiles tui`), profiles, opt-in Git hooks, the shell/Git configs, the Terminal Noir app configs and the author's Umbriel/Niri/Noctalia desktop work on Arch Linux / CachyOS.
 
 ## Why
 
@@ -14,7 +14,7 @@ A public dotfiles repo that cannot prove it is clean will leak CPF numbers, LAN 
 
 ## Requirements
 
-Arch Linux or CachyOS, Bash 4.3+, Git and GNU coreutils. The optional desktop helpers target Umbriel or Niri, Noctalia v5, Vicinae and zsh; the install flow itself needs pacman and (for AUR packages) an AUR helper.
+Arch Linux or CachyOS, Bash 4.3+, Git and GNU coreutils. The optional desktop helpers target Umbriel or Niri, Noctalia v5, Vicinae and zsh; the install flow itself needs pacman and (for AUR packages) an AUR helper. `dotfiles tui` also needs a terminal, `stty`, `checkupdates` (pacman-contrib, in the `core` group) and the [tui.sh](https://github.com/alganet/tuish) submodule: clone with `--recurse-submodules`, or run `git submodule update --init` in an existing clone.
 
 ## New machine
 
@@ -34,11 +34,23 @@ Then install:
 ./install.sh --yes
 ```
 
+### Guided install (`dotfiles tui`)
+
 Prefer a guided run? `dotfiles tui` checks the base tools (git, curl, sudo, base-devel, an AUR helper) and pending system updates first, and unlocks a checklist of install steps only when both are clean:
 
 ```bash
 dotfiles tui
 ```
+
+| Screen | Keys |
+|---|---|
+| Prerequisites | `i` install what is missing, `u` update the system (`pacman -Syu`), `r` check again, `enter` open the checklist (only when everything is ok), `q` quit |
+| Install checklist | arrows or `j`/`k` move, `space` select, `a` all or none, `enter` run the selected steps, `b` back, `q` quit |
+| Installing | `ctrl-c` stops the run; when it ends, `enter` goes back and `q` quits |
+
+Each checklist step is one `dotfiles` command (packages per manager, fonts, runtimes, links, setup), so the TUI never duplicates install logic. Before a run it asks for the `sudo` password once, in the normal terminal, then keeps the sudo timestamp fresh while the run lasts. The steps run in the background with no terminal input: a step that would prompt fails and says why in the log instead of hanging. The TUI shows each step's progress and the live install log, and keeps the full log under `~/.cache/dotfiles/`:
+
+![dotfiles tui installing: finished steps marked ok, a spinner on the running step and the live install log below](.github/assets/tui.png)
 
 A rerun on a configured machine skips what is already there and ends with a summary:
 
@@ -63,7 +75,11 @@ chsh -s /bin/zsh
 
 ### Package groups
 
-Public package lists live under [`packages/`](packages/) with these pacman groups: `core`, `shell`, `containers`, `vm` (QEMU/KVM with virt-manager), `fonts`, `desktop`, `apps` (the author's desktop apps: Discord, Obsidian, Spotify, LibreOffice and more). AUR, Flatpak and npm lists sit beside them, with their own `apps` groups. Machine-only extras go in [`private/packages/`](private/README.md) (`*.list`) and are merged after the public files; they never enter git.
+Public package lists live under [`packages/`](packages/) with these pacman groups: `core`, `shell`, `containers`, `vm` (QEMU/KVM with virt-manager), `fonts`, `desktop`, `apps` (the author's desktop apps: Discord, Obsidian, Spotify, LibreOffice and more). AUR, Flatpak and npm lists sit beside them, with their own `apps` groups (the AUR `desktop` group carries Vicinae and the Luciole file manager). Machine-only extras go in [`private/packages/`](private/README.md) (`*.list`) and are merged after the public files; they never enter git.
+
+Installs are idempotent: installed packages are skipped (pacman providers count, so `podman-docker` satisfies `docker`, and an installed `-bin` or `-git` AUR variant satisfies the others), the system is upgraded once with `pacman -Syu` and only when something is missing, existing links that already reach the source are kept, and setup scripts leave existing defaults, settings and enabled services alone. A failing package manager no longer stops the others; the run ends with the failed steps and packages listed.
+
+The `vm` group pairs with the `libvirt.sh` setup step, which enables `libvirtd`, adds you to the `libvirt` group and starts the default NAT network, so `virt-manager` can test a full install on a clean VM.
 
 ## Quick start (existing clone)
 
@@ -77,6 +93,7 @@ dotfiles --help
 ## Usage
 
 ```bash
+dotfiles tui
 dotfiles links create
 dotfiles packages install --manager pacman --group fonts --dry-run --yes
 dotfiles packages install --dry-run --yes
@@ -97,7 +114,7 @@ dotfiles links verify
 | Path | Role |
 |---|---|
 | `.zshenv` | Resolves `$DOTFILES`, builds `PATH` once, prepends `private/bin` when present |
-| `.zshrc` / `.bashrc` / `.profile` | Interactive shell; sources `private/shell/*.zsh` in name order |
+| `.zshrc` / `.bashrc` / `.profile` | Interactive shell; defaults `ZSH` to `~/.oh-my-zsh` (a graphical session started without a login shell exports none) and sources `private/shell/*.zsh` in name order |
 | `.p10k.zsh` | Powerlevel10k config (theme package from Arch) |
 | `.oh-my-zsh/custom/` | Generic aliases and helpers (no unsafe defaults) |
 | `.gitconfig` + `configs/git/*` | Generic Git defaults; identity/signing/hooks stay in `~/.gitconfig.local` |
@@ -110,37 +127,47 @@ dotfiles links verify
 
 ## Desktop (Umbriel, niri and Noctalia)
 
-The public tree ships generic configs for two compositors, [Umbriel](https://docs.noctalia.dev/umbriel/) (the default session) and [niri](https://yalter.github.io/niri/), a [Noctalia](https://docs.noctalia.dev) bar that uses **built-in widgets only** and the [Vicinae](https://github.com/vicinaehq/vicinae) launcher with the Terminal Noir theme. Personal binds, plugins and monitor layouts stay in the private overlay.
+The public tree ships the author's desktop for two compositors, [Umbriel](https://docs.noctalia.dev/umbriel/) (the default session) and [niri](https://yalter.github.io/niri/) (the fallback), the [Noctalia](https://docs.noctalia.dev) bar with its plugins, and the [Vicinae](https://github.com/vicinaehq/vicinae) launcher with the Terminal Noir theme. Only the files listed under [Kept private](#kept-private) stay out of git.
 
-The installer adds `umbriel` and `xdg-desktop-portal-umbriel` (CachyOS repo; `umbriel-git` from the AUR on plain Arch) and `vicinae-bin` (AUR) with the desktop groups. The `vicinae.sh` setup step creates `~/.config/vicinae/settings.json` importing `dotfiles.json` when it is missing (it never rewrites an existing one) and enables `vicinae.service`.
+The installer adds `umbriel` and `xdg-desktop-portal-umbriel` (CachyOS repo; `umbriel-git` from the AUR on plain Arch) and `vicinae-bin` (AUR) with the desktop groups. The `vicinae.sh` setup step creates `~/.config/vicinae/settings.json` importing `dotfiles.json` when it is missing (it never rewrites an existing one) and enables `vicinae.service` unless it is already enabled.
 
-### Hooks
+### Desktop files
 
 | File | Role |
 |---|---|
-| `configs/niri/monitor.kdl` | Example output (one active `eDP-1` plus a commented sample). Replace via private `links.conf` for your machine. |
-| `configs/niri/private.kdl` | Empty public stub included last by `config.kdl`. Replace with personal binds, window rules and startup entries. |
-| `configs/noctalia/bar.toml` | Built-in widgets only. Replace to restore a plugin bar. |
-| `configs/noctalia/plugins.toml` | `enabled = []`. Replace to enable plugins. |
-| `configs/umbriel/config.toml` | Includes `base.toml`, then the optional `private.toml` (both optional, list order), so a private file wins over the base. Add `private.toml` through the private `links.conf` with personal binds, rules, outputs and a full `autostart` list (arrays replace, tables merge, rule lists append). |
-| `configs/vicinae/dotfiles.json` | Theme, launcher window and font. The Vicinae GUI owns `~/.config/vicinae/settings.json`; add `"imports": ["dotfiles.json"]` there. |
-| `configs/vicinae/scripts/` | Script commands. The Beaver Habits ones call `bin/utils/beaverhabits` and read `~/.config/beaverhabits/env`. |
+| `configs/umbriel/config.toml` | Includes `base.toml`, then `private.toml` (both optional, list order), so `private.toml` wins over the base |
+| `configs/umbriel/base.toml` | Shared binds, rules, scratchpads and layer rules, free of personal app ids |
+| `configs/umbriel/private.toml` | The author's binds, window rules, scratchpads and full `autostart` list (arrays replace, tables merge, rule lists append) |
+| `configs/umbriel/outputs.toml` | The author's monitor layout |
+| `configs/niri/config.kdl` | niri config; includes `monitor.kdl` and ends with `private.kdl` |
+| `configs/niri/monitor.kdl` / `private.kdl` | The author's outputs, and personal binds and window rules |
+| `configs/noctalia/bar.toml` / `plugins.toml` | The author's bar and its enabled plugins; every plugin widget on the bar must have its plugin enabled |
+| `configs/vicinae/dotfiles.json` | Theme, launcher window and font. The Vicinae GUI owns `~/.config/vicinae/settings.json`; add `"imports": ["dotfiles.json"]` there |
+| `configs/vicinae/scripts/` | Script commands. The Beaver Habits ones call `bin/utils/beaverhabits` and read `~/.config/beaverhabits/env` |
 
-Private `links.conf` entries replace a public target by the same path. Example:
+A private `links.conf` entry still replaces a public target by the same path, for a machine that needs a different file:
 
 ```bash
 # in $DOTFILES_PRIVATE/links.conf
 [paths]
-private/configs/niri/private.kdl | .config/niri/private.kdl |
-private/configs/niri/monitor.kdl | .config/niri/monitor.kdl |
-private/configs/noctalia/bar.toml | .config/noctalia/bar.toml |
-private/configs/noctalia/plugins.toml | .config/noctalia/plugins.toml |
-private/configs/umbriel/private.toml | .config/umbriel/private.toml |
+configs/.gitconfig.private | .gitconfig
+private/configs/niri/monitor.kdl | .config/niri/monitor.kdl
 ```
+
+### Keys and behavior
+
+| Keys | Action |
+|---|---|
+| `Ctrl+Space` or `Super+D` | Vicinae launcher (tapping `Super` alone opens nothing) |
+| `Super+Shift+F` | Luciole, the default file manager (the `file-associations.sh` setup step makes it the folder handler, replacing Nautilus but never another choice you made) |
+| `Super+Shift+<key>` | Toggle a scratchpad app (Spotify, YouTube, Obsidian, Discord, LocalSend, WhatsApp, Grok...) through `umbriel-scratchpad toggle` |
+| `Ctrl+Q` or `Super+Q` | `umbriel-scratchpad close`: closes a scratchpad app for good when its process owns no other window, and closes the window otherwise |
+
+Every Umbriel scratchpad sets `hide_when_empty = true`, so closing its last window also hides the scratchpad instead of leaving the workspace dimmed. Apps that close to the tray can leave an invisible window outside its scratchpad that still takes clicks; `umbriel-scratchpad toggle` moves such a window back into its scratchpad, or minimizes it.
 
 ### Helpers and environment
 
-Desktop helpers live under `bin/utils/` (`niri-*`, `nocta`, `noctalia-*`, `webapp`, `game-mode`, `beaverhabits`). See [bin/README.md](bin/README.md).
+Desktop helpers live under `bin/utils/` (`niri-*`, `umbriel-scratchpad`, `nocta`, `noctalia-*`, `webapp`, `game-mode`, `beaverhabits`, `dotfiles-tui`). `webapp` is one command for web apps: `webapp install|list|remove|launch|browser`, each with its own `--help`. See [bin/README.md](bin/README.md).
 
 | Variable | Purpose |
 |---|---|
@@ -172,15 +199,28 @@ scripts/themes/build-terminal-noir
 | Electron | `configs/electron-flags.conf`, `electron40-flags.conf` | (flags only) |
 | Obsidian | (manual vault snippet) | `configs/obsidian/snippets/terminal-noir.css` |
 | fcitx5 | `configs/fcitx5/config` | (layout switch; Arch `[paths:arch]`) |
-| espanso | `configs/espanso/` | English `abbrev.yml` / `fun.yml` (Arch `[paths:arch]`); language packs stay in the private overlay |
+| espanso | `configs/espanso/` | The author's `abbrev.yml` / `fun.yml` (Arch `[paths:arch]`); personal matches are `match/*.private.yml` |
+| Solaar | `configs/solaar/rules.yaml` | (mouse button map for one device) |
 
 Neovim `spelllang` defaults to English. Set `DOTFILES_SPELLLANG` (comma-separated) in a private shell snippet for extra locales. VS Code settings ship without MCP server blocks.
 
-**Kept private (overlay):** `opencode/opencode.json`, `solaar/rules.yaml`, `applications/input-remapper-gtk.desktop`, `espanso/match/base.yml` and `personal.yml`, `themes/terminal-noir/devnull-tui.json`, wallpapers, niri `private.kdl` / machine `monitor.kdl`, Noctalia `bar.toml` / `plugins.toml` with author plugins, and hardware helpers (`niri-hdmi-automode`, `audio-jack-autoswitch`, `rdo-solo*`). See [private/private-overlay.md](private/private-overlay.md).
+### Kept private
+
+Private configs sit next to the public ones as `<name>.private.<ext>` (or `<dotfile>.private`): symlinks into the private overlay, where the real files are versioned. `.gitignore` ignores `*.private.*` and `*.private`, and only the overlay's `links.conf` links them, so a clean clone never misses a file.
+
+| Public path | Holds |
+|---|---|
+| `configs/espanso/match/base.private.yml` | E-mail, phone and personal links (overlay `configs/espanso/match/base.yml`) |
+| `configs/espanso/match/personal.private.yml` | Name, documents and address |
+| `configs/opencode/opencode.private.json` | OpenCode MCP servers (homelab clients) |
+| `configs/.gitconfig.private` | Git identity and URL rewrites; the tracked `.gitconfig` stays generic |
+
+Machine helpers also stay in the overlay's `bin/` (`niri-hdmi-automode`, `audio-jack-autoswitch`, `rdo-solo*`). See [private/private-overlay.md](private/private-overlay.md).
 
 | Command | Purpose |
 |---|---|
 | `./install.sh` | New-machine flow (prerequisites, AUR helper, packages, fonts, runtimes, links, setup) |
+| `dotfiles tui` | Guided install: prerequisites gate, then a checklist of steps with live logs |
 | `dotfiles links create [--files\|--paths]` | Create every link, or only file or path links |
 | `dotfiles packages install --manager <m> [names]` | Install from `packages/<m>.list` (`pacman`, `aur`, `flatpak`, `node`, `sh`), or only the named packages |
 | `dotfiles packages install` | Run every manager (pacman, AUR, Flatpak, Node, sh), then langs |
@@ -247,11 +287,13 @@ dotfiles hooks disable
 
 ### Privileges
 
-`sudo` is used for pacman installs, enabling the docker service and adding the user to the docker group. Removals ask for confirmation unless `DOTFILES_YES=1`.
+`sudo` is used for pacman installs, enabling the docker service and adding the user to the docker group (skipped when a provider such as `podman-docker` is installed), and by the `libvirt.sh` setup step (enable `libvirtd`, add the user to the `libvirt` group, start the default network). Removals ask for confirmation unless `DOTFILES_YES=1`.
+
+`dotfiles tui` asks for the sudo password once with `sudo -v`, in the normal terminal, then refreshes the timestamp with `sudo -n true` every 50 seconds until the run ends; it never stores the password. Its system update and base install run `pacman --noconfirm` because the background run has no terminal to ask.
 
 ### Local changes
 
-The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak.*` siblings. Overlay entries can select different sources; review both manifests before linking. The CLI opens no network listener. Optional helpers under [`bin/`](bin/README.md) include privileged and network-talking scripts; none run unless you invoke them.
+The CLI creates symlinks under HOME. Conflicting real files move to unique `.bak.*` siblings. `dotfiles tui` writes the full output of every run to `~/.cache/dotfiles/tui-<date>.log` (plus a `.state` file) and leaves them there. Overlay entries can select different sources; review both manifests before linking. The CLI opens no network listener. Optional helpers under [`bin/`](bin/README.md) include privileged and network-talking scripts; none run unless you invoke them.
 
 ### Shell startup
 
@@ -268,7 +310,7 @@ Profile files under `profiles/**/git-*.conf` and `gcloud-*.conf` are gitignored;
 
 ### Desktop helpers
 
-The `niri-*`, `nocta` and `noctalia-*` helpers talk only to the local niri and Noctalia sockets and to `notify-send`. They open no network listeners. `webapp install` writes `.desktop` files under the user's home (`~/.local/share/applications`). `game-mode` freezes and thaws cgroup scopes for the apps in `GAME_MODE_APPS` (stop/continue via the cgroup freezer) and may power niri outputs on or off.
+The `niri-*`, `umbriel-scratchpad`, `nocta` and `noctalia-*` helpers talk only to the local compositor and Noctalia sockets and to `notify-send`; `umbriel-scratchpad close` force-closes a scratchpad app whose process owns no other window. They open no network listeners. `webapp install` writes `.desktop` files under the user's home (`~/.local/share/applications`). `game-mode` freezes and thaws cgroup scopes for the apps in `GAME_MODE_APPS` (stop/continue via the cgroup freezer) and may power niri outputs on or off.
 
 Report security issues privately to the maintainer; do not open a public issue with secrets, hostnames or personal data.
 
