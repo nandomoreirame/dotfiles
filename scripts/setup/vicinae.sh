@@ -27,6 +27,7 @@ else
 fi
 
 if command -v systemctl >/dev/null 2>&1; then
-  systemctl --user enable --now vicinae.service ||
+  systemctl --user is-enabled --quiet vicinae.service ||
+    systemctl --user enable --now vicinae.service ||
     printf '%s\n' "Could not enable vicinae.service; start it with: vicinae server"
 fi

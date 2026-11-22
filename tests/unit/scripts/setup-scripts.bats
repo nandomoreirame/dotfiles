@@ -105,7 +105,7 @@ setup() {
 
 vic_stubs() {
     printf '#!/bin/sh\nexit 0\n' > "$STUBS/vicinae"
-    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\nexit 0\n' "$LOG" > "$STUBS/systemctl"
+    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\ncase "$*" in *is-enabled*) exit "${VIC_ENABLED:-1}";; esac\nexit 0\n' "$LOG" > "$STUBS/systemctl"
     chmod +x "$STUBS/vicinae" "$STUBS/systemctl"
 }
 
@@ -155,4 +155,34 @@ run_vic() { run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scri
 
 @test "the registry runs vicinae.sh during install" {
     grep -Fq 'vicinae.sh|auto|' "$ROOT/scripts/setup/registry.conf"
+}
+
+@test "vicinae leaves an already enabled service alone" {
+    vic_stubs
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" VIC_ENABLED=0 bash "$ROOT/scripts/setup/vicinae.sh"
+    [ "$status" -eq 0 ]
+    run grep -q 'enable --now' "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "file-associations keeps a MIME type that already has a default" {
+    mkdir -p "$HOME/.local/share/applications"
+    printf '[Desktop Entry]\nName=Calc\n' > "$HOME/.local/share/applications/libreoffice-calc.desktop"
+    printf '#!/bin/sh\necho "xdg-mime $*" >> "%s"\n[ "$1" = "query" ] && [ "$3" = "text/csv" ] && echo other.desktop\nexit 0\n' "$LOG" > "$STUBS/xdg-mime"
+    chmod +x "$STUBS/xdg-mime"
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/file-associations.sh"
+    [ "$status" -eq 0 ]
+    run grep -q 'xdg-mime default libreoffice-calc.desktop text/csv' "$LOG"
+    [ "$status" -ne 0 ]
+    grep -q 'xdg-mime default libreoffice-calc.desktop application/vnd.ms-excel$' "$LOG"
+}
+
+@test "gtk-dark skips keys that already hold the dark value" {
+    printf '#!/bin/sh\necho "gsettings $*" >> "%s"\n[ "$1" = "get" ] && [ "$3" = "color-scheme" ] && echo "\x27prefer-dark\x27"\nexit 0\n' "$LOG" > "$STUBS/gsettings"
+    chmod +x "$STUBS/gsettings"
+    run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scripts/setup/gtk-dark.sh"
+    [ "$status" -eq 0 ]
+    run grep -q 'set org.gnome.desktop.interface color-scheme' "$LOG"
+    [ "$status" -ne 0 ]
+    grep -q 'set org.gnome.desktop.interface gtk-theme adw-gtk3-dark' "$LOG"
 }

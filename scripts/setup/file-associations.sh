@@ -22,7 +22,14 @@ _set_default() {
     printf '%s\n' "$handler not installed; skipping associations"
     return 0
   fi
+  local current
   for mime in "$@"; do
+    # Never override a default the user (or another app) already chose.
+    current="$(xdg-mime query default "$mime" 2>/dev/null || true)"
+    if [ -n "$current" ]; then
+      printf '  %s already opens with %s (kept)\n' "$mime" "$current"
+      continue
+    fi
     xdg-mime default "$handler" "$mime" \
       && printf '  %s -> %s\n' "$mime" "$handler" \
       || printf '  failed to associate %s (continuing)\n' "$mime"

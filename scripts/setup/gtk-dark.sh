@@ -7,12 +7,20 @@ if ! command -v gsettings >/dev/null 2>&1; then
   exit 0
 fi
 
-gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
+# _ensure <schema> <key> <value>: write only when the value differs.
+_ensure() {
+  if [ "$(gsettings get "$1" "$2" 2>/dev/null)" = "'$3'" ]; then
+    return 0
+  fi
+  gsettings set "$1" "$2" "$3"
+}
+
+_ensure org.gnome.desktop.interface color-scheme "prefer-dark"
+_ensure org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
 
 for schema in org.gtk.Settings.FileChooser org.gtk.gtk4.Settings.FileChooser; do
   if gsettings list-schemas 2>/dev/null | grep -qx "$schema"; then
-    gsettings set "$schema" startup-mode "cwd"
+    _ensure "$schema" startup-mode "cwd"
   fi
 done
 
