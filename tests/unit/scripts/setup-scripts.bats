@@ -186,3 +186,45 @@ run_vic() { run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" bash "$ROOT/scri
     [ "$status" -ne 0 ]
     grep -q 'set org.gnome.desktop.interface gtk-theme adw-gtk3-dark' "$LOG"
 }
+
+# libvirt.sh stubs. LV_ENABLED / LV_GROUPS / LV_NET drive the reported state.
+lv_stubs() {
+    printf '#!/bin/sh\nexit 0\n' > "$STUBS/libvirtd"
+    printf '#!/bin/sh\necho "virsh $*" >> "%s"\ncase "$*" in *net-info*) printf "Name: default\\nActive: %%s\\nAutostart: %%s\\n" "${LV_NET_ACTIVE:-no}" "${LV_NET_AUTO:-no}";; esac\nexit 0\n' "$LOG" > "$STUBS/virsh"
+    printf '#!/bin/sh\necho "systemctl $*" >> "%s"\ncase "$*" in *is-enabled*) exit "${LV_ENABLED:-1}";; esac\nexit 0\n' "$LOG" > "$STUBS/systemctl"
+    printf '#!/bin/sh\necho "sudo $*" >> "%s"\nexec "$@"\n' "$LOG" > "$STUBS/sudo"
+    printf '#!/bin/sh\necho "usermod $*" >> "%s"\n' "$LOG" > "$STUBS/usermod"
+    printf '#!/bin/sh\n[ "$1" = "-nG" ] && { echo "${LV_GROUPS:-wheel}"; exit 0; }\n[ "$1" = "-un" ] && { echo tester; exit 0; }\nexit 0\n' > "$STUBS/id"
+    chmod +x "$STUBS"/*
+}
+
+run_lv() { run env -i HOME="$HOME" PATH="$STUBS:/usr/bin:/bin" USER=tester "$@" bash "$ROOT/scripts/setup/libvirt.sh"; }
+
+@test "libvirt is a no-op when libvirt is not installed" {
+    run env -i HOME="$HOME" PATH="$STUBS" USER=tester /usr/bin/bash "$ROOT/scripts/setup/libvirt.sh"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"libvirt not installed"* ]]
+}
+
+@test "libvirt enables the daemon, adds the user and starts the default network" {
+    lv_stubs
+    run_lv
+    [ "$status" -eq 0 ]
+    grep -Fqx 'sudo systemctl enable --now libvirtd.service' "$LOG"
+    grep -Fqx 'usermod -aG libvirt tester' "$LOG"
+    grep -Fq 'virsh --connect qemu:///system net-autostart default' "$LOG"
+    grep -Fq 'virsh --connect qemu:///system net-start default' "$LOG"
+    [[ "$output" == *"Log out and back in"* ]]
+}
+
+@test "libvirt changes nothing when everything is already set up" {
+    lv_stubs
+    run_lv LV_ENABLED=0 LV_GROUPS="wheel libvirt" LV_NET_ACTIVE=yes LV_NET_AUTO=yes
+    [ "$status" -eq 0 ]
+    run grep -E 'enable --now|usermod|net-autostart|net-start' "$LOG"
+    [ "$status" -ne 0 ]
+}
+
+@test "the registry runs libvirt.sh during install" {
+    grep -Fq 'libvirt.sh|auto|' "$ROOT/scripts/setup/registry.conf"
+}

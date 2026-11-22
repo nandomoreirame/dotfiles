@@ -57,7 +57,7 @@ chsh -s /bin/zsh
 
 ### Package groups
 
-Public package lists live under [`packages/`](packages/) with these pacman groups: `core`, `shell`, `containers`, `fonts`, `desktop`. AUR, Flatpak and npm lists sit beside them. Personal picks go in [`private/packages/`](private/README.md) (`*.list`) and are merged after the public files; they never enter git.
+Public package lists live under [`packages/`](packages/) with these pacman groups: `core`, `shell`, `containers`, `vm` (QEMU/KVM with virt-manager), `fonts`, `desktop`. AUR, Flatpak and npm lists sit beside them. Personal picks go in [`private/packages/`](private/README.md) (`*.list`) and are merged after the public files; they never enter git.
 
 ## Quick start (existing clone)
 

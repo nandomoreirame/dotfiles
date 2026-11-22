@@ -40,7 +40,7 @@ pl() { run bash -c "export DOTFILES='$DOTFILES'; source '$ROOT/lib/package-lists
 }
 
 @test "public lists define the expected groups" {
-    for g in core shell containers fonts desktop; do
+    for g in core shell containers vm fonts desktop; do
         grep -q "^## $g\$" "$ROOT/packages/pacman.list"
     done
     grep -q '^# ' "$ROOT/packages/pacman.list"
