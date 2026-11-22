@@ -116,3 +116,44 @@ zrun() { run zsh -f -c "export DOTFILES='$ROOT'; source '$CUSTOM/aliases.zsh'; s
     [ "$status" -eq 3 ]
     [[ "$output" == *"git pull --rebase"* ]]
 }
+
+# ---- dotenv_load: .env files exported as environment, parsed (never executed) ----
+
+@test "dotenv_load exports KEY=value lines with optional export and quotes" {
+    f="$BATS_TEST_TMPDIR/a.env"
+    printf '# comment\n\nPLAIN=one\nexport EXPORTED=two\nDQ="three four"\nSQ='"'"'five'"'"'\n' > "$f"
+    zrun "dotenv_load '$f'; print -r -- \"\$PLAIN|\$EXPORTED|\$DQ|\$SQ\"; env | grep -c '^PLAIN=one$'"
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "one|two|three four|five" ]
+    [ "${lines[1]}" = "1" ]
+}
+
+@test "dotenv_load never executes command substitution" {
+    f="$BATS_TEST_TMPDIR/b.env"
+    printf 'EVIL=$(touch %s/pwned)\nTICK=`touch %s/pwned2`\n' "$BATS_TEST_TMPDIR" "$BATS_TEST_TMPDIR" > "$f"
+    zrun "dotenv_load '$f'; print -r -- \"\$EVIL\""
+    [ ! -e "$BATS_TEST_TMPDIR/pwned" ]
+    [ ! -e "$BATS_TEST_TMPDIR/pwned2" ]
+    [[ "$output" == *'$(touch'* ]]
+}
+
+@test "dotenv_load skips invalid lines and a missing file quietly" {
+    f="$BATS_TEST_TMPDIR/c.env"
+    printf 'not a pair\n1BAD=x\nGOOD=y\n' > "$f"
+    zrun "dotenv_load '$f'; dotenv_load '$BATS_TEST_TMPDIR/none.env'; print -r -- \"\$GOOD\""
+    [ "$status" -eq 0 ]
+    [ "$output" = "y" ]
+}
+
+@test "dotenv_load_dotfiles loads the repo .env, then the overlay .env, which wins" {
+    d="$BATS_TEST_TMPDIR/dot"; mkdir -p "$d/private"
+    printf 'A=repo\nB=repo\n' > "$d/.env"
+    printf 'B=overlay\n' > "$d/private/.env"
+    zrun "dotenv_load_dotfiles '$d' '$d/private'; print -r -- \"\$A \$B\""
+    [ "$status" -eq 0 ]
+    [ "$output" = "repo overlay" ]
+}
+
+@test ".zshrc calls dotenv_load_dotfiles without naming the .env paths" {
+    grep -q 'dotenv_load_dotfiles' "$ROOT/configs/.zshrc"
+}

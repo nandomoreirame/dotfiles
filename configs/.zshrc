@@ -43,6 +43,12 @@ if [[ -r "$DOTFILES/lib/private.sh" ]]; then
   fi
 fi
 
+# Local env files (gitignored) from the repo, then the overlay, which wins.
+# Parsed by dotenv_load (KEY=value only, never executed).
+if typeset -f dotenv_load_dotfiles >/dev/null 2>&1; then
+  dotenv_load_dotfiles
+fi
+
 # Optional WordPress completion helper
 [[ -r "$DOTFILES/lib/wp-completion.sh" ]] && source "$DOTFILES/lib/wp-completion.sh"
 
