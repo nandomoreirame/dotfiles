@@ -6,6 +6,19 @@ source "$DOTFILES/lib/environments.sh"
 # shellcheck source=lib/prompt.sh
 source "$DOTFILES/lib/prompt.sh"
 
+# Regexes live in variables: bash and zsh then read them the same way (an
+# inline \( is a literal paren in bash but loses its backslash in zsh).
+_PROFILE_RE_DQ='^"(.*)"$'
+_PROFILE_RE_SQ="^'(.*)'\$"
+_PROFILE_RE_DQ_ANY='^".*"$'
+_PROFILE_RE_SQ_ANY="^'.*'\$"
+_PROFILE_RE_EXPAND='^\$\{([A-Za-z_][A-Za-z0-9_]*)(:?-)([^}]*)\}$'
+_PROFILE_RE_CLOSE='^[[:space:]]*\)[[:space:]]*$'
+_PROFILE_RE_BEFORE_CLOSE='^(.*)\)[[:space:]]*$'
+_PROFILE_RE_DQ_ENTRY='^"([^"]*)"(.*)$'
+_PROFILE_RE_GCLOUD_OPEN='^GCLOUD_PROJECTS=\((.*)$'
+_PROFILE_RE_ASSIGN='^((export[[:space:]]+)?)([A-Z_][A-Z0-9_]*)=(.*)$'
+
 _profile_exists() {
     local profile_name="$1"
     [ -d "$PROFILES_DIR/$profile_name" ]
@@ -69,12 +82,13 @@ _profile_conf_is_blank_or_comment() {
 
 # Strip one layer of matching single or double quotes from a value; leave bare.
 _profile_conf_unquote() {
+    if [ -n "${ZSH_VERSION:-}" ]; then setopt localoptions bashrematch ksharrays; fi
     local raw="$1"
-    if [[ "$raw" =~ ^\"(.*)\"$ ]]; then
+    if [[ "$raw" =~ $_PROFILE_RE_DQ ]]; then
         printf '%s' "${BASH_REMATCH[1]}"
         return 0
     fi
-    if [[ "$raw" =~ ^\'(.*)\'$ ]]; then
+    if [[ "$raw" =~ $_PROFILE_RE_SQ ]]; then
         printf '%s' "${BASH_REMATCH[1]}"
         return 0
     fi
@@ -85,7 +99,7 @@ _profile_conf_unquote() {
 _profile_conf_has_unquoted_pipe() {
     local s="$1" i c q=
     for ((i = 0; i < ${#s}; i++)); do
-        c="${s:i:1}"
+        c="${s:$i:1}"
         if [ -n "$q" ]; then
             if [ "$c" = "$q" ]; then
                 q=
@@ -155,11 +169,32 @@ _profile_conf_expand_home_only() {
 }
 
 # Expand only $HOME and a single ${NAME:-default} / ${NAME-default}.
+# Indirect variable access for bash (${!name}) and zsh (${(P)name}). $1 is
+# always a validated identifier from _PROFILE_RE_EXPAND.
+_profile_var_value() {
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        # shellcheck disable=SC2296  # zsh-only parameter flag, never reached in bash
+        printf '%s' "${(P)1-}"
+    else
+        printf '%s' "${!1-}"
+    fi
+}
+
+_profile_var_is_set() {
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        # shellcheck disable=SC2296  # zsh-only parameter flag, never reached in bash
+        [ -n "${(P)1+x}" ]
+    else
+        [ -n "${!1+x}" ]
+    fi
+}
+
 _profile_conf_expand_value() {
+    if [ -n "${ZSH_VERSION:-}" ]; then setopt localoptions bashrematch ksharrays; fi
     local val="$1"
     local name op def expanded
 
-    if [[ "$val" =~ ^\$\{([A-Za-z_][A-Za-z0-9_]*)(:?-)([^}]*)\}$ ]]; then
+    if [[ "$val" =~ $_PROFILE_RE_EXPAND ]]; then
         name="${BASH_REMATCH[1]}"
         op="${BASH_REMATCH[2]}"
         def="${BASH_REMATCH[3]}"
@@ -167,16 +202,16 @@ _profile_conf_expand_value() {
             return 1
         fi
         if [ "$op" = ":-" ]; then
-            if [ -z "${!name:-}" ]; then
+            if [ -z "$(_profile_var_value "$name")" ]; then
                 expanded="$def"
             else
-                expanded="${!name}"
+                expanded="$(_profile_var_value "$name")"
             fi
         else
-            if [ -z "${!name+x}" ]; then
+            if ! _profile_var_is_set "$name"; then
                 expanded="$def"
             else
-                expanded="${!name}"
+                expanded="$(_profile_var_value "$name")"
             fi
         fi
         printf '%s' "$expanded"
@@ -197,6 +232,7 @@ _profile_unset_identity_vars() {
 # Safe conf loader: blank/# comments, KEY=value, and GCLOUD_PROJECTS=( "id|Name" ... ).
 # Uses printf -v only; never eval or source. Returns non-zero on any reject.
 _profile_load_conf_file() {
+    if [ -n "${ZSH_VERSION:-}" ]; then setopt localoptions bashrematch ksharrays; fi
     local config_file="$1"
     local line key raw val entry
     local in_array=0
@@ -217,7 +253,7 @@ _profile_load_conf_file() {
                 return 1
             fi
             # End of array: optional whitespace then )
-            if [[ "$line" =~ ^[[:space:]]*\)[[:space:]]*$ ]]; then
+            if [[ "$line" =~ $_PROFILE_RE_CLOSE ]]; then
                 GCLOUD_PROJECTS=("${tokens[@]}")
                 tokens=()
                 in_array=0
@@ -227,7 +263,7 @@ _profile_load_conf_file() {
             line="${line#"${line%%[![:space:]]*}"}"
             line="${line%"${line##*[![:space:]]}"}"
             local close=0
-            if [[ "$line" =~ ^(.*)\)[[:space:]]*$ ]]; then
+            if [[ "$line" =~ $_PROFILE_RE_BEFORE_CLOSE ]]; then
                 line="${BASH_REMATCH[1]}"
                 line="${line%"${line##*[![:space:]]}"}"
                 close=1
@@ -235,7 +271,7 @@ _profile_load_conf_file() {
             while [ -n "$line" ]; do
                 line="${line#"${line%%[![:space:]]*}"}"
                 [ -z "$line" ] && break
-                if [[ "$line" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                if [[ "$line" =~ $_PROFILE_RE_DQ_ENTRY ]]; then
                     entry="${BASH_REMATCH[1]}"
                     line="${BASH_REMATCH[2]}"
                     tokens+=("$entry")
@@ -260,17 +296,17 @@ _profile_load_conf_file() {
         fi
 
         # GCLOUD_PROJECTS=( ... ) single- or multi-line
-        if [[ "$line" =~ ^GCLOUD_PROJECTS=\((.*)$ ]]; then
+        if [[ "$line" =~ $_PROFILE_RE_GCLOUD_OPEN ]]; then
             local rest="${BASH_REMATCH[1]}"
             rest="${rest#"${rest%%[![:space:]]*}"}"
             tokens=()
-            if [[ "$rest" =~ ^(.*)\)[[:space:]]*$ ]]; then
+            if [[ "$rest" =~ $_PROFILE_RE_BEFORE_CLOSE ]]; then
                 rest="${BASH_REMATCH[1]}"
                 rest="${rest%"${rest##*[![:space:]]}"}"
                 while [ -n "$rest" ]; do
                     rest="${rest#"${rest%%[![:space:]]*}"}"
                     [ -z "$rest" ] && break
-                    if [[ "$rest" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                    if [[ "$rest" =~ $_PROFILE_RE_DQ_ENTRY ]]; then
                         tokens+=("${BASH_REMATCH[1]}")
                         rest="${BASH_REMATCH[2]}"
                     else
@@ -285,7 +321,7 @@ _profile_load_conf_file() {
             while [ -n "$rest" ]; do
                 rest="${rest#"${rest%%[![:space:]]*}"}"
                 [ -z "$rest" ] && break
-                if [[ "$rest" =~ ^\"([^\"]*)\"(.*)$ ]]; then
+                if [[ "$rest" =~ $_PROFILE_RE_DQ_ENTRY ]]; then
                     tokens+=("${BASH_REMATCH[1]}")
                     rest="${BASH_REMATCH[2]}"
                 else
@@ -297,7 +333,7 @@ _profile_load_conf_file() {
         fi
 
         # Optional export prefix; KEY must be UPPER_SNAKE
-        if [[ "$line" =~ ^((export[[:space:]]+)?)([A-Z_][A-Z0-9_]*)=(.*)$ ]]; then
+        if [[ "$line" =~ $_PROFILE_RE_ASSIGN ]]; then
             key="${BASH_REMATCH[3]}"
             raw="${BASH_REMATCH[4]}"
             if ! _profile_conf_key_is_allowed "$key"; then
@@ -307,7 +343,7 @@ _profile_load_conf_file() {
                 return 1
             fi
             # Disallow spaces outside quotes in bare values
-            if [[ ! "$raw" =~ ^\".*\"$ && ! "$raw" =~ ^\'.*\'$ && "$raw" =~ [[:space:]] ]]; then
+            if [[ ! "$raw" =~ $_PROFILE_RE_DQ_ANY && ! "$raw" =~ $_PROFILE_RE_SQ_ANY && "$raw" =~ [[:space:]] ]]; then
                 return 1
             fi
             val="$(_profile_conf_unquote "$raw")"

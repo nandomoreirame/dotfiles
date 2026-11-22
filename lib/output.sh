@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 : "${DOTFILES:=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# BASH_SOURCE is empty when zsh sources this file; fall back to $DOTFILES/lib.
+_lib_dir="${BASH_SOURCE[0]%/*}"
+[ -n "${BASH_SOURCE[0]:-}" ] || _lib_dir="$DOTFILES/lib"
 # shellcheck source=lib/environments.sh
-source "${BASH_SOURCE[0]%/*}/environments.sh"
+source "$_lib_dir/environments.sh"
+unset _lib_dir
 
 #
 # Headers and Logging

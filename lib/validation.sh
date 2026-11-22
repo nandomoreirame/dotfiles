@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 : "${DOTFILES:=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# BASH_SOURCE is empty when zsh sources this file; fall back to $DOTFILES/lib.
+_lib_dir="${BASH_SOURCE[0]%/*}"
+[ -n "${BASH_SOURCE[0]:-}" ] || _lib_dir="$DOTFILES/lib"
 # shellcheck source=lib/prompt.sh
-source "${BASH_SOURCE[0]%/*}/prompt.sh"
+source "$_lib_dir/prompt.sh"
+unset _lib_dir
 
 
 
