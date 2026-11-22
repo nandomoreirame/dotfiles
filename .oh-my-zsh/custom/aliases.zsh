@@ -7,8 +7,6 @@ alias "..."="cd ../.."
 alias "...."="cd ../../.."
 alias "....."="cd ../../../.."
 
-alias "dotfiles"="cd $DOTFILES"
-
 alias t="tmux"
 alias ta="tmux attach -t"
 alias tn="tmux new -A -s"
