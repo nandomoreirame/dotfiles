@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Input Remapper
+Icon=input-remapper
+# Override of /usr/share/applications/input-remapper-gtk.desktop.
+# The upstream launcher uses `#!/usr/bin/env python3`, which resolves to the
+# mise-shimmed python (3.12) on this machine, while the `inputremapper` module
+# lives in the system python (3.14) site-packages -> ModuleNotFoundError, GUI
+# never opens. Pin the interpreter to /usr/bin/python3. Files in
+# ~/.local/share/applications take precedence over /usr/share/applications.
+Exec=/usr/bin/python3 /usr/bin/input-remapper-gtk
+Terminal=false
+Categories=Settings
+Comment=GUI for device specific key mappings

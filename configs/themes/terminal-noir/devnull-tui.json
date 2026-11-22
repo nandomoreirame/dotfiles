@@ -1,0 +1,29 @@
+{
+  "custom_themes": [
+    {
+      "name": "Terminal Noir",
+      "base": "dark",
+      "colors": {
+        "blue": "#f5a623",
+        "code": "#facf9e",
+        "danger": "#ff7b72",
+        "graph": "",
+        "hairline": "#222226",
+        "ink": "#f4f4f5",
+        "lane1": "#f5a623",
+        "lane2": "#34d399",
+        "lane3": "#bc8cff",
+        "lane4": "#39c5cf",
+        "lane5": "#ff7b72",
+        "lane6": "#58a6ff",
+        "muted": "#a1a1aa",
+        "peak": "",
+        "shell": "#0b0b0c",
+        "soft": "#2e220f",
+        "success": "#34d399",
+        "warning": "#facf9e",
+        "wash": "#18181b"
+      }
+    }
+  ]
+}

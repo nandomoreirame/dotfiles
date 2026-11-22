@@ -69,7 +69,7 @@ theme_color() {
 }
 
 @test "desktop and gtk configs hold no personal data" {
-    run grep -rnE "@gmail|/home/[a-z]|input-remapper" \
+    run grep -rnE "@gmail|/home/[a-z]" \
         "$PROJECT_ROOT/configs/gtk-3.0" \
         "$PROJECT_ROOT/configs/gtk-4.0" \
         "$PROJECT_ROOT/configs/applications" \

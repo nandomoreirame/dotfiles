@@ -1,0 +1,25 @@
+%YAML 1.3
+# Solaar rules for the Logitech MX Master 3S on niri (Wayland).
+# Buttons are diverted via Solaar (divert-keys = Desviado) so they send HID++
+# notifications instead of their default action; each rule below catches the
+# press and runs `niri msg action` directly. Execute is used (not KeyPress)
+# because KeyPress relies on XTEST, which does not trigger niri global binds
+# on Wayland. Diversion is set per-button (STOP the Solaar daemon first, else
+# the running daemon clobbers the CLI write to config.yaml on shutdown):
+#   pkill -x solaar
+#   solaar config "MX Master 3S" divert-keys "Back Button" Desviado
+#   solaar config "MX Master 3S" divert-keys "Forward Button" Desviado
+#   solaar config "MX Master 3S" divert-keys "Mouse Gesture Button" Desviado
+#   setsid -f solaar --window=hide   # restart; applies diversions + rules
+---
+- Key: [Mouse Gesture Button, pressed]
+- Execute: [/usr/bin/niri, msg, action, toggle-overview]
+...
+---
+- Key: [Forward Button, pressed]
+- Execute: [/usr/bin/niri, msg, action, focus-workspace-down]
+...
+---
+- Key: [Back Button, pressed]
+- Execute: [/usr/bin/niri, msg, action, focus-workspace-up]
+...
