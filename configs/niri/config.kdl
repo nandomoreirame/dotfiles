@@ -227,7 +227,7 @@ window-rule {
     open-floating true
 }
 
-// Browsers, editors, OBS Studio and tiled Chrome webapps open at 2/3 of the screen. The webapps that
+// Browsers, editors, OBS Studio, Luciole and tiled Chrome webapps open at 2/3 of the screen. The webapps that
 // float (YouTube, YT Music, X composer) are excluded and keep their own size.
 window-rule {
     match app-id=r#"^(google-chrome|chromium|firefox|brave-browser|zen)"#
@@ -235,6 +235,8 @@ window-rule {
     match app-id=r#"(?i)^(code|com\.microsoft\.VSCode|cursor|antigravity)$"#
     // OBS Studio (native "com.obsproject.Studio" or Flatpak of the same id).
     match app-id=r#"^com\.obsproject\.Studio$"#
+    // Luciole file manager (Mod+Shift+F).
+    match app-id=r#"^dev\.noctalia\.luciole$"#
     match app-id=r#"^chrome-"#
     exclude app-id=r#"^chrome-(youtube\.com|music\.youtube\.com|x\.com__compose_post)"#
     exclude title="^Picture-in-Picture$"
