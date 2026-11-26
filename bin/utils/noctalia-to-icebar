@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+usage() {
+    cat <<'USAGE'
+Usage: noctalia-to-icebar [--icebar PATH] [--config PATH] [--dry-run]
+
+Try Icebar in the current Umbriel session. Press Ctrl+C to restore Noctalia.
+  -h, --help     Show this help.
+  --icebar PATH  Use this executable instead of icebar from PATH or the test cache.
+  --config PATH  Use this Icebar RON file instead of the test config.
+  --dry-run      Describe the switch without changing the session.
+USAGE
+}
+
+fail() {
+    printf 'noctalia-to-icebar: %s\n' "$*" >&2
+    exit 1
+}
+
+usage_error() {
+    printf 'noctalia-to-icebar: %s\n' "$*" >&2
+    usage >&2
+    exit 2
+}
+
+test_dir="${XDG_CACHE_HOME:-$HOME/.cache}/noctalia-to-icebar"
+icebar=
+config=
+dry_run=false
+while (( $# )); do
+    case "$1" in
+        -h|--help) usage; exit 0 ;;
+        --dry-run) dry_run=true; shift ;;
+        --icebar|--config)
+            [[ -n "${2:-}" && "$2" != --* ]] || usage_error "Missing value for $1"
+            if [[ "$1" == --icebar ]]; then icebar="$2"; else config="$2"; fi
+            shift 2
+            ;;
+        *) usage_error "Unknown argument: $1" ;;
+    esac
+done
+
+if [[ -n "$config" && ( ! -f "$config" || ! -r "$config" || "$config" != *.ron ) ]]; then
+    fail "Cannot read config as a RON file: $config"
+fi
+
+if "$dry_run"; then
+    printf '%s\n' 'Start Icebar and wait for a mapped layer.' 'Stop Noctalia for this display.' 'Restore Noctalia when Icebar exits or is interrupted.'
+    exit 0
+fi
+
+icebar="${icebar:-$(command -v icebar || printf '%s' "$test_dir/icebar")}"
+[[ -f "$icebar" && -x "$icebar" ]] || fail "Icebar executable not found: $icebar"
+[[ "$icebar" == */* ]] || icebar="./$icebar"
+if [[ -z "$config" && -f "$test_dir/config.ron" ]]; then
+    config="$test_dir/config.ron"
+fi
+icebar_args=()
+if [[ -n "$config" ]]; then
+    icebar_args=(--config "$(realpath -- "$config")")
+fi
+
+[[ -n "${XDG_RUNTIME_DIR:-}" && "${WAYLAND_DISPLAY:-}" == wayland-* && "$WAYLAND_DISPLAY" != */* ]] ||
+    fail 'Run this command from the Umbriel session.'
+for command in umbriel noctalia flock fuser setsid; do
+    command -v "$command" >/dev/null || fail "Missing command: $command"
+done
+
+exec 9>"$XDG_RUNTIME_DIR/noctalia-to-icebar-$WAYLAND_DISPLAY.lock"
+flock -n 9 || fail 'A switch is already in progress on this display.'
+noctalia_lock="$XDG_RUNTIME_DIR/noctalia-$WAYLAND_DISPLAY.lock"
+noctalia_pid="$(fuser "$noctalia_lock" 2>/dev/null)" || fail 'Noctalia is not running on this display.'
+[[ "$noctalia_pid" =~ ^[[:space:]]*([0-9]+)[[:space:]]*$ ]] ||
+    fail 'Could not identify a single Noctalia process.'
+noctalia_pid="${BASH_REMATCH[1]}"
+[[ "$(<"/proc/$noctalia_pid/comm")" == noctalia ]] || fail 'Unexpected owner of the Noctalia lock.'
+
+layers="$(umbriel layers)" || fail 'Could not read Umbriel layers.'
+if awk '$2 == "icebar" { found=1 } END { exit !found }' <<<"$layers"; then
+    fail 'Icebar already has a layer on this display.'
+fi
+
+icebar_pid=
+restore=false
+cleanup() {
+    if [[ -n "$icebar_pid" ]]; then
+        kill -TERM "$icebar_pid" 2>/dev/null || true
+    fi
+    if "$restore"; then
+        printf '%s\n' 'Restoring Noctalia...' >&2
+        setsid -f noctalia </dev/null >"$test_dir/noctalia.log" 2>&1 9>&-
+    fi
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
+
+mkdir -p "$test_dir"
+"$icebar" "${icebar_args[@]}" >"$test_dir/icebar.log" 2>&1 9>&- &
+icebar_pid=$!
+for (( attempt = 0; attempt < 50; attempt++ )); do
+    kill -0 "$icebar_pid" 2>/dev/null || fail "Icebar exited. See $test_dir/icebar.log"
+    layers="$(umbriel layers)" || fail 'Lost contact with Umbriel.'
+    if awk '$2 == "icebar" && $4 == "yes" { found=1 } END { exit !found }' <<<"$layers"; then
+        break
+    fi
+    sleep 0.2
+done
+(( attempt < 50 )) || fail "Icebar did not map a layer. See $test_dir/icebar.log"
+if grep -Eq 'WARNING: Config parse failed:|Creating Warning Window' "$test_dir/icebar.log"; then
+    fail "Icebar reported a configuration warning. See $test_dir/icebar.log"
+fi
+
+kill -TERM "$noctalia_pid" || fail 'Could not stop Noctalia.'
+restore=true
+for (( attempt = 0; attempt < 25; attempt++ )); do
+    kill -0 "$noctalia_pid" 2>/dev/null || break
+    sleep 0.2
+done
+(( attempt < 25 )) || fail 'Noctalia did not exit after SIGTERM.'
+
+printf '%s\n' 'Icebar is running. Press Ctrl+C to restore Noctalia.' >&2
+wait "$icebar_pid"
