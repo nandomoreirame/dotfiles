@@ -18,6 +18,12 @@
 # (window-kill) when its client owns no other window; a shared client (Chrome
 # webapps) gets window-close, and a window that survives it gets minimized.
 #
+# `tile` backs Mod+Shift+V and is a toggle: the active scratchpad window is
+# restored from its scratchpad and tiled (floating toggled off only when it
+# stays floating); an active window outside any scratchpad whose app id matches
+# a `default_scratchpad` rule goes back into that scratchpad and is revealed
+# (window-focus), since the move alone hides it.
+#
 # `umbriel` is stubbed on PATH: `subscribe windows` prints FAKE_WINDOWS (or
 # FAKE_WINDOWS_AFTER_MOVE once a move-to-scratchpad was logged) and every
 # `msg` call is recorded in CALL_LOG.
@@ -54,7 +60,9 @@ TOML
     cat > "$STUB_DIR/umbriel" <<'STUB'
 #!/usr/bin/env bash
 if [ "$1" = "subscribe" ]; then
-    if [ -n "${FAKE_WINDOWS_AFTER_CLOSE:-}" ] && grep -q 'window-close' "$CALL_LOG"; then
+    if [ -n "${FAKE_WINDOWS_AFTER_RESTORE:-}" ] && grep -q 'window-restore-from-scratchpad' "$CALL_LOG"; then
+        printf '{"event":"windows","data":%s}\n' "$FAKE_WINDOWS_AFTER_RESTORE"
+    elif [ -n "${FAKE_WINDOWS_AFTER_CLOSE:-}" ] && grep -q 'window-close' "$CALL_LOG"; then
         printf '{"event":"windows","data":%s}\n' "$FAKE_WINDOWS_AFTER_CLOSE"
     elif [ -n "${FAKE_WINDOWS_AFTER_MOVE:-}" ] && grep -q 'window-move-to-scratchpad' "$CALL_LOG"; then
         printf '{"event":"windows","data":%s}\n' "$FAKE_WINDOWS_AFTER_MOVE"
@@ -84,6 +92,7 @@ run_wrapper() {
         FAKE_WINDOWS="${FAKE_WINDOWS:-[]}" \
         FAKE_WINDOWS_AFTER_MOVE="${FAKE_WINDOWS_AFTER_MOVE:-}" \
         FAKE_WINDOWS_AFTER_CLOSE="${FAKE_WINDOWS_AFTER_CLOSE:-}" \
+        FAKE_WINDOWS_AFTER_RESTORE="${FAKE_WINDOWS_AFTER_RESTORE:-}" \
         UMBRIEL_SCRATCHPAD_CLOSE_WAIT=0 \
         timeout 10 "$SCRIPT" "$@"
 }
@@ -237,4 +246,51 @@ umbriel msg window-minimize w1"
     assert_success
     run cat "$CALL_LOG"
     assert_output "umbriel msg scratchpad-toggle youtube"
+}
+
+@test "tile restores the active scratchpad window and tiles it when it stays floating" {
+    FAKE_WINDOWS="[$(winp o1 obsidian obsidian 40 true)]" \
+    FAKE_WINDOWS_AFTER_RESTORE="[$(winp o1 obsidian '' 40 true)]" \
+        run_wrapper tile
+
+    assert_success
+    run cat "$CALL_LOG"
+    assert_output "umbriel msg window-restore-from-scratchpad obsidian
+umbriel msg window-toggle-floating o1"
+}
+
+@test "tile does not toggle floating when the restored window is already tiled" {
+    FAKE_WINDOWS="[$(winp o1 obsidian obsidian 40 true)]" \
+    FAKE_WINDOWS_AFTER_RESTORE="[$(win o1 obsidian '' false true false)]" \
+        run_wrapper tile
+
+    assert_success
+    run cat "$CALL_LOG"
+    assert_output "umbriel msg window-restore-from-scratchpad obsidian"
+}
+
+@test "tile on a window outside any scratchpad does nothing" {
+    FAKE_WINDOWS="[$(winp t1 com.mitchellh.ghostty '' 10 true)]" run_wrapper tile
+
+    assert_success
+    run cat "$CALL_LOG"
+    assert_output ""
+}
+
+@test "tile sends a tiled window back into the scratchpad its rule names" {
+    FAKE_WINDOWS="[$(winp s1 Spotify '' 20 true)]" run_wrapper tile
+
+    assert_success
+    run cat "$CALL_LOG"
+    assert_output "umbriel msg window-move-to-scratchpad spotify
+umbriel msg window-focus s1"
+}
+
+@test "tile finds the scratchpad in any config file, not only base.toml" {
+    FAKE_WINDOWS="[$(winp w1 chrome-web.whatsapp.com__-Default '' 30 true)]" run_wrapper tile
+
+    assert_success
+    run cat "$CALL_LOG"
+    assert_output "umbriel msg window-move-to-scratchpad whatsapp
+umbriel msg window-focus w1"
 }

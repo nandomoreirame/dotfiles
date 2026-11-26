@@ -269,6 +269,8 @@ numlock_toggle = true
 "Mod+Shift+L" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle localsend", repeat = false }
 "Mod+Shift+S" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad toggle spotify", repeat = false }
 "Mod+Alt+L" = { action = "spawn $HOME/.dotfiles/bin/utils/localsend-clip phone", repeat = false }
+# Toggle the focused window between its scratchpad and the tiling layout.
+"Mod+Shift+V" = { action = "spawn $HOME/.dotfiles/bin/utils/umbriel-scratchpad tile", repeat = false }
 
 
 # TUIs and tools
@@ -402,7 +404,7 @@ numlock_toggle = true
 "Mod+Shift+Minus" = "window-modify-secondary-extent -0.1"
 "Mod+Shift+Equal" = "window-modify-secondary-extent +0.1"
 "Mod+V" = { action = "window-toggle-floating", repeat = false }
-"Mod+Shift+V" = { action = "window-focus-switch-floating", repeat = false }
+"Mod+Ctrl+Shift+V" = { action = "window-focus-switch-floating", repeat = false }
 "Mod+W" = { action = "column-toggle-tabbed", repeat = false }
 # Umbriel extras that collide with nothing from niri.
 "Mod+P" = { action = "window-toggle-pinned", repeat = false }
@@ -528,12 +530,13 @@ default_floating = true
 match.app_id = "^(md[.]obsidian[.]Obsidian|obsidian)$"
 default_scrolling_extent = 0.33333
 
-# Browsers, editors, OBS Studio and Chrome webapps at 2/3.
+# Browsers, editors, OBS Studio, Luciole and Chrome webapps at 2/3.
 [[window_rule]]
 match.app_id = [
   "^(google-chrome|chromium|firefox|brave-browser|zen)",
   "^(code|com[.]microsoft[.]VSCode|[Cc]ursor|[Aa]ntigravity)$",
   "^com[.]obsproject[.]Studio$",
+  "^dev[.]noctalia[.]luciole$",
   "^chrome-",
 ]
 default_scrolling_extent = 0.66667

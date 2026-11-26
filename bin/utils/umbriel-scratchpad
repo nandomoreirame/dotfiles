@@ -5,6 +5,7 @@
 # Usage:
 #   umbriel-scratchpad toggle <name>   fix orphans of <name>, then scratchpad-toggle
 #   umbriel-scratchpad close           close the active window (Ctrl+Q / Mod+Q)
+#   umbriel-scratchpad tile            toggle the active window between its scratchpad and tiling
 set -eo pipefail
 
 exec python3 - "$@" <<'PY'
@@ -18,6 +19,7 @@ overlay, and the next scratchpad-toggle spawns a duplicate instance.
 Usage:
   umbriel-scratchpad toggle <name>   fix orphans of <name>, then scratchpad-toggle
   umbriel-scratchpad close           close the active window (Ctrl+Q / Mod+Q)
+  umbriel-scratchpad tile            toggle the active window between its scratchpad and tiling
 
 toggle: an orphan (floating, outside any scratchpad, app id matching a
 window_rule with default_scratchpad = <name>) moves back into an empty
@@ -90,6 +92,27 @@ def app_id_patterns(name):
     return patterns
 
 
+def scratchpad_for(app_id):
+    """Name of the scratchpad whose window rule matches <app_id>, or None."""
+    for path in sorted(glob.glob(os.path.join(config_dir(), "*.toml"))):
+        try:
+            with open(path, "rb") as fh:
+                data = tomllib.load(fh)
+        except (OSError, tomllib.TOMLDecodeError):
+            continue
+        for rule in data.get("window_rule", []):
+            name = rule.get("default_scratchpad")
+            pattern = rule.get("match", {}).get("app_id")
+            if not name or not isinstance(pattern, str):
+                continue
+            try:
+                if re.search(pattern, app_id):
+                    return name
+            except re.error:
+                continue
+    return None
+
+
 def find(windows, wid):
     return next((w for w in windows if w.get("id") == wid), None)
 
@@ -140,6 +163,24 @@ def close():
         msg("window-minimize", wid)
 
 
+def tile():
+    """Toggle the active window between its scratchpad and the tiling layout."""
+    active = next((w for w in query_windows() if w.get("active")), None)
+    if active is None:
+        return
+    if not active.get("scratchpad"):
+        name = scratchpad_for(active.get("app_id", ""))
+        if name:
+            msg("window-move-to-scratchpad", name)
+            msg("window-focus", active["id"])
+        return
+    wid = active["id"]
+    msg("window-restore-from-scratchpad", active["scratchpad"])
+    after = find(query_windows(), wid)
+    if after is not None and after.get("floating"):
+        msg("window-toggle-floating", wid)
+
+
 def main(argv):
     if len(argv) == 2 and argv[0] == "toggle" and argv[1]:
         toggle(argv[1])
@@ -147,7 +188,10 @@ def main(argv):
     if argv == ["close"]:
         close()
         return 0
-    print("usage: umbriel-scratchpad toggle <name> | close", file=sys.stderr)
+    if argv == ["tile"]:
+        tile()
+        return 0
+    print("usage: umbriel-scratchpad toggle <name> | close | tile", file=sys.stderr)
     return 2
 
 
