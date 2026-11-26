@@ -48,7 +48,7 @@ position = [2552, 1308]
 "Mod+Ctrl+T" = { action = "spawn vicinae cmd launch @thomaslombart/store.raycast.todoist:create-task", repeat = false }
 "Mod+Ctrl+N" = { action = "spawn vicinae cmd launch @marcjulian/store.raycast.obsidian:createNoteCommand", repeat = false }
 "Mod+Ctrl+O" = { action = "spawn vicinae cmd launch @marcjulian/store.raycast.obsidian:searchNoteCommand", repeat = false }
-"Mod+Ctrl+R" = { action = "spawn vicinae cmd launch @gebeto/store.raycast.translate:quick-translate", repeat = false }
+"Mod+Ctrl+backslash" = { action = "spawn vicinae cmd launch @gebeto/store.raycast.translate:quick-translate", repeat = false }
 "Mod+Ctrl+C" = { action = "spawn vicinae cmd launch @thomas/store.raycast.google-calendar:create-quick-event", repeat = false }
 "Mod+Ctrl+B" = { action = "spawn $HOME/.dotfiles/bin/utils/beaverhabits pick", repeat = false }
 "Mod+Alt+M" = { action = "spawn noctalia msg plugin nandomoreirame/obs-live:live all mute", repeat = false }
