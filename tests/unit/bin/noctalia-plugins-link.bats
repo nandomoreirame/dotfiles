@@ -233,7 +233,7 @@ make_qml_repo() {
 }
 
 @test "defaults to ~/hub/projects/noctalia-plugins" {
-    run grep -F '${HOME}/dev/projects/noctalia-plugins' "$SCRIPT"
+    run grep -F '${HOME}/hub/projects/noctalia-plugins' "$SCRIPT"
     assert_success
 }
 

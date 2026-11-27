@@ -203,7 +203,7 @@ noctalia_plugins_link_main() {
     esac
   done
 
-  local repos_dir="${NOCTALIA_PLUGIN_REPOS_DIR:-${HOME}/dev/projects/noctalia-plugins}"
+  local repos_dir="${NOCTALIA_PLUGIN_REPOS_DIR:-${HOME}/hub/projects/noctalia-plugins}"
   local data_home="${XDG_DATA_HOME:-${HOME}/.local/share}"
   local plugins_dir="${data_home}/noctalia/plugins"
 
