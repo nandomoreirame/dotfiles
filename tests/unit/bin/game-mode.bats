@@ -37,7 +37,7 @@ setup() {
     RT="$BATS_TEST_TMPDIR/run"
     mkdir -p "$CG" "$RT" "$FAKE"
 
-    # Fake scopes: chromium (should freeze), other-app (should not), Steam (kept + steam_running).
+    # Fake scopes: chromium (should freeze), other-app (should not), Steam (kept + launcher_running).
     for name in app-chromium-111.scope app-other-app-222.scope app-Steam-333.scope; do
         mkdir -p "$CG/$name"
         : > "$CG/$name/cgroup.procs"
@@ -54,7 +54,7 @@ exit 0
 STUB
     chmod +x "$BATS_TEST_TMPDIR/bin/nocta-hold" "$BATS_TEST_TMPDIR/bin/game-mode"
 
-    # pgrep -x steamwebhelper must fail; Steam scope covers steam_running.
+    # pgrep -x steamwebhelper must fail; Steam scope covers launcher_running.
     cat > "$FAKE/pgrep" <<STUB
 #!/bin/sh
 echo "pgrep \$*" >> "$CALLS"
@@ -86,7 +86,7 @@ STUB
 @test "game-mode serializes concurrent toggles with a lock" {
     CG="$BATS_TEST_TMPDIR/cg"; RT="$BATS_TEST_TMPDIR/run"
     mkdir -p "$RT" "$BATS_TEST_TMPDIR/bin"
-    # The Steam scope makes steam_running true, so `on` really freezes.
+    # The Steam scope makes launcher_running true, so `on` really freezes.
     for name in app-chromium-111.scope app-Steam-333.scope; do
         mkdir -p "$CG/$name"
         : > "$CG/$name/cgroup.procs"
@@ -115,4 +115,37 @@ STUB
 @test "game-mode closes the lock fd for long-lived children" {
     run grep -cE '9>&-' "$ROOT/bin/utils/game-mode"
     [ "$output" -ge 5 ]
+}
+
+# Steam OR RetroArch is enough to enter game mode; with neither, `on` is a no-op.
+_launcher_case() {
+    CG="$BATS_TEST_TMPDIR/cg"; RT="$BATS_TEST_TMPDIR/run"
+    mkdir -p "$RT" "$BATS_TEST_TMPDIR/bin"
+    for name in "$@"; do
+        mkdir -p "$CG/$name"
+        : > "$CG/$name/cgroup.procs"
+        printf '0\n' > "$CG/$name/cgroup.freeze"
+        printf 'frozen 0\n' > "$CG/$name/cgroup.events"
+    done
+    cp "$ROOT/bin/utils/game-mode" "$BATS_TEST_TMPDIR/bin/game-mode"
+    printf '#!/bin/sh\nexit 0\n' > "$BATS_TEST_TMPDIR/bin/nocta-hold"
+    printf '#!/bin/sh\nexit 1\n' > "$FAKE/pgrep"
+    printf '#!/bin/sh\nexit 0\n' > "$FAKE/notify-send"
+    chmod +x "$BATS_TEST_TMPDIR/bin/nocta-hold" "$FAKE/pgrep" "$FAKE/notify-send"
+    run env -i HOME="$BATS_TEST_TMPDIR" PATH="$FAKE:/usr/bin:/bin" \
+        XDG_RUNTIME_DIR="$RT" GAME_MODE_APP_CG="$CG" GAME_MODE_APPS="chromium" \
+        GAME_MODE_KEEP_OUTPUTS=1 bash "$BATS_TEST_TMPDIR/bin/game-mode" on
+    [ "$status" -eq 0 ]
+}
+
+@test "game-mode on works with only RetroArch open" {
+    _launcher_case app-chromium-111.scope app-retroarch-444.scope
+    [ "$(cat "$CG/app-chromium-111.scope/cgroup.freeze")" = "1" ]
+    [ -f "$RT/game-mode.active" ]
+}
+
+@test "game-mode on does nothing when neither Steam nor RetroArch is open" {
+    _launcher_case app-chromium-111.scope
+    [ "$(cat "$CG/app-chromium-111.scope/cgroup.freeze")" = "0" ]
+    [ ! -f "$RT/game-mode.active" ]
 }

@@ -22,7 +22,7 @@ _setup_dev_environment() {
         # shellcheck disable=SC2206
         dirs=($DOTFILES_DEV_DIRS)
     else
-        dirs=("$HOME/dev/projects")
+        dirs=("$HOME/hub/projects")
     fi
 
     for dir in "${dirs[@]}"; do

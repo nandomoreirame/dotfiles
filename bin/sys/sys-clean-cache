@@ -16,13 +16,13 @@ set -euo pipefail
 #   sys-clean-cache --help             # Show this help
 #
 # Environment:
-#   SYS_CLEAN_DEV_DIR       where to look for Rust target/ dirs (default ~/dev)
+#   SYS_CLEAN_DEV_DIR       where to look for Rust target/ dirs (default ~/hub)
 #   SYS_CLEAN_COREDUMP_DIR  systemd coredump dir (default /var/lib/systemd/coredump)
 
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-DEV_DIR="${SYS_CLEAN_DEV_DIR:-$HOME/dev}"
+DEV_DIR="${SYS_CLEAN_DEV_DIR:-$HOME/hub}"
 COREDUMP_DIR="${SYS_CLEAN_COREDUMP_DIR:-/var/lib/systemd/coredump}"
 SUDO="sudo"
 

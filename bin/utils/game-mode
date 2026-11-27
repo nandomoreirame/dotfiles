@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # game-mode -- freeze background work apps to free CPU/RAM for gaming, restore on
-# demand. TOGGLE model: it does NOT launch anything. You open Steam yourself (so
+# demand. TOGGLE model: it does NOT launch anything. You open Steam or RetroArch yourself (so
 # it renders with the full session env -- launching it under the freeze/systemd
 # paints it black); game-mode only PAUSES everything else.
 #
@@ -23,13 +23,13 @@
 # Trigger: Noctalia's Performance mode (via hooks) and/or a keybind.
 #
 # Usage:
-#   game-mode on       Verify Steam is open (notify if not), power off the
+#   game-mode on       Verify Steam or RetroArch is open (notify if not), power off the
 #                      non-focused outputs, freeze the work scopes, and turn on
 #                      Do Not Disturb + keep-awake in the Noctalia shell.
 #   game-mode off      Thaw every work scope, power the outputs back on, and
 #                      turn off Do Not Disturb + keep-awake.
 #   game-mode toggle   off if active, on otherwise.
-#   game-mode status   Show state, frozen-scope count, whether Steam is open.
+#   game-mode status   Show state, frozen-scope count, whether Steam or RetroArch is open.
 #
 # Escape hatch: from a TTY (Ctrl+Alt+F2) run `game-mode off` -- the thaw writes
 # the cgroup files directly (no compositor needed) and NIRI_SOCKET is autodetected.
@@ -247,9 +247,12 @@ frozen_count() {
     printf '%s' "$n"
 }
 
-steam_running() {
+# True when Steam or RetroArch is open; either one is enough to enter game mode.
+launcher_running() {
     compgen -G "$APP_CG/*[Ss]team*.scope" >/dev/null 2>&1 && return 0
-    pgrep -x steamwebhelper >/dev/null 2>&1
+    compgen -G "$APP_CG/*[Rr]etro[Aa]rch*.scope" >/dev/null 2>&1 && return 0
+    pgrep -x steamwebhelper >/dev/null 2>&1 && return 0
+    pgrep -x retroarch >/dev/null 2>&1
 }
 
 # Read Noctalia DND state as yes/no (empty if nocta fails / unknown).
@@ -274,8 +277,8 @@ cmd_on() {
         notify "Game mode already on" "Use 'game-mode off' to leave."
         return 0
     fi
-    if ! steam_running; then
-        notify "Steam is not open" "Open Steam from the launcher and try again."
+    if ! launcher_running; then
+        notify "Steam or RetroArch is not open" "Open one of them from the launcher and try again."
         return 0
     fi
     : >"$STATE_FILE"
@@ -333,10 +336,10 @@ cmd_status() {
     fi
     echo "frozen scopes      : $(frozen_count)"
     echo "media playing now  : $(media_pids | grep -c . || true) stream(s)"
-    if steam_running; then
-        echo "Steam open         : yes"
+    if launcher_running; then
+        echo "Steam/RetroArch open: yes"
     else
-        echo "Steam open         : no"
+        echo "Steam/RetroArch open: no"
     fi
     local dnd
     dnd="$(noctalia_state_bool doNotDisturb)"

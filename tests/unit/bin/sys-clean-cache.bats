@@ -28,7 +28,7 @@ setup() {
     FAKE_HOME="$TEST_DIR/home"
     CALL_LOG="$TEST_DIR/calls.log"
 
-    mkdir -p "$STUB_DIR" "$FAKE_HOME/.cache" "$FAKE_HOME/dev" "$TEST_DIR/coredump"
+    mkdir -p "$STUB_DIR" "$FAKE_HOME/.cache" "$FAKE_HOME/hub" "$TEST_DIR/coredump"
     : > "$CALL_LOG"
 
     # sudo: log and run the command unprivileged. -v (upfront auth) is
@@ -113,7 +113,7 @@ run_clean() {
         FAKE_ORPHANS="${FAKE_ORPHANS:-}" \
         FAKE_DOCKER="${FAKE_DOCKER:-down}" \
         FAKE_SUDO_AUTH="${FAKE_SUDO_AUTH:-ok}" \
-        SYS_CLEAN_DEV_DIR="$FAKE_HOME/dev" \
+        SYS_CLEAN_DEV_DIR="$FAKE_HOME/hub" \
         SYS_CLEAN_COREDUMP_DIR="$TEST_DIR/coredump" \
         bash "$SCRIPT" "$@" <<< "${ANSWERS:-}"
 }
@@ -208,7 +208,7 @@ seed_file() {
 @test "EOF on stdin quits without running anything" {
     seed_file "$FAKE_HOME/.cache/thumbnails/a.png"
     run env -i HOME="$FAKE_HOME" PATH="$STUB_DIR:/usr/bin:/bin" TERM=dumb \
-        CALL_LOG="$CALL_LOG" SYS_CLEAN_DEV_DIR="$FAKE_HOME/dev" \
+        CALL_LOG="$CALL_LOG" SYS_CLEAN_DEV_DIR="$FAKE_HOME/hub" \
         bash "$SCRIPT" --only thumbnails < /dev/null
     assert_success
     assert_file_exists "$FAKE_HOME/.cache/thumbnails/a.png"
@@ -313,14 +313,14 @@ seed_file() {
 }
 
 @test "rust-targets: removes only target/ next to a Cargo.toml" {
-    seed_file "$FAKE_HOME/dev/app/Cargo.toml"
-    seed_file "$FAKE_HOME/dev/app/target/debug/app"
-    seed_file "$FAKE_HOME/dev/web/target/keep.txt"
+    seed_file "$FAKE_HOME/hub/app/Cargo.toml"
+    seed_file "$FAKE_HOME/hub/app/target/debug/app"
+    seed_file "$FAKE_HOME/hub/web/target/keep.txt"
     ANSWERS="y" run_clean --only rust-targets
     assert_success
-    assert_output --partial "$FAKE_HOME/dev/app/target"
-    assert_dir_not_exists "$FAKE_HOME/dev/app/target"
-    assert_file_exists "$FAKE_HOME/dev/web/target/keep.txt"
+    assert_output --partial "$FAKE_HOME/hub/app/target"
+    assert_dir_not_exists "$FAKE_HOME/hub/app/target"
+    assert_file_exists "$FAKE_HOME/hub/web/target/keep.txt"
 }
 
 # ---------------------------------------------------------------------------

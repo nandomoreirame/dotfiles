@@ -232,7 +232,7 @@ make_qml_repo() {
     assert_symlink_to "$REPOS_DIR/aibar" "$PLUGINS_DIR/aibar"
 }
 
-@test "defaults to ~/dev/projects/noctalia-plugins" {
+@test "defaults to ~/hub/projects/noctalia-plugins" {
     run grep -F '${HOME}/dev/projects/noctalia-plugins' "$SCRIPT"
     assert_success
 }

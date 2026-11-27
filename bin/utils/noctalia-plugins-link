@@ -4,7 +4,7 @@
 # Usage:
 #   noctalia-plugins-link [--list]
 #
-# For each $NOCTALIA_PLUGIN_REPOS_DIR/<name> (default ~/dev/projects/noctalia-plugins),
+# For each $NOCTALIA_PLUGIN_REPOS_DIR/<name> (default ~/hub/projects/noctalia-plugins),
 # skipping <name>-v4 worktrees and dotted backups,
 # with a root plugin.toml whose id is "${NOCTALIA_PLUGIN_AUTHOR}/<name>", creates:
 #   ${XDG_DATA_HOME:-$HOME/.local/share}/noctalia/plugins/<name> -> <repo>

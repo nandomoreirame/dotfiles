@@ -92,7 +92,7 @@ return {
       -- on top of the sidebar; the layout keeps the window hidden, it is not removed
       picker = {
         sources = {
-          -- only projects of files opened recently: no scan of ~/dev (the Snacks default)
+          -- only projects of files opened recently: no scan of ~/hub (the Snacks default)
           projects = { dev = {}, recent = true },
           files = { hidden = true, exclude = SEARCH_EXCLUDE },
           grep = { hidden = true, exclude = SEARCH_EXCLUDE },
@@ -105,7 +105,7 @@ return {
               hidden = { "input" },
               layout = { width = EXPLORER_WIDTH, min_width = EXPLORER_WIDTH },
             },
-            -- the root row shows the whole project path (~/dev/) instead of its folder name
+            -- the root row shows the whole project path (~/hub/) instead of its folder name
             format = function(item, picker)
               local ret = Snacks.picker.format.file(item, picker)
               if item.file == picker:cwd() then
