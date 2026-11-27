@@ -34,6 +34,23 @@ noctalia_restart_pids() {
   pgrep -x "$name" 2>/dev/null || true
 }
 
+# True when at least one non-zombie niri process exists.
+# A defunct leftover from a past niri session (common after switching to
+# Umbriel) still matches `pgrep -x niri` but has no compositor IPC; treat it
+# as gone so the setsid spawn path runs.
+noctalia_restart_niri_alive() {
+  local pid state proc_dir="${NOCTALIA_PROC_DIR:-/proc}"
+  for pid in $(noctalia_restart_pids niri); do
+    [ -n "$pid" ] || continue
+    # /proc/<pid>/stat field 3 is the state letter; Z means zombie.
+    state="$(awk '{ print $3 }' "$proc_dir/$pid/stat" 2>/dev/null)" || state="?"
+    if [ "$state" != "Z" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 # Kill every noctalia PID from pgrep -x. Never uses pkill -f.
 # Optional first arg is a kill signal flag (e.g. -9). Default is SIGTERM.
 # Resolve kill via PATH (type -P) so the bash builtin is skipped and tests can stub it.
@@ -89,22 +106,22 @@ noctalia_restart_reap_watchers() {
   done
 }
 
-# Spawn noctalia detached. Prefer niri's spawn; fall back to setsid.
+# Spawn noctalia detached. Prefer niri's spawn; fall back to setsid (Umbriel).
 noctalia_restart_spawn_shell() {
-  if pgrep -x niri >/dev/null 2>&1; then
+  if noctalia_restart_niri_alive; then
     niri msg action spawn -- noctalia
   else
     setsid -f noctalia >/dev/null 2>&1
   fi
 }
 
-# Make niri IPC reachable when niri is running. A terminal opened before a
-# re-login keeps a NIRI_SOCKET pointing at the dead compositor, so fall back to
-# the live socket in XDG_RUNTIME_DIR. Returns 1 when niri runs but cannot be
-# reached; returns 0 when niri is not running (the setsid fallback applies).
+# Make niri IPC reachable when a live niri is running. A terminal opened before
+# a re-login keeps a NIRI_SOCKET pointing at the dead compositor, so fall back
+# to the live socket in XDG_RUNTIME_DIR. Returns 1 when live niri cannot be
+# reached; returns 0 when niri is absent or only a zombie (setsid fallback).
 noctalia_restart_ensure_niri() {
   local sock
-  pgrep -x niri >/dev/null 2>&1 || return 0
+  noctalia_restart_niri_alive || return 0
   if [ -z "${NIRI_SOCKET:-}" ] || [ ! -e "$NIRI_SOCKET" ]; then
     for sock in "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/niri.*.sock; do
       if [ -e "$sock" ]; then
@@ -154,7 +171,7 @@ noctalia_restart_main() {
     return 1
   fi
   local tray_before=""
-  pgrep -x niri >/dev/null 2>&1 && tray_before="$(noctalia_restart_tray_windows | tr '\n' ' ')"
+  noctalia_restart_niri_alive && tray_before="$(noctalia_restart_tray_windows | tr '\n' ' ')"
   # 1. Stop the running shell by PID.
   noctalia_restart_kill_shells
   # 2. Wait for exit; SIGKILL leftovers at the deadline.
@@ -165,8 +182,8 @@ noctalia_restart_main() {
   noctalia_restart_reap_watchers
   # 4. Relaunch the shell.
   noctalia_restart_spawn_shell
-  # 5. Send tray apps that popped their window back to the tray.
-  pgrep -x niri >/dev/null 2>&1 && noctalia_restart_rehide_tray_windows "$tray_before"
+  # 5. Send tray apps that popped their window back to the tray (niri only).
+  noctalia_restart_niri_alive && noctalia_restart_rehide_tray_windows "$tray_before"
   return 0
 }
 

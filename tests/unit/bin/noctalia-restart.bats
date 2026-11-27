@@ -251,6 +251,24 @@ run_restart() {
     ! grep -q "niri msg action spawn" "$CALL_LOG"
 }
 
+@test "falls back to setsid when the only niri is a zombie (Umbriel leftover)" {
+    # A defunct niri from a previous session makes pgrep -x succeed, but there
+    # is no compositor IPC. Umbriel sessions must still restart via setsid.
+    FAKE_NOCTALIA_PIDS="1111"
+    FAKE_NIRI_PIDS="99"
+    NOCTALIA_RESTART_WAIT_SECS=0
+    mkdir -p "$PROC_DIR/99"
+    # /proc/pid/stat field 3 is the state; Z means zombie.
+    printf '99 (niri) Z 1\n' >"$PROC_DIR/99/stat"
+
+    run_restart
+
+    assert_success
+    grep -qx "kill 1111" "$CALL_LOG"
+    grep -qx "setsid -f noctalia" "$CALL_LOG"
+    ! grep -q "niri msg action spawn" "$CALL_LOG"
+}
+
 @test "game-mode has no v4 (qs) references" {
     [ -f "$PROJECT_ROOT/bin/utils/game-mode" ]
     ! grep -qw 'qs' "$PROJECT_ROOT/bin/utils/game-mode"
