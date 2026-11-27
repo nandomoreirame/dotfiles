@@ -6,10 +6,17 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Prefer an exported DOTFILES; otherwise .zshenv already set it.
+# Drop a stale export (missing directory) so a renamed workspace re-derives.
+if [[ -n ${DOTFILES:-} && ! -d $DOTFILES ]]; then
+  unset DOTFILES
+fi
 : "${DOTFILES:=${${(%):-%N}:A:h:h}}"
 export DOTFILES
 
 # Custom directory lives in this clone (plugins/themes come from Arch packages).
+if [[ -n ${ZSH_CUSTOM:-} && ! -d $ZSH_CUSTOM ]]; then
+  unset ZSH_CUSTOM
+fi
 export ZSH_CUSTOM="${ZSH_CUSTOM:-$DOTFILES/.oh-my-zsh/custom}"
 
 # Load shared bash settings when present (PATH extras, mise, zoxide).

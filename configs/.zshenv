@@ -2,9 +2,18 @@
 # Builds PATH once. Nothing here may print.
 
 # Resolve the clone from this file's real path (follows the ~/.zshenv symlink).
-# An exported DOTFILES wins so tests and overlays can override.
+# An exported DOTFILES wins when it points at an existing directory (tests/overlays).
+# A stale export (e.g. after ~/dev→~/hub, kept by the compositor) is dropped.
+if [[ -n ${DOTFILES:-} && ! -d $DOTFILES ]]; then
+  unset DOTFILES
+fi
 : "${DOTFILES:=${${(%):-%N}:A:h:h}}"
 export DOTFILES
+
+# Same for a private overlay path inherited from a long-lived session.
+if [[ -n ${DOTFILES_PRIVATE:-} && ! -d $DOTFILES_PRIVATE ]]; then
+  unset DOTFILES_PRIVATE
+fi
 
 # mise directories (defaults match the Arch package layout)
 export MISE_DATA_DIR="${MISE_DATA_DIR:-$HOME/.local/share/mise}"

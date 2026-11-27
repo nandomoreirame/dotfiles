@@ -16,17 +16,38 @@ zrun() { run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" zsh -f -c "source '$
 }
 
 @test "an exported dotfiles wins over the derived one" {
-    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES=/srv/example/dot zsh -f -c "source '$HOME_DECOY/.zshenv'; print -r -- \$DOTFILES"
-    [ "$output" = "/srv/example/dot" ]
+    override="$BATS_TEST_TMPDIR/override"
+    mkdir -p "$override"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES="$override" zsh -f -c "source '$HOME_DECOY/.zshenv'; print -r -- \$DOTFILES"
+    [ "$output" = "$override" ]
+}
+
+@test "a missing exported DOTFILES is re-derived from the zshenv path" {
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES=/nonexistent/dotfiles \
+        zsh -f -c "source '$HOME_DECOY/.zshenv'; print -r -- \$DOTFILES"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$ROOT" ]
+}
+
+@test "a missing exported DOTFILES_PRIVATE is dropped" {
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" DOTFILES_PRIVATE=/nonexistent/private \
+        zsh -f -c "source '$HOME_DECOY/.zshenv'; print -r -- \${DOTFILES_PRIVATE-UNSET}"
+    [ "$status" -eq 0 ]
+    [ "$output" = "UNSET" ]
 }
 
 @test "private bin joins the path only when it exists" {
-    zrun 'print -l $path'
+    # Disposable clone: a real private/bin overlay must not flake this check.
+    dot="$BATS_TEST_TMPDIR/path-dot"
+    mkdir -p "$dot/configs"
+    cp "$ROOT/configs/.zshenv" "$dot/configs/.zshenv"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" \
+        zsh -f -c "source '$dot/configs/.zshenv'; print -l \$path"
     [[ "$output" != *"/private/bin"* ]]
-    mkdir -p "$ROOT/private/bin"
-    zrun 'print -l $path'
-    rmdir "$ROOT/private/bin"
-    [[ "$output" == *"$ROOT/private/bin"* ]]
+    mkdir -p "$dot/private/bin"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" \
+        zsh -f -c "source '$dot/configs/.zshenv'; print -l \$path"
+    [[ "$output" == *"$dot/private/bin"* ]]
 }
 
 @test "the path has no duplicates" {

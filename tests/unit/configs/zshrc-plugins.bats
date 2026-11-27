@@ -62,3 +62,18 @@ setup() {
         zsh -f -c "source '$ROOT/configs/.zshrc' 2>/dev/null"
     [[ "$output" == *"CUSTOM-OMZ"* ]]
 }
+
+@test "zshrc re-derives a missing exported DOTFILES and ZSH_CUSTOM" {
+    # Match the live layout: ~/.oh-my-zsh/custom -> clone custom (profiles.sh
+    # later sets ZSH_CUSTOM=$ZSH/custom from the default ZSH).
+    mkdir -p "$HOME_DECOY/.oh-my-zsh"
+    ln -s "$ROOT/.oh-my-zsh/custom" "$HOME_DECOY/.oh-my-zsh/custom"
+    run env -i HOME="$HOME_DECOY" PATH="/usr/bin:/bin" \
+        DOTFILES=/nonexistent/dotfiles \
+        ZSH_CUSTOM=/nonexistent/custom \
+        ZDOTDIR="$BATS_TEST_TMPDIR" \
+        zsh -f -c "source '$ROOT/configs/.zshrc' 2>/dev/null; print -r -- \$DOTFILES; print -r -- \$ZSH_CUSTOM"
+    [[ "$output" == *"$ROOT"* ]]
+    [[ "$output" != *"/nonexistent/"* ]]
+    [[ "$output" == *"$HOME_DECOY/.oh-my-zsh/custom"* || "$output" == *"$ROOT/.oh-my-zsh/custom"* ]]
+}

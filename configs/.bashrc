@@ -2,6 +2,10 @@
 
 if [[ -n "$BASH_VERSION" ]]; then
   # Prefer an exported DOTFILES; otherwise derive it from this file (follows symlinks).
+  # Drop a stale export (missing directory) so a renamed workspace re-derives.
+  if [[ -n "${DOTFILES:-}" && ! -d "${DOTFILES}" ]]; then
+    unset DOTFILES
+  fi
   if [[ -z "${DOTFILES:-}" ]]; then
     _bashrc_src="${BASH_SOURCE[0]:-$0}"
     if command -v readlink >/dev/null 2>&1; then
